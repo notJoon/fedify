@@ -1,5 +1,9 @@
 // deno-lint-ignore-file no-explicit-any
-import type { MessageQueue, MessageQueueEnqueueOptions } from "@fedify/fedify";
+import type {
+  MessageQueue,
+  MessageQueueEnqueueOptions,
+  MessageQueueListenOptions,
+} from "@fedify/fedify";
 import type { Redis, RedisKey } from "ioredis";
 import { type Codec, JsonCodec } from "./codec.ts";
 
@@ -127,20 +131,34 @@ export class RedisMessageQueue implements MessageQueue, Disposable {
     }
   }
 
-  listen(handler: (message: any) => void | Promise<void>): void {
+  listen(
+    handler: (message: any) => void | Promise<void>,
+    options: MessageQueueListenOptions = {},
+  ): Promise<void> {
     if (this.#loopHandle != null) {
       throw new Error("Already listening");
     }
+    const signal = options.signal;
     this.#loopHandle = setInterval(async () => {
       const message = await this.#poll();
       if (message === undefined) return;
       await handler(message);
     }, this.#loopInterval.total({ unit: "milliseconds" }));
-    this.#subRedis.subscribe(this.#channelKey, () => {
-      this.#subRedis.on("message", async () => {
+    const promise = this.#subRedis.subscribe(this.#channelKey, () => {
+      const onMessage = async () => {
         const message = await this.#poll();
         if (message === undefined) return;
         await handler(message);
+      };
+      this.#subRedis.on("message", onMessage);
+      signal?.addEventListener("abort", () => {
+        this.#subRedis.off("message", onMessage);
+      });
+    });
+    return new Promise((resolve) => {
+      signal?.addEventListener("abort", () => {
+        clearInterval(this.#loopHandle);
+        promise.then(() => resolve());
       });
     });
   }

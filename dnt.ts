@@ -10,7 +10,8 @@ await Deno.writeTextFile(
     imports: {
       ...metadata.imports,
       "@fedify/fedify": metadata.imports["@fedify/fedify"]
-        .replace(/^jsr:/, "npm:"),
+        .replace(/^jsr:/, "npm:")
+        .replace(/\+.+$/, ""),
     },
   }),
 );

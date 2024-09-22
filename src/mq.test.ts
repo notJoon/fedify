@@ -21,12 +21,13 @@ Deno.test("RedisMessageQueue", async (t) => {
   });
 
   const messages: string[] = [];
-  mq.listen((message: string) => {
+  const controller = new AbortController();
+  const listening = mq.listen((message: string) => {
     messages.push(message);
-  });
-  mq2.listen((message: string) => {
+  }, controller);
+  const listening2 = mq2.listen((message: string) => {
     messages.push(message);
-  });
+  }, controller);
 
   await t.step("enqueue()", async () => {
     await mq.enqueue("Hello, world!");
@@ -53,6 +54,10 @@ Deno.test("RedisMessageQueue", async (t) => {
     assertEquals(messages, ["Hello, world!", "Delayed message"]);
     assertGreater(Date.now() - started, 3_000);
   });
+
+  controller.abort();
+  await listening;
+  await listening2;
 
   mq[Symbol.dispose]();
   mq2[Symbol.dispose]();

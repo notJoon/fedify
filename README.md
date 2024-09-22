@@ -66,6 +66,8 @@ Changelog
 
 To be released.
 
+ -  Let `RedisMessageQueue` follow up the latest `MessageQueue` interface,
+    which was updated in Fedify 1.0.0.
  -  Added some example code.
 
 ### Version 0.1.1
