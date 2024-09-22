@@ -36,6 +36,9 @@ await build({
     bugs: {
       url: "https://github.com/dahlia/fedify-redis/issues",
     },
+    funding: [
+      "https://github.com/sponsors/dahlia",
+    ],
   },
   outDir: "./npm",
   entryPoints: [
