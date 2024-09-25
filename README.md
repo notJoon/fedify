@@ -64,7 +64,7 @@ Changelog
 
 ### Version 0.2.0
 
-To be released.
+Released on September 26, 2024.
 
  -  Let `RedisMessageQueue` follow up the latest `MessageQueue` interface,
     which was updated in Fedify 1.0.0.
