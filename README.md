@@ -64,7 +64,7 @@ Changelog
 
 ### Version 0.3.0
 
-To be released.
+Released on October 4, 2024.
 
  -  Polling is now more efficient.
  -  Renamed `RedisMessageQueueOptions.loopInterval` option to `pollInterval`
