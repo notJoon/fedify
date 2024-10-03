@@ -62,6 +62,10 @@ bun add @fedify/redis
 Changelog
 ---------
 
+### Version 0.4.0
+
+To be released.
+
 ### Version 0.3.0
 
 Released on October 4, 2024.
