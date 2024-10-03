@@ -1,4 +1,5 @@
-import { assertEquals, assertGreater } from "@std/assert";
+import { assertEquals } from "@std/assert/assert-equals";
+import { assertGreater } from "@std/assert/assert-greater";
 import { delay } from "@std/async/delay";
 import { Redis } from "ioredis";
 import { RedisMessageQueue } from "./mq.ts";
@@ -8,24 +9,24 @@ Deno.test("RedisMessageQueue", async (t) => {
   const queueKey = `fedify_test_queue_${crypto.randomUUID()}`;
   const lockKey = `fedify_test_lock_${crypto.randomUUID()}`;
   const mq = new RedisMessageQueue(() => new Redis(), {
-    loopInterval: { seconds: 1 },
+    pollInterval: { seconds: 1 },
     channelKey,
     queueKey,
     lockKey,
   });
   const mq2 = new RedisMessageQueue(() => new Redis(), {
-    loopInterval: { seconds: 1 },
+    pollInterval: { seconds: 1 },
     channelKey,
     queueKey,
     lockKey,
   });
 
-  const messages: string[] = [];
+  const messages: (string | number)[] = [];
   const controller = new AbortController();
-  const listening = mq.listen((message: string) => {
+  const listening = mq.listen((message: string | number) => {
     messages.push(message);
   }, controller);
-  const listening2 = mq2.listen((message: string) => {
+  const listening2 = mq2.listen((message: string | number) => {
     messages.push(message);
   }, controller);
 
@@ -53,6 +54,18 @@ Deno.test("RedisMessageQueue", async (t) => {
   await t.step("listen() with delay", () => {
     assertEquals(messages, ["Hello, world!", "Delayed message"]);
     assertGreater(Date.now() - started, 3_000);
+  });
+
+  await t.step("enqueue() [bulk]", async () => {
+    for (let i = 0; i < 1_000; i++) await mq.enqueue(i);
+  });
+
+  await waitFor(() => messages.length > 1_001, 30_000);
+
+  await t.step("listen() [bulk]", () => {
+    const numbers: Set<number> = new Set();
+    for (let i = 0; i < 1_000; i++) numbers.add(i);
+    assertEquals(new Set(messages.slice(2)), numbers);
   });
 
   controller.abort();

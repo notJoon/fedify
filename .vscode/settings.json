@@ -1,6 +1,9 @@
 {
+  "cSpell.enabled": false,
   "deno.enable": true,
-  "deno.unstable": true,
+  "deno.unstable": [
+    "temporal"
+  ],
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
@@ -18,8 +21,5 @@
     "editor.codeActionsOnSave": {
       "source.sortImports": "always"
     }
-  },
-  "cSpell.words": [
-    "fedify"
-  ]
+  }
 }

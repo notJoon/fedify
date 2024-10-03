@@ -4,8 +4,11 @@ import type {
   MessageQueueEnqueueOptions,
   MessageQueueListenOptions,
 } from "@fedify/fedify";
+import { getLogger } from "@logtape/logtape";
 import type { Redis, RedisKey } from "ioredis";
 import { type Codec, JsonCodec } from "./codec.ts";
+
+const logger = getLogger(["fedify", "redis", "mq"]);
 
 /**
  * Options for {@link RedisMessageQueue} class.
@@ -22,35 +25,35 @@ export interface RedisMessageQueueOptions {
   /**
    * The Pub/Sub channel key to use for the message queue.  `"fedify_channel"`
    * by default.
+   * @default `"fedify_channel"`
    */
   channelKey?: RedisKey;
 
   /**
    * The Sorted Set key to use for the delayed message queue.  `"fedify_queue"`
    * by default.
+   * @default `"fedify_queue"`
    */
   queueKey?: RedisKey;
 
   /**
    * The key to use for locking the message queue.  `"fedify_lock"` by default.
+   * @default `"fedify_lock"`
    */
   lockKey?: RedisKey;
 
   /**
    * The codec to use for encoding and decoding messages in the key-value store.
    * Defaults to {@link JsonCodec}.
+   * @default {@link JsonCodec}
    */
   codec?: Codec;
 
   /**
-   * The interval at which to poll the message queue for delayed messages.
-   * If this interval is too short, it may cause excessive load on the Redis
-   * server.  If it is too long, it may cause messages to be delayed longer
-   * than expected.
-   *
-   * 5 seconds by default.
+   * The poll interval for the message queue.  5 seconds by default.
+   * @default `{ seconds: 5 }`
    */
-  loopInterval?: Temporal.DurationLike;
+  pollInterval?: Temporal.Duration | Temporal.DurationLike;
 }
 
 /**
@@ -76,7 +79,7 @@ export class RedisMessageQueue implements MessageQueue, Disposable {
   #queueKey: RedisKey;
   #lockKey: RedisKey;
   #codec: Codec;
-  #loopInterval: Temporal.Duration;
+  #pollIntervalMs: number;
   #loopHandle?: ReturnType<typeof setInterval>;
 
   /**
@@ -92,9 +95,9 @@ export class RedisMessageQueue implements MessageQueue, Disposable {
     this.#queueKey = options.queueKey ?? "fedify_queue";
     this.#lockKey = options.lockKey ?? "fedify_lock";
     this.#codec = options.codec ?? new JsonCodec();
-    this.#loopInterval = Temporal.Duration.from(
-      options.loopInterval ?? { seconds: 5 },
-    );
+    this.#pollIntervalMs = Temporal.Duration.from(
+      options.pollInterval ?? { seconds: 5 },
+    ).total("millisecond");
   }
 
   async enqueue(
@@ -104,34 +107,51 @@ export class RedisMessageQueue implements MessageQueue, Disposable {
     const ts = options?.delay == null
       ? 0
       : Temporal.Now.instant().add(options.delay).epochMilliseconds;
-    const encodedMessage = this.#codec.encode(message);
+    const encodedMessage = this.#codec.encode([
+      crypto.randomUUID(),
+      message,
+    ]);
     await this.#redis.zadd(this.#queueKey, ts, encodedMessage);
     if (ts < 1) this.#redis.publish(this.#channelKey, "");
   }
 
   async #poll(): Promise<any | undefined> {
-    const result = await this.#redis.setnx(this.#lockKey, this.#workerId);
-    if (result < 1) return;
-    await this.#redis.expire(
+    logger.debug("Polling for messages...");
+    const result = await this.#redis.set(
       this.#lockKey,
-      this.#loopInterval.total({ unit: "seconds" }) * 2,
+      this.#workerId,
+      "EX",
+      Math.floor(this.#pollIntervalMs / 1000 * 2),
+      "NX",
     );
+    if (result == null) {
+      logger.debug(
+        "Another worker is already processing messages; skipping...",
+      );
+      return;
+    }
+    logger.debug("Acquired lock; processing messages...");
     const messages = await this.#redis.zrangebyscoreBuffer(
       this.#queueKey,
       0,
       Temporal.Now.instant().epochMilliseconds,
     );
+    logger.debug(
+      "Found {messages} messages to process.",
+      { messages: messages.length },
+    );
     try {
       if (messages.length < 1) return;
-      const message = messages[0];
-      await this.#redis.zrem(this.#queueKey, message);
-      return this.#codec.decode(message);
+      const encodedMessage = messages[0];
+      await this.#redis.zrem(this.#queueKey, encodedMessage);
+      const [_, message] = this.#codec.decode(encodedMessage) as [string, any];
+      return message;
     } finally {
       await this.#redis.del(this.#lockKey);
     }
   }
 
-  listen(
+  async listen(
     handler: (message: any) => void | Promise<void>,
     options: MessageQueueListenOptions = {},
   ): Promise<void> {
@@ -139,27 +159,50 @@ export class RedisMessageQueue implements MessageQueue, Disposable {
       throw new Error("Already listening");
     }
     const signal = options.signal;
-    this.#loopHandle = setInterval(async () => {
-      const message = await this.#poll();
-      if (message === undefined) return;
-      await handler(message);
-    }, this.#loopInterval.total({ unit: "milliseconds" }));
-    const promise = this.#subRedis.subscribe(this.#channelKey, () => {
-      const onMessage = async () => {
-        const message = await this.#poll();
+    const poll = async () => {
+      while (!signal?.aborted) {
+        let message: any;
+        try {
+          message = await this.#poll();
+        } catch (error) {
+          logger.error("Error polling for messages: {error}", error);
+          return;
+        }
         if (message === undefined) return;
         await handler(message);
-      };
-      this.#subRedis.on("message", onMessage);
+      }
+    };
+    const promise = this.#subRedis.subscribe(this.#channelKey, () => {
+      this.#subRedis.on("message", poll);
       signal?.addEventListener("abort", () => {
-        this.#subRedis.off("message", onMessage);
+        this.#subRedis.off("message", poll);
       });
     });
-    return new Promise((resolve) => {
-      signal?.addEventListener("abort", () => {
-        clearInterval(this.#loopHandle);
-        promise.then(() => resolve());
+    signal?.addEventListener(
+      "abort",
+      () => {
+        for (const timeout of timeouts) clearTimeout(timeout);
+      },
+    );
+    const timeouts = new Set<ReturnType<typeof setTimeout>>();
+    while (!signal?.aborted) {
+      let timeout: ReturnType<typeof setTimeout> | undefined;
+      await new Promise<unknown>((resolve) => {
+        signal?.addEventListener("abort", resolve);
+        timeout = setTimeout(() => {
+          signal?.removeEventListener("abort", resolve);
+          resolve(0);
+        }, this.#pollIntervalMs);
+        timeouts.add(timeout);
       });
+      if (timeout != null) timeouts.delete(timeout);
+      await poll();
+    }
+    return await new Promise((resolve) => {
+      signal?.addEventListener("abort", () => {
+        promise.catch(() => resolve()).then(() => resolve());
+      });
+      promise.catch(() => resolve()).then(() => resolve());
     });
   }
 

@@ -12,6 +12,9 @@ await Deno.writeTextFile(
       "@fedify/fedify": metadata.imports["@fedify/fedify"]
         .replace(/^jsr:/, "npm:")
         .replace(/\+.+$/, ""),
+      "@logtape/logtape": metadata.imports["@logtape/logtape"]
+        .replace(/^jsr:/, "npm:")
+        .replace(/\+.+$/, ""),
     },
   }),
 );
