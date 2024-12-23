@@ -68,6 +68,14 @@ Changelog
 
 To be released.
 
+ -  Added some logging using [LogTape] for the sake of debugging.  The following
+    categories are used:
+
+     -  `["fedify", "postgres", "kv"]`
+     -  `["fedify", "postgres", "mq"]`
+
+[LogTape]: https://logtape.org/
+
 ### Version 0.2.2
 
 Released on November 18, 2024.

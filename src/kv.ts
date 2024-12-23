@@ -1,6 +1,9 @@
 import type { KvKey, KvStore, KvStoreSetOptions } from "@fedify/fedify";
+import { getLogger } from "@logtape/logtape";
 import type { JSONValue, Parameter, Sql } from "postgres";
 import { driverSerializesJson } from "./utils.ts";
+
+const logger = getLogger(["fedify", "postgres", "kv"]);
 
 /**
  * Options for the PostgreSQL key-value store.
@@ -110,6 +113,9 @@ export class PostgresKvStore implements KvStore {
    */
   async initialize(): Promise<void> {
     if (this.#initialized) return;
+    logger.debug("Initializing the key-value store table {tableName}...", {
+      tableName: this.#tableName,
+    });
     await this.#sql`
       CREATE UNLOGGED TABLE IF NOT EXISTS ${this.#sql(this.#tableName)} (
         key text[] PRIMARY KEY,
@@ -120,6 +126,9 @@ export class PostgresKvStore implements KvStore {
     `;
     this.#driverSerializesJson = await driverSerializesJson(this.#sql);
     this.#initialized = true;
+    logger.debug("Initialized the key-value store table {tableName}.", {
+      tableName: this.#tableName,
+    });
   }
 
   /**

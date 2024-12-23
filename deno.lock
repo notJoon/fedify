@@ -7,6 +7,7 @@
     "jsr:@fedify/fedify@1": "1.0.0",
     "jsr:@hugoalh/http-header-link@^1.0.2": "1.0.2",
     "jsr:@hugoalh/is-string-singleline@1.0.2": "1.0.2",
+    "jsr:@logtape/logtape@0.8": "0.8.0",
     "jsr:@logtape/logtape@~0.6.2": "0.6.2",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.226": "0.226.0",
@@ -70,7 +71,7 @@
       "integrity": "3bb429331cec437ac6dcf0527b3e0fda1f0261d1945b7d2f20a7a3e9fdec7aa9",
       "dependencies": [
         "jsr:@hugoalh/http-header-link",
-        "jsr:@logtape/logtape",
+        "jsr:@logtape/logtape@~0.6.2",
         "jsr:@std/bytes@^1.0.2",
         "jsr:@std/encoding",
         "jsr:@std/http",
@@ -97,6 +98,9 @@
     },
     "@logtape/logtape@0.6.2": {
       "integrity": "80a5a203bb6775c46ede31d0582502f238811cc44e54a1e53631480c48e2df04"
+    },
+    "@logtape/logtape@0.8.0": {
+      "integrity": "12bdf406a713f754d99c2ff65deb45127ce4e2c59e7136d608042250629428bd"
     },
     "@std/assert@0.223.0": {
       "integrity": "eb8d6d879d76e1cc431205bd346ed4d88dc051c6366365b1af47034b0670be24"
@@ -380,6 +384,7 @@
     "dependencies": [
       "jsr:@deno/dnt@~0.41.3",
       "jsr:@fedify/fedify@1",
+      "jsr:@logtape/logtape@0.8",
       "jsr:@std/assert@0.226",
       "jsr:@std/async@^1.0.5",
       "npm:postgres@^3.4.5"

@@ -3,9 +3,12 @@ import type {
   MessageQueueEnqueueOptions,
   MessageQueueListenOptions,
 } from "@fedify/fedify";
+import { getLogger } from "@logtape/logtape";
 import type { JSONValue, Parameter, Sql } from "postgres";
 import postgres from "postgres";
 import { driverSerializesJson } from "./utils.ts";
+
+const logger = getLogger(["fedify", "postgres", "mq"]);
 
 /**
  * Options for the PostgreSQL message queue.
@@ -85,6 +88,14 @@ export class PostgresMessageQueue implements MessageQueue {
   ): Promise<void> {
     await this.initialize();
     const delay = options?.delay ?? Temporal.Duration.from({ seconds: 0 });
+    if (options?.delay) {
+      logger.debug("Enqueuing a message with a delay of {delay}...", {
+        delay,
+        message,
+      });
+    } else {
+      logger.debug("Enqueuing a message...", { message });
+    }
     await this.#sql`
       INSERT INTO ${this.#sql(this.#tableName)} (message, delay)
       VALUES (
@@ -92,7 +103,12 @@ export class PostgresMessageQueue implements MessageQueue {
         ${delay.toString()}
       );
     `;
+    logger.debug("Enqueued a message.", { message });
     await this.#sql.notify(this.#channelName, delay.toString());
+    logger.debug("Notified the message queue channel {channelName}.", {
+      channelName: this.#channelName,
+      message,
+    });
   }
 
   async listen(
@@ -166,6 +182,9 @@ export class PostgresMessageQueue implements MessageQueue {
    */
   async initialize(): Promise<void> {
     if (this.#initialized) return;
+    logger.debug("Initializing the message queue table {tableName}...", {
+      tableName: this.#tableName,
+    });
     try {
       await this.#sql`
       CREATE TABLE IF NOT EXISTS ${this.#sql(this.#tableName)} (
@@ -175,16 +194,22 @@ export class PostgresMessageQueue implements MessageQueue {
         created timestamp with time zone DEFAULT CURRENT_TIMESTAMP
       );
     `;
-    } catch (e) {
+    } catch (error) {
       if (
-        !(e instanceof postgres.PostgresError &&
-          e.constraint_name === "pg_type_typname_nsp_index")
+        !(error instanceof postgres.PostgresError &&
+          error.constraint_name === "pg_type_typname_nsp_index")
       ) {
-        throw e;
+        logger.error("Failed to initialize the message queue table: {error}", {
+          error,
+        });
+        throw error;
       }
     }
     this.#driverSerializesJson = await driverSerializesJson(this.#sql);
     this.#initialized = true;
+    logger.debug("Initialized the message queue table {tableName}.", {
+      tableName: this.#tableName,
+    });
   }
 
   /**
