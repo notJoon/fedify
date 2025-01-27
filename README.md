@@ -30,8 +30,8 @@ const federation = createFederation({
 [JSR badge]: https://jsr.io/badges/@fedify/postgres
 [npm]: https://www.npmjs.com/package/@fedify/postgres
 [npm badge]: https://img.shields.io/npm/v/@fedify/postgres?logo=npm
-[GitHub Actions]: https://github.com/dahlia/fedify-postgres/actions/workflows/main.yaml
-[GitHub Actions badge]: https://github.com/dahlia/fedify-postgres/actions/workflows/main.yaml/badge.svg
+[GitHub Actions]: https://github.com/fedify-dev/postgres/actions/workflows/main.yaml
+[GitHub Actions badge]: https://github.com/fedify-dev/postgres/actions/workflows/main.yaml/badge.svg
 [Fedify]: https://fedify.dev/
 [`KvStore`]: https://jsr.io/@fedify/fedify/doc/federation/~/KvStore
 [`MessageQueue`]: https://jsr.io/@fedify/fedify/doc/federation/~/MessageQueue
