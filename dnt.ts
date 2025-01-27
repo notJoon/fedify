@@ -30,13 +30,13 @@ await build({
       email: "hong@minhee.org",
       url: "https://hongminhee.org/",
     },
-    homepage: "https://github.com/dahlia/fedify-amqp",
+    homepage: "https://github.com/fedify-dev/amqp",
     repository: {
       type: "git",
-      url: "git+https://github.com/dahlia/fedify-amqp.git",
+      url: "git+https://github.com/fedify-dev/amqp.git",
     },
     bugs: {
-      url: "https://github.com/dahlia/fedify-amqp/issues",
+      url: "https://github.com/fedify-dev/amqp/issues",
     },
     funding: [
       "https://github.com/sponsors/dahlia",

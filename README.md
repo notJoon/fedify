@@ -34,8 +34,8 @@ const federation = createFederation({
 [JSR badge]: https://jsr.io/badges/@fedify/amqp
 [npm]: https://www.npmjs.com/package/@fedify/amqp
 [npm badge]: https://img.shields.io/npm/v/@fedify/amqp?logo=npm
-[GitHub Actions]: https://github.com/dahlia/fedify-amqp/actions/workflows/main.yaml
-[GitHub Actions badge]: https://github.com/dahlia/fedify-amqp/actions/workflows/main.yaml/badge.svg
+[GitHub Actions]: https://github.com/fedify-dev/amqp/actions/workflows/main.yaml
+[GitHub Actions badge]: https://github.com/fedify-dev/amqp/actions/workflows/main.yaml/badge.svg
 [RabbitMQ]: https://www.rabbitmq.com/
 [Fedify]: https://fedify.dev/
 [`KvStore`]: https://jsr.io/@fedify/fedify/doc/federation/~/KvStore
