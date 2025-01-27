@@ -32,13 +32,13 @@ await build({
       email: "hong@minhee.org",
       url: "https://hongminhee.org/",
     },
-    homepage: "https://github.com/dahlia/fedify-redis",
+    homepage: "https://github.com/fedify-dev/redis",
     repository: {
       type: "git",
-      url: "git+https://github.com/dahlia/fedify-redis.git",
+      url: "git+https://github.com/fedify-dev/redis.git",
     },
     bugs: {
-      url: "https://github.com/dahlia/fedify-redis/issues",
+      url: "https://github.com/fedify-dev/redis/issues",
     },
     funding: [
       "https://github.com/sponsors/dahlia",
