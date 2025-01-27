@@ -8,18 +8,17 @@
     "email": "hong@minhee.org",
     "url": "https://hongminhee.org/"
   },
-  "homepage": "https://github.com/dahlia/fedify-express",
+  "homepage": "https://github.com/fedify-dev/express",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dahlia/fedify-express.git"
+    "url": "git+https://github.com/fedify-dev/express.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dahlia/fedify-express/issues"
+    "url": "https://github.com/fedify-dev/express/issues"
   },
   "funding": [
-    "https://github.com/sponsors/dahlia",
-    "https://toss.me/hongminhee"
+    "https://github.com/sponsors/dahlia"
   ],
   "type": "module",
   "module": "./dist/index.js",
