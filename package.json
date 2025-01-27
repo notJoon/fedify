@@ -8,17 +8,17 @@
     "email": "hong@minhee.org",
     "url": "https://hongminhee.org/"
   },
-  "homepage": "https://github.com/dahlia/fedify-h3",
+  "homepage": "https://github.com/fedify-dev/h3",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dahlia/fedify-h3.git"
+    "url": "git+https://github.com/fedify-dev/h3.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dahlia/fedify-h3/issues"
+    "url": "https://github.com/fedify-dev/h3/issues"
   },
   "funding": [
-    "https://github.com/sponsors/dahlia",
+    "https://github.com/sponsors/dahlia"
   ],
   "type": "module",
   "module": "dist/index.js",
