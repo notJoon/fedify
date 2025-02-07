@@ -14,7 +14,7 @@ Supporters
 ----------
 
 - [Daniel Supernault](https://pixelfed.org/)
-- [tkgka](https://opencollective.com/guest-1b915c65)
+- [tkgka](https://opencollective.com/tkgka)
 - [Blaine](https://opencollective.com/blaine)
 
 Backers
