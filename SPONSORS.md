@@ -20,7 +20,7 @@ Supporters
 Backers
 -------
 
-yamanoku, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart
+yamanoku, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
 
 One-time donations
 ------------------
