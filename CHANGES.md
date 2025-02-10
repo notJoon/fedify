@@ -8,6 +8,13 @@ Version 1.1.12
 
 To be released.
 
+ -  Fixed a bug with nested object hydration in Activity Vocabulary API where
+    deeply nested properties (like `Object.getAttribution()` on
+    `Activity.getObject()`) were't being properly hydrated during `toJsonLd()`
+    calls. Previously, subsequent calls to `toJsonLd()` on nested objects could
+    result in inconsistent JSON-LD output where nested objects remained as URLs
+    instead of being fully expanded.
+
 
 Version 1.1.11
 --------------
@@ -295,6 +302,19 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.15
+--------------
+
+Released on February 10, 2025.
+
+ -  Fixed a bug with nested object hydration in Activity Vocabulary API where
+    deeply nested properties (like `Object.getAttribution()` on
+    `Activity.getObject()`) were't being properly hydrated during `toJsonLd()`
+    calls. Previously, subsequent calls to `toJsonLd()` on nested objects could
+    result in inconsistent JSON-LD output where nested objects remained as URLs
+    instead of being fully expanded.
 
 
 Version 1.0.14
