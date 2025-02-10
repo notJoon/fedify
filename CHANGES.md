@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.4.1
 -------------
 
-To be released.
+Released on February 10, 2025.
 
  -  Fixed a bug with nested object hydration in Activity Vocabulary API where
     deeply nested properties (like `Object.getAttribution()` on
