@@ -8,6 +8,13 @@ Version 1.0.15
 
 To be released.
 
+ -  Fixed a bug with nested object hydration in Activity Vocabulary API where
+    deeply nested properties (like `Object.getAttribution()` on
+    `Activity.getObject()`) were't being properly hydrated during `toJsonLd()`
+    calls. Previously, subsequent calls to `toJsonLd()` on nested objects could
+    result in inconsistent JSON-LD output where nested objects remained as URLs
+    instead of being fully expanded.
+
 
 Version 1.0.14
 --------------

@@ -50,6 +50,7 @@ async function* generateClass(
     yield `
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
+    #cachedJsonLd?: unknown;
     readonly id: URL | null;
 
     protected get _documentLoader(): DocumentLoader | undefined {
@@ -59,11 +60,17 @@ async function* generateClass(
     protected get _contextLoader(): DocumentLoader | undefined {
       return this.#contextLoader;
     }
+
+    protected get _cachedJsonLd(): unknown | undefined {
+      return this.#cachedJsonLd;
+    }
+
+    protected set _cachedJsonLd(value: unknown | undefined) {
+      this.#cachedJsonLd = value;
+    }
     `;
   }
   yield `
-    #cachedJsonLd?: unknown;
-
     /**
      * The type URI of {@link ${type.name}}: \`${typeUri}\`.
      */
