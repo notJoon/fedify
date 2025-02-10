@@ -9,6 +9,19 @@ Version 1.5.0
 To be released.
 
 
+Version 1.4.1
+-------------
+
+Released on February 10, 2025.
+
+ -  Fixed a bug with nested object hydration in Activity Vocabulary API where
+    deeply nested properties (like `Object.getAttribution()` on
+    `Activity.getObject()`) were't being properly hydrated during `toJsonLd()`
+    calls. Previously, subsequent calls to `toJsonLd()` on nested objects could
+    result in inconsistent JSON-LD output where nested objects remained as URLs
+    instead of being fully expanded.
+
+
 Version 1.4.0
 -------------
 
@@ -92,6 +105,19 @@ Released on February 5, 2025.
 
 [#3]: https://github.com/fedify-dev/fedify/issues/3
 [#195]: https://github.com/fedify-dev/fedify/issues/195
+
+
+Version 1.3.8
+-------------
+
+Released on February 10, 2025.
+
+ -  Fixed a bug with nested object hydration in Activity Vocabulary API where
+    deeply nested properties (like `Object.getAttribution()` on
+    `Activity.getObject()`) were't being properly hydrated during `toJsonLd()`
+    calls. Previously, subsequent calls to `toJsonLd()` on nested objects could
+    result in inconsistent JSON-LD output where nested objects remained as URLs
+    instead of being fully expanded.
 
 
 Version 1.3.7
@@ -293,6 +319,19 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.12
+--------------
+
+Released on February 10, 2025.
+
+ -  Fixed a bug with nested object hydration in Activity Vocabulary API where
+    deeply nested properties (like `Object.getAttribution()` on
+    `Activity.getObject()`) were't being properly hydrated during `toJsonLd()`
+    calls. Previously, subsequent calls to `toJsonLd()` on nested objects could
+    result in inconsistent JSON-LD output where nested objects remained as URLs
+    instead of being fully expanded.
 
 
 Version 1.2.11
@@ -540,6 +579,19 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.12
+--------------
+
+Released on February 10, 2025.
+
+ -  Fixed a bug with nested object hydration in Activity Vocabulary API where
+    deeply nested properties (like `Object.getAttribution()` on
+    `Activity.getObject()`) were't being properly hydrated during `toJsonLd()`
+    calls. Previously, subsequent calls to `toJsonLd()` on nested objects could
+    result in inconsistent JSON-LD output where nested objects remained as URLs
+    instead of being fully expanded.
 
 
 Version 1.1.11
@@ -828,6 +880,19 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.15
+--------------
+
+Released on February 10, 2025.
+
+ -  Fixed a bug with nested object hydration in Activity Vocabulary API where
+    deeply nested properties (like `Object.getAttribution()` on
+    `Activity.getObject()`) were't being properly hydrated during `toJsonLd()`
+    calls. Previously, subsequent calls to `toJsonLd()` on nested objects could
+    result in inconsistent JSON-LD output where nested objects remained as URLs
+    instead of being fully expanded.
 
 
 Version 1.0.14
