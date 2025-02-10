@@ -76,7 +76,6 @@ async function* generateClass(
     `;
   }
   yield `
-
     /**
      * The type URI of {@link ${type.name}}: \`${typeUri}\`.
      */
