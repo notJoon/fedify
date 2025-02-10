@@ -378,6 +378,27 @@ test("Activity.getObject()", async () => {
   assertEquals(object.id, new URL("https://example.com/object"));
   assertEquals(object.name, "Fetched object");
 
+  // Is hydration applied to toJsonLd()?
+  const jsonLd = await activity.toJsonLd();
+  assertEquals(jsonLd, {
+    "@context": [
+      "https://w3id.org/identity/v1",
+      "https://www.w3.org/ns/activitystreams",
+      "https://w3id.org/security/v1",
+      "https://w3id.org/security/data-integrity/v1",
+    ],
+    type: "Activity",
+    object: {
+      id: "https://example.com/announce",
+      type: "Announce",
+      object: {
+        type: "Object",
+        id: "https://example.com/object",
+        name: "Fetched object",
+      },
+    },
+  });
+
   const activity2 = new Activity({
     object: new URL("https://example.com/not-found"),
   });
