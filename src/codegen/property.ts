@@ -179,6 +179,7 @@ async function* generateProperty(
             await this.#fetch${toPascalCase(property.singularName)}(v, options);
           if (fetched == null) return null;
           this.${await getFieldName(property.uri)}[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       `;
@@ -236,6 +237,7 @@ async function* generateProperty(
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }

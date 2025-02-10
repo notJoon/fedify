@@ -56,7 +56,6 @@ export class Object {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link Object}: \`https://www.w3.org/ns/activitystreams#Object\`.
      */
@@ -1745,6 +1744,7 @@ proofs?: (DataIntegrityProof | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -1929,6 +1929,7 @@ proofs?: (DataIntegrityProof | URL)[];}
             await this.#fetchAttribution(v, options);
           if (fetched == null) return null;
           this.#_42CGqJ94zgQ3ZBbfHwD8Hrr2L5Py_attributedTo[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -1983,6 +1984,7 @@ proofs?: (DataIntegrityProof | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -2130,6 +2132,7 @@ proofs?: (DataIntegrityProof | URL)[];}
             await this.#fetchAudience(v, options);
           if (fetched == null) return null;
           this.#_3ocC3VVi88cEd5sPWL8djkZsvTN6_audience[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -2183,6 +2186,7 @@ proofs?: (DataIntegrityProof | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -2368,6 +2372,7 @@ get contents(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -2554,6 +2559,7 @@ get names(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -2702,6 +2708,7 @@ get names(): ((string | LanguageString))[] {
             await this.#fetchIcon(v, options);
           if (fetched == null) return null;
           this.#_33CjRLy5ujtsUrwRSCrsggvGdKuR_icon[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -2756,6 +2763,7 @@ get names(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -2904,6 +2912,7 @@ get names(): ((string | LanguageString))[] {
             await this.#fetchImage(v, options);
           if (fetched == null) return null;
           this.#_3dXrUdkARxwyJLtJcYi1AJ92H41U_image[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -2958,6 +2967,7 @@ get names(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -3114,6 +3124,7 @@ get names(): ((string | LanguageString))[] {
             await this.#fetchReplyTarget(v, options);
           if (fetched == null) return null;
           this.#_3fpbDrvZgf3Kq1a5V9aByFn8kx3s_inReplyTo[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -3167,6 +3178,7 @@ get names(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -3323,6 +3335,7 @@ get names(): ((string | LanguageString))[] {
             await this.#fetchLocation(v, options);
           if (fetched == null) return null;
           this.#_31k5MUZJsnsPNg8dQQJieWaXTFnR_location[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -3376,6 +3389,7 @@ get names(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -3531,6 +3545,7 @@ get names(): ((string | LanguageString))[] {
             await this.#fetchPreview(v, options);
           if (fetched == null) return null;
           this.#_gCVTegXxWWCw6wWRxa1QF65zusg_preview[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -3583,6 +3598,7 @@ get names(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -3737,6 +3753,7 @@ get names(): ((string | LanguageString))[] {
             await this.#fetchReplies(v, options);
           if (fetched == null) return null;
           this.#_7UpwM3JWcXhADcscukEehBorf6k_replies[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -3921,6 +3938,7 @@ get summaries(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -4090,6 +4108,7 @@ get urls(): ((URL | Link))[] {
             await this.#fetchTo(v, options);
           if (fetched == null) return null;
           this.#_3hFbw7DTpHhq3cvVhkY8njhcsXbd_to[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -4143,6 +4162,7 @@ get urls(): ((URL | Link))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -4290,6 +4310,7 @@ get urls(): ((URL | Link))[] {
             await this.#fetchBto(v, options);
           if (fetched == null) return null;
           this.#_aLZupjwL8XB7tzdLgCMXdjZ6qej_bto[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -4343,6 +4364,7 @@ get urls(): ((URL | Link))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -4490,6 +4512,7 @@ get urls(): ((URL | Link))[] {
             await this.#fetchCc(v, options);
           if (fetched == null) return null;
           this.#_42a1SvBs24QSLzKcfjCyNTjW5a1g_cc[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -4543,6 +4566,7 @@ get urls(): ((URL | Link))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -4690,6 +4714,7 @@ get urls(): ((URL | Link))[] {
             await this.#fetchBcc(v, options);
           if (fetched == null) return null;
           this.#_3qvegKUB8YLgTXRpEf8E6JZSkz2H_bcc[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -4743,6 +4768,7 @@ get urls(): ((URL | Link))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -4929,6 +4955,7 @@ get urls(): ((URL | Link))[] {
             await this.#fetchProof(v, options);
           if (fetched == null) return null;
           this.#_42rPnotok1ivQ2RNCKNbeFJgx8b8_proof[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -4981,6 +5008,7 @@ get urls(): ((URL | Link))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -7967,7 +7995,6 @@ get urls(): ((URL | Link))[] {
  */
 export class Emoji extends Object {
 
-
     /**
      * The type URI of {@link Emoji}: \`http://joinmastodon.org/ns#Emoji\`.
      */
@@ -8294,7 +8321,6 @@ proofs?: (DataIntegrityProof | URL)[];}
  * 
  */
 export class ChatMessage extends Object {
-
 
     /**
      * The type URI of {@link ChatMessage}: \`http://litepub.social/ns#ChatMessage\`.
@@ -8752,7 +8778,6 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
  * 
  */
 export class Activity extends Object {
-
 
     /**
      * The type URI of {@link Activity}: \`https://www.w3.org/ns/activitystreams#Activity\`.
@@ -9425,6 +9450,7 @@ instruments?: (Object | URL)[];}
             await this.#fetchActor(v, options);
           if (fetched == null) return null;
           this.#_2DjTTboo3CNHU2a2JQqUSE2dbv9D_actor[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -9479,6 +9505,7 @@ instruments?: (Object | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -9627,6 +9654,7 @@ instruments?: (Object | URL)[];}
             await this.#fetchObject(v, options);
           if (fetched == null) return null;
           this.#_2MH19yxjn1wnHsNfa5n4JBhJzxyc_object[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -9681,6 +9709,7 @@ instruments?: (Object | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -9832,6 +9861,7 @@ instruments?: (Object | URL)[];}
             await this.#fetchTarget(v, options);
           if (fetched == null) return null;
           this.#_3JQCmF2Ww56Ag9EWRYoSZRDNCYtF_target[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -9889,6 +9919,7 @@ instruments?: (Object | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -10037,6 +10068,7 @@ instruments?: (Object | URL)[];}
             await this.#fetchResult(v, options);
           if (fetched == null) return null;
           this.#_u4QGFbRFcYmPEKGbPv1hpBR9r5G_result[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -10091,6 +10123,7 @@ instruments?: (Object | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -10240,6 +10273,7 @@ instruments?: (Object | URL)[];}
             await this.#fetchOrigin(v, options);
           if (fetched == null) return null;
           this.#_25zu2s3VxVujgEKqrDycjE284XQR_origin[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -10295,6 +10329,7 @@ instruments?: (Object | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -10442,6 +10477,7 @@ instruments?: (Object | URL)[];}
             await this.#fetchInstrument(v, options);
           if (fetched == null) return null;
           this.#_3c5t2x7DYRo2shwTxpkd4kYSS5WQ_instrument[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -10495,6 +10531,7 @@ instruments?: (Object | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -11277,7 +11314,6 @@ instruments?: (Object | URL)[];}
  */
 export class EmojiReact extends Activity {
 
-
     /**
      * The type URI of {@link EmojiReact}: \`http://litepub.social/ns#EmojiReact\`.
      */
@@ -11621,7 +11657,6 @@ export class PropertyValue {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link PropertyValue}: \`http://schema.org#PropertyValue\`.
      */
@@ -12176,7 +12211,6 @@ export class DidService {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link DidService}: \`https://www.w3.org/ns/did#Service\`.
      */
@@ -12603,7 +12637,6 @@ get endpoints(): (URL)[] {
  */
 export class Export extends DidService {
 
-
     /**
      * The type URI of {@link Export}: \`https://w3id.org/fep/9091#Export\`.
      */
@@ -12896,7 +12929,6 @@ export class DataIntegrityProof {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link DataIntegrityProof}: \`https://w3id.org/security#DataIntegrityProof\`.
      */
@@ -13227,6 +13259,7 @@ cryptosuite?: \\"eddsa-jcs-2022\\" | null;verificationMethod?: Multikey | URL | 
             await this.#fetchVerificationMethod(v, options);
           if (fetched == null) return null;
           this.#_2mHVKxqA7zncjveJrDEo3pWpMZqg_verificationMethod[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -13766,7 +13799,6 @@ export class CryptographicKey {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link CryptographicKey}: \`https://w3id.org/security#Key\`.
      */
@@ -14050,6 +14082,7 @@ owner?: Application | Group | Organization | Person | Service | URL | null;publi
             await this.#fetchOwner(v, options);
           if (fetched == null) return null;
           this.#_5UJq9NDh3ZHgswFwwdVxQvJxdx2_owner[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -14506,7 +14539,6 @@ export class Multikey {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link Multikey}: \`https://w3id.org/security#Multikey\`.
      */
@@ -14790,6 +14822,7 @@ controller?: Application | Group | Organization | Person | Service | URL | null;
             await this.#fetchController(v, options);
           if (fetched == null) return null;
           this.#_2yr3eUBTP6cNcyaxKzAXWjFsnGzN_controller[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -15226,7 +15259,6 @@ controller?: Application | Group | Organization | Person | Service | URL | null;
  */
 export class Accept extends Activity {
 
-
     /**
      * The type URI of {@link Accept}: \`https://www.w3.org/ns/activitystreams#Accept\`.
      */
@@ -15552,7 +15584,6 @@ instruments?: (Object | URL)[];}
  */
 export class Add extends Activity {
 
-
     /**
      * The type URI of {@link Add}: \`https://www.w3.org/ns/activitystreams#Add\`.
      */
@@ -15873,7 +15904,6 @@ instruments?: (Object | URL)[];}
  */
 export class Announce extends Activity {
 
-
     /**
      * The type URI of {@link Announce}: \`https://www.w3.org/ns/activitystreams#Announce\`.
      */
@@ -16190,7 +16220,6 @@ instruments?: (Object | URL)[];}
 /** Describes a software application.
  */
 export class Application extends Object {
-
 
     /**
      * The type URI of {@link Application}: \`https://www.w3.org/ns/activitystreams#Application\`.
@@ -17199,6 +17228,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchPublicKey(v, options);
           if (fetched == null) return null;
           this.#_axq166E2eZADq34V4MYUc8KMZdC_publicKey[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -17250,6 +17280,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -17399,6 +17430,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAssertionMethod(v, options);
           if (fetched == null) return null;
           this.#_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -17454,6 +17486,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -17634,6 +17667,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchInbox(v, options);
           if (fetched == null) return null;
           this.#_3ghX3VfZXXbLvhCRH7QJqpzLrXjB_inbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -17795,6 +17829,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchOutbox(v, options);
           if (fetched == null) return null;
           this.#_41QwhqJouoLg3h8dRPKat21brynC_outbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -17942,6 +17977,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowing(v, options);
           if (fetched == null) return null;
           this.#_3yAv8jymNfNuJUDuBzJ1NQhdbAee_following[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -18092,6 +18128,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowers(v, options);
           if (fetched == null) return null;
           this.#_BBCTgfphhsFzpVfKTykGSpBNwoA_followers[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -18240,6 +18277,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchLiked(v, options);
           if (fetched == null) return null;
           this.#_3bgkPwJanyTCoVFM9ovRcus8tKkU_liked[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -18386,6 +18424,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeatured(v, options);
           if (fetched == null) return null;
           this.#_4N1vBJzXDf8NbBumeECQMFvKetja_featured[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -18532,6 +18571,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeaturedTags(v, options);
           if (fetched == null) return null;
           this.#_2MxnRRLq9iPzx5CFq2NPrXdUDCac_featuredTags[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -18676,6 +18716,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -18902,6 +18943,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchSuccessor(v, options);
           if (fetched == null) return null;
           this.#_2ZNWDhuNdSXBwEmrB5kwffdKGzok_movedTo[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -19084,6 +19126,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAlias(v, options);
           if (fetched == null) return null;
           this.#_3NV7TGNhuABbryNjNi4wib4DgNpY_alsoKnownAs[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -19139,6 +19182,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -19288,6 +19332,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchService(v, options);
           if (fetched == null) return null;
           this.#_4Q6NrKH6bazBGtxwG8vyG77ir7Tg_service[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -19343,6 +19388,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -21423,7 +21469,6 @@ get preferredUsernames(): ((string | LanguageString))[] {
  */
 export class IntransitiveActivity extends Activity {
 
-
     /**
      * The type URI of {@link IntransitiveActivity}: \`https://www.w3.org/ns/activitystreams#IntransitiveActivity\`.
      */
@@ -21756,7 +21801,6 @@ instruments?: (Object | URL)[];}
  */
 export class Arrive extends IntransitiveActivity {
 
-
     /**
      * The type URI of {@link Arrive}: \`https://www.w3.org/ns/activitystreams#Arrive\`.
      */
@@ -22073,7 +22117,6 @@ instruments?: (Object | URL)[];}
 /** Represents any kind of multi-paragraph written work.
  */
 export class Article extends Object {
-
 
     /**
      * The type URI of {@link Article}: \`https://www.w3.org/ns/activitystreams#Article\`.
@@ -22526,7 +22569,6 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
 /** Represents a document of any kind.
  */
 export class Document extends Object {
-
 
     /**
      * The type URI of {@link Document}: \`https://www.w3.org/ns/activitystreams#Document\`.
@@ -23072,7 +23114,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
  */
 export class Audio extends Document {
 
-
     /**
      * The type URI of {@link Audio}: \`https://www.w3.org/ns/activitystreams#Audio\`.
      */
@@ -23396,7 +23437,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
  * 
  */
 export class Ignore extends Activity {
-
 
     /**
      * The type URI of {@link Ignore}: \`https://www.w3.org/ns/activitystreams#Ignore\`.
@@ -23723,7 +23763,6 @@ instruments?: (Object | URL)[];}
  */
 export class Block extends Ignore {
 
-
     /**
      * The type URI of {@link Block}: \`https://www.w3.org/ns/activitystreams#Block\`.
      */
@@ -24045,7 +24084,6 @@ instruments?: (Object | URL)[];}
  * 
  */
 export class Collection extends Object {
-
 
     /**
      * The type URI of {@link Collection}: \`https://www.w3.org/ns/activitystreams#Collection\`.
@@ -24394,6 +24432,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
             await this.#fetchCurrent(v, options);
           if (fetched == null) return null;
           this.#_3UyUdxnyn6cDn53QKrh4MBiearma_current[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -24538,6 +24577,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
             await this.#fetchFirst(v, options);
           if (fetched == null) return null;
           this.#_J52RqweMe6hhv7RnLJMC8BExTE5_first[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -24682,6 +24722,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
             await this.#fetchLast(v, options);
           if (fetched == null) return null;
           this.#_gyJJnyEFnuNVi1HFZKfAn3Hfn26_last[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -24836,6 +24877,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -25522,7 +25564,6 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
  */
 export class CollectionPage extends Collection {
 
-
     /**
      * The type URI of {@link CollectionPage}: \`https://www.w3.org/ns/activitystreams#CollectionPage\`.
      */
@@ -25806,6 +25847,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
             await this.#fetchPartOf(v, options);
           if (fetched == null) return null;
           this.#_2kWgBhQKjEauxx8C6qF3ZQamK4Le_partOf[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -25948,6 +25990,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
             await this.#fetchNext(v, options);
           if (fetched == null) return null;
           this.#_3BT4kQLcXhHx7TAWaNDKh8nFn9eY_next[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -26091,6 +26134,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
             await this.#fetchPrev(v, options);
           if (fetched == null) return null;
           this.#_3b8yG8tDNzQFFEnWhCc13G8eHooA_prev[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -26596,7 +26640,6 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
  */
 export class Create extends Activity {
 
-
     /**
      * The type URI of {@link Create}: \`https://www.w3.org/ns/activitystreams#Create\`.
      */
@@ -26916,7 +26959,6 @@ instruments?: (Object | URL)[];}
  */
 export class Delete extends Activity {
 
-
     /**
      * The type URI of {@link Delete}: \`https://www.w3.org/ns/activitystreams#Delete\`.
      */
@@ -27233,7 +27275,6 @@ instruments?: (Object | URL)[];}
 /** Indicates that the \`actor\` dislikes the \`object\`.
  */
 export class Dislike extends Activity {
-
 
     /**
      * The type URI of {@link Dislike}: \`https://www.w3.org/ns/activitystreams#Dislike\`.
@@ -27578,7 +27619,6 @@ export class Endpoints {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link Endpoints}: \`https://www.w3.org/ns/activitystreams#Endpoints\`.
      */
@@ -28484,7 +28524,6 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
  */
 export class Event extends Object {
 
-
     /**
      * The type URI of {@link Event}: \`https://www.w3.org/ns/activitystreams#Event\`.
      */
@@ -28810,7 +28849,6 @@ proofs?: (DataIntegrityProof | URL)[];}
  */
 export class Flag extends Activity {
 
-
     /**
      * The type URI of {@link Flag}: \`https://www.w3.org/ns/activitystreams#Flag\`.
      */
@@ -29132,7 +29170,6 @@ instruments?: (Object | URL)[];}
  */
 export class Follow extends Activity {
 
-
     /**
      * The type URI of {@link Follow}: \`https://www.w3.org/ns/activitystreams#Follow\`.
      */
@@ -29449,7 +29486,6 @@ instruments?: (Object | URL)[];}
 /** Represents a formal or informal collective of Actors.
  */
 export class Group extends Object {
-
 
     /**
      * The type URI of {@link Group}: \`https://www.w3.org/ns/activitystreams#Group\`.
@@ -30458,6 +30494,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchPublicKey(v, options);
           if (fetched == null) return null;
           this.#_axq166E2eZADq34V4MYUc8KMZdC_publicKey[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -30509,6 +30546,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -30658,6 +30696,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAssertionMethod(v, options);
           if (fetched == null) return null;
           this.#_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -30713,6 +30752,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -30893,6 +30933,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchInbox(v, options);
           if (fetched == null) return null;
           this.#_3ghX3VfZXXbLvhCRH7QJqpzLrXjB_inbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -31054,6 +31095,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchOutbox(v, options);
           if (fetched == null) return null;
           this.#_41QwhqJouoLg3h8dRPKat21brynC_outbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -31201,6 +31243,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowing(v, options);
           if (fetched == null) return null;
           this.#_3yAv8jymNfNuJUDuBzJ1NQhdbAee_following[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -31351,6 +31394,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowers(v, options);
           if (fetched == null) return null;
           this.#_BBCTgfphhsFzpVfKTykGSpBNwoA_followers[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -31499,6 +31543,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchLiked(v, options);
           if (fetched == null) return null;
           this.#_3bgkPwJanyTCoVFM9ovRcus8tKkU_liked[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -31645,6 +31690,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeatured(v, options);
           if (fetched == null) return null;
           this.#_4N1vBJzXDf8NbBumeECQMFvKetja_featured[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -31791,6 +31837,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeaturedTags(v, options);
           if (fetched == null) return null;
           this.#_2MxnRRLq9iPzx5CFq2NPrXdUDCac_featuredTags[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -31935,6 +31982,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -32161,6 +32209,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchSuccessor(v, options);
           if (fetched == null) return null;
           this.#_2ZNWDhuNdSXBwEmrB5kwffdKGzok_movedTo[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -32343,6 +32392,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAlias(v, options);
           if (fetched == null) return null;
           this.#_3NV7TGNhuABbryNjNi4wib4DgNpY_alsoKnownAs[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -32398,6 +32448,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -32547,6 +32598,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchService(v, options);
           if (fetched == null) return null;
           this.#_4Q6NrKH6bazBGtxwG8vyG77ir7Tg_service[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -32602,6 +32654,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -34713,7 +34766,6 @@ export class Link {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link Link}: \`https://www.w3.org/ns/activitystreams#Link\`.
      */
@@ -35296,6 +35348,7 @@ get names(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -36149,7 +36202,6 @@ get names(): ((string | LanguageString))[] {
  */
 export class Hashtag extends Link {
 
-
     /**
      * The type URI of {@link Hashtag}: \`https://www.w3.org/ns/activitystreams#Hashtag\`.
      */
@@ -36432,7 +36484,6 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
 /** An image document of any kind.
  */
 export class Image extends Document {
-
 
     /**
      * The type URI of {@link Image}: \`https://www.w3.org/ns/activitystreams#Image\`.
@@ -36759,7 +36810,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
  */
 export class Offer extends Activity {
 
-
     /**
      * The type URI of {@link Offer}: \`https://www.w3.org/ns/activitystreams#Offer\`.
      */
@@ -37083,7 +37133,6 @@ instruments?: (Object | URL)[];}
  */
 export class Invite extends Offer {
 
-
     /**
      * The type URI of {@link Invite}: \`https://www.w3.org/ns/activitystreams#Invite\`.
      */
@@ -37402,7 +37451,6 @@ instruments?: (Object | URL)[];}
  * 
  */
 export class Join extends Activity {
-
 
     /**
      * The type URI of {@link Join}: \`https://www.w3.org/ns/activitystreams#Join\`.
@@ -37723,7 +37771,6 @@ instruments?: (Object | URL)[];}
  */
 export class Leave extends Activity {
 
-
     /**
      * The type URI of {@link Leave}: \`https://www.w3.org/ns/activitystreams#Leave\`.
      */
@@ -38043,7 +38090,6 @@ instruments?: (Object | URL)[];}
  */
 export class Like extends Activity {
 
-
     /**
      * The type URI of {@link Like}: \`https://www.w3.org/ns/activitystreams#Like\`.
      */
@@ -38360,7 +38406,6 @@ instruments?: (Object | URL)[];}
 /** Indicates that the \`actor\` has listened to the \`object\`.
  */
 export class Listen extends Activity {
-
 
     /**
      * The type URI of {@link Listen}: \`https://www.w3.org/ns/activitystreams#Listen\`.
@@ -38679,7 +38724,6 @@ instruments?: (Object | URL)[];}
  */
 export class Mention extends Link {
 
-
     /**
      * The type URI of {@link Mention}: \`https://www.w3.org/ns/activitystreams#Mention\`.
      */
@@ -38965,7 +39009,6 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
  * 
  */
 export class Move extends Activity {
-
 
     /**
      * The type URI of {@link Move}: \`https://www.w3.org/ns/activitystreams#Move\`.
@@ -39285,7 +39328,6 @@ instruments?: (Object | URL)[];}
  * 
  */
 export class Note extends Object {
-
 
     /**
      * The type URI of {@link Note}: \`https://www.w3.org/ns/activitystreams#Note\`.
@@ -39741,7 +39783,6 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
  */
 export class OrderedCollection extends Collection {
 
-
     /**
      * The type URI of {@link OrderedCollection}: \`https://www.w3.org/ns/activitystreams#OrderedCollection\`.
      */
@@ -39989,6 +40030,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -40348,7 +40390,6 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
  */
 export class OrderedCollectionPage extends CollectionPage {
 
-
     /**
      * The type URI of {@link OrderedCollectionPage}: \`https://www.w3.org/ns/activitystreams#OrderedCollectionPage\`.
      */
@@ -40621,6 +40662,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -41054,7 +41096,6 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
 /** Represents an organization.
  */
 export class Organization extends Object {
-
 
     /**
      * The type URI of {@link Organization}: \`https://www.w3.org/ns/activitystreams#Organization\`.
@@ -42063,6 +42104,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchPublicKey(v, options);
           if (fetched == null) return null;
           this.#_axq166E2eZADq34V4MYUc8KMZdC_publicKey[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -42114,6 +42156,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -42263,6 +42306,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAssertionMethod(v, options);
           if (fetched == null) return null;
           this.#_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -42318,6 +42362,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -42498,6 +42543,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchInbox(v, options);
           if (fetched == null) return null;
           this.#_3ghX3VfZXXbLvhCRH7QJqpzLrXjB_inbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -42659,6 +42705,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchOutbox(v, options);
           if (fetched == null) return null;
           this.#_41QwhqJouoLg3h8dRPKat21brynC_outbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -42806,6 +42853,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowing(v, options);
           if (fetched == null) return null;
           this.#_3yAv8jymNfNuJUDuBzJ1NQhdbAee_following[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -42956,6 +43004,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowers(v, options);
           if (fetched == null) return null;
           this.#_BBCTgfphhsFzpVfKTykGSpBNwoA_followers[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -43104,6 +43153,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchLiked(v, options);
           if (fetched == null) return null;
           this.#_3bgkPwJanyTCoVFM9ovRcus8tKkU_liked[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -43250,6 +43300,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeatured(v, options);
           if (fetched == null) return null;
           this.#_4N1vBJzXDf8NbBumeECQMFvKetja_featured[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -43396,6 +43447,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeaturedTags(v, options);
           if (fetched == null) return null;
           this.#_2MxnRRLq9iPzx5CFq2NPrXdUDCac_featuredTags[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -43540,6 +43592,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -43766,6 +43819,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchSuccessor(v, options);
           if (fetched == null) return null;
           this.#_2ZNWDhuNdSXBwEmrB5kwffdKGzok_movedTo[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -43948,6 +44002,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAlias(v, options);
           if (fetched == null) return null;
           this.#_3NV7TGNhuABbryNjNi4wib4DgNpY_alsoKnownAs[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -44003,6 +44058,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -44152,6 +44208,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchService(v, options);
           if (fetched == null) return null;
           this.#_4Q6NrKH6bazBGtxwG8vyG77ir7Tg_service[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -44207,6 +44264,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -46284,7 +46342,6 @@ get preferredUsernames(): ((string | LanguageString))[] {
  */
 export class Page extends Document {
 
-
     /**
      * The type URI of {@link Page}: \`https://www.w3.org/ns/activitystreams#Page\`.
      */
@@ -46606,7 +46663,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
 /** Represents an individual person.
  */
 export class Person extends Object {
-
 
     /**
      * The type URI of {@link Person}: \`https://www.w3.org/ns/activitystreams#Person\`.
@@ -47615,6 +47671,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchPublicKey(v, options);
           if (fetched == null) return null;
           this.#_axq166E2eZADq34V4MYUc8KMZdC_publicKey[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -47666,6 +47723,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -47815,6 +47873,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAssertionMethod(v, options);
           if (fetched == null) return null;
           this.#_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -47870,6 +47929,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -48050,6 +48110,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchInbox(v, options);
           if (fetched == null) return null;
           this.#_3ghX3VfZXXbLvhCRH7QJqpzLrXjB_inbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -48211,6 +48272,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchOutbox(v, options);
           if (fetched == null) return null;
           this.#_41QwhqJouoLg3h8dRPKat21brynC_outbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -48358,6 +48420,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowing(v, options);
           if (fetched == null) return null;
           this.#_3yAv8jymNfNuJUDuBzJ1NQhdbAee_following[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -48508,6 +48571,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowers(v, options);
           if (fetched == null) return null;
           this.#_BBCTgfphhsFzpVfKTykGSpBNwoA_followers[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -48656,6 +48720,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchLiked(v, options);
           if (fetched == null) return null;
           this.#_3bgkPwJanyTCoVFM9ovRcus8tKkU_liked[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -48802,6 +48867,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeatured(v, options);
           if (fetched == null) return null;
           this.#_4N1vBJzXDf8NbBumeECQMFvKetja_featured[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -48948,6 +49014,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeaturedTags(v, options);
           if (fetched == null) return null;
           this.#_2MxnRRLq9iPzx5CFq2NPrXdUDCac_featuredTags[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -49092,6 +49159,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -49318,6 +49386,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchSuccessor(v, options);
           if (fetched == null) return null;
           this.#_2ZNWDhuNdSXBwEmrB5kwffdKGzok_movedTo[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -49500,6 +49569,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAlias(v, options);
           if (fetched == null) return null;
           this.#_3NV7TGNhuABbryNjNi4wib4DgNpY_alsoKnownAs[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -49555,6 +49625,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -49704,6 +49775,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchService(v, options);
           if (fetched == null) return null;
           this.#_4Q6NrKH6bazBGtxwG8vyG77ir7Tg_service[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -49759,6 +49831,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -51839,7 +51912,6 @@ get preferredUsernames(): ((string | LanguageString))[] {
  */
 export class Place extends Object {
 
-
     /**
      * The type URI of {@link Place}: \`https://www.w3.org/ns/activitystreams#Place\`.
      */
@@ -52791,7 +52863,6 @@ proofs?: (DataIntegrityProof | URL)[];accuracy?: number | null;altitude?: number
  */
 export class Profile extends Object {
 
-
     /**
      * The type URI of {@link Profile}: \`https://www.w3.org/ns/activitystreams#Profile\`.
      */
@@ -53025,6 +53096,7 @@ proofs?: (DataIntegrityProof | URL)[];describes?: Object | URL | null;}
             await this.#fetchDescribes(v, options);
           if (fetched == null) return null;
           this.#_3CLQ1PLSXrhSQbTGGHuxNyaEFKM1_describes[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -53371,7 +53443,6 @@ proofs?: (DataIntegrityProof | URL)[];describes?: Object | URL | null;}
  * 
  */
 export class Question extends IntransitiveActivity {
-
 
     /**
      * The type URI of {@link Question}: \`https://www.w3.org/ns/activitystreams#Question\`.
@@ -53728,6 +53799,7 @@ instruments?: (Object | URL)[];exclusiveOptions?: (Object | URL)[];inclusiveOpti
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -53877,6 +53949,7 @@ instruments?: (Object | URL)[];exclusiveOptions?: (Object | URL)[];inclusiveOpti
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -54460,7 +54533,6 @@ instruments?: (Object | URL)[];exclusiveOptions?: (Object | URL)[];inclusiveOpti
  */
 export class Read extends Activity {
 
-
     /**
      * The type URI of {@link Read}: \`https://www.w3.org/ns/activitystreams#Read\`.
      */
@@ -54779,7 +54851,6 @@ instruments?: (Object | URL)[];}
  * 
  */
 export class Reject extends Activity {
-
 
     /**
      * The type URI of {@link Reject}: \`https://www.w3.org/ns/activitystreams#Reject\`.
@@ -55108,7 +55179,6 @@ instruments?: (Object | URL)[];}
  * 
  */
 export class Relationship extends Object {
-
 
     /**
      * The type URI of {@link Relationship}: \`https://www.w3.org/ns/activitystreams#Relationship\`.
@@ -55487,6 +55557,7 @@ relationships?: (Object | URL)[];}
             await this.#fetchSubject(v, options);
           if (fetched == null) return null;
           this.#_2Zqdmi46ZnDQsECS6mzwhrv3rUKq_subject[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -55630,6 +55701,7 @@ relationships?: (Object | URL)[];}
             await this.#fetchObject(v, options);
           if (fetched == null) return null;
           this.#_2MH19yxjn1wnHsNfa5n4JBhJzxyc_object[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -55682,6 +55754,7 @@ relationships?: (Object | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -55830,6 +55903,7 @@ relationships?: (Object | URL)[];}
             await this.#fetchRelationship(v, options);
           if (fetched == null) return null;
           this.#_4Lzz89F9qipAQSGkWyX9DGWiUojG_relationship[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -55884,6 +55958,7 @@ relationships?: (Object | URL)[];}
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -56402,7 +56477,6 @@ relationships?: (Object | URL)[];}
  */
 export class Remove extends Activity {
 
-
     /**
      * The type URI of {@link Remove}: \`https://www.w3.org/ns/activitystreams#Remove\`.
      */
@@ -56719,7 +56793,6 @@ instruments?: (Object | URL)[];}
 /** Represents a service of any kind.
  */
 export class Service extends Object {
-
 
     /**
      * The type URI of {@link Service}: \`https://www.w3.org/ns/activitystreams#Service\`.
@@ -57728,6 +57801,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchPublicKey(v, options);
           if (fetched == null) return null;
           this.#_axq166E2eZADq34V4MYUc8KMZdC_publicKey[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -57779,6 +57853,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -57928,6 +58003,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAssertionMethod(v, options);
           if (fetched == null) return null;
           this.#_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -57983,6 +58059,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -58163,6 +58240,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchInbox(v, options);
           if (fetched == null) return null;
           this.#_3ghX3VfZXXbLvhCRH7QJqpzLrXjB_inbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -58324,6 +58402,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchOutbox(v, options);
           if (fetched == null) return null;
           this.#_41QwhqJouoLg3h8dRPKat21brynC_outbox[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -58471,6 +58550,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowing(v, options);
           if (fetched == null) return null;
           this.#_3yAv8jymNfNuJUDuBzJ1NQhdbAee_following[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -58621,6 +58701,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFollowers(v, options);
           if (fetched == null) return null;
           this.#_BBCTgfphhsFzpVfKTykGSpBNwoA_followers[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -58769,6 +58850,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchLiked(v, options);
           if (fetched == null) return null;
           this.#_3bgkPwJanyTCoVFM9ovRcus8tKkU_liked[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -58915,6 +58997,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeatured(v, options);
           if (fetched == null) return null;
           this.#_4N1vBJzXDf8NbBumeECQMFvKetja_featured[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -59061,6 +59144,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchFeaturedTags(v, options);
           if (fetched == null) return null;
           this.#_2MxnRRLq9iPzx5CFq2NPrXdUDCac_featuredTags[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -59205,6 +59289,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -59431,6 +59516,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchSuccessor(v, options);
           if (fetched == null) return null;
           this.#_2ZNWDhuNdSXBwEmrB5kwffdKGzok_movedTo[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -59613,6 +59699,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchAlias(v, options);
           if (fetched == null) return null;
           this.#_3NV7TGNhuABbryNjNi4wib4DgNpY_alsoKnownAs[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -59668,6 +59755,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -59817,6 +59905,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
             await this.#fetchService(v, options);
           if (fetched == null) return null;
           this.#_4Q6NrKH6bazBGtxwG8vyG77ir7Tg_service[0] = fetched;
+          this._cachedJsonLd = undefined;
           return fetched;
         }
       
@@ -59872,6 +59961,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this._cachedJsonLd = undefined;
             yield fetched;
             continue;
           }
@@ -61975,7 +62065,6 @@ export class Source {
       this.#cachedJsonLd = value;
     }
     
-
     /**
      * The type URI of {@link Source}: \`https://www.w3.org/ns/activitystreams#Source\`.
      */
@@ -62540,7 +62629,6 @@ get contents(): ((string | LanguageString))[] {
  */
 export class TentativeAccept extends Accept {
 
-
     /**
      * The type URI of {@link TentativeAccept}: \`https://www.w3.org/ns/activitystreams#TentativeAccept\`.
      */
@@ -62859,7 +62947,6 @@ instruments?: (Object | URL)[];}
  * 
  */
 export class TentativeReject extends Reject {
-
 
     /**
      * The type URI of {@link TentativeReject}: \`https://www.w3.org/ns/activitystreams#TentativeReject\`.
@@ -63180,7 +63267,6 @@ instruments?: (Object | URL)[];}
  * 
  */
 export class Tombstone extends Object {
-
 
     /**
      * The type URI of {@link Tombstone}: \`https://www.w3.org/ns/activitystreams#Tombstone\`.
@@ -63611,7 +63697,6 @@ proofs?: (DataIntegrityProof | URL)[];deleted?: Temporal.Instant | null;}
  */
 export class Travel extends IntransitiveActivity {
 
-
     /**
      * The type URI of {@link Travel}: \`https://www.w3.org/ns/activitystreams#Travel\`.
      */
@@ -63936,7 +64021,6 @@ instruments?: (Object | URL)[];}
  */
 export class Undo extends Activity {
 
-
     /**
      * The type URI of {@link Undo}: \`https://www.w3.org/ns/activitystreams#Undo\`.
      */
@@ -64259,7 +64343,6 @@ instruments?: (Object | URL)[];}
  */
 export class Update extends Activity {
 
-
     /**
      * The type URI of {@link Update}: \`https://www.w3.org/ns/activitystreams#Update\`.
      */
@@ -64576,7 +64659,6 @@ instruments?: (Object | URL)[];}
 /** Represents a video document of any kind.
  */
 export class Video extends Document {
-
 
     /**
      * The type URI of {@link Video}: \`https://www.w3.org/ns/activitystreams#Video\`.
@@ -64900,7 +64982,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
  * 
  */
 export class View extends Activity {
-
 
     /**
      * The type URI of {@link View}: \`https://www.w3.org/ns/activitystreams#View\`.
