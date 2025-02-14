@@ -37,6 +37,17 @@ bun install -g @fedify/cli
 [Node.js]: https://nodejs.org/
 [Bun]: https://bun.sh/
 
+### Using Scoop on Windows
+
+If you are using Windows and have [Scoop] installed, you can install `fedify`
+by running the following command:
+
+~~~~ powershell
+scoop install fedify
+~~~~
+
+[Scoop]: https://scoop.sh/
+
 ### Using Deno
 
 If you have [Deno] installed, you can install `fedify` by running the following

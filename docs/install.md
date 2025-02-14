@@ -27,6 +27,10 @@ npm install -g @fedify/cli
 bun install -g @fedify/cli
 ~~~~
 
+~~~~ powershell [Scoop (Windows)]
+scoop install fedify
+~~~~
+
 ~~~~ sh [Deno]
 deno install -g -A --unstable-fs --unstable-kv --unstable-temporal -n fedify jsr:@fedify/cli
 ~~~~
