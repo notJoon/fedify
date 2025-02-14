@@ -10,7 +10,7 @@ import * as $posts_uuid_ from "./routes/posts/[uuid].tsx";
 import * as $posts_index from "./routes/posts/index.tsx";
 import * as $users_handle_ from "./routes/users/[handle].ts";
 
-import { type Manifest } from "$fresh/server.ts";
+import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {

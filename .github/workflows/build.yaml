@@ -15,9 +15,9 @@ jobs:
       pull-requests: write
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v1
+    - uses: denoland/setup-deno@v2
       with:
-        deno-version: v1.x
+        deno-version: v2.x
     - run: deno task cache
       working-directory: ${{ github.workspace }}/src/
     - run: deno task test --coverage=.cov --junit-path=.test-report.xml
@@ -42,13 +42,18 @@ jobs:
         check_name: "Test Results (Windows)"
         files: src/.test-report.xml
       continue-on-error: true
+    - if: '!cancelled()'
+      uses: codecov/test-results-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: src/.test-report.xml
     - run: deno coverage --lcov .cov > .cov.lcov
       working-directory: ${{ github.workspace }}/src/
       continue-on-error: true
-    - uses: codecov/codecov-action@v4
+    - uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: src/.cov.lcov
+        files: src/.cov.lcov
       continue-on-error: true
     - run: "true"
 
@@ -60,9 +65,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v1
+    - uses: denoland/setup-deno@v2
       with:
-        deno-version: v1.x
+        deno-version: v2.x
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
@@ -80,13 +85,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v1
+    - uses: denoland/setup-deno@v2
       with:
-        deno-version: v1.x
+        deno-version: v2.x
     - run: deno task hooks:pre-commit
-      working-directory: ${{ github.workspace }}/src/
-    - run: deno task check
-      working-directory: ${{ github.workspace }}/examples/blog/
 
   release-test:
     runs-on: ubuntu-latest
@@ -95,9 +97,9 @@ jobs:
       contents: read
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v1
+    - uses: denoland/setup-deno@v2
       with:
-        deno-version: v1.x
+        deno-version: v2.x
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
@@ -120,9 +122,9 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v1
+    - uses: denoland/setup-deno@v2
       with:
-        deno-version: v1.x
+        deno-version: v2.x
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
@@ -141,7 +143,7 @@ jobs:
         [[ "$(jq -r .version deno.json)" = "$GITHUB_REF_NAME" ]]
         ! grep -i "to be released" CHANGES.md
       working-directory: ${{ github.workspace }}/src/
-    # Don't know why, but the .gitignore list is not overriden by include list
+    # Don't know why, but the .gitignore list is not overridden by include list
     # in deno.json:
     - run: rm vocab/.gitignore
       working-directory: ${{ github.workspace }}/src/
@@ -217,9 +219,9 @@ jobs:
       contents: read
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v1
+    - uses: denoland/setup-deno@v2
       with:
-        deno-version: v1.x
+        deno-version: v2.x
     - run: deno task codegen
       working-directory: ${{ github.workspace }}/src/
     - uses: denoland/deployctl@v1
@@ -281,3 +283,5 @@ jobs:
         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
       timeout-minutes: 2
+
+# cSpell: ignore submark softprops npmjs deployctl nwtgck

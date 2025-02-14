@@ -1,4 +1,3 @@
-import { verifyObject } from "@fedify/fedify";
 import { getLogger, withContext } from "@logtape/logtape";
 import {
   context,
@@ -37,7 +36,7 @@ import { verifyRequest } from "../sig/http.ts";
 import { exportJwk, importJwk, validateCryptoKey } from "../sig/key.ts";
 import { hasSignature, signJsonLd } from "../sig/ld.ts";
 import { getKeyOwner } from "../sig/owner.ts";
-import { signObject } from "../sig/proof.ts";
+import { signObject, verifyObject } from "../sig/proof.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import {
   lookupObject,

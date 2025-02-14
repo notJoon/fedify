@@ -182,9 +182,7 @@ the repository in Visual Studio Code and get ready to hack on Fedify by running
 the following commands at the *root* of the repository:
 
 ~~~~ bash
-pushd src
 deno task codegen
-popd
 code .
 ~~~~
 
@@ -212,14 +210,12 @@ Please click the *Install* button to install the Deno extension.
 
 ### Running the Fedify CLI
 
-If you want to test your changes in the Fedify CLI, you can run `deno task run`
-command at the *cli/* directory.  For example, if you want to test
+If you want to test your changes in the Fedify CLI, you can run
+`deno task -f @fedify/cli run` command.  For example, if you want to test
 the `fedify lookup` subcommand, you can run the following command:
 
 ~~~~ bash
-pushd cli/
-deno task run lookup @fedify@hollo.social
-popd
+deno task -f @fedify/cli run lookup @fedify@hollo.social
 ~~~~
 
 > [!TIP]
@@ -230,21 +226,17 @@ popd
 #### Running the tests
 
 If you want to test your changes in the Fedify library, you can run
-`deno task test` command at the *src/* directory:
+the following command:
 
 ~~~~ bash
-pushd src/
-deno task test
-popd
+deno task -f @fedify/fedify test
 ~~~~
 
 If the tests pass, you should run `deno task test-all` command to test
 the library with Deno, Node.js, and [Bun]:
 
 ~~~~ bash
-pushd src/
 deno task test-all
-popd
 ~~~~
 
 Of course, Node.js and Bun should be installed on your system to run the tests

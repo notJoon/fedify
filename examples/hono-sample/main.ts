@@ -16,7 +16,7 @@ fedi.setActorDispatcher("/{identifier}", (ctx, identifier) => {
   });
 });
 
-const app = new Hono();
+const app: Hono = new Hono();
 app.use(federation(fedi, () => undefined));
 app.get("/", (c) => c.redirect("/sample"));
 app.get("/sample", (c) => c.text("Hi, I am Sample!\n"));

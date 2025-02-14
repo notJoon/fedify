@@ -1,12 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
 import { copy } from "@std/fs";
-import { join } from "@std/path";
+import workspaceMetadata from "../deno.json" with { type: "json" };
+import metadata from "./deno.json" with { type: "json" };
 
 await emptyDir("./npm");
 await emptyDir("./npm/esm/codegen");
-
-const denoJson = join(import.meta.dirname!, "deno.json");
-const metadata = JSON.parse(await Deno.readTextFile(denoJson));
 
 const excludedExports = ["./x/denokv", "./x/fresh"];
 
@@ -21,14 +19,17 @@ for (const { name } of entryPoints) {
 }
 
 const importMap = ".dnt-import-map.json";
+const imports = {
+  ...workspaceMetadata.imports,
+  ...metadata.imports,
+};
 await Deno.writeTextFile(
   importMap,
   JSON.stringify({
     imports: {
-      ...metadata.imports,
-      "@logtape/logtape": metadata.imports["@logtape/logtape"]
-        .replace(/^jsr:/, "npm:"),
-      "@hugoalh/http-header-link": metadata.imports["@hugoalh/http-header-link"]
+      ...imports,
+      "@logtape/logtape": imports["@logtape/logtape"].replace(/^jsr:/, "npm:"),
+      "@hugoalh/http-header-link": imports["@hugoalh/http-header-link"]
         .replace(/^jsr:/, "npm:"),
     },
   }),
@@ -135,10 +136,13 @@ await build({
     }
     await Deno.copyFile("codegen/schema.yaml", "npm/esm/codegen/schema.yaml");
     await Deno.copyFile("../CHANGES.md", "npm/CHANGES.md");
+    await Deno.copyFile("../CONTRIBUTING.md", "npm/CONTRIBUTING.md");
     await Deno.copyFile("../FEDERATION.md", "npm/FEDERATION.md");
     await Deno.copyFile("../LICENSE", "npm/LICENSE");
     await Deno.copyFile("../logo.svg", "npm/logo.svg");
     await Deno.copyFile("../README.md", "npm/README.md");
+    await Deno.copyFile("../SECURITY.md", "npm/SECURITY.md");
+    await Deno.copyFile("../SPONSORS.md", "npm/SPONSORS.md");
   },
 });
 

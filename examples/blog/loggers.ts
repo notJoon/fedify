@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import {
   configure,
   getConsoleSink,
@@ -6,6 +7,7 @@ import {
 } from "@logtape/logtape";
 
 await configure({
+  contextLocalStorage: new AsyncLocalStorage(),
   sinks: {
     console: getConsoleSink(),
     file: Deno.env.get("DENO_DEPLOYMENT_ID") == null

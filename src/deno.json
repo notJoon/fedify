@@ -19,21 +19,9 @@
   "imports": {
     "@cfworker/json-schema": "npm:@cfworker/json-schema@^2.0.1",
     "@david/which-runtime": "jsr:@david/which-runtime@^0.2.1",
-    "@deno/dnt": "jsr:@deno/dnt@0.41.2",
-    "@fedify/fedify": "./mod.ts",
-    "@fedify/fedify/federation": "./federation/mod.ts",
-    "@fedify/fedify/nodeinfo": "./nodeinfo/mod.ts",
-    "@fedify/fedify/runtime": "./runtime/mod.ts",
-    "@fedify/fedify/sig": "./sig/mod.ts",
-    "@fedify/fedify/vocab": "./vocab/mod.ts",
-    "@fedify/fedify/webfinger": "./webfinger/mod.ts",
-    "@fedify/fedify/x/denokv": "./x/denokv.ts",
-    "@fedify/fedify/x/fresh": "./x/fresh.ts",
-    "@fedify/fedify/x/hono": "./x/hono.ts",
-    "@fedify/fedify/x/sveltekit": "./x/sveltekit.ts",
+    "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@hongminhee/aitertools": "jsr:@hongminhee/aitertools@^0.6.0",
     "@hugoalh/http-header-link": "jsr:@hugoalh/http-header-link@^1.0.2",
-    "@logtape/logtape": "jsr:@logtape/logtape@^0.8.1",
     "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
     "@opentelemetry/semantic-conventions": "npm:@opentelemetry/semantic-conventions@^1.27.0",
     "@phensley/language-tag": "npm:@phensley/language-tag@^1.9.0",
@@ -42,10 +30,7 @@
     "@std/bytes": "jsr:@std/bytes@^1.0.2",
     "@std/collections": "jsr:@std/collections@^1.0.6",
     "@std/encoding": "jsr:@std/encoding@^1.0.5",
-    "@std/fs": "jsr:@std/fs@^1.0.3",
     "@std/http": "jsr:@std/http@^1.0.6",
-    "@std/path": "jsr:@std/path@^1.0.6",
-    "@std/semver": "jsr:@std/semver@^1.0.3",
     "@std/testing": "jsr:@std/testing@^0.224.0",
     "@std/text": "jsr:@std/text@^1.0.6",
     "@std/url": "jsr:@std/url@^0.225.1",
@@ -65,42 +50,48 @@
     "vocab/vocab.ts"
   ],
   "exclude": [
-    ".git/",
-    ".github/",
-    ".vscode/",
-    ".zed/",
+    ".dnt-import-map.json",
     "apidoc/",
-    "cli/",
     "codegen/schema.yaml",
-    "docs/",
-    "examples/",
-    "logo.svg",
     "npm/",
     "vocab/*.yaml",
     "!vocab/vocab.ts"
   ],
   "tasks": {
-    "cache": "deno task codegen && deno cache mod.ts",
-    "check": "deno task codegen && deno fmt --check && deno lint && deno check */*.ts",
     "codegen": "deno run --allow-read --allow-write --check codegen/main.ts vocab/ ../runtime/ > vocab/vocab.ts && deno fmt vocab/vocab.ts && deno cache vocab/vocab.ts && deno check vocab/vocab.ts",
-    "test-without-codegen": "deno test --check --doc --allow-read --allow-write --allow-env --unstable-kv --trace-leaks --parallel",
-    "test": "deno task codegen && deno task test-without-codegen",
-    "coverage": "rm -rf coverage/ && deno task test --coverage && deno coverage --html coverage",
-    "bench": "deno task codegen && deno bench --allow-read --allow-write --allow-net --allow-env --allow-run --unstable-kv",
-    "apidoc": "deno task codegen && deno doc --html --name=Fedify --output=apidoc/ mod.ts",
     "check-version": "deno run ../cli/scripts/check_version.ts",
-    "publish": "deno task codegen && deno publish",
-    "dnt-without-codegen": "deno run -A dnt.ts",
-    "dnt": "deno task codegen && deno task dnt-without-codegen",
-    "test-all": "deno task check && deno task test-without-codegen && deno task dnt-without-codegen && cd npm/ && bun run ./test_runner.js && cd ../",
-    "update": "deno run --allow-env --allow-read --allow-write=. --allow-run=git,deno --allow-net=jsr.io,registry.npmjs.org jsr:@molt/cli ./*.ts",
-    "update:commit": "deno task -q update --commit --pre-commit=fmt,lint",
-    "hooks:install": "deno run --allow-read=deno.json,.git/hooks/ --allow-write=.git/hooks/ jsr:@hongminhee/deno-task-hooks",
-    "hooks:pre-commit": "deno task check && deno task check-version"
-  },
-  "unstable": [
-    "kv",
-    "temporal"
-  ],
-  "lock": false
+    "cache": {
+      "command": "deno cache mod.ts",
+      "dependencies": ["check-version", "codegen"]
+    },
+    "check": {
+      "command": "deno fmt --check && deno lint && deno check */*.ts",
+      "dependencies": ["codegen"]
+    },
+    "test": {
+      "command": "deno test --check --doc --allow-read --allow-write --allow-env --unstable-kv --trace-leaks --parallel",
+      "dependencies": ["codegen"]
+    },
+    "coverage": "deno task test --clean --coverage && deno coverage --html coverage",
+    "bench": {
+      "command": "deno bench --allow-read --allow-write --allow-net --allow-env --allow-run --unstable-kv",
+      "dependencies": ["codegen"]
+    },
+    "apidoc": {
+      "command": "deno doc --html --name=Fedify --output=apidoc/ mod.ts",
+      "dependencies": ["codegen"]
+    },
+    "publish": {
+      "command": "deno publish",
+      "dependencies": ["codegen"]
+    },
+    "dnt": {
+      "command": "deno run -A dnt.ts",
+      "dependencies": ["codegen"]
+    },
+    "test-all": {
+      "command": "cd npm/ && bun run ./test_runner.js && cd ../",
+      "dependencies": ["check", "test", "dnt"]
+    }
+  }
 }

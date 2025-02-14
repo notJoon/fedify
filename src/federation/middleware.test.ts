@@ -1,4 +1,3 @@
-import { Invite } from "@fedify/fedify";
 import {
   assert,
   assertEquals,
@@ -38,6 +37,7 @@ import {
   Announce,
   Create,
   type CryptographicKey,
+  Invite,
   Multikey,
   Note,
   Object,

@@ -1,0 +1,31 @@
+{
+  "workspace": [
+    "./src",
+    "./cli",
+    "./examples/blog",
+    "./examples/hono-sample"
+  ],
+  "imports": {
+    "@logtape/logtape": "jsr:@logtape/logtape@^0.8.1",
+    "@std/fs": "jsr:@std/fs@^1.0.3",
+    "@std/path": "jsr:@std/path@^1.0.6",
+    "@std/semver": "jsr:@std/semver@^1.0.3",
+    "preact": "npm:preact@10.19.6"
+  },
+  "unstable": [
+    "fs",
+    "kv",
+    "process",
+    "temporal"
+  ],
+  "tasks": {
+    "codegen": "deno task -f @fedify/cli codegen",
+    "check": "deno task -f @fedify/fedify check && deno task -f @fedify/cli check && deno task -f @fedify/blog check && deno task -f @fedify/hono-sample check",
+    "test-all": "deno task -f @fedify/fedify test-all && deno task -f @fedify/cli check && deno task -f @fedify/blog check && deno task -f @fedify/hono-sample check",
+    "publish": "deno task -f @fedify/fedify publish && deno task -f @fedify/cli publish",
+    "hooks:install": "deno run --allow-read=deno.json,.git/hooks/ --allow-write=.git/hooks/ jsr:@hongminhee/deno-task-hooks",
+    "hooks:pre-commit": {
+      "dependencies": ["check"]
+    }
+  }
+}
