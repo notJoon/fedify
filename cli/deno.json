@@ -69,7 +69,7 @@
       ]
     },
     "npm": {
-      "command": "deno run --allow-read --allow-write --allow-run --allow-env npm/pack.ts",
+      "command": "deno run --allow-read --allow-write --allow-run --allow-env scripts/npm.ts",
       "dependencies": [
         "sync-version"
       ]

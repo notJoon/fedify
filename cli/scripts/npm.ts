@@ -1,7 +1,7 @@
 import { which } from "jsr:@david/which@0.4.1";
 import { dirname, join } from "jsr:@std/path@1.0.0";
 import denoJson from "../deno.json" with { type: "json" };
-import metadataTemplate from "./package.json" with { type: "json" };
+import metadataTemplate from "../npm/package.json" with { type: "json" };
 
 async function main() {
   const metadata = {
@@ -17,11 +17,11 @@ async function main() {
     JSON.stringify(metadata),
   );
   await Deno.copyFile(
-    join(import.meta.dirname!, "install.mjs"),
+    join(dirname(import.meta.dirname!), "npm", "install.mjs"),
     join(tempDir, "install.mjs"),
   );
   await Deno.copyFile(
-    join(import.meta.dirname!, "run.mjs"),
+    join(dirname(import.meta.dirname!), "npm", "run.mjs"),
     join(tempDir, "run.mjs"),
   );
   await Deno.copyFile(
