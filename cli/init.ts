@@ -1278,10 +1278,18 @@ async function isCommandAvailable(
   try {
     const output = await cmd.output();
     const stdout = new TextDecoder().decode(output.stdout);
+    logger.debug(
+      "The stdout of the command {command} is: {stdout}",
+      { command: checkCommand, stdout },
+    );
     return outputPattern.exec(stdout.trim()) ? true : false;
-  } catch (e) {
-    if (e instanceof Deno.errors.NotFound) return false;
-    throw e;
+  } catch (error) {
+    logger.debug(
+      "The command {command} failed with the error: {error}",
+      { command: checkCommand, error },
+    );
+    if (error instanceof Deno.errors.NotFound) return false;
+    throw error;
   }
 }
 
