@@ -374,7 +374,8 @@ function printActivityEntry(idx: number, entry: ActivityEntry): void {
 function getHandle<T extends string>(
   c: HonoContext<BlankEnv, T, BlankInput>,
 ): string {
-  return `@i@${c.req.url}`;
+  const url = new URL(c.req.url);
+  return `@i@${url.host}`;
 }
 
 const app = new Hono();
