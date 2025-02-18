@@ -1,9 +1,11 @@
 import {
   configure,
   getConsoleSink,
+  getFileSink,
   type LogRecord,
   type Sink,
 } from "@logtape/logtape";
+import { dirname } from "@std/path";
 
 export interface RecordingSink extends Sink {
   startRecording(): void;
@@ -30,19 +32,28 @@ export function getRecordingSink(): RecordingSink {
 
 export const recordingSink = getRecordingSink();
 
+export const logFile = Deno.env.get("FEDIFY_LOG_FILE");
+if (logFile != null) {
+  await Deno.mkdir(dirname(logFile), { recursive: true });
+}
+
 await configure({
-  sinks: { console: getConsoleSink(), recording: recordingSink },
+  sinks: {
+    console: getConsoleSink(),
+    recording: recordingSink,
+    file: logFile == null ? () => undefined : getFileSink(logFile),
+  },
   filters: {},
   loggers: [
     {
       category: "fedify",
       level: "debug",
-      sinks: ["recording"],
+      sinks: ["recording", "file"],
     },
     {
       category: ["logtape", "meta"],
       level: "warning",
-      sinks: ["console"],
+      sinks: ["console", "file"],
     },
   ],
   reset: true,

@@ -8,6 +8,8 @@ import { basename, dirname, join, normalize } from "@std/path";
 import { format, greaterThan, parse } from "@std/semver";
 import metadata from "./deno.json" with { type: "json" };
 
+const logger = getLogger(["fedify", "cli", "init"]);
+
 type Runtime = "deno" | "bun" | "node";
 
 interface RuntimeDescription {
@@ -541,8 +543,6 @@ const messageQueues: Record<MessageQueue, MessageQueueDescription> = {
     denoUnstable: ["kv"],
   },
 } as const;
-
-const logger = getLogger(["fedify", "cli", "init"]);
 
 export const command = new Command()
   .type(

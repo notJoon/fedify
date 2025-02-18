@@ -8,6 +8,10 @@ Version 1.0.16
 
 To be released.
 
+ -  The `fedify` command became aware of `FEDIFY_LOG_FILE` environment variable
+    to log messages to a file.  If the variable is set, the command logs
+    messages to the file specified by the variable.
+
 
 Version 1.0.15
 --------------
