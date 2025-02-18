@@ -11,6 +11,8 @@ To be released.
  -  Fedify now accepts PEM-PKCS#1 besides PEM-SPKI for RSA public keys.
     [[#209]]
 
+     -  `CryptographicKey` now can contain a `publicKey` with a PEM-PKCS#1
+        format (in addition to PEM-SPKI).
      -  Added `importPkcs1()` function.
      -  Added `importPem()` function.
 

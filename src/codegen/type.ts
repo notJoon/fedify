@@ -313,7 +313,7 @@ const scalarTypes: Record<string, ScalarType> = {
         && typeof ${v}["@value"] === "string"`;
     },
     decoder(v) {
-      return `await importSpki(${v}["@value"])`;
+      return `await importPem(${v}["@value"])`;
     },
   },
   "fedify:multibaseKey": {

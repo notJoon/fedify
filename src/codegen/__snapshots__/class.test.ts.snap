@@ -15,7 +15,7 @@ import { decode as decodeMultibase, encode as encodeMultibase }
 import {
     exportSpki,
     exportMultibaseKey,
-    importSpki,
+    importPem,
     importMultibaseKey,
   } from \\"../runtime/key.ts\\";
 import { LanguageString } from \\"../runtime/langstr.ts\\";
@@ -15371,7 +15371,7 @@ owner?: Application | Group | Organization | Person | Service | URL | null;publi
         : _2fE2QMDdg6KFGqa4NEC3TmjApSAD_publicKeyPem__array
     ) {
       if (v == null) continue;
-    _2fE2QMDdg6KFGqa4NEC3TmjApSAD_publicKeyPem.push(await importSpki(v[\\"@value\\"]))
+    _2fE2QMDdg6KFGqa4NEC3TmjApSAD_publicKeyPem.push(await importPem(v[\\"@value\\"]))
     }
     instance.#_2fE2QMDdg6KFGqa4NEC3TmjApSAD_publicKeyPem = _2fE2QMDdg6KFGqa4NEC3TmjApSAD_publicKeyPem;
     

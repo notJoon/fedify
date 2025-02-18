@@ -118,7 +118,7 @@ export async function* generateClasses(
   yield `import {
     exportSpki,
     exportMultibaseKey,
-    importSpki,
+    importPem,
     importMultibaseKey,
   } from "${runtimePath}/key.ts";\n`;
   yield `import { LanguageString } from "${runtimePath}/langstr.ts";\n`;
