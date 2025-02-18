@@ -8,6 +8,8 @@ import { basename, dirname, join, normalize } from "@std/path";
 import { format, greaterThan, parse } from "@std/semver";
 import metadata from "./deno.json" with { type: "json" };
 
+const logger = getLogger(["fedify", "cli", "init"]);
+
 type Runtime = "deno" | "bun" | "node";
 
 interface RuntimeDescription {
@@ -67,11 +69,11 @@ const packageManagers: Record<PackageManager, PackageManagerDescription> = {
   },
 };
 
-const packageManagerAvailabilities: Record<PackageManager, boolean> = Object
-  .fromEntries(
+const packageManagerLocations: Record<PackageManager, string | undefined> =
+  Object.fromEntries(
     await Promise.all(
       (Object.keys(packageManagers) as PackageManager[])
-        .map(async (pm) => [pm, await isPackageManagerAvailable(pm)]),
+        .map(async (pm) => [pm, await locatePackageManager(pm)]),
     ),
   );
 
@@ -566,8 +568,6 @@ const messageQueues: Record<MessageQueue, MessageQueueDescription> = {
   },
 } as const;
 
-const logger = getLogger(["fedify", "cli", "init"]);
-
 export const command = new Command()
   .type(
     "runtime",
@@ -581,7 +581,7 @@ export const command = new Command()
     "package-manager",
     new EnumType(
       (Object.keys(packageManagers) as PackageManager[]).filter((pm) =>
-        packageManagerAvailabilities[pm]
+        packageManagerLocations[pm]
       ),
     ),
   )
@@ -763,7 +763,7 @@ export const command = new Command()
       );
       Deno.exit(1);
     }
-    if (runtime === "node" && !packageManagerAvailabilities[packageManager]) {
+    if (runtime === "node" && !packageManagerLocations[packageManager]) {
       console.error(`The ${packageManager} is not available on this system.`);
       Deno.exit(1);
     }
@@ -1306,10 +1306,18 @@ async function isCommandAvailable(
   try {
     const output = await cmd.output();
     const stdout = new TextDecoder().decode(output.stdout);
+    logger.debug(
+      "The stdout of the command {command} is: {stdout}",
+      { command: checkCommand, stdout },
+    );
     return outputPattern.exec(stdout.trim()) ? true : false;
-  } catch (e) {
-    if (e instanceof Deno.errors.NotFound) return false;
-    throw e;
+  } catch (error) {
+    logger.debug(
+      "The command {command} failed with the error: {error}",
+      { command: checkCommand, error },
+    );
+    if (error instanceof Deno.errors.NotFound) return false;
+    throw error;
   }
 }
 
@@ -1317,8 +1325,21 @@ function isRuntimeAvailable(runtime: Runtime): Promise<boolean> {
   return isCommandAvailable(runtimes[runtime]);
 }
 
-function isPackageManagerAvailable(pm: PackageManager): Promise<boolean> {
-  return isCommandAvailable(packageManagers[pm]);
+async function locatePackageManager(
+  pm: PackageManager,
+): Promise<string | undefined> {
+  if (await isCommandAvailable(packageManagers[pm])) {
+    return packageManagers[pm].checkCommand[0];
+  }
+  if (Deno.build.os !== "windows") return undefined;
+  const cmd: [string, ...string[]] = [
+    packageManagers[pm].checkCommand[0] + ".cmd",
+    ...packageManagers[pm].checkCommand.slice(1),
+  ];
+  if (await isCommandAvailable({ ...packageManagers[pm], checkCommand: cmd })) {
+    return cmd[0];
+  }
+  return undefined;
 }
 
 async function addDependencies(
@@ -1344,7 +1365,7 @@ async function addDependencies(
     );
   if (deps.length < 1) return;
   const cmd = new Deno.Command(
-    runtime === "node" ? pm : runtime,
+    runtime === "node" ? (packageManagerLocations[pm] ?? pm) : runtime,
     {
       args: [
         "add",
