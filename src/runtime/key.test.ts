@@ -5,11 +5,12 @@ import {
   exportMultibaseKey,
   exportSpki,
   importMultibaseKey,
+  importPkcs1,
   importSpki,
 } from "./key.ts";
 
 // cSpell: disable
-const rsaPem = "-----BEGIN PUBLIC KEY-----\n" +
+const rsaSpki = "-----BEGIN PUBLIC KEY-----\n" +
   "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxsRuvCkgJtflBTl4OVsm\n" +
   "nt/J1mQfZasfJtN33dcZ3d1lJroxmgmMu69zjGEAwkNbMQaWNLqC4eogkJaeJ4RR\n" +
   "5MHYXkL9nNilVoTkjX5BVit3puzs7XJ7WQnKQgQMI+ezn24GHsZ/v1JIo77lerX5\n" +
@@ -18,6 +19,17 @@ const rsaPem = "-----BEGIN PUBLIC KEY-----\n" +
   "Ie/YUBOGj/ImSEXhRwlFerKsoAVnZ0Hwbfa46qk44TAt8CyoPMWmpK6pt0ng4pQ2\n" +
   "uwIDAQAB\n" +
   "-----END PUBLIC KEY-----\n";
+// cSpell: enable
+
+// cSpell: disable
+const rsaPkcs1 = "-----BEGIN RSA PUBLIC KEY-----\n" +
+  "MIIBCgKCAQEAxsRuvCkgJtflBTl4OVsmnt/J1mQfZasfJtN33dcZ3d1lJroxmgmM\n" +
+  "u69zjGEAwkNbMQaWNLqC4eogkJaeJ4RR5MHYXkL9nNilVoTkjX5BVit3puzs7XJ7\n" +
+  "WQnKQgQMI+ezn24GHsZ/v1JIo77lerX5k4HNwTNVt+yaZVQWaOMR3+6FwziQR6kd\n" +
+  "0VuG9/a9dgAnz2cEoORRC1i4W7IZaB1sZnh1WbHbevlGd72HSXll5rocPIHn8gq6\n" +
+  "xpBgpHwRphlRsgn4KHaJ6brXDIJjrnQhIe/YUBOGj/ImSEXhRwlFerKsoAVnZ0Hw\n" +
+  "bfa46qk44TAt8CyoPMWmpK6pt0ng4pQ2uwIDAQAB\n" +
+  "-----END RSA PUBLIC KEY-----\n";
 // cSpell: enable
 
 const rsaJwk = {
@@ -67,7 +79,7 @@ const ed25519Multibase = "z6MksHj1MJnidCtDiyYW9ugNFftoX9fLK4bornTxmMZ6X7vq";
 // cSpell: enable
 
 test("importSpki()", async () => {
-  const rsaKey = await importSpki(rsaPem);
+  const rsaKey = await importSpki(rsaSpki);
   assertEquals(await exportJwk(rsaKey), rsaJwk);
 
   const ed25519Key = await importSpki(ed25519Pem);
@@ -77,11 +89,16 @@ test("importSpki()", async () => {
 test("exportSpki()", async () => {
   const rsaKey = await importJwk(rsaJwk, "public");
   const rsaSpki = await exportSpki(rsaKey);
-  assertEquals(rsaSpki, rsaPem);
+  assertEquals(rsaSpki, rsaSpki);
 
   const ed25519Key = await importJwk(ed25519Jwk, "public");
   const ed25519Spki = await exportSpki(ed25519Key);
   assertEquals(ed25519Spki, ed25519Pem);
+});
+
+test("importPkcs1()", async () => {
+  const rsaKey = await importPkcs1(rsaPkcs1);
+  assertEquals(await exportJwk(rsaKey), rsaJwk);
 });
 
 test("importMultibase()", async () => {

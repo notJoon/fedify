@@ -8,6 +8,13 @@ Version 1.5.0
 
 To be released.
 
+ -  Fedify now accepts PEM-PKCS#1 besides PEM-SPKI for RSA public keys.
+    [[#209]]
+
+     -  Added `importPkcs1()` function.
+
+[#209]: https://github.com/fedify-dev/fedify/issues/209
+
 
 Version 1.4.1
 -------------

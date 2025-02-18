@@ -1,4 +1,3 @@
-import { createPublicKey } from "node:crypto";
 import { concat } from "@std/bytes/concat";
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { decodeBase64Url } from "@std/encoding/base64url";
@@ -6,6 +5,7 @@ import { decodeHex } from "@std/encoding/hex";
 import { Integer, Sequence } from "asn1js";
 import { decode, encode } from "multibase";
 import { addPrefix, getCodeFromData, rmPrefix } from "multicodec";
+import { createPublicKey } from "node:crypto";
 import { PublicKeyInfo } from "pkijs";
 import { validateCryptoKey } from "../sig/key.ts";
 
@@ -63,6 +63,19 @@ export async function exportSpki(key: CryptoKey): Promise<string> {
   let pem = encodeBase64(spki);
   pem = (pem.match(/.{1,64}/g) || []).join("\n");
   return `-----BEGIN PUBLIC KEY-----\n${pem}\n-----END PUBLIC KEY-----\n`;
+}
+
+/**
+ * Imports a PEM-PKCS#1 formatted public key.
+ * @param pem The PEM-PKCS#1 formatted public key.
+ * @returns The imported public key.
+ * @throws {TypeError} If the key is invalid or unsupported.
+ * @since 1.5.0
+ */
+export function importPkcs1(pem: string): Promise<CryptoKey> {
+  const key = createPublicKey({ key: pem, format: "pem", type: "pkcs1" });
+  const spki = key.export({ type: "spki", format: "pem" }) as string;
+  return importSpki(spki);
 }
 
 /**
@@ -153,3 +166,5 @@ export async function exportMultibaseKey(key: CryptoKey): Promise<string> {
   const encoded = encode("base58btc", prefixed);
   return new TextDecoder().decode(encoded);
 }
+
+// cSpell: ignore multicodec pkijs
