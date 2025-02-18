@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.1.13
 --------------
 
-To be released.
+Released on February 19, 2025.
 
  -  Fixed a bug where the `fedify init` command had failed to locate package
     managers on Windows.  [[#210]]
