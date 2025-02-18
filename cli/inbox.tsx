@@ -1,3 +1,5 @@
+/** @jsx react-jsx */
+/** @jsxImportSource hono/jsx */
 import { colors } from "@cliffy/ansi";
 import { Command } from "@cliffy/command";
 import { Cell, Table } from "@cliffy/table";

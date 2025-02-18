@@ -1,3 +1,5 @@
+/** @jsx react-jsx */
+/** @jsxImportSource hono/jsx */
 // This script purposes to test the inbox web front-end.
 // All data is dummy and does not reflect real-world data, but it is useful for
 // testing the front-end.

@@ -16,6 +16,10 @@ To be released.
      -  Added `importPkcs1()` function.
      -  Added `importPem()` function.
 
+ -  Fixed a bug of the `fedify inbox` command where it had failed to render
+    the web interface when the `fedify` command was installed using
+    `deno install` command from JSR.
+
 [#209]: https://github.com/fedify-dev/fedify/issues/209
 
 

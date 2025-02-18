@@ -1,6 +1,8 @@
+/** @jsx react-jsx */
+/** @jsxImportSource hono/jsx */
 import type { LogRecord } from "@logtape/logtape";
 import { getStatusText } from "@poppanator/http-constants";
-import type { FC, PropsWithChildren } from "hono/jsx";
+import { type FC, Fragment, type PropsWithChildren } from "hono/jsx";
 import { getSingletonHighlighter } from "shiki";
 import type { ActivityEntry } from "./entry.ts";
 import {
@@ -23,8 +25,10 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = (
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>
-          {props.title == null ? "" : <>{props.title} &mdash;{" "}</>}Fedify
-          Ephemeral Inbox
+          {props.title == null
+            ? ""
+            : <Fragment>{props.title} &mdash;{" "}</Fragment>}Fedify Ephemeral
+          Inbox
         </title>
       </head>
       <body>
@@ -62,10 +66,10 @@ const Tab: FC<TabProps> = (
             {label}
             {badge != null
               ? (
-                <>
+                <Fragment>
                   {" "}
                   <span class="badge text-bg-secondary">{badge}</span>
-                </>
+                </Fragment>
               )
               : undefined}
           </span>
@@ -77,10 +81,10 @@ const Tab: FC<TabProps> = (
             {label}
             {badge != null
               ? (
-                <>
+                <Fragment>
                   {" "}
                   <span class="badge text-bg-secondary">{badge}</span>
-                </>
+                </Fragment>
               )
               : undefined}
           </a>
@@ -155,7 +159,7 @@ const Log: FC<LogProps> = (
         </time>
       </div>
       <small class="text-body-secondary">
-        {category.map((c, i) => i < 1 ? c : <>{" "}/ {c}</>)}
+        {category.map((c, i) => i < 1 ? c : <Fragment>{" "}/ {c}</Fragment>)}
       </small>
     </li>
   );
@@ -329,19 +333,19 @@ const ActivityList: FC<ActivityListProps> = (
               Request #{i}:{" "}
               <code>{entry.request.method} {url.pathname + url.search}</code>
               {entry.activity == null ? "" : (
-                <>
+                <Fragment>
                   {" "}&middot; <code>{entry.activity.constructor.name}</code>
-                </>
+                </Fragment>
               )}
               {entry.response == null ? "" : (
-                <>
+                <Fragment>
                   {" "}&rarr;{" "}
                   <code>
                     {entry.response.status} {entry.response.statusText === ""
                       ? getStatusText(entry.response.status)
                       : entry.response.statusText}
                   </code>
-                </>
+                </Fragment>
               )}
             </span>
             <time
