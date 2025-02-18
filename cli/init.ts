@@ -69,11 +69,11 @@ const packageManagers: Record<PackageManager, PackageManagerDescription> = {
   },
 };
 
-const packageManagerAvailabilities: Record<PackageManager, boolean> = Object
-  .fromEntries(
+const packageManagerLocations: Record<PackageManager, string | undefined> =
+  Object.fromEntries(
     await Promise.all(
       (Object.keys(packageManagers) as PackageManager[])
-        .map(async (pm) => [pm, await isPackageManagerAvailable(pm)]),
+        .map(async (pm) => [pm, await locatePackageManager(pm)]),
     ),
   );
 
@@ -557,7 +557,7 @@ export const command = new Command()
     "package-manager",
     new EnumType(
       (Object.keys(packageManagers) as PackageManager[]).filter((pm) =>
-        packageManagerAvailabilities[pm]
+        packageManagerLocations[pm]
       ),
     ),
   )
@@ -739,7 +739,7 @@ export const command = new Command()
       );
       Deno.exit(1);
     }
-    if (runtime === "node" && !packageManagerAvailabilities[packageManager]) {
+    if (runtime === "node" && !packageManagerLocations[packageManager]) {
       console.error(`The ${packageManager} is not available on this system.`);
       Deno.exit(1);
     }
@@ -1297,8 +1297,21 @@ function isRuntimeAvailable(runtime: Runtime): Promise<boolean> {
   return isCommandAvailable(runtimes[runtime]);
 }
 
-function isPackageManagerAvailable(pm: PackageManager): Promise<boolean> {
-  return isCommandAvailable(packageManagers[pm]);
+async function locatePackageManager(
+  pm: PackageManager,
+): Promise<string | undefined> {
+  if (await isCommandAvailable(packageManagers[pm])) {
+    return packageManagers[pm].checkCommand[0];
+  }
+  if (Deno.build.os !== "windows") return undefined;
+  const cmd: [string, ...string[]] = [
+    packageManagers[pm].checkCommand[0] + ".cmd",
+    ...packageManagers[pm].checkCommand.slice(1),
+  ];
+  if (await isCommandAvailable({ ...packageManagers[pm], checkCommand: cmd })) {
+    return cmd[0];
+  }
+  return undefined;
 }
 
 async function addDependencies(
@@ -1324,7 +1337,7 @@ async function addDependencies(
     );
   if (deps.length < 1) return;
   const cmd = new Deno.Command(
-    runtime === "node" ? pm : runtime,
+    runtime === "node" ? (packageManagerLocations[pm] ?? pm) : runtime,
     {
       args: [
         "add",
