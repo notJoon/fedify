@@ -766,16 +766,16 @@ If it goes well, you will see the output like the below (without termination;
 press <kbd>^C</kbd> to stop the server):
 
 ~~~~
-✔ The ephemeral ActivityPub server is up and running: https://fb36a63c96eeea.lhr.life/
+✔ The ephemeral ActivityPub server is up and running: https://f9285cf4974c86.lhr.life/
 ✔ Sent follow request to @faguscus_dashirniul@activitypub.academy.
 ╭───────────────┬─────────────────────────────────────────╮
-│ Actor handle: │ i@fb36a63c96eeea.lhr.life               │
+│ Actor handle: │ i@f9285cf4974c86.lhr.life               │
 ├───────────────┼─────────────────────────────────────────┤
-│    Actor URI: │ https://fb36a63c96eeea.lhr.life/i       │
+│    Actor URI: │ https://f9285cf4974c86.lhr.life/i       │
 ├───────────────┼─────────────────────────────────────────┤
-│  Actor inbox: │ https://fb36a63c96eeea.lhr.life/i/inbox │
+│  Actor inbox: │ https://f9285cf4974c86.lhr.life/i/inbox │
 ├───────────────┼─────────────────────────────────────────┤
-│ Shared inbox: │ https://fb36a63c96eeea.lhr.life/inbox   │
+│ Shared inbox: │ https://f9285cf4974c86.lhr.life/inbox   │
 ╰───────────────┴─────────────────────────────────────────╯
 ~~~~
 
@@ -788,7 +788,7 @@ console:
 
 ~~~~
 ╭────────────────┬─────────────────────────────────────╮
-│     Request #: │ 1                                   │
+│     Request #: │ 2                                   │
 ├────────────────┼─────────────────────────────────────┤
 │ Activity type: │ Follow                              │
 ├────────────────┼─────────────────────────────────────┤
@@ -796,7 +796,7 @@ console:
 ├────────────────┼─────────────────────────────────────┤
 │ HTTP response: │ 202                                 │
 ├────────────────┼─────────────────────────────────────┤
-│        Details │ https://fb36a63c96eeea.lhr.life/r/1 │
+│        Details │ https://f9285cf4974c86.lhr.life/r/2 │
 ╰────────────────┴─────────────────────────────────────╯
 ~~~~
 
@@ -831,7 +831,7 @@ fedify inbox -f @john@doe.com -f @jane@doe.com
 > ├────────────────┼─────────────────────────────────────┤
 > │ HTTP response: │ 202                                 │
 > ├────────────────┼─────────────────────────────────────┤
-> │        Details │ https://fb36a63c96eeea.lhr.life/r/0 │
+> │        Details │ https://f9285cf4974c86.lhr.life/r/0 │
 > ╰────────────────┴─────────────────────────────────────╯
 > ~~~~
 
