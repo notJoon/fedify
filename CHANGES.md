@@ -29,6 +29,19 @@ To be released.
 [#209]: https://github.com/fedify-dev/fedify/issues/209
 
 
+Version 1.4.2
+-------------
+
+Released on February 19, 2025.
+
+ -  Fixed a bug where the `fedify init` command had failed to locate package
+    managers on Windows.  [[#210]]
+
+ -  The `fedify` command became aware of `FEDIFY_LOG_FILE` environment variable
+    to log messages to a file.  If the variable is set, the command logs
+    messages to the file specified by the variable.
+
+
 Version 1.4.1
 -------------
 
@@ -125,6 +138,19 @@ Released on February 5, 2025.
 
 [#3]: https://github.com/fedify-dev/fedify/issues/3
 [#195]: https://github.com/fedify-dev/fedify/issues/195
+
+
+Version 1.3.9
+-------------
+
+Released on February 19, 2025.
+
+ -  Fixed a bug where the `fedify init` command had failed to locate package
+    managers on Windows.  [[#210]]
+
+ -  The `fedify` command became aware of `FEDIFY_LOG_FILE` environment variable
+    to log messages to a file.  If the variable is set, the command logs
+    messages to the file specified by the variable.
 
 
 Version 1.3.8
@@ -339,6 +365,19 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.13
+--------------
+
+Released on February 19, 2025.
+
+ -  Fixed a bug where the `fedify init` command had failed to locate package
+    managers on Windows.  [[#210]]
+
+ -  The `fedify` command became aware of `FEDIFY_LOG_FILE` environment variable
+    to log messages to a file.  If the variable is set, the command logs
+    messages to the file specified by the variable.
 
 
 Version 1.2.12
@@ -599,6 +638,19 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.13
+--------------
+
+Released on February 19, 2025.
+
+ -  Fixed a bug where the `fedify init` command had failed to locate package
+    managers on Windows.  [[#210]]
+
+ -  The `fedify` command became aware of `FEDIFY_LOG_FILE` environment variable
+    to log messages to a file.  If the variable is set, the command logs
+    messages to the file specified by the variable.
 
 
 Version 1.1.12
@@ -900,6 +952,21 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.16
+--------------
+
+Released on February 19, 2025.
+
+ -  Fixed a bug where the `fedify init` command had failed to locate package
+    managers on Windows.  [[#210]]
+
+ -  The `fedify` command became aware of `FEDIFY_LOG_FILE` environment variable
+    to log messages to a file.  If the variable is set, the command logs
+    messages to the file specified by the variable.
+
+[#210]: https://github.com/fedify-dev/fedify/issues/210
 
 
 Version 1.0.15
