@@ -78,6 +78,19 @@ export function importPkcs1(pem: string): Promise<CryptoKey> {
   return importSpki(spki);
 }
 
+const PKCS1_HEADER = /^\s*-----BEGIN\s+RSA\s+PUBLIC\s+KEY-----\s*\n/;
+
+/**
+ * Imports a PEM formatted public key (SPKI or PKCS#1).
+ * @param pem The PEM formatted public key to import (SPKI or PKCS#1).
+ * @returns The imported public key.
+ * @throws {TypeError} If the key is invalid or unsupported.
+ * @since 1.5.0
+ */
+export function importPem(pem: string): Promise<CryptoKey> {
+  return PKCS1_HEADER.test(pem) ? importPkcs1(pem) : importSpki(pem);
+}
+
 /**
  * Imports a [Multibase]-encoded public key.
  *

@@ -12,6 +12,7 @@ To be released.
     [[#209]]
 
      -  Added `importPkcs1()` function.
+     -  Added `importPem()` function.
 
 [#209]: https://github.com/fedify-dev/fedify/issues/209
 

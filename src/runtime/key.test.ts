@@ -5,6 +5,7 @@ import {
   exportMultibaseKey,
   exportSpki,
   importMultibaseKey,
+  importPem,
   importPkcs1,
   importSpki,
 } from "./key.ts";
@@ -99,6 +100,17 @@ test("exportSpki()", async () => {
 test("importPkcs1()", async () => {
   const rsaKey = await importPkcs1(rsaPkcs1);
   assertEquals(await exportJwk(rsaKey), rsaJwk);
+});
+
+test("importPem()", async () => {
+  const rsaPkcs1Key = await importPem(rsaPkcs1);
+  assertEquals(await exportJwk(rsaPkcs1Key), rsaJwk);
+
+  const rsaSpkiKey = await importPem(rsaSpki);
+  assertEquals(await exportJwk(rsaSpkiKey), rsaJwk);
+
+  const ed25519Key = await importPem(ed25519Pem);
+  assertEquals(await exportJwk(ed25519Key), ed25519Jwk);
 });
 
 test("importMultibase()", async () => {
