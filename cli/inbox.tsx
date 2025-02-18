@@ -24,7 +24,8 @@ import {
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
 import { parse } from "@std/semver";
-import { Hono } from "hono";
+import { type Context as HonoContext, Hono } from "hono";
+import type { BlankEnv, BlankInput } from "hono/types";
 import ora from "ora";
 import metadata from "./deno.json" with { type: "json" };
 import { getDocumentLoader } from "./docloader.ts";
@@ -370,11 +371,23 @@ function printActivityEntry(idx: number, entry: ActivityEntry): void {
     .render();
 }
 
+function getHandle<T extends string>(
+  c: HonoContext<BlankEnv, T, BlankInput>,
+): string {
+  return `@i@${c.req.url}`;
+}
+
 const app = new Hono();
 
 app.get("/", (c) => c.redirect("/r"));
 
-app.get("/r", (c) => c.html(<ActivityListPage entries={activities} />));
+app.get(
+  "/r",
+  (c) =>
+    c.html(
+      <ActivityListPage handle={getHandle(c)} entries={activities} />,
+    ),
+);
 
 app.get("/r/:idx{[0-9]+}", (c) => {
   const idx = parseInt(c.req.param("idx"));
@@ -387,7 +400,14 @@ app.get("/r/:idx{[0-9]+}", (c) => {
   ) {
     return c.notFound();
   }
-  return c.html(<ActivityEntryPage idx={idx} entry={activity} tabPage={tab} />);
+  return c.html(
+    <ActivityEntryPage
+      handle={getHandle(c)}
+      idx={idx}
+      entry={activity}
+      tabPage={tab}
+    />,
+  );
 });
 
 async function fetch(request: Request): Promise<Response> {

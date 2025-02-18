@@ -8,6 +8,8 @@ import { Hono } from "hono";
 import type { ActivityEntry } from "./entry.ts";
 import { ActivityEntryPage, ActivityListPage } from "./view.tsx";
 
+const DUMB_HANDLE = "@test@localhost";
+
 const app = new Hono();
 
 app.get("/r/0", async (c) => {
@@ -81,6 +83,7 @@ app.get("/r/0", async (c) => {
   };
   return c.html(
     <ActivityEntryPage
+      handle={DUMB_HANDLE}
       idx={idx}
       entry={entry}
       // @ts-ignore:
@@ -99,6 +102,7 @@ app.get("/r/1", (c) => {
   };
   return c.html(
     <ActivityEntryPage
+      handle={DUMB_HANDLE}
       idx={idx}
       entry={entry}
       // @ts-ignore:
@@ -116,6 +120,7 @@ app.get("/r/2", (c) => {
   };
   return c.html(
     <ActivityEntryPage
+      handle={DUMB_HANDLE}
       idx={idx}
       entry={entry}
       // @ts-ignore:
@@ -166,7 +171,7 @@ app.get("/r", (c) => {
     },
   ];
   return c.html(
-    <ActivityListPage entries={entries} />,
+    <ActivityListPage handle={DUMB_HANDLE} entries={entries} />,
   );
 });
 

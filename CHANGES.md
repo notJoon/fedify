@@ -20,6 +20,12 @@ To be released.
     the web interface when the `fedify` command was installed using
     `deno install` command from JSR.
 
+ -  The web interface of the `fedify inbox` command was slightly redesigned:
+
+     -  The Fedify logo with the cute dinosaur is now displayed at the top of
+        the page.
+     -  You can easily copy the fediverse handle of the ephemeral actor.
+
 [#209]: https://github.com/fedify-dev/fedify/issues/209
 
 

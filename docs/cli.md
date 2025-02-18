@@ -766,16 +766,16 @@ If it goes well, you will see the output like the below (without termination;
 press <kbd>^C</kbd> to stop the server):
 
 ~~~~
-✔ The ephemeral ActivityPub server is up and running: https://12a4fea81cbcf6.lhr.life/
-✔ Followed @bibelus_vasariol@activitypub.academy
+✔ The ephemeral ActivityPub server is up and running: https://fb36a63c96eeea.lhr.life/
+✔ Sent follow request to @faguscus_dashirniul@activitypub.academy.
 ╭───────────────┬─────────────────────────────────────────╮
-│ Actor handle: │ i@12a4fea81cbcf6.lhr.life               │
+│ Actor handle: │ i@fb36a63c96eeea.lhr.life               │
 ├───────────────┼─────────────────────────────────────────┤
-│    Actor URI: │ https://12a4fea81cbcf6.lhr.life/i       │
+│    Actor URI: │ https://fb36a63c96eeea.lhr.life/i       │
 ├───────────────┼─────────────────────────────────────────┤
-│  Actor inbox: │ https://12a4fea81cbcf6.lhr.life/i/inbox │
+│  Actor inbox: │ https://fb36a63c96eeea.lhr.life/i/inbox │
 ├───────────────┼─────────────────────────────────────────┤
-│ Shared inbox: │ https://12a4fea81cbcf6.lhr.life/inbox   │
+│ Shared inbox: │ https://fb36a63c96eeea.lhr.life/inbox   │
 ╰───────────────┴─────────────────────────────────────────╯
 ~~~~
 
@@ -787,17 +787,17 @@ If any incoming activities are received, the server will log them to the
 console:
 
 ~~~~
-╭────────────────┬────────────────────────────────────╮
-│     Request #: │ 3                                  │
-├────────────────┼────────────────────────────────────┤
-│ Activity type: │ Create                             │
-├────────────────┼────────────────────────────────────┤
-│  HTTP request: │ POST /inbox                        │
-├────────────────┼────────────────────────────────────┤
-│ HTTP response: │ 202                                │
-├────────────────┼────────────────────────────────────┤
-│        Details │ http://12a4fea81cbcf6.lhr.life/r/3 │
-╰────────────────┴────────────────────────────────────╯
+╭────────────────┬─────────────────────────────────────╮
+│     Request #: │ 1                                   │
+├────────────────┼─────────────────────────────────────┤
+│ Activity type: │ Follow                              │
+├────────────────┼─────────────────────────────────────┤
+│  HTTP request: │ POST /i/inbox                       │
+├────────────────┼─────────────────────────────────────┤
+│ HTTP response: │ 202                                 │
+├────────────────┼─────────────────────────────────────┤
+│        Details │ https://fb36a63c96eeea.lhr.life/r/1 │
+╰────────────────┴─────────────────────────────────────╯
 ~~~~
 
 You can also see the details of the incoming activities by visiting the
@@ -831,7 +831,7 @@ fedify inbox -f @john@doe.com -f @jane@doe.com
 > ├────────────────┼─────────────────────────────────────┤
 > │ HTTP response: │ 202                                 │
 > ├────────────────┼─────────────────────────────────────┤
-> │        Details │ https://876f71397f5c31.lhr.life/r/0 │
+> │        Details │ https://fb36a63c96eeea.lhr.life/r/0 │
 > ╰────────────────┴─────────────────────────────────────╯
 > ~~~~
 
