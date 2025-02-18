@@ -8,6 +8,13 @@ Version 1.1.13
 
 To be released.
 
+ -  Fixed a bug where the `fedify init` command had failed to locate package
+    managers on Windows.  [[#210]]
+
+ -  The `fedify` command became aware of `FEDIFY_LOG_FILE` environment variable
+    to log messages to a file.  If the variable is set, the command logs
+    messages to the file specified by the variable.
+
 
 Version 1.1.12
 --------------
@@ -308,6 +315,21 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.16
+--------------
+
+Released on February 19, 2025.
+
+ -  Fixed a bug where the `fedify init` command had failed to locate package
+    managers on Windows.  [[#210]]
+
+ -  The `fedify` command became aware of `FEDIFY_LOG_FILE` environment variable
+    to log messages to a file.  If the variable is set, the command logs
+    messages to the file specified by the variable.
+
+[#210]: https://github.com/fedify-dev/fedify/issues/210
 
 
 Version 1.0.15
