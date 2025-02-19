@@ -131,6 +131,138 @@ However, you probably don't want to use this option directly; instead,
 you should use above two options to specify the sender.
 
 
+Specifying recipients
+---------------------
+
+The second argument of the `Context.sendActivity()` method is the recipients
+of the activity.  It can be multiple, and you can set them to `Recipient`
+objects, or `Actor` objects (which satisfy the `Recipient` interface), or
+simply `"followers"` string which is a special value that represents the
+followers of the sender.
+
+### `Actor | Actor[]`
+
+If you specify `Actor` objects, the activity is delivered to the actors'
+inboxes (or shared inboxes if some actors support it and you turn on
+the `preferSharedInbox` option):
+
+~~~~ typescript twoslash
+import { Activity, type Actor, type Context } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = new Activity({});
+const actor = {} as Actor;
+// ---cut-before---
+await ctx.sendActivity(
+  { identifier: "2bd304f9-36b3-44f0-bf0b-29124aafcbb4" },
+  actor,  // [!code highlight]
+  activity,
+);
+~~~~
+
+Or you can specify multiple actors:
+
+~~~~ typescript twoslash
+import { Activity, type Actor, type Context } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = new Activity({});
+const actor = {} as Actor;
+const actor2 = {} as Actor;
+const actor3 = {} as Actor;
+// ---cut-before---
+await ctx.sendActivity(
+  { username: "john" },
+  [actor, actor2, actor3],  // [!code highlight]
+  activity,
+);
+~~~~
+
+### `Recipient | Recipient[]`
+
+If you specify any objects that satisfy the `Recipient` interface, the activity
+is delivered to the recipients' inboxes (or shared inboxes if some recipients
+support it and you turn on the `preferSharedInbox` option).
+
+The `Recipient` interface is defined as follows:
+
+~~~~ typescript twoslash
+export interface Recipient {
+  readonly id: URL | null;
+  readonly inboxId: URL | null;
+  readonly endpoints?: {
+    sharedInbox: URL | null;
+  } | null;
+}
+~~~~
+
+Here's an example of specifying a `Recipient` object:
+
+~~~~ typescript{3-6} twoslash
+import { Activity, type Context, Recipient } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = new Activity({});
+// ---cut-before---
+await ctx.sendActivity(
+  { identifier: "2bd304f9-36b3-44f0-bf0b-29124aafcbb4" },
+  {
+    id: new URL("https://example.com/actors/1"),
+    inboxId: new URL("https://example.com/actors/1/inbox"),
+  } satisfies Recipient,
+  activity,
+);
+~~~~
+
+Or you can provide its shared inbox endpoint as well:
+
+~~~~ typescript{6-8} twoslash
+import { Activity, type Context, Recipient } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = new Activity({});
+// ---cut-before---
+await ctx.sendActivity(
+  { username: "john" },
+  {
+    id: new URL("https://example.com/actors/1"),
+    inboxId: new URL("https://example.com/actors/1/inbox"),
+    endpoints: {
+      sharedInbox: new URL("https://example.com/inbox"),
+    }
+  } satisfies Recipient,
+  activity,
+  { preferSharedInbox: true },  // [!code highlight]
+);
+~~~~
+
+### `"followers"`
+
+> [!NOTE]
+> You need to implement the [followers collection
+> dispatcher](./collections.md#followers) to use this feature.
+
+It's the most convenient way to deliver an activity to the followers of the
+sender.
+
+If you specify the `"followers"` string, the activity is delivered to the
+followers of the sender.  It is a special value that represents the followers
+of the sender:
+
+~~~~ typescript twoslash
+import { Activity, type Context } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = new Activity({});
+// ---cut-before---
+await ctx.sendActivity(
+  { identifier: "2bd304f9-36b3-44f0-bf0b-29124aafcbb4" },
+  "followers",  // [!code highlight]
+  activity,
+);
+~~~~
+
+> [!NOTE]
+> You cannot use the `"followers"` string if the sender is a `SenderKeyPair` or
+> an array of `SenderKeyPair` objects.  You need to specify the recipients
+> manually in this case.
+
+
 Specifying an activity
 ----------------------
 
