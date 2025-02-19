@@ -1,6 +1,6 @@
 import type { LogRecord } from "@logtape/logtape";
 import { getStatusText } from "@poppanator/http-constants";
-import type { FC, PropsWithChildren } from "hono/jsx";
+import { type FC, Fragment, type PropsWithChildren } from "hono/jsx";
 import { getSingletonHighlighter } from "shiki";
 import type { ActivityEntry } from "./entry.ts";
 import {
@@ -36,8 +36,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = (
           rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
           crossorigin="anonymous"
-        >
-        </link>
+        />
       </body>
     </html>
   );
@@ -141,9 +140,11 @@ const Log: FC<LogProps> = (
       <div class="d-flex w-100 justify-content-between">
         <p class="mb-1" style="white-space: pre-wrap; word-break: break-word;">
           {message.map((m, i) =>
-            i % 2 == 0
-              ? m
-              : <code>{typeof m === "string" ? m : Deno.inspect(m)}</code>
+            i % 2 == 0 ? m : (
+              <code key={i}>
+                {typeof m === "string" ? m : Deno.inspect(m)}
+              </code>
+            )
           )}
         </p>
         <time
@@ -155,7 +156,10 @@ const Log: FC<LogProps> = (
         </time>
       </div>
       <small class="text-body-secondary">
-        {category.map((c, i) => i < 1 ? c : <>{" "}/ {c}</>)}
+        {category.map((c, i) =>
+          // deno-lint-ignore jsx-curly-braces
+          i < 1 ? c : <Fragment key={i.toString()}>{" "}/ {c}</Fragment>
+        )}
       </small>
     </li>
   );
@@ -168,7 +172,7 @@ interface LogListProps {
 const LogList: FC<LogListProps> = ({ logs }: LogListProps) => {
   return (
     <ul class="list-group mt-3">
-      {logs.map((log) => <Log log={log} />)}
+      {logs.map((log) => <Log key={log.timestamp} log={log} />)}
     </ul>
   );
 };
