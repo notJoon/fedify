@@ -24,7 +24,7 @@ export function PostForm(
           type="text"
           id="title"
           name="title"
-          required={true}
+          required
           aria-invalid={error?.title == null ? undefined : "true"}
           value={defaultValues?.title}
         />
@@ -41,7 +41,7 @@ export function PostForm(
           name="content"
           cols={80}
           rows={7}
-          required={true}
+          required
           aria-invalid={error?.content == null ? undefined : "true"}
           value={defaultValues?.content}
         />
@@ -57,7 +57,7 @@ export function PostForm(
           type="password"
           id="password"
           name="password"
-          required={true}
+          required
           aria-invalid={error?.password == null ? undefined : "true"}
         />
         {error?.password && (

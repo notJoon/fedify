@@ -31,7 +31,7 @@ export default function Setup({ url, error, defaultValues }: SetupProps) {
               id="handle"
               name="handle"
               placeholder="your-handle"
-              required={true}
+              required
               pattern="^[A-Za-z._\-]{3,20}$"
               title="Must be 3-20 characters long and contain only letters, periods, underscores, and hyphens"
               aria-invalid={error?.handle == null ? undefined : "true"}
@@ -55,7 +55,7 @@ export default function Setup({ url, error, defaultValues }: SetupProps) {
               id="title"
               name="title"
               placeholder="My blog"
-              required={true}
+              required
               aria-invalid={error?.title == null ? undefined : "true"}
               value={defaultValues?.title}
             />
@@ -75,7 +75,7 @@ export default function Setup({ url, error, defaultValues }: SetupProps) {
               id="description"
               name="description"
               placeholder="A blog about&hellip;"
-              required={true}
+              required
               aria-invalid={error?.description == null ? undefined : "true"}
               value={defaultValues?.description}
             />
@@ -95,7 +95,7 @@ export default function Setup({ url, error, defaultValues }: SetupProps) {
               type="password"
               id="password"
               name="password"
-              required={true}
+              required
               aria-invalid={error?.password == null ? undefined : "true"}
             />
             <small>

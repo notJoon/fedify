@@ -28,6 +28,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = (
         <title>
           {props.title == null
             ? ""
+            // deno-lint-ignore jsx-curly-braces
             : <Fragment>{props.title} &mdash;{" "}</Fragment>}Fedify Ephemeral
           Inbox ({props.handle})
         </title>
@@ -353,9 +354,11 @@ const Log: FC<LogProps> = (
       <div class="d-flex w-100 justify-content-between">
         <p class="mb-1" style="white-space: pre-wrap; word-break: break-word;">
           {message.map((m, i) =>
-            i % 2 == 0
-              ? m
-              : <code>{typeof m === "string" ? m : Deno.inspect(m)}</code>
+            i % 2 == 0 ? m : (
+              <code key={i}>
+                {typeof m === "string" ? m : Deno.inspect(m)}
+              </code>
+            )
           )}
         </p>
         <time
@@ -367,7 +370,10 @@ const Log: FC<LogProps> = (
         </time>
       </div>
       <small class="text-body-secondary">
-        {category.map((c, i) => i < 1 ? c : <Fragment>{" "}/ {c}</Fragment>)}
+        {category.map((c, i) =>
+          // deno-lint-ignore jsx-curly-braces
+          i < 1 ? c : <Fragment key={i.toString()}>{" "}/ {c}</Fragment>
+        )}
       </small>
     </li>
   );
@@ -380,7 +386,7 @@ interface LogListProps {
 const LogList: FC<LogListProps> = ({ logs }: LogListProps) => {
   return (
     <ul class="list-group mt-3">
-      {logs.map((log) => <Log log={log} />)}
+      {logs.map((log) => <Log key={log.timestamp} log={log} />)}
     </ul>
   );
 };
@@ -543,12 +549,12 @@ const ActivityList: FC<ActivityListProps> = (
               <code>{entry.request.method} {url.pathname + url.search}</code>
               {entry.activity == null ? "" : (
                 <Fragment>
-                  {" "}&middot; <code>{entry.activity.constructor.name}</code>
+                  {} &middot; <code>{entry.activity.constructor.name}</code>
                 </Fragment>
               )}
               {entry.response == null ? "" : (
                 <Fragment>
-                  {" "}&rarr;{" "}
+                  {} &rarr;{" "}
                   <code>
                     {entry.response.status} {entry.response.statusText === ""
                       ? getStatusText(entry.response.status)

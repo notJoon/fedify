@@ -114,7 +114,7 @@ export async function importMultibaseKey(key: string): Promise<CryptoKey> {
     const spki = keyObject.export({ type: "spki", format: "der" }).buffer;
     return await crypto.subtle.importKey(
       "spki",
-      spki,
+      new Uint8Array(spki),
       { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
       true,
       ["verify"],

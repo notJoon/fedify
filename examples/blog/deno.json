@@ -5,27 +5,39 @@
     "codegen": "deno task -f @fedify/fedify codegen",
     "check": {
       "command": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
-      "dependencies": ["codegen"]
+      "dependencies": [
+        "codegen"
+      ]
     },
     "cli": {
       "command": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
-      "dependencies": ["codegen"]
+      "dependencies": [
+        "codegen"
+      ]
     },
     "manifest": {
       "command": "deno task cli manifest $(pwd)",
-      "dependencies": ["codegen"]
+      "dependencies": [
+        "codegen"
+      ]
     },
     "start": {
       "command": "deno run -A --watch=static/,routes/ --unstable-kv dev.ts",
-      "dependencies": ["codegen"]
+      "dependencies": [
+        "codegen"
+      ]
     },
     "build": {
       "command": "deno run -A dev.ts build",
-      "dependencies": ["codegen"]
+      "dependencies": [
+        "codegen"
+      ]
     },
     "preview": {
       "command": "deno run -A main.ts",
-      "dependencies": ["codegen"]
+      "dependencies": [
+        "codegen"
+      ]
     },
     "update": "deno run -A -r https://fresh.deno.dev/update ."
   },
@@ -34,6 +46,9 @@
       "tags": [
         "fresh",
         "recommended"
+      ],
+      "exclude": [
+        "react-no-danger"
       ]
     }
   },
