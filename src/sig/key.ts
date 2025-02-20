@@ -326,11 +326,19 @@ async function fetchKeyInternal<T extends CryptographicKey | Multikey>(
         contextLoader,
         tracerProvider,
       });
+    let length = 0;
+    let lastKey: T | null = null;
     for await (const k of keys) {
+      length++;
+      lastKey = k as T;
       if (k.id?.href === keyId) {
         key = k as T;
         break;
       }
+    }
+    const keyIdUrl = new URL(keyId);
+    if (key == null && keyIdUrl.hash === "" && length === 1) {
+      key = lastKey;
     }
     if (key == null) {
       logger.debug(

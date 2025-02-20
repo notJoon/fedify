@@ -16,6 +16,9 @@ To be released.
      -  Added `importPkcs1()` function.
      -  Added `importPem()` function.
 
+ -  Fedify became to choose the public key of the actor if `keyId` has no
+    fragment and the actor has only one public key.  [[#211]]
+
  -  Fixed a bug of the `fedify inbox` command where it had failed to render
     the web interface when the `fedify` command was installed using
     `deno install` command from JSR.
@@ -27,6 +30,7 @@ To be released.
      -  You can easily copy the fediverse handle of the ephemeral actor.
 
 [#209]: https://github.com/fedify-dev/fedify/issues/209
+[#211]: https://github.com/fedify-dev/fedify/issues/211
 
 
 Version 1.4.2

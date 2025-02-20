@@ -325,4 +325,30 @@ test("fetchKey()", async () => {
     }),
     { key: rsaPublicKey1, cached: false },
   );
+  // Discard a fragment if no key is found
+  assertEquals(
+    await fetchKey(
+      "https://example.com/users/handle",
+      CryptographicKey,
+      options,
+    ),
+    {
+      key: new CryptographicKey({
+        id: new URL("https://example.com/users/handle#main-key"),
+        publicKey: await importJwk({
+          kty: "RSA",
+          alg: "RS256",
+          // cSpell: disable
+          n: "oRmBtnxbdFutoRd1GLGwwGTrsqlRRWUe11hHQaoRLGf5LwQ0tIc6I9q-dynliw-2kxYsLn9SH2je6HcTYOolgW7F_cOWXZQN04b-OiYcU1ConAhLjmn4k1uKawJ614y0ScPNd8PQ-CljsnlPxbq9ofaCMe2BV3B6y09aCuGFJ0nxn1_ubjmIBIWWFTAznoz1J9BhJDGyt3IO3ABy3f9zDVlR32L_n5VIkXnxkjUKdzMAOzYb62kuKOp1iznRTPrV71SNtivJMwSh_LVgBrmZjtIn_oim-KyX_fdLU3tQ7VClyqmJzyAjccOH6Qj6nFTPh-vX07gqN8IlLT2uye4waw",
+          e: "AQAB",
+          // cSpell: enable
+          key_ops: ["verify"],
+          ext: true,
+        }, "public"),
+      }) as CryptographicKey & {
+        publicKey: CryptoKey;
+      },
+      cached: false,
+    },
+  );
 });
