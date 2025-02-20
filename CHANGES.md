@@ -16,8 +16,8 @@ To be released.
      -  Added `importPkcs1()` function.
      -  Added `importPem()` function.
 
- -  Fedify became to choose the public key of the actor if `keyId` has no
-    fragment and the actor has only one public key.  [[#211]]
+ -  The `fetchKey()` function became to choose the public key of the actor
+    if `keyId` has no fragment and the actor has only one public key.  [[#211]]
 
  -  Fixed a bug of the `fedify inbox` command where it had failed to render
     the web interface when the `fedify` command was installed using
