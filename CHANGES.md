@@ -8,6 +8,13 @@ Version 1.1.14
 
 To be released.
 
+ -  Added the following default contexts to `Follow`, `Undo`, and `Update`
+    classes:
+
+     -  <https://w3id.org/security/v1>
+     -  <https://www.w3.org/ns/did/v1>
+     -  <https://w3id.org/security/multikey/v1>
+
 
 Version 1.1.13
 --------------
@@ -321,6 +328,19 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.17
+--------------
+
+Released on February 22, 2025.
+
+ -  Added the following default contexts to `Follow`, `Undo`, and `Update`
+    classes:
+
+     -  <https://w3id.org/security/v1>
+     -  <https://www.w3.org/ns/did/v1>
+     -  <https://w3id.org/security/multikey/v1>
 
 
 Version 1.0.16
