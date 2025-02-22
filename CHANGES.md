@@ -8,6 +8,13 @@ Version 1.0.17
 
 To be released.
 
+ -  Added the following default contexts to `Follow`, `Undo`, and `Update`
+    classes:
+
+     -  <https://w3id.org/security/v1>
+     -  <https://www.w3.org/ns/did/v1>
+     -  <https://w3id.org/security/multikey/v1>
+
 
 Version 1.0.16
 --------------
