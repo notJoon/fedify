@@ -24307,7 +24307,7 @@ instruments?: (Object | URL)[];}
       );
     }
     const docContext = options.context ??
-      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/data-integrity/v1\\"];
+      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/v1\\",\\"https://w3id.org/security/data-integrity/v1\\",\\"https://www.w3.org/ns/did/v1\\",\\"https://w3id.org/security/multikey/v1\\"];
     const compacted = await jsonld.compact(
       values,
       docContext,
@@ -53115,7 +53115,7 @@ instruments?: (Object | URL)[];}
       );
     }
     const docContext = options.context ??
-      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/data-integrity/v1\\"];
+      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/v1\\",\\"https://w3id.org/security/data-integrity/v1\\",\\"https://www.w3.org/ns/did/v1\\",\\"https://w3id.org/security/multikey/v1\\"];
     const compacted = await jsonld.compact(
       values,
       docContext,
@@ -53388,7 +53388,7 @@ instruments?: (Object | URL)[];}
       );
     }
     const docContext = options.context ??
-      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/data-integrity/v1\\",{\\"alsoKnownAs\\":{\\"@id\\":\\"as:alsoKnownAs\\",\\"@type\\":\\"@id\\"},\\"manuallyApprovesFollowers\\":\\"as:manuallyApprovesFollowers\\",\\"sensitive\\":\\"as:sensitive\\",\\"movedTo\\":{\\"@id\\":\\"as:movedTo\\",\\"@type\\":\\"@id\\"},\\"quoteUrl\\":\\"as:quoteUrl\\",\\"toot\\":\\"http://joinmastodon.org/ns#\\",\\"featured\\":{\\"@id\\":\\"toot:featured\\",\\"@type\\":\\"@id\\"},\\"featuredTags\\":{\\"@id\\":\\"toot:featuredTags\\",\\"@type\\":\\"@id\\"},\\"discoverable\\":\\"toot:discoverable\\",\\"suspended\\":\\"toot:suspended\\",\\"memorial\\":\\"toot:memorial\\",\\"indexable\\":\\"toot:indexable\\",\\"votersCount\\":\\"toot:votersCount\\",\\"Emoji\\":\\"toot:Emoji\\",\\"Hashtag\\":\\"as:Hashtag\\",\\"schema\\":\\"http://schema.org#\\",\\"PropertyValue\\":\\"schema:PropertyValue\\",\\"value\\":\\"schema:value\\",\\"ChatMessage\\":\\"http://litepub.social/ns#ChatMessage\\",\\"fedibird\\":\\"http://fedibird.com/ns#\\",\\"quoteUri\\":\\"fedibird:quoteUri\\",\\"misskey\\":\\"https://misskey-hub.net/ns#\\",\\"_misskey_quote\\":\\"misskey:_misskey_quote\\",\\"_misskey_followedMessage\\":\\"misskey:_misskey_followedMessage\\",\\"isCat\\":\\"misskey:isCat\\"}];
+      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/v1\\",\\"https://w3id.org/security/data-integrity/v1\\",\\"https://www.w3.org/ns/did/v1\\",\\"https://w3id.org/security/multikey/v1\\",{\\"alsoKnownAs\\":{\\"@id\\":\\"as:alsoKnownAs\\",\\"@type\\":\\"@id\\"},\\"manuallyApprovesFollowers\\":\\"as:manuallyApprovesFollowers\\",\\"sensitive\\":\\"as:sensitive\\",\\"movedTo\\":{\\"@id\\":\\"as:movedTo\\",\\"@type\\":\\"@id\\"},\\"quoteUrl\\":\\"as:quoteUrl\\",\\"toot\\":\\"http://joinmastodon.org/ns#\\",\\"featured\\":{\\"@id\\":\\"toot:featured\\",\\"@type\\":\\"@id\\"},\\"featuredTags\\":{\\"@id\\":\\"toot:featuredTags\\",\\"@type\\":\\"@id\\"},\\"discoverable\\":\\"toot:discoverable\\",\\"suspended\\":\\"toot:suspended\\",\\"memorial\\":\\"toot:memorial\\",\\"indexable\\":\\"toot:indexable\\",\\"votersCount\\":\\"toot:votersCount\\",\\"Emoji\\":\\"toot:Emoji\\",\\"Hashtag\\":\\"as:Hashtag\\",\\"schema\\":\\"http://schema.org#\\",\\"PropertyValue\\":\\"schema:PropertyValue\\",\\"value\\":\\"schema:value\\",\\"ChatMessage\\":\\"http://litepub.social/ns#ChatMessage\\",\\"fedibird\\":\\"http://fedibird.com/ns#\\",\\"quoteUri\\":\\"fedibird:quoteUri\\",\\"misskey\\":\\"https://misskey-hub.net/ns#\\",\\"_misskey_quote\\":\\"misskey:_misskey_quote\\",\\"_misskey_followedMessage\\":\\"misskey:_misskey_followedMessage\\",\\"isCat\\":\\"misskey:isCat\\"}];
     const compacted = await jsonld.compact(
       values,
       docContext,
