@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.0.17
 --------------
 
-To be released.
+Released on February 22, 2025.
 
  -  Added the following default contexts to `Follow`, `Undo`, and `Update`
     classes:
