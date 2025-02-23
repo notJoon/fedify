@@ -1,12 +1,5 @@
 {
   "deno.enable": true,
-  "deno.enablePaths": [
-    "cli",
-    "src",
-    "examples/blog",
-    "examples/hono-sample",
-    "scripts"
-  ],
   "deno.unstable": true,
   "editor.detectIndentation": false,
   "editor.indentSize": 2,

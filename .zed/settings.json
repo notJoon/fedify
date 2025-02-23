@@ -1,12 +1,6 @@
 {
   "deno": {
     "enable": true,
-    "enablePaths": [
-      "cli",
-      "src",
-      "examples/blog",
-      "examples/hono-sample"
-    ],
     "unstable": true
   },
   "ensure_final_newline_on_save": true,
