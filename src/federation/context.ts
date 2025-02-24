@@ -29,6 +29,16 @@ export interface Context<TContextData> {
   readonly origin: string;
 
   /**
+   * The canonical origin of the federated server, including the scheme
+   * (`http://` or `https://`) and the host (e.g., `example.com:8080`).
+   *
+   * When the associated {@link Federation} object does not have any explicit
+   * canonical origin, it is the same as the {@link Context.origin}.
+   * @since 1.5.0
+   */
+  readonly canonicalOrigin: string;
+
+  /**
    * The host of the federated server, including the hostname
    * (e.g., `example.com`) and the port following a colon (e.g., `:8080`)
    * if it is not the default port for the scheme.

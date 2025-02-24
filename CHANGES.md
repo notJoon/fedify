@@ -8,6 +8,14 @@ Version 1.5.0
 
 To be released.
 
+ -  A `Federation` object now can have a canonical origin for web URLs and
+    a canonical host for fediverse handles.  This affects the URLs constructed
+    by `Context` objects, and the WebFinger responses.
+
+     -  Added `CreateFederationOptions.origin` option.
+     -  Added `FederationOrigin` interface.
+     -  Added `Context.canonicalOrigin` property.
+
  -  Fedify now accepts PEM-PKCS#1 besides PEM-SPKI for RSA public keys.
     [[#209]]
 

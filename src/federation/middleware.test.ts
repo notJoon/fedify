@@ -54,26 +54,145 @@ import {
 } from "./middleware.ts";
 import { RouterError } from "./router.ts";
 
-test("createFederation()", () => {
+test("createFederation()", async (t) => {
   const kv = new MemoryKvStore();
-  assertThrows(() =>
-    createFederation<number>({
+
+  await t.step("allowPrivateAddress", () => {
+    assertThrows(() =>
+      createFederation<number>({
+        kv,
+        documentLoader: mockDocumentLoader,
+        allowPrivateAddress: true,
+      }), TypeError);
+    assertThrows(() =>
+      createFederation<number>({
+        kv,
+        contextLoader: mockDocumentLoader,
+        allowPrivateAddress: true,
+      }), TypeError);
+    assertThrows(() =>
+      createFederation<number>({
+        kv,
+        authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
+        allowPrivateAddress: true,
+      }), TypeError);
+  });
+
+  await t.step("origin", () => {
+    const f = createFederation<void>({ kv, origin: "http://example.com:8080" });
+    assertInstanceOf(f, FederationImpl);
+    assertEquals(f.origin, {
+      handleHost: "example.com:8080",
+      webOrigin: "http://example.com:8080",
+    });
+
+    assertThrows(
+      () => createFederation<void>({ kv, origin: "example.com" }),
+      TypeError,
+    );
+    assertThrows(
+      () => createFederation<void>({ kv, origin: "ftp://example.com" }),
+      TypeError,
+    );
+    assertThrows(
+      () => createFederation<void>({ kv, origin: "https://example.com/foo" }),
+      TypeError,
+    );
+    assertThrows(
+      () => createFederation<void>({ kv, origin: "https://example.com/?foo" }),
+      TypeError,
+    );
+    assertThrows(
+      () => createFederation<void>({ kv, origin: "https://example.com/#foo" }),
+      TypeError,
+    );
+
+    const f2 = createFederation<void>({
       kv,
-      documentLoader: mockDocumentLoader,
-      allowPrivateAddress: true,
-    }), TypeError);
-  assertThrows(() =>
-    createFederation<number>({
-      kv,
-      contextLoader: mockDocumentLoader,
-      allowPrivateAddress: true,
-    }), TypeError);
-  assertThrows(() =>
-    createFederation<number>({
-      kv,
-      authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
-      allowPrivateAddress: true,
-    }), TypeError);
+      origin: {
+        handleHost: "example.com:8080",
+        webOrigin: "https://ap.example.com",
+      },
+    });
+    assertInstanceOf(f2, FederationImpl);
+    assertEquals(f2.origin, {
+      handleHost: "example.com:8080",
+      webOrigin: "https://ap.example.com",
+    });
+
+    assertThrows(
+      () =>
+        createFederation<void>({
+          kv,
+          origin: {
+            handleHost: "https://example.com",
+            webOrigin: "https://example.com",
+          },
+        }),
+      TypeError,
+    );
+    assertThrows(
+      () =>
+        createFederation<void>({
+          kv,
+          origin: {
+            handleHost: "example.com/",
+            webOrigin: "https://example.com",
+          },
+        }),
+      TypeError,
+    );
+
+    assertThrows(
+      () =>
+        createFederation<void>({
+          kv,
+          origin: { handleHost: "example.com", webOrigin: "example.com" },
+        }),
+      TypeError,
+    );
+    assertThrows(
+      () =>
+        createFederation<void>({
+          kv,
+          origin: { handleHost: "example.com", webOrigin: "ftp://example.com" },
+        }),
+      TypeError,
+    );
+    assertThrows(
+      () =>
+        createFederation<void>({
+          kv,
+          origin: {
+            handleHost: "example.com",
+            webOrigin: "https://example.com/foo",
+          },
+        }),
+      TypeError,
+    );
+    assertThrows(
+      () =>
+        createFederation<void>({
+          kv,
+          origin: {
+            handleHost: "example.com",
+            webOrigin: "https://example.com/?foo",
+          },
+        }),
+      TypeError,
+    );
+    assertThrows(
+      () =>
+        createFederation<void>({
+          kv,
+          origin: {
+            handleHost: "example.com",
+            webOrigin: "https://example.com/#foo",
+          },
+        }),
+      TypeError,
+    );
+  });
 });
 
 test("Federation.createContext()", async (t) => {
@@ -110,6 +229,7 @@ test("Federation.createContext()", async (t) => {
     );
     assertEquals(ctx.data, 123);
     assertEquals(ctx.origin, "https://example.com:1234");
+    assertEquals(ctx.canonicalOrigin, "https://example.com:1234");
     assertEquals(ctx.host, "example.com:1234");
     assertEquals(ctx.hostname, "example.com");
     assertStrictEquals(ctx.documentLoader, documentLoader);
@@ -400,6 +520,208 @@ test("Federation.createContext()", async (t) => {
       { type: "featuredTags", identifier: "handle", handle: "handle" },
     );
     assertEquals(ctx.parseUri(null), null);
+  });
+
+  await t.step("Context with origin", () => {
+    const federation = createFederation<void>({
+      kv,
+      origin: "https://ap.example.com",
+      documentLoader,
+      contextLoader: mockDocumentLoader,
+    });
+    const ctx = federation.createContext(new URL("https://example.com:1234/"));
+    assertEquals(ctx.origin, "https://example.com:1234");
+    assertEquals(ctx.canonicalOrigin, "https://ap.example.com");
+    assertEquals(ctx.host, "example.com:1234");
+    assertEquals(ctx.hostname, "example.com");
+
+    federation.setNodeInfoDispatcher("/nodeinfo/2.1", () => ({
+      software: {
+        name: "Example",
+        version: { major: 1, minor: 2, patch: 3 },
+      },
+      protocols: ["activitypub"],
+      usage: {
+        users: {},
+        localPosts: 123,
+        localComments: 456,
+      },
+    }));
+    assertEquals(
+      ctx.getNodeInfoUri(),
+      new URL("https://ap.example.com/nodeinfo/2.1"),
+    );
+
+    federation.setActorDispatcher("/users/{identifier}", () => new Person({}));
+    assertEquals(
+      ctx.getActorUri("handle"),
+      new URL("https://ap.example.com/users/handle"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/handle")),
+      { type: "actor", handle: "handle", identifier: "handle" },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/handle")),
+      { type: "actor", handle: "handle", identifier: "handle" },
+    );
+
+    federation.setObjectDispatcher(
+      Note,
+      "/users/{identifier}/notes/{id}",
+      (_ctx, values) => {
+        return new Note({
+          summary: `Note ${values.id} by ${values.identifier}`,
+        });
+      },
+    );
+    assertEquals(
+      ctx.getObjectUri(Note, { identifier: "john", id: "123" }),
+      new URL("https://ap.example.com/users/john/notes/123"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/john/notes/123")),
+      {
+        type: "object",
+        class: Note,
+        typeId: new URL("https://www.w3.org/ns/activitystreams#Note"),
+        values: { identifier: "john", id: "123" },
+      },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/john/notes/123")),
+      {
+        type: "object",
+        class: Note,
+        typeId: new URL("https://www.w3.org/ns/activitystreams#Note"),
+        values: { identifier: "john", id: "123" },
+      },
+    );
+
+    federation.setInboxListeners("/users/{identifier}/inbox", "/inbox");
+    assertEquals(ctx.getInboxUri(), new URL("https://ap.example.com/inbox"));
+    assertEquals(
+      ctx.getInboxUri("handle"),
+      new URL("https://ap.example.com/users/handle/inbox"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/inbox")),
+      { type: "inbox", handle: undefined, identifier: undefined },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/inbox")),
+      { type: "inbox", handle: undefined, identifier: undefined },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/handle/inbox")),
+      { type: "inbox", handle: "handle", identifier: "handle" },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/handle/inbox")),
+      { type: "inbox", handle: "handle", identifier: "handle" },
+    );
+
+    federation.setOutboxDispatcher(
+      "/users/{identifier}/outbox",
+      () => ({ items: [] }),
+    );
+    assertEquals(
+      ctx.getOutboxUri("handle"),
+      new URL("https://ap.example.com/users/handle/outbox"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/handle/outbox")),
+      { type: "outbox", handle: "handle", identifier: "handle" },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/handle/outbox")),
+      { type: "outbox", handle: "handle", identifier: "handle" },
+    );
+
+    federation.setFollowingDispatcher(
+      "/users/{identifier}/following",
+      () => ({ items: [] }),
+    );
+    assertEquals(
+      ctx.getFollowingUri("handle"),
+      new URL("https://ap.example.com/users/handle/following"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/handle/following")),
+      { type: "following", handle: "handle", identifier: "handle" },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/handle/following")),
+      { type: "following", handle: "handle", identifier: "handle" },
+    );
+
+    federation.setFollowersDispatcher(
+      "/users/{identifier}/followers",
+      () => ({ items: [] }),
+    );
+    assertEquals(
+      ctx.getFollowersUri("handle"),
+      new URL("https://ap.example.com/users/handle/followers"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/handle/followers")),
+      { type: "followers", handle: "handle", identifier: "handle" },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/handle/followers")),
+      { type: "followers", handle: "handle", identifier: "handle" },
+    );
+
+    federation.setLikedDispatcher(
+      "/users/{identifier}/liked",
+      () => ({ items: [] }),
+    );
+    assertEquals(
+      ctx.getLikedUri("handle"),
+      new URL("https://ap.example.com/users/handle/liked"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/handle/liked")),
+      { type: "liked", handle: "handle", identifier: "handle" },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/handle/liked")),
+      { type: "liked", handle: "handle", identifier: "handle" },
+    );
+
+    federation.setFeaturedDispatcher(
+      "/users/{identifier}/featured",
+      () => ({ items: [] }),
+    );
+    assertEquals(
+      ctx.getFeaturedUri("handle"),
+      new URL("https://ap.example.com/users/handle/featured"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/handle/featured")),
+      { type: "featured", handle: "handle", identifier: "handle" },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/handle/featured")),
+      { type: "featured", handle: "handle", identifier: "handle" },
+    );
+
+    federation.setFeaturedTagsDispatcher(
+      "/users/{identifier}/tags",
+      () => ({ items: [] }),
+    );
+    assertEquals(
+      ctx.getFeaturedTagsUri("handle"),
+      new URL("https://ap.example.com/users/handle/tags"),
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://ap.example.com/users/handle/tags")),
+      { type: "featuredTags", handle: "handle", identifier: "handle" },
+    );
+    assertEquals(
+      ctx.parseUri(new URL("https://example.com:1234/users/handle/tags")),
+      { type: "featuredTags", handle: "handle", identifier: "handle" },
+    );
   });
 
   mf.mock("GET@/.well-known/nodeinfo", (req) => {

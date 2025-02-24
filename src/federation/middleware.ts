@@ -159,6 +159,13 @@ export interface CreateFederationOptions<TContextData> {
   manuallyStartQueue?: boolean;
 
   /**
+   * The canonical base URL of the server.  This is used for constructing
+   * absolute URLs and fediverse handles.
+   * @since 1.5.0
+   */
+  origin?: string | FederationOrigin;
+
+  /**
    * A custom JSON-LD document loader factory.  By default, this uses
    * the built-in cache-backed loader that fetches remote documents over
    * HTTP(S).
@@ -331,6 +338,26 @@ export interface FederationKvPrefixes {
 }
 
 /**
+ * Options for {@link CreateFederationOptions.origin} when it is not a string.
+ * @since 1.5.0
+ */
+export interface FederationOrigin {
+  /**
+   * The canonical hostname for fediverse handles (which are looked up through
+   * WebFinger).  This is used for WebFinger lookups.  It has to be a valid
+   * hostname, e.g., `"example.com"`.
+   */
+  handleHost: string;
+
+  /**
+   * The canonical origin for web URLs.  This is used for constructing absolute
+   * URLs.  It has to start with either `"http://"` or `"https://"`, and must
+   * not contain a path or query string, e.g., `"https://example.com"`.
+   */
+  webOrigin: string;
+}
+
+/**
  * Create a new {@link Federation} instance.
  * @param parameters Parameters for initializing the instance.
  * @returns A new {@link Federation} instance.
@@ -350,6 +377,7 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
   inboxQueueStarted: boolean;
   outboxQueueStarted: boolean;
   manuallyStartQueue: boolean;
+  origin?: FederationOrigin;
   router: Router;
   nodeInfoDispatcher?: NodeInfoDispatcher<TContextData>;
   actorCallbacks?: ActorCallbacks<TContextData>;
@@ -442,6 +470,54 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
     this.inboxQueueStarted = false;
     this.outboxQueueStarted = false;
     this.manuallyStartQueue = options.manuallyStartQueue ?? false;
+    if (options.origin != null) {
+      if (typeof options.origin === "string") {
+        if (
+          !URL.canParse(options.origin) || !options.origin.match(/^https?:\/\//)
+        ) {
+          throw new TypeError(
+            `Invalid origin: ${JSON.stringify(options.origin)}`,
+          );
+        }
+        const origin = new URL(options.origin);
+        if (
+          !origin.pathname.match(/^\/*$/) || origin.search !== "" ||
+          origin.hash !== ""
+        ) {
+          throw new TypeError(
+            `Invalid origin: ${JSON.stringify(options.origin)}`,
+          );
+        }
+        this.origin = { handleHost: origin.host, webOrigin: origin.origin };
+      } else {
+        const { handleHost, webOrigin } = options.origin;
+        if (
+          !URL.canParse(`https://${handleHost}/`) || handleHost.includes("/")
+        ) {
+          throw new TypeError(
+            `Invalid origin.handleHost: ${JSON.stringify(handleHost)}`,
+          );
+        }
+        if (!URL.canParse(webOrigin) || !webOrigin.match(/^https?:\/\//)) {
+          throw new TypeError(
+            `Invalid origin.webOrigin: ${JSON.stringify(webOrigin)}`,
+          );
+        }
+        const webOriginUrl = new URL(webOrigin);
+        if (
+          !webOriginUrl.pathname.match(/^\/*$/) || webOriginUrl.search !== "" ||
+          webOriginUrl.hash !== ""
+        ) {
+          throw new TypeError(
+            `Invalid origin.webOrigin: ${JSON.stringify(webOrigin)}`,
+          );
+        }
+        this.origin = {
+          handleHost: new URL(`https://${handleHost}/`).host,
+          webOrigin: webOriginUrl.origin,
+        };
+      }
+    }
     this.router = new Router({
       trailingSlashInsensitive: options.trailingSlashInsensitive,
     });
@@ -2300,6 +2376,7 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
       case "webfinger":
         return await handleWebFinger(request, {
           context,
+          host: this.origin?.handleHost,
           actorDispatcher: this.actorCallbacks?.dispatcher,
           actorHandleMapper: this.actorCallbacks?.handleMapper,
           actorAliasMapper: this.actorCallbacks?.aliasMapper,
@@ -2552,6 +2629,10 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     return this.url.origin;
   }
 
+  get canonicalOrigin(): string {
+    return this.federation.origin?.webOrigin ?? this.origin;
+  }
+
   get tracerProvider(): TracerProvider {
     return this.federation.tracerProvider;
   }
@@ -2561,7 +2642,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No NodeInfo dispatcher registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getActorUri(identifier: string): URL {
@@ -2572,7 +2653,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No actor dispatcher registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getObjectUri<TObject extends Object>(
@@ -2596,7 +2677,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No object dispatcher registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getOutboxUri(identifier: string): URL {
@@ -2607,7 +2688,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No outbox dispatcher registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getInboxUri(): URL;
@@ -2618,7 +2699,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       if (path == null) {
         throw new RouterError("No shared inbox path registered.");
       }
-      return new URL(path, this.url);
+      return new URL(path, this.canonicalOrigin);
     }
     const path = this.federation.router.build(
       "inbox",
@@ -2627,7 +2708,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No inbox path registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getFollowingUri(identifier: string): URL {
@@ -2638,7 +2719,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No following collection path registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getFollowersUri(identifier: string): URL {
@@ -2649,7 +2730,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No followers collection path registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getLikedUri(identifier: string): URL {
@@ -2660,7 +2741,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No liked collection path registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getFeaturedUri(identifier: string): URL {
@@ -2671,7 +2752,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No featured collection path registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   getFeaturedTagsUri(identifier: string): URL {
@@ -2682,12 +2763,14 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     if (path == null) {
       throw new RouterError("No featured tags collection path registered.");
     }
-    return new URL(path, this.url);
+    return new URL(path, this.canonicalOrigin);
   }
 
   parseUri(uri: URL | null): ParseUriResult | null {
     if (uri == null) return null;
-    if (uri.origin !== this.url.origin) return null;
+    if (uri.origin !== this.origin && uri.origin !== this.canonicalOrigin) {
+      return null;
+    }
     const route = this.federation.router.route(uri.pathname);
     const logger = getLogger(["fedify", "federation"]);
     if (route == null) return null;
@@ -2873,7 +2956,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       logger.warn("No actor dispatcher registered.");
       return [];
     }
-    const actorUri = new URL(path, this.url);
+    const actorUri = new URL(path, this.canonicalOrigin);
     const keyPairs = await this.federation.actorCallbacks?.keyPairsDispatcher(
       new ContextImpl({
         ...this,
@@ -3168,7 +3251,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       );
       opts.collectionSync = collectionId == null
         ? undefined
-        : new URL(collectionId, this.url).href;
+        : new URL(collectionId, this.canonicalOrigin).href;
     } else {
       expandedRecipients = [recipients];
     }

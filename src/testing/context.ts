@@ -14,6 +14,7 @@ import { mockDocumentLoader } from "./docloader.ts";
 export function createContext<TContextData>(
   {
     url,
+    canonicalOrigin,
     data,
     documentLoader,
     contextLoader,
@@ -45,6 +46,7 @@ export function createContext<TContextData>(
   return {
     data,
     origin: url.origin,
+    canonicalOrigin: canonicalOrigin ?? url.origin,
     host: url.host,
     hostname: url.hostname,
     documentLoader: documentLoader ?? mockDocumentLoader,

@@ -23,6 +23,12 @@ export interface WebFingerHandlerParameters<TContextData> {
   context: RequestContext<TContextData>;
 
   /**
+   * The canonical hostname of the server, if it's explicitly configured.
+   * @since 1.5.0
+   */
+  host?: string;
+
+  /**
    * The callback for dispatching the actor.
    */
   actorDispatcher?: ActorDispatcher<TContextData>;
@@ -30,12 +36,14 @@ export interface WebFingerHandlerParameters<TContextData> {
   /**
    * The callback for mapping a WebFinger username to the corresponding actor's
    * internal identifier, or `null` if the username is not found.
+   * @since 0.15.0
    */
   actorHandleMapper?: ActorHandleMapper<TContextData>;
 
   /**
    * The callback for mapping a WebFinger query to the corresponding actor's
    * internal identifier or username, or `null` if the query is not found.
+   * @since 1.4.0
    */
   actorAliasMapper?: ActorAliasMapper<TContextData>;
 
@@ -46,11 +54,13 @@ export interface WebFingerHandlerParameters<TContextData> {
 
   /**
    * The OpenTelemetry tracer.
+   * @since 1.3.0
    */
   tracer?: Tracer;
 
   /**
    * The span for the request.
+   * @since 1.3.0
    */
   span?: Span;
 }
@@ -96,6 +106,7 @@ async function handleWebFingerInternal<TContextData>(
   request: Request,
   {
     context,
+    host,
     actorDispatcher,
     actorHandleMapper,
     actorAliasMapper,
@@ -159,11 +170,13 @@ async function handleWebFingerInternal<TContextData>(
           result.username,
         );
       }
-    } else if (toASCII(match[2].toLowerCase()) != context.url.host) {
-      return await onNotFound(request);
     } else {
+      const resourceHost = toASCII(match[2].toLowerCase());
+      if (resourceHost != context.url.host && resourceHost != host) {
+        return await onNotFound(request);
+      }
       identifier = await mapUsernameToIdentifier(match[1]);
-      resourceUrl = new URL(`acct:${match[1]}@${context.url.host}`);
+      resourceUrl = new URL(`acct:${match[1]}@${resourceHost}`);
     }
   } else {
     identifier = uriParsed.identifier;
@@ -208,10 +221,21 @@ async function handleWebFingerInternal<TContextData>(
   }
   const aliases: string[] = [];
   if (resourceUrl.protocol != "acct:" && actor.preferredUsername != null) {
-    aliases.push(`acct:${actor.preferredUsername}@${context.url.host}`);
+    aliases.push(`acct:${actor.preferredUsername}@${host ?? context.url.host}`);
+    if (host != null && host !== context.url.host) {
+      aliases.push(`acct:${actor.preferredUsername}@${context.url.host}`);
+    }
   }
   if (resourceUrl.href !== context.getActorUri(identifier).href) {
     aliases.push(context.getActorUri(identifier).href);
+  }
+  if (
+    resourceUrl.protocol === "acct:" && host != null &&
+    host !== context.url.host &&
+    !resourceUrl.href.endsWith(`@${host}`)
+  ) {
+    const username = resourceUrl.href.replace(/^acct:/, "").replace(/@.*$/, "");
+    aliases.push(`acct:${username}@${host}`);
   }
   const jrd: ResourceDescriptor = {
     subject: resourceUrl.href,

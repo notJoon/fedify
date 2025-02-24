@@ -12,6 +12,7 @@
         "deno",
         "!typescript-language-server",
         "!vtsls",
+        "!biome",
         "..."
       ]
     },
@@ -20,6 +21,7 @@
         "deno",
         "!typescript-language-server",
         "!vtsls",
+        "!biome",
         "..."
       ]
     },
@@ -28,6 +30,7 @@
         "deno",
         "!typescript-language-server",
         "!vtsls",
+        "!biome",
         "..."
       ]
     }

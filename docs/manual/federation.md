@@ -456,7 +456,7 @@ serve({
 How the `Federation` object recognizes the domain name
 ------------------------------------------------------
 
-The `Federation` object recognizes the domain name of the server by
+By default, the `Federation` object recognizes the domain name of the server by
 the [`Host`] header of the incoming HTTP requests.  The `Host` header is
 a standard HTTP header that contains the domain name of the server.
 
@@ -540,6 +540,100 @@ Bun.serve({
 [x-forwarded-fetch]: https://github.com/dahlia/x-forwarded-fetch
 
 
+Explicitly setting the canonical origin
+---------------------------------------
+
+*This API is available since Fedify 1.5.0.*
+
+Or you can explicitly set the canonical origin of the server by passing
+the `~CreateFederationOptions.origin` option to the `createFederation()`
+function.  The `~CreateFederationOptions.origin` option is either a string or
+a `FederationOrigin` object, which consists of two fields:
+`~FederationOrigin.handleHost` and `~FederationOrigin.webOrigin`.
+
+For example, if you want to set the canonical origin to `https://example.com`,
+you can pass the string:
+
+~~~~ typescript twoslash
+// @noErrors: 2353
+import { createFederation, type KvStore } from "@fedify/fedify";
+// ---cut-before---
+const federation = createFederation({
+// ---cut-start---
+  kv: null as unknown as KvStore,
+// ---cut-end---
+  origin: "https://example.com",
+});
+~~~~
+
+> [!NOTE]
+> The `~CreateFederationOptions.origin` option has to include the leading
+> `https://` or `http://` scheme.
+
+Such a configuration leads the [constructed URLs using
+`Context`](./context.md#building-the-object-uris) to use the canonical origin
+instead of the origin from the incoming HTTP requests, which avoids constructing
+unexpected URLs when a request bypasses a reverse proxy or a load balancer.
+
+> [!CAUTION]
+> For example, suppose that your federated server (upstream) is accessible at
+> the `http://1.2.3.4:8000` and your load balancer (downstream) is accessible at
+> the `https://example.com` and forwards the requests to the upstream server.
+> In this case, you should set the canonical origin to `https://example.com` to
+> construct the correct URLs.  Otherwise, when some malicious actor directly
+> sends a request to the upstream server, the constructed URLs will start with
+> `http://1.2.3.4:8000` instead of `https://example.com`, which can lead to
+> security issues.
+
+> [!TIP]
+> If your federated server needs to support [multiple domains on the same
+> server](#virtual-hosting), you would not want to set the canonical origin
+> explicitly.  Instead, you should rely on the `Host` header or
+> `X-Forwarded-Host` header to determine the domain name.
+
+
+Separating WebFinger host from the server origin
+------------------------------------------------
+
+*This API is available since Fedify 1.5.0.*
+
+Sometimes you may want to use different domain names for WebFinger handles
+(i.e., fediverse handles) and the server origin.  For example, you may want
+to use `https://ap.example.com/actors/alice` as an actor URI but want to use
+`@alice@example.com` as its fediverse handle.
+
+In such cases, you can set the `~FederationOrigin.handleHost` different from
+the `~FederationOrigin.webOrigin` in the `~CreateFederationOptions.origin`
+option.  The `~FederationOrigin.handleHost` is used to construct the WebFinger
+handles, and the `~FederationOrigin.webOrigin` is used to [construct the URLs
+in the `Context` object](./context.md#building-the-object-uris):
+
+~~~~ typescript twoslash
+// @noErrors: 2353
+import { createFederation, type KvStore } from "@fedify/fedify";
+// ---cut-before---
+const federation = createFederation({
+// ---cut-start---
+  kv: null as unknown as KvStore,
+// ---cut-end---
+  origin: {
+    handleHost: "example.com",
+    webOrigin: "https://ap.example.com",
+  },
+});
+~~~~
+
+> [!NOTE]
+> Even if you set the `~FederationOrigin.handleHost` different from the
+> `~FederationOrigin.webOrigin`, the other fediverse handle with the same
+> domain name as the `~FederationOrigin.webOrigin` will still be recognized.
+>
+> In the above example, two fediverse handles are recognized as the same:
+>
+>  -  `@alice@example.com`
+>  -  `@alice@ap.example.com`
+
+
 Integrating with web frameworks
 -------------------------------
 
@@ -598,6 +692,11 @@ Virtual hosting
 ---------------
 
 *This API is available since Fedify 0.12.0.*
+
+> [!CAUTION]
+> You should not [explicitly configure a canonical
+> origin](#explicitly-setting-the-canonical-origin) when you want to support
+> multiple domains on the same server.
 
 You may want to support multiple domains on the same server, so-called
 *virtual hosts*.  To determine the virtual host of the server based on the
