@@ -555,7 +555,6 @@ For example, if you want to set the canonical origin to `https://example.com`,
 you can pass the string:
 
 ~~~~ typescript twoslash
-// @noErrors: 2353
 import { createFederation, type KvStore } from "@fedify/fedify";
 // ---cut-before---
 const federation = createFederation({
@@ -609,7 +608,6 @@ handles, and the `~FederationOrigin.webOrigin` is used to [construct the URLs
 in the `Context` object](./context.md#building-the-object-uris):
 
 ~~~~ typescript twoslash
-// @noErrors: 2353
 import { createFederation, type KvStore } from "@fedify/fedify";
 // ---cut-before---
 const federation = createFederation({
