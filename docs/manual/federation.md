@@ -587,8 +587,8 @@ unexpected URLs when a request bypasses a reverse proxy or a load balancer.
 > [!TIP]
 > If your federated server needs to support [multiple domains on the same
 > server](#virtual-hosting), you would not want to set the canonical origin
-> explicitly.  Instead, you should rely on the `Host` header or
-> `X-Forwarded-Host` header to determine the domain name.
+> explicitly.  Instead, you should rely on the [`Host`] header or
+> [`X-Forwarded-Host`] header to determine the domain name.
 
 
 Separating WebFinger host from the server origin
@@ -621,6 +621,31 @@ const federation = createFederation({
 });
 ~~~~
 
+That is not all.  You also need to make the */.well-known/webfinger* endpoint
+of the `~FederationOrigin.handleHost` to redirect to the
+*/.well-known/webfinger* endpoint of the `~FederationOrigin.webOrigin` unless
+you want to connect the `~FederationOrigin.handleHost` to the same server as
+the `~FederationOrigin.webOrigin`.  For example, if your
+`~FederationOrigin.handleHost` is served by [Caddy], you can use the following
+configuration to redirect the WebFinger requests:
+
+~~~~ caddy
+example.com {
+  redir /.well-known/webfinger https://ap.example.com/.well-known/webfinger
+}
+~~~~
+
+Or if you use [nginx], you can use the following configuration:
+
+~~~~ nginx
+server {
+  server_name example.com;
+  location /.well-known/webfinger {
+    return 301 https://ap.example.com$request_uri;
+  }
+}
+~~~~
+
 > [!NOTE]
 > Even if you set the `~FederationOrigin.handleHost` different from the
 > `~FederationOrigin.webOrigin`, the other fediverse handle with the same
@@ -630,6 +655,9 @@ const federation = createFederation({
 >
 >  -  `@alice@example.com`
 >  -  `@alice@ap.example.com`
+
+[Caddy]: https://caddyserver.com/
+[nginx]: https://nginx.org/
 
 
 Integrating with web frameworks
