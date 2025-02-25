@@ -8,6 +8,15 @@ Version 1.0.18
 
 To be released.
 
+ -  Added the following default context to `Application`, `Group`,
+    `Organization`, `Person`, and `Service` classes:
+
+    ~~~~ json
+    {
+      "Emoji": "http://joinmastodon.org/ns#Emoji"
+    }
+    ~~~~
+
 
 Version 1.0.17
 --------------

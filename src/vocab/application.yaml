@@ -16,6 +16,7 @@ defaultContext:
     "@type": "@id"
   manuallyApprovesFollowers: "as:manuallyApprovesFollowers"
   toot: "http://joinmastodon.org/ns#"
+  Emoji: "toot:Emoji"
   featured:
     "@id": "toot:featured"
     "@type": "@id"

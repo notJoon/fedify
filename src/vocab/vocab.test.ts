@@ -601,6 +601,7 @@ test("Person.toJsonLd()", async () => {
         suspended: "toot:suspended",
         toot: "http://joinmastodon.org/ns#",
         value: "schema:value",
+        Emoji: "toot:Emoji",
       },
     ],
     alsoKnownAs: "https://example.com/alias",
