@@ -8,6 +8,15 @@ Version 1.4.4
 
 To be released.
 
+ -  Added the following default context to `Application`, `Group`,
+    `Organization`, `Person`, and `Service` classes:
+
+    ~~~~ json
+    {
+      "Emoji": "http://joinmastodon.org/ns#Emoji"
+    }
+    ~~~~
+
 
 Version 1.4.3
 -------------
@@ -131,6 +140,21 @@ Released on February 5, 2025.
 
 [#3]: https://github.com/fedify-dev/fedify/issues/3
 [#195]: https://github.com/fedify-dev/fedify/issues/195
+
+
+Version 1.3.11
+--------------
+
+Released on February 25, 2025.
+
+ -  Added the following default context to `Application`, `Group`,
+    `Organization`, `Person`, and `Service` classes:
+
+    ~~~~ json
+    {
+      "Emoji": "http://joinmastodon.org/ns#Emoji"
+    }
+    ~~~~
 
 
 Version 1.3.10
@@ -371,6 +395,21 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.15
+--------------
+
+Released on February 25, 2025.
+
+ -  Added the following default context to `Application`, `Group`,
+    `Organization`, `Person`, and `Service` classes:
+
+    ~~~~ json
+    {
+      "Emoji": "http://joinmastodon.org/ns#Emoji"
+    }
+    ~~~~
 
 
 Version 1.2.14
@@ -657,6 +696,21 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.15
+--------------
+
+Released on February 25, 2025.
+
+ -  Added the following default context to `Application`, `Group`,
+    `Organization`, `Person`, and `Service` classes:
+
+    ~~~~ json
+    {
+      "Emoji": "http://joinmastodon.org/ns#Emoji"
+    }
+    ~~~~
 
 
 Version 1.1.14
@@ -984,6 +1038,21 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.18
+--------------
+
+Released on February 25, 2025.
+
+ -  Added the following default context to `Application`, `Group`,
+    `Organization`, `Person`, and `Service` classes:
+
+    ~~~~ json
+    {
+      "Emoji": "http://joinmastodon.org/ns#Emoji"
+    }
+    ~~~~
 
 
 Version 1.0.17
