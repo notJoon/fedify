@@ -19,6 +19,7 @@ defaultContext:
     "@id": "as:movedTo"
     "@type": "@id"
   toot: "http://joinmastodon.org/ns#"
+  Emoji: "toot:Emoji"
   featured:
     "@id": "toot:featured"
     "@type": "@id"
