@@ -95,14 +95,16 @@ financial contributors:[^2]
 ### Supporters
 
 - [Daniel Supernault](https://pixelfed.org/)
+- [tkgka](https://opencollective.com/tkgka)
+- [Blaine](https://opencollective.com/blaine)
 
 ### Backers
 
-yamanoku, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart
+yamanoku, Julian Fietkau, taye, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
 
 ### One-time donations
 
-Markus P, Rameez
+Markus P, Nils Bergmann, Rameez
 
 <!-- /DO NOT EDIT -->
 <!-- cSpell: enable -->
