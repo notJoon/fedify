@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.0.18
 --------------
 
-To be released.
+Released on February 25, 2025.
 
  -  Added the following default context to `Application`, `Group`,
     `Organization`, `Person`, and `Service` classes:
