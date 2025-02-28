@@ -20,7 +20,7 @@ Supporters
 Backers
 -------
 
-yamanoku, Julian Fietkau, taye, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
+okin, yamanoku, Julian Fietkau, taye, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
 
 One-time donations
 ------------------
