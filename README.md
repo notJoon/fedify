@@ -53,7 +53,7 @@ Changelog
 
 ### Version 0.1.2
 
-To be released.
+Released on February 28, 2025.
 
  -  Made the package compatible with Fedify 1.0.0 or later.
 
