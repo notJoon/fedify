@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.4.5
 -------------
 
-To be released.
+Released on February 28, 2025.
 
  -  Made `fedify init` to install *@fedify/h3* 0.1.2 which is compatible with
     Fedify 1.0.0 or later versions when `--web-framework nitro` option is
