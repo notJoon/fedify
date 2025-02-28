@@ -8,6 +8,17 @@ Version 1.1.16
 
 To be released.
 
+ -  Made `fedify init` to install *@fedify/h3* 0.1.2 which is compatible with
+    Fedify 1.0.0 or later versions when `--web-framework nitro` option is
+    provided.  [[#213]]
+
+ -  Fixed a bug where `fedify init` had failed to initialize a project with
+    the `--runtime node --package-manager pnpm --web-framework nitro` option.
+    [[#213]]
+
+ -  Made `fedify init` to install *@logtape/logtape* 0.6.5 which is the version
+    used in Fedify 1.1.x.
+
 
 Version 1.1.15
 --------------
@@ -349,6 +360,25 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.19
+--------------
+
+Released on February 28, 2025.
+
+ -  Made `fedify init` to install *@fedify/h3* 0.1.2 which is compatible with
+    Fedify 1.0.0 or later versions when `--web-framework nitro` option is
+    provided.  [[#213]]
+
+ -  Fixed a bug where `fedify init` had failed to initialize a project with
+    the `--runtime node --package-manager pnpm --web-framework nitro` option.
+    [[#213]]
+
+ -  Made `fedify init` to install *@logtape/logtape* 0.6.5 which is the version
+    used in Fedify 1.0.x.
+
+[#213]: https://github.com/fedify-dev/fedify/issues/213
 
 
 Version 1.0.18

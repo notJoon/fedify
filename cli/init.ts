@@ -384,16 +384,15 @@ Then, try look up an actor from your server:
       command: [
         ...(runtime === "bun"
           ? ["bunx"]
-          : pm === "npm"
+          : pm === "npm" || pm === "yarn"
           ? ["npx", "--yes"]
           : [pm, "dlx"]),
         "giget@latest",
         "nitro",
         ".",
-        "--install",
       ],
       dependencies: {
-        "@fedify/h3": "^0.1.0",
+        "@fedify/h3": "^0.1.2",
       },
       federationFile: "server/federation.ts",
       loggingFile: "server/logging.ts",
@@ -1007,7 +1006,7 @@ await configure({
     }
     const dependencies: Record<string, string> = {
       "@fedify/fedify": `^${await getLatestFedifyVersion(metadata.version)}`,
-      "@logtape/logtape": "^0.4.2",
+      "@logtape/logtape": "^0.6.5",
       ...initializer.dependencies,
       ...kvStoreDesc?.dependencies,
       ...mqDesc?.dependencies,
