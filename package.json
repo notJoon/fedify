@@ -18,6 +18,7 @@
     "url": "https://github.com/fedify-dev/h3/issues"
   },
   "funding": [
+    "https://opencollective.com/fedify",
     "https://github.com/sponsors/dahlia"
   ],
   "type": "module",
