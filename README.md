@@ -51,6 +51,10 @@ app.use(router);
 Changelog
 ---------
 
+### Version 0.1.3
+
+To be released.
+
 ### Version 0.1.2
 
 Released on February 28, 2025.
