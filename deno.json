@@ -6,7 +6,7 @@
     "./examples/hono-sample"
   ],
   "imports": {
-    "@logtape/logtape": "jsr:@logtape/logtape@^0.8.1",
+    "@logtape/logtape": "jsr:@logtape/logtape@^0.8.2",
     "@std/fs": "jsr:@std/fs@^1.0.3",
     "@std/path": "jsr:@std/path@^1.0.6",
     "@std/semver": "jsr:@std/semver@^1.0.3",
@@ -25,7 +25,9 @@
     "publish": "deno task -f @fedify/fedify publish && deno task -f @fedify/cli publish",
     "hooks:install": "deno run --allow-read=deno.json,.git/hooks/ --allow-write=.git/hooks/ jsr:@hongminhee/deno-task-hooks",
     "hooks:pre-commit": {
-      "dependencies": ["check"]
+      "dependencies": [
+        "check"
+      ]
     }
   }
 }
