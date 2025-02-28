@@ -55,6 +55,8 @@ Changelog
 
 To be released.
 
+ -  Made the package compatible with Fedify 1.0.0 or later.
+
 ### Version 0.1.1
 
 Released on August 6, 2024.
