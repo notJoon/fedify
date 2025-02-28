@@ -1006,7 +1006,7 @@ await configure({
     }
     const dependencies: Record<string, string> = {
       "@fedify/fedify": `^${await getLatestFedifyVersion(metadata.version)}`,
-      "@logtape/logtape": "^0.4.2",
+      "@logtape/logtape": "^0.6.5",
       ...initializer.dependencies,
       ...kvStoreDesc?.dependencies,
       ...mqDesc?.dependencies,

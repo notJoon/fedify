@@ -8,13 +8,16 @@ Version 1.0.19
 
 To be released.
 
- -  Made `fedify init` to use *@fedify/h3* 0.1.2 which is compatible with
+ -  Made `fedify init` to install *@fedify/h3* 0.1.2 which is compatible with
     Fedify 1.0.0 or later versions when `--web-framework nitro` option is
     provided.  [[#213]]
 
  -  Fixed a bug where `fedify init` had failed to initialize a project with
     the `--runtime node --package-manager pnpm --web-framework nitro` option.
     [[#213]]
+
+ -  Made `fedify init` to install *@logtape/logtape* 0.6.5 which is the version
+    used in Fedify 1.0.x.
 
 [#213]: https://github.com/fedify-dev/fedify/issues/213
 
