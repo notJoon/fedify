@@ -100,11 +100,11 @@ financial contributors:[^2]
 
 ### Backers
 
-yamanoku, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, Julian Fietkau, taye, malte
+yamanoku, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte, Julian Fietkau, taye
 
 ### One-time donations
 
-Markus P, Rameez, Nils Bergmann
+Markus P, Nils Bergmann, Rameez
 
 <!-- /DO NOT EDIT -->
 <!-- cSpell: enable -->
