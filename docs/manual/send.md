@@ -282,7 +282,24 @@ recommended to specify the `id` property explicitly.
 > [!TIP]
 > The activity's `id` does not have to be necessarily dereferenceable—it's
 > totally fine to use a URL with a fragment identifier, such as
-> `https://example.com/123#follow`.
+> `https://example.com/123#follow/751d477f-2167-4473-ace5-4404f4760c0d`.
+
+> [!CAUTION]
+> Sometimes you may tempted to derive the activity's `id` from the actor and
+> the object's `id` properties, but keep in mind that the same kind of
+> activities can be made by the same actor to the same object multiple times.
+>
+> For example, if Alice sends a `Follow` activity to Bob, Bob accepts it,
+> Alice sends an `Undo(Follow)` activity to Bob, and Alice sends a `Follow`
+> activity to Bob again, the `id` of the `Follow` activity should be different
+> from the previous one, even if the `actor` and the `object` are the same.
+>
+> If they have the same `id`, the recipient may mistakenly think that the
+> activity is a duplicate of the previous one and ignore it, which is not
+> what you want.
+>
+> To ensure the uniqueness of the activity's `id`, it is recommended to contain
+> a UUID or a similar unique identifier in the `id` property.
 
 The most of cases, an activity should have the `to` property, which corresponds
 to the recipient of the activity.  If it's a public activity, you can set
