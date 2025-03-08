@@ -11,7 +11,7 @@ import {
 } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
 import { toPascalCase } from "@std/text/to-pascal-case";
-import { decode } from "multibase";
+import { decode } from "../multibase/index.ts";
 import {
   loadSchemaFiles,
   type PropertySchema,

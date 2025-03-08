@@ -10,7 +10,7 @@ import { type Span, SpanStatusCode, type TracerProvider, trace }
 import { LanguageTag, parseLanguageTag }
     from \\"@phensley/language-tag\\";
 import { decode as decodeMultibase, encode as encodeMultibase }
-    from \\"multibase\\";import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
+    from \\"../multibase/index.ts\\";import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
     from \\"../runtime/docloader.ts\\";
 import {
     exportSpki,

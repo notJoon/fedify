@@ -3,7 +3,7 @@ import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { decodeBase64Url } from "@std/encoding/base64url";
 import { decodeHex } from "@std/encoding/hex";
 import { Integer, Sequence } from "asn1js";
-import { decode, encode } from "multibase";
+import { decode, encode } from "../multibase/index.ts";
 import { addPrefix, getCodeFromData, rmPrefix } from "multicodec";
 import { createPublicKey } from "node:crypto";
 import { PublicKeyInfo } from "pkijs";
