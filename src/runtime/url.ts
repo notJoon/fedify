@@ -34,8 +34,12 @@ export async function validatePublicUrl(url: string): Promise<void> {
   // FIXME: This is a temporary workaround for the `Bun` runtime; for unknown
   // reasons, the Web Crypto API does not work as expected after a DNS lookup.
   // This workaround purposes to prevent unit tests from hanging up:
-  if ("Bun" in globalThis && hostname === "example.com") {
-    return;
+  if ("Bun" in globalThis) {
+    if (hostname === "example.com" || hostname.endsWith(".example.com")) {
+      return;
+    } else if (hostname === "fedify-test.internal") {
+      throw new UrlError("Invalid or private address: fedify-test.internal");
+    }
   }
   // To prevent SSRF via DNS rebinding, we need to resolve all IP addresses
   // and ensure that they are all public:

@@ -1,5 +1,5 @@
 import { SpanStatusCode, trace, type TracerProvider } from "@opentelemetry/api";
-import { toASCII, toUnicode } from "node:punycode";
+import { domainToASCII, domainToUnicode } from "node:url";
 import metadata from "../deno.json" with { type: "json" };
 import type { GetUserAgentOptions } from "../runtime/docloader.ts";
 import { lookupWebFinger } from "../webfinger/lookup.ts";
@@ -259,7 +259,7 @@ export function normalizeActorHandle(
     throw new TypeError("Invalid actor handle.");
   }
   domain = domain.toLowerCase();
-  domain = options.punycode ? toASCII(domain) : toUnicode(domain);
+  domain = options.punycode ? domainToASCII(domain) : domainToUnicode(domain);
   domain = domain.toLowerCase();
   const user = handle.substring(0, atPos);
   return options.trimLeadingAt ? `${user}@${domain}` : `@${user}@${domain}`;
