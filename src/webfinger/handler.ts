@@ -1,5 +1,5 @@
 import { getLogger } from "@logtape/logtape";
-import { toASCII } from "node:punycode";
+import { domainToASCII } from "node:url";
 import type {
   ActorDispatcher,
   ActorHandleMapper,
@@ -74,7 +74,9 @@ export async function handleWebFinger<TContextData>(
   const uriParsed = context.parseUri(resourceUrl);
   if (uriParsed?.type != "actor") {
     const match = /^acct:([^@]+)@([^@]+)$/.exec(resource);
-    if (match == null || toASCII(match[2].toLowerCase()) != context.url.host) {
+    if (
+      match == null || domainToASCII(match[2].toLowerCase()) != context.url.host
+    ) {
       return await onNotFound(request);
     }
     const username = match[1];
