@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.3.13
 --------------
 
-To be released.
+Released on March 9, 2025.
 
  -  Fedify no more depends on `node:punycode` module, which is deprecated in
     Node.js.  Now it uses the built-in `node:url` module instead.
