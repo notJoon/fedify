@@ -1,5 +1,5 @@
 const textDecoder = new TextDecoder();
-export const decodeText = (bytes: ArrayBufferView | ArrayBuffer): string =>
+export const decodeText = (bytes: DataView | Uint8Array): string =>
   textDecoder.decode(bytes);
 
 const textEncoder = new TextEncoder();
