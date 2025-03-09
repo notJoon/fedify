@@ -8,6 +8,10 @@ Version 1.1.17
 
 To be released.
 
+ -  Fedify no more depends on `node:punycode` module, which is deprecated in
+    Node.js.  Now it uses the built-in `node:url` module instead.
+    [[#212], [#214] by Fróði Karlsson]
+
 
 Version 1.1.16
 --------------
@@ -366,6 +370,19 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.20
+--------------
+
+Released on March 9, 2025.
+
+ -  Fedify no more depends on `node:punycode` module, which is deprecated in
+    Node.js.  Now it uses the built-in `node:url` module instead.
+    [[#212], [#214] by Fróði Karlsson]
+
+[#212]: https://github.com/fedify-dev/fedify/issues/212
+[#214]: https://github.com/fedify-dev/fedify/pull/214
 
 
 Version 1.0.19
@@ -2521,4 +2538,4 @@ Version 0.1.0
 
 Initial release.  Released on March 8, 2024.
 
-<!-- cSpell: ignore Dogeon Fabien Wressell Emelia -->
+<!-- cSpell: ignore Dogeon Fabien Wressell Emelia Fróði Karlsson -->

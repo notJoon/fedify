@@ -1,4 +1,4 @@
-import { toASCII, toUnicode } from "node:punycode";
+import { domainToASCII, domainToUnicode } from "node:url";
 import { lookupWebFinger } from "../webfinger/lookup.ts";
 import { Application, Group, Organization, Person, Service } from "./vocab.ts";
 
@@ -190,7 +190,7 @@ export function normalizeActorHandle(
     throw new TypeError("Invalid actor handle.");
   }
   domain = domain.toLowerCase();
-  domain = options.punycode ? toASCII(domain) : toUnicode(domain);
+  domain = options.punycode ? domainToASCII(domain) : domainToUnicode(domain);
   domain = domain.toLowerCase();
   const user = handle.substring(0, atPos);
   return options.trimLeadingAt ? `${user}@${domain}` : `@${user}@${domain}`;
