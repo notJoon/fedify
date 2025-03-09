@@ -1,7 +1,7 @@
 import { getLogger } from "@logtape/logtape";
 import type { Span, Tracer } from "@opentelemetry/api";
 import { SpanKind, SpanStatusCode } from "@opentelemetry/api";
-import { toASCII } from "node:punycode";
+import { domainToASCII } from "node:url";
 import type {
   ActorAliasMapper,
   ActorDispatcher,
@@ -159,7 +159,7 @@ async function handleWebFingerInternal<TContextData>(
           result.username,
         );
       }
-    } else if (toASCII(match[2].toLowerCase()) != context.url.host) {
+    } else if (domainToASCII(match[2].toLowerCase()) != context.url.host) {
       return await onNotFound(request);
     } else {
       identifier = await mapUsernameToIdentifier(match[1]);
