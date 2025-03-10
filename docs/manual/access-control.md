@@ -33,7 +33,7 @@ callback with `ActorCallbackSetters.authorize()` or
 with `ObjectCallbackSetters.authorize()`.  The below example shows how to enable
 authorized fetch for the actor dispatcher:
 
-~~~~ typescript{8-10} twoslash
+~~~~ typescript{9-11} twoslash
 // @noErrors: 2307 2345
 import type { Actor, Federation } from "@fedify/fedify";
 /**
@@ -57,7 +57,8 @@ federation
   .setActorDispatcher("/users/{identifier}", async (ctx, identifier) => {
     // Omitted for brevity; see the related section for details.
   })
-  .authorize(async (ctx, identifier, signedKey, signedKeyOwner) => {
+  .authorize(async (ctx, identifier) => {
+    const signedKeyOwner = await ctx.getSignedKeyOwner();
     if (signedKeyOwner == null) return false;
     return !await isBlocked(identifier, signedKeyOwner);
   });
@@ -65,7 +66,7 @@ federation
 
 The equivalent method is available for collections as well:
 
-~~~~ typescript{8-10} twoslash
+~~~~ typescript{9-11} twoslash
 // @noErrors: 2307 2345
 import type { Actor, Federation } from "@fedify/fedify";
 /**
@@ -89,7 +90,8 @@ federation
   .setOutboxDispatcher("/users/{identifier}/outbox", async (ctx, identifier) => {
     // Omitted for brevity; see the related section for details.
   })
-  .authorize(async (ctx, identifier, signedKey, signedKeyOwner) => {
+  .authorize(async (ctx, identifier) => {
+    const signedKeyOwner  = await ctx.getSignedKeyOwner();
     if (signedKeyOwner == null) return false;
     return !await isBlocked(identifier, signedKeyOwner);
   });
@@ -105,14 +107,14 @@ Fine-grained access control
 You may not want to block everything from an unauthorized user, but only filter
 some resources.  For example, you may want to show some private posts to
 a specific group of users.  In such cases, you can use the
-`RequestContext.getSignedKeyOwner()` method to get the actor who signed
-the request and make a decision based on the actor.
+`RequestContext.getSignedKeyOwner()` method inside the dispatcher
+to get the actor who signed the request and make a decision based on the actor.
 
 The method returns the `Actor` object who signed the request (more precisely,
 the owner of the key that signed the request, if the key is associated with an
 actor).  The below pseudo code shows how to filter out private posts:
 
-~~~~ typescript{7,9} twoslash
+~~~~ typescript{7} twoslash
 // @noErrors: 2307
 import type { Actor, Create, Federation } from "@fedify/fedify";
 const federation = null as unknown as Federation<void>;
@@ -150,10 +152,78 @@ federation
     const keyOwner = await ctx.getSignedKeyOwner();  // Get the actor who signed the request
     if (keyOwner == null) return { items: [] };  // Return an empty array if the actor is not found
     const items = posts
-      .filter(post => post.isVisibleTo(keyOwner))
+      .filter(post => post.isVisibleTo(keyOwner))  // [!code highlight]
       .map(toCreate);  // Convert model objects to ActivityStreams objects
     return { items };
   });
 ~~~~
+
+
+Instance actor
+--------------
+
+When you enable authorized fetch, you need to fetch actors from other servers
+to retrieve their public keys.  However, fetching resources from other servers
+may cause an infinite loop if the other server also requires authorized fetch,
+which causes another request to your server for the public key, and so on.
+
+The most common way to prevent it is a pattern called [instance actor], which
+is an actor that represents the whole instance and exceptionally does not
+require authorized fetch.  You can use the instance actor to fetch resources
+from other servers without causing an infinite loop.
+
+Usually, many ActivityPub implementations name their instance actor as their
+domain name, such as `example.com@example.com`.  Here is an example of how to
+implement an instance actor:
+
+~~~~ typescript{3-11,20-27} twoslash
+import { type Actor, Application, type Federation, Person } from "@fedify/fedify";
+/**
+ * A hypothetical `Federation` instance.
+ */
+const federation = null as unknown as Federation<void>;
+/**
+ * A hypothetical function that checks if the user blocks the actor.
+ * @param userId The ID of the user to check if the actor is blocked.
+ * @param signedKeyOwner The actor who signed the request.
+ * @returns `true` if the actor is blocked; otherwise, `false`.
+ */
+async function isBlocked(userId: string, signedKeyOwner: Actor): Promise<boolean> {
+  return false;
+}
+// ---cut-before---
+federation
+  .setActorDispatcher("/actors/{identifier}", async (ctx, identifier) => {
+    if (identifier === ctx.hostname) {
+      // A special case for the instance actor:
+      return new Application({
+        id: ctx.getActorUri(identifier),
+        // Omitted for brevity; other properties of the instance actor...
+        // Note that you have to set the `publicKey` property of the instance
+        // actor.
+      });
+    }
+
+    // A normal case for a user actor:
+    return new Person({
+      id: ctx.getActorUri(identifier),
+      // Omitted for brevity; other properties of the user actor...
+    });
+  })
+  .authorize(async (ctx, identifier) => {
+    // Allow the instance actor to access any resources:
+    if (identifier === ctx.hostname) return true;
+    // Create an authenticated document loader behalf of the instance actor:
+    const documentLoader = await ctx.getDocumentLoader({
+      identifier: ctx.hostname,
+    });
+    // Get the actor who signed the request:
+    const signedKeyOwner = await ctx.getSignedKeyOwner({ documentLoader });
+    if (signedKeyOwner == null) return false;
+    return !await isBlocked(identifier, signedKeyOwner);
+  });
+~~~~
+
+[instance actor]: https://swicg.github.io/activitypub-http-signature/#instance-actor
 
 <!-- cSpell: ignore blocklist -->

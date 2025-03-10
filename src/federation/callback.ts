@@ -227,9 +227,13 @@ export type OutboxErrorHandler = (
  * @typeParam TContextData The context data to pass to the {@link Context}.
  * @param context The request context.
  * @param identifier The internal identifier of the actor that is being requested.
- * @param signedKey The key that was used to sign the request, or `null` if
+ * @param signedKey *Deprecated in Fedify 1.5.0 in favor of
+ *                  {@link RequestContext.getSignedKey} method.*
+ *                  The key that was used to sign the request, or `null` if
  *                  the request was not signed or the signature was invalid.
- * @param signedKeyOwner The actor that owns the key that was used to sign the
+ * @param signedKeyOwner *Deprecated in Fedify 1.5.0 in favor of
+ *                       {@link RequestContext.getSignedKeyOwner} method.*
+ *                       The actor that owns the key that was used to sign the
  *                       request, or `null` if the request was not signed or the
  *                       signature was invalid, or if the key is not associated
  *                       with an actor.
@@ -250,9 +254,13 @@ export type AuthorizePredicate<TContextData> = (
  * @typeParam TParam The parameter names of the requested URL.
  * @param context The request context.
  * @param values The parameters of the requested URL.
- * @param signedKey The key that was used to sign the request, or `null` if
+ * @param signedKey *Deprecated in Fedify 1.5.0 in favor of
+ *                  {@link RequestContext.getSignedKey} method.*
+ *                  The key that was used to sign the request, or `null` if
  *                  the request was not signed or the signature was invalid.
- * @param signedKeyOwner The actor that owns the key that was used to sign the
+ * @param signedKeyOwner *Deprecated in Fedify 1.5.0 in favor of
+ *                       {@link RequestContext.getSignedKeyOwner} method.*
+ *                       The actor that owns the key that was used to sign the
  *                       request, or `null` if the request was not signed or the
  *                       signature was invalid, or if the key is not associated
  *                       with an actor.

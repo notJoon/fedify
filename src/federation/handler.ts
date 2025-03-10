@@ -79,8 +79,26 @@ export async function handleActor<TContextData>(
   }
   if (!acceptsJsonLd(request)) return await onNotAcceptable(request);
   if (authorizePredicate != null) {
-    const key = await context.getSignedKey();
-    const keyOwner = await context.getSignedKeyOwner();
+    let key = await context.getSignedKey();
+    key = key?.clone({}, {
+      // @ts-expect-error: $warning is not part of the type definition
+      $warning: {
+        category: ["fedify", "federation", "actor"],
+        message: "The third parameter of AuthorizePredicate is deprecated " +
+          "in favor of RequestContext.getSignedKey() method.  The third " +
+          "parameter will be removed in a future release.",
+      },
+    }) ?? null;
+    let keyOwner = await context.getSignedKeyOwner();
+    keyOwner = keyOwner?.clone({}, {
+      // @ts-expect-error: $warning is not part of the type definition
+      $warning: {
+        category: ["fedify", "federation", "actor"],
+        message: "The fourth parameter of AuthorizePredicate is deprecated " +
+          "in favor of RequestContext.getSignedKeyOwner() method.  The " +
+          "fourth parameter will be removed in a future release.",
+      },
+    }) ?? null;
     if (!await authorizePredicate(context, identifier, key, keyOwner)) {
       return await onUnauthorized(request);
     }
@@ -121,8 +139,26 @@ export async function handleObject<TContextData>(
   if (object == null) return await onNotFound(request);
   if (!acceptsJsonLd(request)) return await onNotAcceptable(request);
   if (authorizePredicate != null) {
-    const key = await context.getSignedKey();
-    const keyOwner = await context.getSignedKeyOwner();
+    let key = await context.getSignedKey();
+    key = key?.clone({}, {
+      // @ts-expect-error: $warning is not part of the type definition
+      $warning: {
+        category: ["fedify", "federation", "object"],
+        message: "The third parameter of ObjectAuthorizePredicate is " +
+          "deprecated in favor of RequestContext.getSignedKey() method.  " +
+          "The third parameter will be removed in a future release.",
+      },
+    }) ?? null;
+    let keyOwner = await context.getSignedKeyOwner();
+    keyOwner = keyOwner?.clone({}, {
+      // @ts-expect-error: $warning is not part of the type definition
+      $warning: {
+        category: ["fedify", "federation", "object"],
+        message: "The fourth parameter of ObjectAuthorizePredicate is " +
+          "deprecated in favor of RequestContext.getSignedKeyOwner() method.  " +
+          "The fourth parameter will be removed in a future release.",
+      },
+    }) ?? null;
     if (!await authorizePredicate(context, values, key, keyOwner)) {
       return await onUnauthorized(request);
     }
@@ -353,8 +389,27 @@ export async function handleCollection<
   }
   if (!acceptsJsonLd(request)) return await onNotAcceptable(request);
   if (collectionCallbacks.authorizePredicate != null) {
-    const key = await context.getSignedKey();
-    const keyOwner = await context.getSignedKeyOwner();
+    let key = await context.getSignedKey();
+    key = key?.clone({}, {
+      // @ts-expect-error: $warning is not part of the type definition
+      $warning: {
+        category: ["fedify", "federation", "collection"],
+        message: "The third parameter of AuthorizePredicate is deprecated in " +
+          "favor of RequestContext.getSignedKey() method.  The third " +
+          "parameter will be removed in a future release.",
+      },
+    }) ?? null;
+    let keyOwner = await context.getSignedKeyOwner();
+    keyOwner = keyOwner?.clone({}, {
+      // @ts-expect-error: $warning is not part of the type definition
+      $warning: {
+        category: ["fedify", "federation", "collection"],
+        message:
+          "The fourth parameter of AuthorizePredicate is deprecated in " +
+          "favor of RequestContext.getSignedKeyOwner() method.  The fourth " +
+          "parameter will be removed in a future release.",
+      },
+    }) ?? null;
     if (
       !await collectionCallbacks.authorizePredicate(
         context,

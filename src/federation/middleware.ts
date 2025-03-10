@@ -78,6 +78,7 @@ import type {
   ActorKeyPair,
   Context,
   ForwardActivityOptions,
+  GetSignedKeyOptions,
   InboxContext,
   ParseUriResult,
   RequestContext,
@@ -3571,12 +3572,16 @@ class RequestContextImpl<TContextData> extends ContextImpl<TContextData>
 
   #signedKey: CryptographicKey | null | undefined = undefined;
 
-  async getSignedKey(): Promise<CryptographicKey | null> {
-    if (this.#signedKey !== undefined) return this.#signedKey;
+  async getSignedKey(
+    options: GetSignedKeyOptions = {},
+  ): Promise<CryptographicKey | null> {
+    if (this.#signedKey != null) return this.#signedKey;
     return this.#signedKey = await verifyRequest(this.request, {
       ...this,
+      contextLoader: options.contextLoader ?? this.contextLoader,
+      documentLoader: options.documentLoader ?? this.documentLoader,
       timeWindow: this.federation.signatureTimeWindow,
-      tracerProvider: this.tracerProvider,
+      tracerProvider: options.tracerProvider ?? this.tracerProvider,
     });
   }
 
@@ -3585,8 +3590,8 @@ class RequestContextImpl<TContextData> extends ContextImpl<TContextData>
   async getSignedKeyOwner(
     options: GetKeyOwnerOptions = {},
   ): Promise<Actor | null> {
-    if (this.#signedKeyOwner !== undefined) return this.#signedKeyOwner;
-    const key = await this.getSignedKey();
+    if (this.#signedKeyOwner != null) return this.#signedKeyOwner;
+    const key = await this.getSignedKey(options);
     if (key == null) return this.#signedKeyOwner = null;
     return this.#signedKeyOwner = await getKeyOwner(key, {
       contextLoader: options.contextLoader ?? this.contextLoader,

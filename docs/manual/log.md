@@ -179,6 +179,11 @@ The `["fedify", "federation", "inbox"]` category is used for logging messages
 related to incoming activities.  When you cannot receive an activity, you can
 check the log messages in this category with the `"debug"` level.
 
+### `["fedify", "federation", "object"]`
+
+The `["fedify", "federation", "object"]` category is used for logging messages
+related to object dispatchers.
+
 ### `["fedify", "federation", "outbox"]`
 
 The `["fedify", "federation", "outbox"]` category is used for logging messages

@@ -27,8 +27,27 @@ To be released.
  -  The `fetchKey()` function became to choose the public key of the actor
     if `keyId` has no fragment and the actor has only one public key.  [[#211]]
 
+ -  Added an optional parameter with `GetSignedKeyOptions` type to
+    the `RequestContext.getSignedKey()` method.
+
+ -  Added `GetSignedKeyOptions` interface.
+
  -  Added an optional parameter with `GetKeyOwnerOptions` type to
     the `RequestContext.getSignedKeyOwner()` method.
+
+ -  Deprecated the parameters of the `AuthorizePredicate` and
+    `ObjectAuthorizePredicate` types to get the signed key and its owner
+    in favor of the `RequestContext.getSignedKey()` and
+    `RequestContext.getSignedKeyOwner()` methods.
+
+     -  Deprecated the third parameter of the `AuthorizePredicate` type in favor
+        of the `RequestContext.getSignedKey()` method.
+     -  Deprecated the fourth parameter of the `AuthorizePredicate` type in
+        favor of the `RequestContext.getSignedKeyOwner()` method.
+     -  Deprecated the third parameter of the `ObjectAuthorizePredicate` type in
+        favor of the `RequestContext.getSignedKey()` method.
+     -  Deprecated the fourth parameter of the `ObjectAuthorizePredicate` type
+        in favor of the `RequestContext.getSignedKeyOwner()` method.
 
  -  Fixed a bug of the `fedify inbox` command where it had failed to render
     the web interface when the `fedify` command was installed using
@@ -42,6 +61,11 @@ To be released.
 
  -  Internalized the [multibase] package, which is obsolete and no longer
     maintained.  [[#127], [#215] by Fróði Karlsson]
+
+ -  Added more log messages using the [LogTape] library.  Currently the below
+    logger categories are used:
+
+     -  `["fedify", "federation", "object"]`
 
 [#127]: https://github.com/fedify-dev/fedify/issues/127
 [#209]: https://github.com/fedify-dev/fedify/issues/209

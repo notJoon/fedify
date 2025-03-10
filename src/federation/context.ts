@@ -444,6 +444,26 @@ export interface RequestContext<TContextData> extends Context<TContextData> {
   getSignedKey(): Promise<CryptographicKey | null>;
 
   /**
+   * Gets the public key of the sender, if any exists and it is verified.
+   * Otherwise, `null` is returned.
+   *
+   * This can be used for implementing [authorized fetch] (also known as
+   * secure mode) in ActivityPub.
+   *
+   * [authorized fetch]: https://swicg.github.io/activitypub-http-signature/#authorized-fetch
+   *
+   * @param options Options for getting the signed key. You usually may want to
+   *                specify the custom `documentLoader` so that making
+   *                an HTTP request to the sender's server is signed with
+   *                your [instance actor].
+   * @returns The public key of the sender, or `null` if the sender is not verified.
+   * @since 1.5.0
+   *
+   * [instance actor]: https://swicg.github.io/activitypub-http-signature/#instance-actor
+   */
+  getSignedKey(options: GetSignedKeyOptions): Promise<CryptographicKey | null>;
+
+  /**
    * Gets the owner of the signed key, if any exists and it is verified.
    * Otherwise, `null` is returned.
    *
@@ -688,6 +708,28 @@ export interface RouteActivityOptions {
    */
   immediate?: boolean;
 
+  /**
+   * The document loader for loading remote JSON-LD documents.
+   */
+  documentLoader?: DocumentLoader;
+
+  /**
+   * The context loader for loading remote JSON-LD contexts.
+   */
+  contextLoader?: DocumentLoader;
+
+  /**
+   * The OpenTelemetry tracer provider.  If omitted, the global tracer provider
+   * is used.
+   */
+  tracerProvider?: TracerProvider;
+}
+
+/**
+ * Options for {@link Context.getSignedKey} method.
+ * @since 1.5.0
+ */
+export interface GetSignedKeyOptions {
   /**
    * The document loader for loading remote JSON-LD documents.
    */
