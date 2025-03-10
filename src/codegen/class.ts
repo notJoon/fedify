@@ -112,7 +112,7 @@ export async function* generateClasses(
   yield `import { LanguageTag, parseLanguageTag }
     from "@phensley/language-tag";\n`;
   yield `import { decode as decodeMultibase, encode as encodeMultibase }
-    from "../runtime/multibase/index.ts";`;
+    from "${runtimePath}/multibase/index.ts";`;
   yield `import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
     from "${runtimePath}/docloader.ts";\n`;
   yield `import {
