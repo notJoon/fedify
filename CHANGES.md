@@ -27,6 +27,9 @@ To be released.
  -  The `fetchKey()` function became to choose the public key of the actor
     if `keyId` has no fragment and the actor has only one public key.  [[#211]]
 
+ -  Added an optional parameter with `GetKeyOwnerOptions` type to
+    the `RequestContext.getSignedKeyOwner()` method.
+
  -  Fixed a bug of the `fedify inbox` command where it had failed to render
     the web interface when the `fedify` command was installed using
     `deno install` command from JSR.

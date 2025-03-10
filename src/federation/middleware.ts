@@ -35,7 +35,7 @@ import {
 import { verifyRequest } from "../sig/http.ts";
 import { exportJwk, importJwk, validateCryptoKey } from "../sig/key.ts";
 import { hasSignature, signJsonLd } from "../sig/ld.ts";
-import { getKeyOwner } from "../sig/owner.ts";
+import { getKeyOwner, type GetKeyOwnerOptions } from "../sig/owner.ts";
 import { signObject, verifyObject } from "../sig/proof.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import {
@@ -3582,11 +3582,17 @@ class RequestContextImpl<TContextData> extends ContextImpl<TContextData>
 
   #signedKeyOwner: Actor | null | undefined = undefined;
 
-  async getSignedKeyOwner(): Promise<Actor | null> {
+  async getSignedKeyOwner(
+    options: GetKeyOwnerOptions = {},
+  ): Promise<Actor | null> {
     if (this.#signedKeyOwner !== undefined) return this.#signedKeyOwner;
     const key = await this.getSignedKey();
     if (key == null) return this.#signedKeyOwner = null;
-    return this.#signedKeyOwner = await getKeyOwner(key, this);
+    return this.#signedKeyOwner = await getKeyOwner(key, {
+      contextLoader: options.contextLoader ?? this.contextLoader,
+      documentLoader: options.documentLoader ?? this.documentLoader,
+      tracerProvider: options.tracerProvider ?? this.tracerProvider,
+    });
   }
 }
 

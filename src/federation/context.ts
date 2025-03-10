@@ -2,6 +2,7 @@ import type { TracerProvider } from "@opentelemetry/api";
 import type { GetNodeInfoOptions } from "../nodeinfo/client.ts";
 import type { JsonValue, NodeInfo } from "../nodeinfo/types.ts";
 import type { DocumentLoader } from "../runtime/docloader.ts";
+import type { GetKeyOwnerOptions } from "../sig/owner.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import type {
   LookupObjectOptions,
@@ -456,6 +457,29 @@ export interface RequestContext<TContextData> extends Context<TContextData> {
    * @since 0.7.0
    */
   getSignedKeyOwner(): Promise<Actor | null>;
+
+  /**
+   * Gets the owner of the signed key, if any exists and it is verified.
+   * Otherwise, `null` is returned.
+   *
+   * This can be used for implementing [authorized fetch] (also known as
+   * secure mode) in ActivityPub.
+   *
+   * [authorized fetch]: https://swicg.github.io/activitypub-http-signature/#authorized-fetch
+   *
+   * @param options Options for getting the key owner. You usually may want to
+   *                specify the custom `documentLoader` so that making
+   *                an HTTP request to the key owner's server is signed with
+   *                your [instance actor].
+   * @returns The owner of the signed key, or `null` if the key is not verified
+   *          or the owner is not found.
+   * @since 1.5.0
+   *
+   * [instance actor]: https://swicg.github.io/activitypub-http-signature/#instance-actor
+   */
+  getSignedKeyOwner(
+    options: GetKeyOwnerOptions,
+  ): Promise<Actor | null>;
 }
 
 /**
