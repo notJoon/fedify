@@ -1,11 +1,11 @@
 import { decode, encode } from "./index.ts";
 import * as constants from "./constants.ts";
 import { decodeText, encodeText } from "./util.ts";
-import { assertEquals, assertThrows } from "@std/assert";
-import { test } from "../testing/mod.ts";
+import { assertEquals } from "@std/assert";
+import { test } from "../../testing/mod.ts";
 import type { BaseName } from "./types.d.ts";
 
-test("multibase.encode and decode", () => {
+test("multibase.encode and decode", async (t) => {
   const testCases: Array<[BaseName, string, string]> = [
     ["base16", decodeText(Uint8Array.from([0x01])), "f01"],
     ["base16", decodeText(Uint8Array.from([15])), "f0f"],
@@ -76,25 +76,27 @@ test("multibase.encode and decode", () => {
   ];
 
   for (const [name, input, expectedOutput] of testCases) {
-    const encoded = encode(name, encodeText(input));
-    assertEquals(
-      decodeText(encoded),
-      expectedOutput,
-      `Encoding ${name} failed`,
-    );
+    await t.step(`Encoding/Decoding ${name} with ${input}`, () => {
+      const encoded = encode(name, encodeText(input));
+      assertEquals(
+        decodeText(encoded),
+        expectedOutput,
+        `Encoding ${name} failed`,
+      );
 
-    const decoded = decode(expectedOutput);
-    assertEquals(decoded, encodeText(input), `Decoding ${name} failed`);
+      const decoded = decode(expectedOutput);
+      assertEquals(decoded, encodeText(input), `Decoding ${name} failed`);
 
-    const decodedFromBuffer = decode(encodeText(expectedOutput));
-    assertEquals(
-      decodedFromBuffer,
-      encodeText(input),
-      `Decoding buffer of ${name} failed`,
-    );
+      const decodedFromBuffer = decode(encodeText(expectedOutput));
+      assertEquals(
+        decodedFromBuffer,
+        encodeText(input),
+        `Decoding buffer of ${name} failed`,
+      );
+    });
   }
 
-  test("should allow base32pad full alphabet", () => {
+  await t.step("should allow base32pad full alphabet", () => {
     const encodedStr = "ctimaq4ygg2iegci7";
     const decoded = decode(encodedStr);
     const encoded = encode("c", decoded);
@@ -102,26 +104,13 @@ test("multibase.encode and decode", () => {
   });
 });
 
-test("multibase.encode fails on unsupported bases", () => {
-  const unsupportedBases: Array<[BaseName, string, string]> = []; // Add your unsupported bases here if any
-
-  for (const [name, input] of unsupportedBases) {
-    assertThrows(
-      () => {
-        encode(name, encodeText(input));
-      },
-      `Encoding unsupported base ${name} should throw`,
-    );
-  }
-});
-
-test("constants", () => {
-  test("constants indexed by name", () => {
+test("constants", async (t) => {
+  await t.step("constants indexed by name", () => {
     const names = constants.names;
     assertEquals(Object.keys(names).length, 23);
   });
 
-  test("constants indexed by code", () => {
+  await t.step("constants indexed by code", () => {
     const codes = constants.codes;
     assertEquals(Object.keys(codes).length, 23);
   });
