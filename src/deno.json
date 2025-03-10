@@ -40,7 +40,6 @@
     "json-canon": "npm:json-canon@^1.0.1",
     "jsonld": "npm:jsonld@^8.3.2",
     "mock_fetch": "jsr:@hongminhee/deno-mock-fetch@^0.3.2",
-    "multibase": "npm:multibase@^4.0.6",
     "multicodec": "npm:multicodec@^3.2.1",
     "pkijs": "npm:pkijs@^3.2.4",
     "uri-template-router": "npm:uri-template-router@^0.0.16",

@@ -37,8 +37,14 @@ To be released.
         the page.
      -  You can easily copy the fediverse handle of the ephemeral actor.
 
+ -  Internalized the [multibase] package, which is obsolete and no longer
+    maintained.  [[#127], [#215] by Fróði Karlsson]
+
+[#127]: https://github.com/fedify-dev/fedify/issues/127
 [#209]: https://github.com/fedify-dev/fedify/issues/209
 [#211]: https://github.com/fedify-dev/fedify/issues/211
+[#215]: https://github.com/fedify-dev/fedify/pull/215
+[multibase]: https://github.com/multiformats/js-multibase
 
 
 Version 1.4.6

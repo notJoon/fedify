@@ -7,6 +7,7 @@
   ],
   "imports": {
     "@logtape/logtape": "jsr:@logtape/logtape@^0.8.2",
+    "@multiformats/base-x": "npm:@multiformats/base-x@^4.0.1",
     "@std/fs": "jsr:@std/fs@^1.0.3",
     "@std/path": "jsr:@std/path@^1.0.6",
     "@std/semver": "jsr:@std/semver@^1.0.3",

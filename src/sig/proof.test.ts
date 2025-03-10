@@ -1,6 +1,6 @@
 import { assertEquals, assertInstanceOf, assertRejects } from "@std/assert";
 import { decodeHex, encodeHex } from "@std/encoding/hex";
-import { decode } from "multibase";
+import { decode } from "../runtime/multibase/index.ts";
 import { importMultibaseKey } from "../runtime/key.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import {
