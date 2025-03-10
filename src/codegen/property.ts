@@ -34,6 +34,12 @@ async function* generateProperty(
       yield `${override} get ${property.singularName}(): (${
         getTypeNames(property.range, types)
       } | null) {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
         if (this.${await getFieldName(property.uri)}.length < 1) return null;
         return this.${await getFieldName(property.uri)}[0];
       }
@@ -163,6 +169,12 @@ async function* generateProperty(
        * but returns its \`@id\` URL instead of the object itself.
        */
       ${override} get ${property.singularName}Id(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
         if (this.${await getFieldName(property.uri)}.length < 1) return null;
         const v = this.${await getFieldName(property.uri)}[0];
         if (v instanceof URL) return v;
@@ -179,6 +191,12 @@ async function* generateProperty(
           tracerProvider?: TracerProvider,
         } = {}
       ): Promise<${getTypeNames(property.range, types)} | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
         if (this.${await getFieldName(property.uri)}.length < 1) return null;
         const v = this.${await getFieldName(property.uri)}[0];
         if (v instanceof URL) {
@@ -220,6 +238,12 @@ async function* generateProperty(
        * but returns their \`@id\`s instead of the objects themselves.
        */
       ${override} get ${property.singularName}Ids(): URL[] {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
         return this.${await getFieldName(property.uri)}.map((v) =>
           v instanceof URL ? v : v.id!
         ).filter(id => id !== null);
@@ -235,6 +259,12 @@ async function* generateProperty(
           tracerProvider?: TracerProvider,
         } = {}
       ): AsyncIterable<${getTypeNames(property.range, types)}> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
         const vs = this.${await getFieldName(property.uri)};
         for (let i = 0; i < vs.length; i++) {
           const v = vs[i];

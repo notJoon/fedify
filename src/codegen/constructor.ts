@@ -84,11 +84,7 @@ export async function* generateConstructor(
   `;
   for await (const code of generateParametersType(typeUri, types)) yield code;
   yield `,
-    {
-      documentLoader,
-      contextLoader,
-      tracerProvider,
-    }: {
+    options: {
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
@@ -97,9 +93,16 @@ export async function* generateConstructor(
   `;
   if (type.extends == null) {
     yield `
-    this.#documentLoader = documentLoader;
-    this.#contextLoader = contextLoader;
-    this.#tracerProvider = tracerProvider;
+    this.#documentLoader = options.documentLoader;
+    this.#contextLoader = options.contextLoader;
+    this.#tracerProvider = options.tracerProvider;
+    if ("$warning" in options) {
+      this.#warning = options.$warning as unknown as {
+        category: string[];
+        message: string;
+        values?: Record<string, unknown>;
+      };
+    }
     if (values.id == null || values.id instanceof URL) {
       this.id = values.id ?? null;
     } else {
@@ -107,7 +110,7 @@ export async function* generateConstructor(
     }
     `;
   } else {
-    yield "super(values, { documentLoader, contextLoader, tracerProvider });";
+    yield "super(values, options);";
   }
   for (const property of type.properties) {
     const fieldName = await getFieldName(property.uri);
@@ -203,6 +206,14 @@ export async function* generateCloner(
       contextLoader?: DocumentLoader,
     } = {}
   ): ${type.name} {
+    if (this._warning != null) {
+      getLogger(this._warning.category).warn(
+        this._warning.message,
+        this._warning.values
+      );
+      // @ts-ignore: $warning is not recognized as a property, but it is.
+      options = { ...options, $warning: this._warning };
+    }
   `;
   if (type.extends == null) {
     yield `

@@ -51,6 +51,11 @@ async function* generateClass(
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
+    readonly #warning?: {
+      category: string[];
+      message: string;
+      values?: Record<string, unknown>;
+    };
     #cachedJsonLd?: unknown;
     readonly id: URL | null;
 
@@ -64,6 +69,14 @@ async function* generateClass(
 
     protected get _tracerProvider(): TracerProvider | undefined {
         return this.#tracerProvider;
+    }
+
+    protected get _warning(): {
+        category: string[];
+        message: string;
+        values?: Record<string, unknown>;
+      } | undefined {
+      return this.#warning;
     }
 
     protected get _cachedJsonLd(): unknown | undefined {
