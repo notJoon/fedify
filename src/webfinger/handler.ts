@@ -171,12 +171,17 @@ async function handleWebFingerInternal<TContextData>(
         );
       }
     } else {
-      const resourceHost = domainToASCII(match[2].toLowerCase());
-      if (resourceHost != context.url.host && resourceHost != host) {
+      const portMatch = /:\d+$/.exec(match[2]);
+      const normalizedHost = portMatch == null
+        ? domainToASCII(match[2].toLowerCase())
+        : domainToASCII(match[2].substring(0, portMatch.index).toLowerCase()) +
+          portMatch[0];
+      if (normalizedHost != context.url.host && normalizedHost != host) {
         return await onNotFound(request);
+      } else {
+        identifier = await mapUsernameToIdentifier(match[1]);
+        resourceUrl = new URL(`acct:${match[1]}@${normalizedHost}`);
       }
-      identifier = await mapUsernameToIdentifier(match[1]);
-      resourceUrl = new URL(`acct:${match[1]}@${resourceHost}`);
     }
   } else {
     identifier = uriParsed.identifier;

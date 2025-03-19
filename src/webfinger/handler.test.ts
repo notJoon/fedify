@@ -19,7 +19,7 @@ test("handleWebFinger()", async (t) => {
       url,
       data: undefined,
       getActorUri(identifier) {
-        return new URL(`https://example.com/users/${identifier}`);
+        return new URL(`${url.origin}/users/${identifier}`);
       },
       async getActor(handle): Promise<Actor | null> {
         return await actorDispatcher(
@@ -47,8 +47,9 @@ test("handleWebFinger()", async (t) => {
 
   const actorDispatcher: ActorDispatcher<void> = (ctx, identifier) => {
     if (identifier !== "someone" && identifier !== "someone2") return null;
+    const actorUri = ctx.getActorUri(identifier);
     return new Person({
-      id: ctx.getActorUri(identifier),
+      id: actorUri,
       name: identifier === "someone" ? "Someone" : "Someone 2",
       preferredUsername: identifier === "someone"
         ? null
@@ -56,13 +57,13 @@ test("handleWebFinger()", async (t) => {
         ? "bar"
         : null,
       icon: new Image({
-        url: new URL("https://example.com/icon.jpg"),
+        url: new URL(`${actorUri.origin}/icon.jpg`),
         mediaType: "image/jpeg",
       }),
       urls: [
-        new URL("https://example.com/@" + identifier),
+        new URL(`${actorUri.origin}/@${identifier}`),
         new Link({
-          href: new URL("https://example.org/@" + identifier),
+          href: new URL(`${actorUri.origin}/@${identifier}`),
           rel: "alternate",
           mediaType: "text/html",
         }),
@@ -131,7 +132,7 @@ test("handleWebFinger()", async (t) => {
         rel: "http://webfinger.net/rel/profile-page",
       },
       {
-        href: "https://example.org/@someone",
+        href: "https://example.com/@someone",
         rel: "alternate",
         type: "text/html",
       },
@@ -175,7 +176,7 @@ test("handleWebFinger()", async (t) => {
         rel: "http://webfinger.net/rel/profile-page",
       },
       {
-        href: "https://example.org/@someone2",
+        href: "https://example.com/@someone2",
         rel: "alternate",
         type: "text/html",
       },
@@ -448,5 +449,89 @@ test("handleWebFinger()", async (t) => {
       ],
       subject: "https://example.com/users/someone2",
     });
+  });
+
+  const expectedForLocalhostWithPort = {
+    subject: "acct:someone@localhost:8000",
+    aliases: ["https://localhost:8000/users/someone"],
+    links: [
+      {
+        href: "https://localhost:8000/users/someone",
+        rel: "self",
+        type: "application/activity+json",
+      },
+      {
+        href: "https://localhost:8000/@someone",
+        rel: "http://webfinger.net/rel/profile-page",
+      },
+      {
+        href: "https://localhost:8000/@someone",
+        rel: "alternate",
+        type: "text/html",
+      },
+      {
+        href: "https://localhost:8000/icon.jpg",
+        rel: "http://webfinger.net/rel/avatar",
+        type: "image/jpeg",
+      },
+    ],
+  };
+
+  await t.step("on localhost with port, ok: resource=acct:...", async () => {
+    const u = new URL("https://localhost:8000/.well-known/webfinger");
+    u.searchParams.set("resource", "acct:someone@localhost:8000");
+    const context = createContext(u);
+    const request = context.request;
+    const response = await handleWebFinger(request, {
+      context,
+      actorDispatcher,
+      onNotFound,
+    });
+    assertEquals(response.status, 200);
+    assertEquals(response.headers.get("Content-Type"), "application/jrd+json");
+    assertEquals(response.headers.get("Access-Control-Allow-Origin"), "*");
+    assertEquals(await response.json(), expectedForLocalhostWithPort);
+  });
+
+  const expectedForHostnameWithPort = {
+    subject: "acct:someone@example.com:8000",
+    aliases: ["http://example.com:8000/users/someone"],
+    links: [
+      {
+        href: "http://example.com:8000/users/someone",
+        rel: "self",
+        type: "application/activity+json",
+      },
+      {
+        href: "http://example.com:8000/@someone",
+        rel: "http://webfinger.net/rel/profile-page",
+      },
+      {
+        href: "http://example.com:8000/@someone",
+        rel: "alternate",
+        type: "text/html",
+      },
+      {
+        href: "http://example.com:8000/icon.jpg",
+        rel: "http://webfinger.net/rel/avatar",
+        type: "image/jpeg",
+      },
+    ],
+  };
+
+  await t.step("on hostname with port, ok: resource=acct:...", async () => {
+    const u = new URL("http://example.com:8000/.well-known/webfinger");
+    u.searchParams.set("resource", "acct:someone@example.com:8000");
+    const context = createContext(u);
+    const request = context.request;
+    const response = await handleWebFinger(request, {
+      context,
+      actorDispatcher,
+      onNotFound,
+    });
+    assertEquals(response.status, 200);
+    assertEquals(response.headers.get("Content-Type"), "application/jrd+json");
+    assertEquals(response.headers.get("Access-Control-Allow-Origin"), "*");
+    assertEquals(await response.json(), expectedForHostnameWithPort);
   });
 });
