@@ -8,6 +8,10 @@ Version 1.0.21
 
 To be released.
 
+ -  Fixed a bug of WebFinger handler where it had failed to match
+    `acct:` URIs with a host having a port number.
+    [[#218], [#219] by Revath S Kumar]
+
 
 Version 1.0.20
 --------------
@@ -2176,3 +2180,4 @@ Version 0.1.0
 Initial release.  Released on March 8, 2024.
 
 <!-- cSpell: ignore Dogeon Fabien Wressell Emelia Fróði Karlsson -->
+<!-- cSpell: ignore Revath Kumar -->

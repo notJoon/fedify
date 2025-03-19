@@ -74,9 +74,13 @@ export async function handleWebFinger<TContextData>(
   const uriParsed = context.parseUri(resourceUrl);
   if (uriParsed?.type != "actor") {
     const match = /^acct:([^@]+)@([^@]+)$/.exec(resource);
-    if (
-      match == null || domainToASCII(match[2].toLowerCase()) != context.url.host
-    ) {
+    if (match == null) return await onNotFound(request);
+    const portMatch = /:\d+$/.exec(match[2]);
+    const normalizedHost = portMatch == null
+      ? domainToASCII(match[2].toLowerCase())
+      : domainToASCII(match[2].substring(0, portMatch.index).toLowerCase()) +
+        portMatch[0];
+    if (normalizedHost != context.url.host) {
       return await onNotFound(request);
     }
     const username = match[1];
