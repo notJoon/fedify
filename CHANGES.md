@@ -12,6 +12,11 @@ To be released.
     `acct:` URIs with a host having a port number.
     [[#218], [#219] by Revath S Kumar]
 
+ -  Fixed a server error thrown when an invalid URL was passed to the `base-url`
+    parameter of the followers collection.  [[#217]]
+
+[#217]: https://github.com/fedify-dev/fedify/issues/217
+
 
 Version 1.0.20
 --------------
