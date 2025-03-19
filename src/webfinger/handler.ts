@@ -159,11 +159,18 @@ async function handleWebFingerInternal<TContextData>(
           result.username,
         );
       }
-    } else if (domainToASCII(match[2].toLowerCase()) != context.url.host) {
-      return await onNotFound(request);
     } else {
-      identifier = await mapUsernameToIdentifier(match[1]);
-      resourceUrl = new URL(`acct:${match[1]}@${context.url.host}`);
+      const portMatch = /:\d+$/.exec(match[2]);
+      const normalizedHost = portMatch == null
+        ? domainToASCII(match[2].toLowerCase())
+        : domainToASCII(match[2].substring(0, portMatch.index).toLowerCase()) +
+          portMatch[0];
+      if (normalizedHost != context.url.host) {
+        return await onNotFound(request);
+      } else {
+        identifier = await mapUsernameToIdentifier(match[1]);
+        resourceUrl = new URL(`acct:${match[1]}@${context.url.host}`);
+      }
     }
   } else {
     identifier = uriParsed.identifier;
