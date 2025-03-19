@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.1.18
 --------------
 
-To be released.
+Released on March 20, 2025.
 
  -  Fixed a bug of WebFinger handler where it had failed to match
     `acct:` URIs with a host having a port number.
