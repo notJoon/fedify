@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.0.21
 --------------
 
-To be released.
+Released on March 20, 2025.
 
  -  Fixed a bug of WebFinger handler where it had failed to match
     `acct:` URIs with a host having a port number.
@@ -16,6 +16,8 @@ To be released.
     parameter of the followers collection.  [[#217]]
 
 [#217]: https://github.com/fedify-dev/fedify/issues/217
+[#218]: https://github.com/fedify-dev/fedify/issues/218
+[#219]: https://github.com/fedify-dev/fedify/pull/219
 
 
 Version 1.0.20

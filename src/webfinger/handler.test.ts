@@ -3,7 +3,7 @@ import type {
   ActorDispatcher,
   ActorHandleMapper,
 } from "../federation/callback.ts";
-import { RequestContext } from "../federation/context.ts";
+import type { RequestContext } from "../federation/context.ts";
 import { createRequestContext } from "../testing/context.ts";
 import { test } from "../testing/mod.ts";
 import type { Actor } from "../vocab/actor.ts";
