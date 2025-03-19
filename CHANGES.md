@@ -8,6 +8,13 @@ Version 1.1.18
 
 To be released.
 
+ -  Fixed a bug of WebFinger handler where it had failed to match
+    `acct:` URIs with a host having a port number.
+    [[#218], [#219] by Revath S Kumar]
+
+ -  Fixed a server error thrown when an invalid URL was passed to the `base-url`
+    parameter of the followers collection.  [[#217]]
+
 
 Version 1.1.17
 --------------
@@ -376,6 +383,23 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.21
+--------------
+
+Released on March 20, 2025.
+
+ -  Fixed a bug of WebFinger handler where it had failed to match
+    `acct:` URIs with a host having a port number.
+    [[#218], [#219] by Revath S Kumar]
+
+ -  Fixed a server error thrown when an invalid URL was passed to the `base-url`
+    parameter of the followers collection.  [[#217]]
+
+[#217]: https://github.com/fedify-dev/fedify/issues/217
+[#218]: https://github.com/fedify-dev/fedify/issues/218
+[#219]: https://github.com/fedify-dev/fedify/pull/219
 
 
 Version 1.0.20
@@ -2545,3 +2569,4 @@ Version 0.1.0
 Initial release.  Released on March 8, 2024.
 
 <!-- cSpell: ignore Dogeon Fabien Wressell Emelia Fróði Karlsson -->
+<!-- cSpell: ignore Revath Kumar -->

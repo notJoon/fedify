@@ -1917,8 +1917,12 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
       case "followers": {
         let baseUrl = url.searchParams.get("base-url");
         if (baseUrl != null) {
-          const u = new URL(baseUrl);
-          baseUrl = `${u.origin}/`;
+          try {
+            baseUrl = `${new URL(baseUrl).origin}/`;
+          } catch {
+            // If base-url is invalid, set to null to behave as if it wasn't provided
+            baseUrl = null;
+          }
         }
         return await handleCollection(request, {
           name: "followers",
