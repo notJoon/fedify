@@ -30,10 +30,11 @@ export interface FederationStartQueueOptions {
 
   /**
    * Starts the task worker only for the specified queue.  If unspecified,
-   * which is the default, the task worker starts for both the inbox and outbox.
+   * which is the default, the task worker starts for all three queues:
+   * inbox, outbox, and fanout.
    * @since 1.3.0
    */
-  queue?: "inbox" | "outbox";
+  queue?: "inbox" | "outbox" | "fanout";
 }
 
 /**

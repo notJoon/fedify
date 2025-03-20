@@ -126,6 +126,8 @@ spans:
 | `activitypub.dispatch_collection_page {collection}` | Server      | Dispatches the ActivityPub collection page.   |
 | `activitypub.dispatch_inbox_listener {type}`        | Internal    | Dispatches the ActivityPub inbox listener.    |
 | `activitypub.dispatch_object`                       | Server      | Dispatches the Activity Streams object.       |
+| `activitypub.fanout`                                | Consumer    | Dequeues the ActivityPub activity to fan out. |
+| `activitypub.fanout`                                | Producer    | Enqueues the ActivityPub activity to fan out. |
 | `activitypub.fetch_key`                             | Client      | Fetches the public keys for the actor.        |
 | `activitypub.get_actor_handle`                      | Client      | Resolves the actor handle.                    |
 | `activitypub.inbox`                                 | Consumer    | Dequeues the ActivityPub activity to receive. |

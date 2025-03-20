@@ -8,6 +8,21 @@ Version 1.5.0
 
 To be released.
 
+-  Improved activity delivery performance with large audiences through
+   a two-stage queuing system.  Sending activities to many recipients
+   (e.g., accounts with many followers) is now significantly faster and uses
+   less memory. [[#220]]
+
+     -  Added `FederationQueueOptions.fanout` option.
+     -  Changed the type of `FederationStartQueueOptions.queue` option to
+        `"inbox" | "outbox" | "fanout" | undefined` (was `"inbox" | "outbox" |
+        undefined`).
+     -  Added `SendActivityOptions.fanout` option.
+     -  Added OpenTelemetry instrumented span `activitypub.fanout`.
+     -  The `ForwardActivityOptions` interface became a type alias of
+        `Omit<SendActivityOptions, "fanout"> & { skipIfUnsigned: boolean }`,
+        which is still compatible with the previous version.
+
  -  A `Federation` object now can have a canonical origin for web URLs and
     a canonical host for fediverse handles.  This affects the URLs constructed
     by `Context` objects, and the WebFinger responses.
@@ -65,12 +80,14 @@ To be released.
  -  Added more log messages using the [LogTape] library.  Currently the below
     logger categories are used:
 
+     -  `["fedify", "federation", "fanout"]`
      -  `["fedify", "federation", "object"]`
 
 [#127]: https://github.com/fedify-dev/fedify/issues/127
 [#209]: https://github.com/fedify-dev/fedify/issues/209
 [#211]: https://github.com/fedify-dev/fedify/issues/211
 [#215]: https://github.com/fedify-dev/fedify/pull/215
+[#220]: https://github.com/fedify-dev/fedify/issues/220
 [multibase]: https://github.com/multiformats/js-multibase
 
 

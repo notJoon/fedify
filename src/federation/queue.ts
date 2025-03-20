@@ -3,7 +3,20 @@ export interface SenderKeyJwkPair {
   privateKey: JsonWebKey;
 }
 
-export type Message = OutboxMessage | InboxMessage;
+export type Message = FanoutMessage | OutboxMessage | InboxMessage;
+
+export interface FanoutMessage {
+  type: "fanout";
+  id: ReturnType<typeof crypto.randomUUID>;
+  baseUrl: string;
+  keys: SenderKeyJwkPair[];
+  inboxes: Record<string, { actorIds: string[]; sharedInbox: boolean }>;
+  activity: unknown;
+  activityId?: string;
+  activityType: string;
+  collectionSync?: string;
+  traceContext: Record<string, string>;
+}
 
 export interface OutboxMessage {
   type: "outbox";

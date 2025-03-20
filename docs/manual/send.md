@@ -397,6 +397,114 @@ an error and does not retry the delivery.
 [`@fedify/redis`]: https://github.com/fedify-dev/redis
 
 
+Optimizing activity delivery for large audiences
+------------------------------------------------
+
+*This API is available since Fedify 1.5.0.*
+
+When sending activities to many recipients (such as when a user with thousands
+of followers creates a post), the delivery process can become
+performance-intensive.  Fedify optimizes this scenario by using a fan-out
+mechanism that improves response times and resource utilization.
+
+### How fan-out works
+
+By default, when the number of recipients exceeds a threshold, Fedify uses
+a two-stage delivery process:
+
+ 1. First, it creates a single consolidated message containing the activity
+    payload and all recipient inboxes
+ 2. Then, a background worker processes this message and re-enqueues individual
+    delivery tasks
+
+This approach has several benefits:
+
+- The `Context.sendActivity()` method returns more quickly
+- Memory consumption is reduced by avoiding payload duplication
+- The user interface remains responsive during large-scale deliveries
+- Each delivery still maintains independent retry logic
+
+### Customizing fan-out behavior
+
+You can control this behavior using the `fanout` option in
+the `~Context.sendActivity()` method:
+
+~~~~ typescript twoslash
+import type { Activity, Context, Recipient } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = {} as Activity;
+const recipients: Recipient[] = [];
+// ---cut-before---
+await ctx.sendActivity(
+  { identifier: "alice" },  // sender
+  recipients,               // recipients
+  activity,                 // activity to send
+  { fanout: "auto" }        // fan-out strategy  // [!code highlight]
+);
+~~~~
+
+The `fanout` option accepts the following values:
+
+`"auto"` (default)
+:   Automatically chooses the optimal strategy based on recipient count
+
+`"skip"`
+:   Always enqueues individual messages, bypassing the fan-out queue
+    (use when payload needs to vary per recipient)
+
+`"force"`
+:   Always uses the fan-out queue regardless of recipient count
+
+> [!NOTE]
+> The `fanout` option is ignored when `immediate: true` is specified,
+> as immediate delivery bypasses all queuing mechanisms.
+
+### When to use each option
+
+Use the default `"auto"` for most cases:
+
+~~~~ typescript twoslash
+import type { Activity, Context, Recipient } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = {} as Activity;
+const recipients: Recipient[] = [];
+// ---cut-before---
+await ctx.sendActivity({ identifier: "alice" }, recipients, activity);
+~~~~
+
+Use `"skip"` when you need different content for each recipient:
+
+~~~~ typescript twoslash
+import type { Activity, Context, Recipient } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = {} as Activity;
+const recipients: Recipient[] = [];
+// ---cut-before---
+await ctx.sendActivity(
+  { identifier: "alice" },
+  recipients, 
+  activity,
+  { fanout: "skip" }  // [!code highlight]
+);
+~~~~
+
+Use `"force"` to ensure fan-out behavior even with few recipients (rarely needed):
+
+~~~~ typescript twoslash
+import type { Activity, Context, Recipient } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+const activity = {} as Activity;
+const recipients: Recipient[] = [];
+// ---cut-before---
+await ctx.sendActivity(
+  { identifier: "alice" },
+  recipients, 
+  activity,
+  { fanout: "force" }  // [!code highlight]
+);
+~~~~
+
+
 Immediately sending an activity
 -------------------------------
 

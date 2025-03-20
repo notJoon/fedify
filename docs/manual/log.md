@@ -164,6 +164,13 @@ related to actor dispatcher.
 The `["fedify", "federation", "collection"]` category is used for logging
 messages related to collections (e.g., outbox, followers, following).
 
+### `["fedify", "federation", "fanout"]`
+
+*This category is available since Fedify 1.5.0.*
+
+The `["fedify", "federation", "fanout"]` category is used for logging
+messages related to fanning out outgoing activities.
+
 ### `["fedify", "federation", "http"]`
 
 *This category is available since Fedify 0.9.0.*

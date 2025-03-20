@@ -52,6 +52,8 @@ import {
   FederationImpl,
   InboxContextImpl,
 } from "./middleware.ts";
+import type { MessageQueue } from "./mq.ts";
+import type { Message } from "./queue.ts";
 import { RouterError } from "./router.ts";
 
 test("createFederation()", async (t) => {
@@ -1306,15 +1308,18 @@ test("FederationImpl.sendActivity()", async (t) => {
 
   await t.step("success", async () => {
     const activity = new Create({
+      id: new URL("https://example.com/activity/1"),
       actor: new URL("https://example.com/person"),
     });
-    const recipient = {
-      id: new URL("https://example.com/recipient"),
-      inboxId: new URL("https://example.com/inbox"),
+    const inboxes = {
+      "https://example.com/inbox": {
+        actorIds: ["https://example.com/recipient"],
+        sharedInbox: false,
+      },
     };
     await federation.sendActivity(
       [{ privateKey: rsaPrivateKey2, keyId: rsaPublicKey2.id! }],
-      recipient,
+      inboxes,
       activity,
       { context },
     );
@@ -1330,7 +1335,7 @@ test("FederationImpl.sendActivity()", async (t) => {
     verified = null;
     await federation.sendActivity(
       [{ privateKey: rsaPrivateKey3, keyId: rsaPublicKey3.id! }],
-      recipient,
+      inboxes,
       activity.clone({
         actor: new URL("https://example.com/person2"),
       }),
@@ -1350,7 +1355,7 @@ test("FederationImpl.sendActivity()", async (t) => {
       [
         { privateKey: ed25519PrivateKey, keyId: ed25519Multikey.id! },
       ],
-      recipient,
+      inboxes,
       activity.clone({
         actor: new URL("https://example.com/person2"),
       }),
@@ -1371,7 +1376,7 @@ test("FederationImpl.sendActivity()", async (t) => {
         { privateKey: rsaPrivateKey3, keyId: rsaPublicKey3.id! },
         { privateKey: ed25519PrivateKey, keyId: ed25519Multikey.id! },
       ],
-      recipient,
+      inboxes,
       activity.clone({
         actor: new URL("https://example.com/person2"),
       }),
@@ -1641,6 +1646,175 @@ test("ContextImpl.sendActivity()", async (t) => {
         activity.clone({ actor: ctx.getActorUri("1") }),
       )
     );
+  });
+
+  const queue: MessageQueue & { messages: Message[]; clear(): void } = {
+    messages: [],
+    enqueue(message) {
+      this.messages.push(message);
+      return Promise.resolve();
+    },
+    async listen() {
+    },
+    clear() {
+      while (this.messages.length > 0) this.messages.shift();
+    },
+  };
+  const federation2 = new FederationImpl<void>({
+    kv,
+    contextLoader: mockDocumentLoader,
+    queue,
+  });
+  federation2
+    .setActorDispatcher("/{identifier}", async (ctx, identifier) => {
+      if (identifier !== "john") return null;
+      const keys = await ctx.getActorKeyPairs(identifier);
+      return new Person({
+        id: ctx.getActorUri(identifier),
+        preferredUsername: "john",
+        publicKey: keys[0].cryptographicKey,
+        assertionMethods: keys.map((k) => k.multikey),
+      });
+    })
+    .setKeyPairsDispatcher((_ctx, identifier) => {
+      if (identifier !== "john") return [];
+      return [
+        { privateKey: rsaPrivateKey2, publicKey: rsaPublicKey2.publicKey! },
+        {
+          privateKey: ed25519PrivateKey,
+          publicKey: ed25519PublicKey.publicKey!,
+        },
+      ];
+    });
+  const ctx2 = new ContextImpl({
+    data: undefined,
+    federation: federation2,
+    url: new URL("https://example.com/"),
+    documentLoader: fetchDocumentLoader,
+    contextLoader: fetchDocumentLoader,
+  });
+
+  await t.step('fanout: "force"', async () => {
+    const activity = new Create({
+      id: new URL("https://example.com/activity/1"),
+      actor: new URL("https://example.com/person"),
+    });
+    await ctx2.sendActivity(
+      { username: "john" },
+      {
+        id: new URL("https://example.com/recipient"),
+        inboxId: new URL("https://example.com/inbox"),
+      },
+      activity,
+      { fanout: "force" },
+    );
+    assertEquals(queue.messages, [
+      {
+        id: queue.messages[0].id,
+        type: "fanout",
+        activity: await activity.toJsonLd({
+          format: "compact",
+          contextLoader: fetchDocumentLoader,
+        }),
+        activityId: "https://example.com/activity/1",
+        activityType: "https://www.w3.org/ns/activitystreams#Create",
+        baseUrl: "https://example.com",
+        collectionSync: undefined,
+        inboxes: {
+          "https://example.com/inbox": {
+            actorIds: [
+              "https://example.com/recipient",
+            ],
+            sharedInbox: false,
+          },
+        },
+        keys: queue.messages[0].type === "fanout" ? queue.messages[0].keys : [],
+        traceContext: {},
+      },
+    ]);
+  });
+
+  queue.clear();
+
+  await t.step('fanout: "skip"', async () => {
+    const activity = new Create({
+      id: new URL("https://example.com/activity/1"),
+      actor: new URL("https://example.com/person"),
+    });
+    await ctx2.sendActivity(
+      { username: "john" },
+      {
+        id: new URL("https://example.com/recipient"),
+        inboxId: new URL("https://example.com/inbox"),
+      },
+      activity,
+      { fanout: "skip" },
+    );
+    assertEquals(queue.messages, [
+      {
+        ...queue.messages[0],
+        type: "outbox",
+      },
+    ]);
+  });
+
+  queue.clear();
+
+  await t.step('fanout: "auto"', async () => {
+    const activity = new Create({
+      id: new URL("https://example.com/activity/1"),
+      actor: new URL("https://example.com/person"),
+    });
+    await ctx2.sendActivity(
+      { username: "john" },
+      {
+        id: new URL("https://example.com/recipient"),
+        inboxId: new URL("https://example.com/inbox"),
+      },
+      activity,
+      { fanout: "auto" },
+    );
+    assertEquals(queue.messages, [
+      {
+        ...queue.messages[0],
+        type: "outbox",
+      },
+    ]);
+
+    queue.clear();
+    await ctx2.sendActivity(
+      { username: "john" },
+      [
+        {
+          id: new URL("https://example.com/recipient"),
+          inboxId: new URL("https://example.com/inbox"),
+        },
+        {
+          id: new URL("https://example2.com/recipient"),
+          inboxId: new URL("https://example2.com/inbox"),
+        },
+        {
+          id: new URL("https://example3.com/recipient"),
+          inboxId: new URL("https://example3.com/inbox"),
+        },
+        {
+          id: new URL("https://example4.com/recipient"),
+          inboxId: new URL("https://example4.com/inbox"),
+        },
+        {
+          id: new URL("https://example5.com/recipient"),
+          inboxId: new URL("https://example5.com/inbox"),
+        },
+      ],
+      activity,
+      { fanout: "auto" },
+    );
+    assertEquals(queue.messages, [
+      {
+        ...queue.messages[0],
+        type: "fanout",
+      },
+    ]);
   });
 });
 

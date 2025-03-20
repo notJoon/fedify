@@ -24,6 +24,7 @@
     "discoverability",
     "docloader",
     "eddsa",
+    "fanout",
     "fedi",
     "fedibird",
     "fedify",

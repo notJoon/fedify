@@ -445,6 +445,12 @@ federation.setInboxListeners("/{identifier}/inbox", "/inbox")
 > );
 > ~~~~
 
+> [!NOTE]
+> The `~InboxContext.forwardActivity()` method does not use a [two-stage
+> delivery process](./send.md#optimizing-activity-delivery-for-large-audiences), 
+> because `~InboxContext.forwardActivity()` method is invoked inside inbox
+> listeners, which are usually running in the background task worker.
+
 [^2]: Some implementations may try to verify the unsigned activity by fetching
       the original object from the original sender's server even if they
       don't trust the forwarded activity.  However, it is not guaranteed

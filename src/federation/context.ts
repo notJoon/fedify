@@ -669,6 +669,24 @@ export interface SendActivityOptions {
   immediate?: boolean;
 
   /**
+   * Determines how activities are queued when sent to multiple recipients.
+   *
+   * - "auto" (default): Automatically chooses optimal strategy based on
+   *   recipient count.
+   * - "skip": Always enqueues individual messages per recipient,
+   *   bypassing the fanout queue. Use when payload needs to vary per recipient.
+   * - "force": Always uses fanout queue regardless of recipient count.
+   *   Useful for testing or special cases.
+   *
+   * This option is ignored when `immediate: true` is specified, as immediate
+   * delivery bypasses all queuing mechanisms.
+   *
+   * @default `"auto"`
+   * @since 1.5.0
+   */
+  fanout?: "auto" | "skip" | "force";
+
+  /**
    * The base URIs to exclude from the recipients' inboxes.  It is useful
    * for excluding the recipients having the same shared inbox with the sender.
    *
@@ -683,7 +701,7 @@ export interface SendActivityOptions {
  * Options for {@link InboxContext.forwardActivity} method.
  * @since 1.0.0
  */
-export interface ForwardActivityOptions extends SendActivityOptions {
+export type ForwardActivityOptions = Omit<SendActivityOptions, "fanout"> & {
   /**
    * Whether to skip forwarding the activity if it is not signed, i.e., it has
    * neither Linked Data Signatures nor Object Integrity Proofs.
@@ -693,7 +711,7 @@ export interface ForwardActivityOptions extends SendActivityOptions {
    * if it is not signed.
    */
   skipIfUnsigned: boolean;
-}
+};
 
 /**
  * Options for {@link Context.routeActivity} method.

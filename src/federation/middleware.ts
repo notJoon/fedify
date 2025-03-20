@@ -106,6 +106,7 @@ import { KvKeyCache } from "./keycache.ts";
 import type { KvKey, KvStore } from "./kv.ts";
 import type { MessageQueue } from "./mq.ts";
 import type {
+  FanoutMessage,
   InboxMessage,
   Message,
   OutboxMessage,
@@ -312,6 +313,14 @@ export interface FederationQueueOptions {
    * activities will not be queued and will be sent immediately.
    */
   outbox?: MessageQueue;
+
+  /**
+   * The message queue for fanning out outgoing activities.  If not provided,
+   * outgoing activities will not be fanned out in the background, but will be
+   * fanned out immediately, which causes slow response times on
+   * {@link Context.sendActivity} calls.
+   */
+  fanout?: MessageQueue;
 }
 
 /**
@@ -375,8 +384,10 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
   kvPrefixes: FederationKvPrefixes;
   inboxQueue?: MessageQueue;
   outboxQueue?: MessageQueue;
+  fanoutQueue?: MessageQueue;
   inboxQueueStarted: boolean;
   outboxQueueStarted: boolean;
+  fanoutQueueStarted: boolean;
   manuallyStartQueue: boolean;
   origin?: FederationOrigin;
   router: Router;
@@ -461,15 +472,19 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
     if (options.queue == null) {
       this.inboxQueue = undefined;
       this.outboxQueue = undefined;
+      this.fanoutQueue = undefined;
     } else if ("enqueue" in options.queue && "listen" in options.queue) {
       this.inboxQueue = options.queue;
       this.outboxQueue = options.queue;
+      this.fanoutQueue = options.queue;
     } else {
       this.inboxQueue = options.queue.inbox;
       this.outboxQueue = options.queue.outbox;
+      this.fanoutQueue = options.queue.fanout;
     }
     this.inboxQueueStarted = false;
     this.outboxQueueStarted = false;
+    this.fanoutQueueStarted = false;
     this.manuallyStartQueue = options.manuallyStartQueue ?? false;
     if (options.origin != null) {
       if (typeof options.origin === "string") {
@@ -612,7 +627,7 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
     return this.tracerProvider.getTracer(metadata.name, metadata.version);
   }
 
-  async #startQueue(
+  async _startQueueInternal(
     ctxData: TContextData,
     signal?: AbortSignal,
     queue?: keyof FederationQueueOptions,
@@ -648,6 +663,22 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
         ),
       );
     }
+    if (
+      this.fanoutQueue != null &&
+      this.fanoutQueue !== this.inboxQueue &&
+      this.fanoutQueue !== this.outboxQueue &&
+      (queue == null || queue === "fanout") &&
+      !this.fanoutQueueStarted
+    ) {
+      logger.debug("Starting a fanout task worker.");
+      this.fanoutQueueStarted = true;
+      promises.push(
+        this.fanoutQueue.listen(
+          (msg) => this.#listenQueue(ctxData, msg),
+          { signal },
+        ),
+      );
+    }
     await Promise.all(promises);
   }
 
@@ -658,7 +689,34 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
       message.traceContext,
     );
     return withContext({ messageId: message.id }, async () => {
-      if (message.type === "outbox") {
+      if (message.type === "fanout") {
+        await tracer.startActiveSpan(
+          "activitypub.fanout",
+          {
+            kind: SpanKind.CONSUMER,
+            attributes: {
+              "activitypub.activity.type": message.activityType,
+            },
+          },
+          extractedContext,
+          async (span) => {
+            if (message.activityId != null) {
+              span.setAttribute("activitypub.activity.id", message.activityId);
+            }
+            try {
+              await this.#listenFanoutMessage(ctxData, message);
+            } catch (e) {
+              span.setStatus({
+                code: SpanStatusCode.ERROR,
+                message: String(e),
+              });
+              throw e;
+            } finally {
+              span.end();
+            }
+          },
+        );
+      } else if (message.type === "outbox") {
         await tracer.startActiveSpan(
           "activitypub.outbox",
           {
@@ -711,6 +769,51 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
           },
         );
       }
+    });
+  }
+
+  async #listenFanoutMessage(
+    data: TContextData,
+    message: FanoutMessage,
+  ): Promise<void> {
+    const logger = getLogger(["fedify", "federation", "fanout"]);
+    logger.debug(
+      "Fanning out activity {activityId} to {inboxes} inbox(es)...",
+      {
+        activityId: message.activityId,
+        inboxes: globalThis.Object.keys(message.inboxes).length,
+      },
+    );
+    const keys: SenderKeyPair[] = await Promise.all(
+      message.keys.map(async ({ keyId, privateKey }) => ({
+        keyId: new URL(keyId),
+        privateKey: await importJwk(privateKey, "private"),
+      })),
+    );
+    const activity = await Activity.fromJsonLd(message.activity, {
+      contextLoader: this.contextLoaderFactory({
+        allowPrivateAddress: this.allowPrivateAddress,
+        userAgent: this.userAgent,
+      }),
+      documentLoader: this.documentLoaderFactory({
+        allowPrivateAddress: this.allowPrivateAddress,
+        userAgent: this.userAgent,
+      }),
+      tracerProvider: this.tracerProvider,
+    });
+    const context = this.#createContext(
+      new URL(message.baseUrl),
+      data,
+      {
+        documentLoader: this.documentLoaderFactory({
+          allowPrivateAddress: this.allowPrivateAddress,
+          userAgent: this.userAgent,
+        }),
+      },
+    );
+    await this.sendActivity(keys, message.inboxes, activity, {
+      collectionSync: message.collectionSync,
+      context,
     });
   }
 
@@ -975,7 +1078,7 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
     contextData: TContextData,
     options: FederationStartQueueOptions = {},
   ): Promise<void> {
-    return this.#startQueue(contextData, options.signal, options.queue);
+    return this._startQueueInternal(contextData, options.signal, options.queue);
   }
 
   createContext(baseUrl: URL, contextData: TContextData): Context<TContextData>;
@@ -2082,48 +2185,15 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
 
   async sendActivity(
     keys: SenderKeyPair[],
-    recipients: Recipient | Recipient[],
+    inboxes: Record<
+      string,
+      { actorIds: Iterable<string>; sharedInbox: boolean }
+    >,
     activity: Activity,
     options: SendActivityInternalOptions<TContextData>,
-    span?: Span,
   ): Promise<void> {
     const logger = getLogger(["fedify", "federation", "outbox"]);
-    const {
-      preferSharedInbox,
-      immediate,
-      excludeBaseUris,
-      collectionSync,
-      context: ctx,
-    } = options;
-    if (keys.length < 1) {
-      throw new TypeError("The sender's keys must not be empty.");
-    }
-    for (const { privateKey } of keys) {
-      validateCryptoKey(privateKey, "private");
-    }
-    for (const activityTransformer of this.activityTransformers) {
-      activity = activityTransformer(activity, ctx);
-    }
-    span?.setAttribute("activitypub.activity.id", activity?.id?.href ?? "");
-    if (activity.actorId == null) {
-      logger.error(
-        "Activity {activityId} to send does not have an actor.",
-        { activity, activityId: activity?.id?.href },
-      );
-      throw new TypeError(
-        "The activity to send must have at least one actor property.",
-      );
-    }
-    const inboxes = extractInboxes({
-      recipients: Array.isArray(recipients) ? recipients : [recipients],
-      preferSharedInbox,
-      excludeBaseUris,
-    });
-    logger.debug("Sending activity {activityId} to inboxes:\n{inboxes}", {
-      inboxes: globalThis.Object.keys(inboxes),
-      activityId: activity.id?.href,
-      activity,
-    });
+    const { immediate, collectionSync, context: ctx } = options;
     if (activity.id == null) {
       throw new TypeError("The activity to send must have an id.");
     }
@@ -2238,7 +2308,7 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
       const privateKeyJwk = await exportJwk(privateKey);
       keyJwkPairs.push({ keyId: keyId.href, privateKey: privateKeyJwk });
     }
-    if (!this.manuallyStartQueue) this.#startQueue(ctx.data);
+    if (!this.manuallyStartQueue) this._startQueueInternal(ctx.data);
     const carrier: Record<string, string> = {};
     propagation.inject(context.active(), carrier);
     const promises: Promise<void>[] = [];
@@ -2468,7 +2538,7 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
             });
           }
         }
-        if (!this.manuallyStartQueue) this.#startQueue(contextData);
+        if (!this.manuallyStartQueue) this._startQueueInternal(contextData);
         return await handleInbox(request, {
           recipient: route.values.identifier ?? route.values.handle ?? null,
           context,
@@ -2577,6 +2647,8 @@ interface ContextOptions<TContextData> {
   contextLoader: DocumentLoader;
   invokedFromActorKeyPairsDispatcher?: { identifier: string };
 }
+
+const FANOUT_THRESHOLD = 5;
 
 export class ContextImpl<TContextData> implements Context<TContextData> {
   readonly url: URL;
@@ -3134,7 +3206,9 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       metadata.version,
     );
     return tracer.startActiveSpan(
-      "activitypub.outbox",
+      this.federation.outboxQueue == null || options.immediate
+        ? "activitypub.outbox"
+        : "activitypub.fanout",
       {
         kind: this.federation.outboxQueue == null || options.immediate
           ? SpanKind.CLIENT
@@ -3181,6 +3255,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     options: SendActivityOptions = {},
     span: Span,
   ): Promise<void> {
+    const logger = getLogger(["fedify", "federation", "outbox"]);
     let keys: SenderKeyPair[];
     let identifier: string | null = null;
     if ("identifier" in sender || "username" in sender || "handle" in sender) {
@@ -3192,7 +3267,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
           username = sender.username;
         } else {
           username = sender.handle;
-          getLogger(["fedify", "federation", "outbox"]).warn(
+          logger.warn(
             'The "handle" property for the sender parameter is deprecated; ' +
               'use "identifier" or "username" instead.',
             { sender },
@@ -3230,10 +3305,13 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     } else {
       keys = [sender];
     }
-    const opts: SendActivityInternalOptions<TContextData> = {
-      context: this,
-      ...options,
-    };
+    if (keys.length < 1) {
+      throw new TypeError("The sender's keys must not be empty.");
+    }
+    for (const { privateKey } of keys) {
+      validateCryptoKey(privateKey, "private");
+    }
+    const opts: SendActivityInternalOptions<TContextData> = { context: this };
     let expandedRecipients: Recipient[];
     if (Array.isArray(recipients)) {
       expandedRecipients = recipients;
@@ -3261,13 +3339,68 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       expandedRecipients = [recipients];
     }
     span.setAttribute("activitypub.inboxes", expandedRecipients.length);
-    return await this.federation.sendActivity(
-      keys,
-      expandedRecipients,
+    for (const activityTransformer of this.federation.activityTransformers) {
+      activity = activityTransformer(activity, this);
+    }
+    span?.setAttribute("activitypub.activity.id", activity?.id?.href ?? "");
+    if (activity.actorId == null) {
+      logger.error(
+        "Activity {activityId} to send does not have an actor.",
+        { activity, activityId: activity?.id?.href },
+      );
+      throw new TypeError(
+        "The activity to send must have at least one actor property.",
+      );
+    }
+    const inboxes = extractInboxes({
+      recipients: expandedRecipients,
+      preferSharedInbox: options.preferSharedInbox,
+      excludeBaseUris: options.excludeBaseUris,
+    });
+    logger.debug("Sending activity {activityId} to inboxes:\n{inboxes}", {
+      inboxes: globalThis.Object.keys(inboxes),
+      activityId: activity.id?.href,
       activity,
-      opts,
-      span,
+    });
+    if (
+      this.federation.fanoutQueue == null || options.immediate ||
+      options.fanout === "skip" || (options.fanout ?? "auto") === "auto" &&
+        globalThis.Object.keys(inboxes).length < FANOUT_THRESHOLD
+    ) {
+      await this.federation.sendActivity(keys, inboxes, activity, opts);
+      return;
+    }
+    const keyJwkPairs = await Promise.all(
+      keys.map(async ({ keyId, privateKey }) => ({
+        keyId: keyId.href,
+        privateKey: await exportJwk(privateKey),
+      })),
     );
+    const carrier: Record<string, string> = {};
+    propagation.inject(context.active(), carrier);
+    const message: FanoutMessage = {
+      type: "fanout",
+      id: crypto.randomUUID(),
+      baseUrl: this.origin,
+      keys: keyJwkPairs,
+      inboxes: globalThis.Object.fromEntries(
+        globalThis.Object.entries(inboxes).map((
+          [k, { actorIds, sharedInbox }],
+        ) => [k, { actorIds: [...actorIds], sharedInbox }]),
+      ),
+      activity: await activity.toJsonLd({
+        format: "compact",
+        contextLoader: this.contextLoader,
+      }),
+      activityId: activity.id?.href,
+      activityType: getTypeId(activity).href,
+      collectionSync: opts.collectionSync,
+      traceContext: carrier,
+    };
+    if (!this.federation.manuallyStartQueue) {
+      this.federation._startQueueInternal(this.data);
+    }
+    this.federation.fanoutQueue.enqueue(message);
   }
 
   async *getFollowers(identifier: string): AsyncIterable<Recipient> {
@@ -3877,8 +4010,8 @@ interface ObjectCallbacks<TContextData, TParam extends string> {
   authorizePredicate?: ObjectAuthorizePredicate<TContextData, TParam>;
 }
 
-interface SendActivityInternalOptions<TContextData>
-  extends SendActivityOptions {
+interface SendActivityInternalOptions<TContextData> {
+  immediate?: boolean;
   collectionSync?: string;
   context: Context<TContextData>;
 }
