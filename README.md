@@ -68,6 +68,9 @@ Changelog
 
 To be released.
 
+ -  Added `PostgresMessageQueue.enqueueMany()` method for efficiently enqueuing
+    multiple messages at once.
+
  -  Added some logging using [LogTape] for the sake of debugging.  The following
     categories are used:
 

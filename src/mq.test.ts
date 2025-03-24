@@ -56,6 +56,37 @@ Deno.test("PostgresMessageQueue", async (t) => {
     assertGreater(Date.now() - started, 3_000);
   });
 
+  await t.step("enqueueMany()", async () => {
+    while (messages.length > 0) messages.pop();
+    const batchMessages = [
+      "First batch message",
+      { text: "Second batch message" },
+      { text: "Third batch message", priority: "high" },
+    ];
+    await mq.enqueueMany(batchMessages);
+    await waitFor(() => messages.length === batchMessages.length, 15_000);
+    assertEquals(messages, batchMessages);
+  });
+
+  await t.step("enqueueMany() with delay", async () => {
+    while (messages.length > 0) messages.pop();
+    started = Date.now();
+    const delayedBatchMessages = [
+      "Delayed batch 1",
+      "Delayed batch 2",
+    ];
+    await mq.enqueueMany(
+      delayedBatchMessages,
+      { delay: Temporal.Duration.from({ seconds: 2 }) },
+    );
+    await waitFor(
+      () => messages.length === delayedBatchMessages.length,
+      15_000,
+    );
+    assertEquals(messages, delayedBatchMessages);
+    assertGreater(Date.now() - started, 2_000);
+  });
+
   controller.abort();
   await listening;
   await listening2;

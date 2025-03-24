@@ -111,6 +111,39 @@ export class PostgresMessageQueue implements MessageQueue {
     });
   }
 
+  async enqueueMany(
+    // deno-lint-ignore no-explicit-any
+    messages: any[],
+    options?: MessageQueueEnqueueOptions,
+  ): Promise<void> {
+    if (messages.length === 0) return;
+    await this.initialize();
+    const delay = options?.delay ?? Temporal.Duration.from({ seconds: 0 });
+    if (options?.delay) {
+      logger.debug("Enqueuing messages with a delay of {delay}...", {
+        delay,
+        messages,
+      });
+    } else {
+      logger.debug("Enqueuing messages...", { messages });
+    }
+    for (const message of messages) {
+      await this.#sql`
+        INSERT INTO ${this.#sql(this.#tableName)} (message, delay)
+        VALUES (
+          ${this.#json(message)},
+          ${delay.toString()}
+        );
+      `;
+    }
+    logger.debug("Enqueued messages.", { messages });
+    await this.#sql.notify(this.#channelName, delay.toString());
+    logger.debug("Notified the message queue channel {channelName}.", {
+      channelName: this.#channelName,
+      messages,
+    });
+  }
+
   async listen(
     // deno-lint-ignore no-explicit-any
     handler: (message: any) => void | Promise<void>,
