@@ -43,6 +43,53 @@ test("InProcessMessageQueue", async (t) => {
     assertGreater(Date.now() - started, 3_000);
   });
 
+  // Clear messages array
+  while (messages.length > 0) messages.pop();
+
+  await t.step("enqueueMany()", async () => {
+    const testMessages = Array.from(
+      { length: 5 },
+      (_, i) => `Batch message ${i}!`,
+    );
+    await mq.enqueueMany(testMessages);
+  });
+
+  await waitFor(() => messages.length >= 5, 15_000);
+
+  await t.step("listen() [multiple]", () => {
+    assertEquals(messages.length, 5);
+    for (let i = 0; i < 5; i++) {
+      assertEquals(messages[i], `Batch message ${i}!`);
+    }
+  });
+
+  // Clear messages array
+  while (messages.length > 0) messages.pop();
+
+  started = 0;
+  await t.step("enqueueMany() with delay", async () => {
+    started = Date.now();
+    const testMessages = Array.from(
+      { length: 3 },
+      (_, i) => `Delayed batch ${i}!`,
+    );
+    await mq.enqueueMany(
+      testMessages,
+      { delay: Temporal.Duration.from({ seconds: 2 }) },
+    );
+    assertEquals(messages.length, 0);
+  });
+
+  await waitFor(() => messages.length >= 3, 15_000);
+
+  await t.step("listen() [delayed multiple]", () => {
+    assertEquals(messages.length, 3);
+    assertGreater(Date.now() - started, 2_000);
+    for (let i = 0; i < 3; i++) {
+      assertEquals(messages[i], `Delayed batch ${i}!`);
+    }
+  });
+
   controller.abort();
   await listening;
 });
@@ -82,7 +129,7 @@ for (const mqName in queues) {
     }, controller);
 
     await t.step("enqueue() [single]", async () => {
-      await mq.enqueue("Hello, world!");
+      await workers.enqueue("Hello, world!");
     });
 
     await waitFor(() => messages.length > 0, 15_000);
@@ -95,8 +142,24 @@ for (const mqName in queues) {
 
     await t.step("enqueue() [multiple]", async () => {
       for (let i = 0; i < 20; i++) {
-        await mq.enqueue(`Hello, ${i}!`);
+        await workers.enqueue(`Hello, ${i}!`);
       }
+    });
+
+    await t.step("listen() [multiple]", async () => {
+      await delay(10 * 250 + 500);
+      assertGreaterOrEqual(messages.length, 5);
+      await waitFor(() => messages.length >= 20, 15_000);
+      assertEquals(messages.length, 20);
+    });
+
+    await waitFor(() => messages.length >= 20, 15_000);
+
+    while (messages.length > 0) messages.pop();
+
+    await t.step("enqueueMany()", async () => {
+      const messages = Array.from({ length: 20 }, (_, i) => `Hello, ${i}!`);
+      await workers.enqueueMany(messages);
     });
 
     await t.step("listen() [multiple]", async () => {

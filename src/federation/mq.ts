@@ -40,6 +40,19 @@ export interface MessageQueue {
   enqueue(message: any, options?: MessageQueueEnqueueOptions): Promise<void>;
 
   /**
+   * Enqueues multiple messages in the queue.  This operation is optional,
+   * and may not be supported by all implementations.  If not supported,
+   * Fedify will invoke {@link enqueue} for each message.
+   *
+   * @param messages The messages to enqueue.
+   * @param options Additional options for enqueuing the messages.
+   */
+  enqueueMany?: (
+    messages: any[],
+    options?: MessageQueueEnqueueOptions,
+  ) => Promise<void>;
+
+  /**
    * Listens for messages in the queue.
    * @param handler The handler for messages in the queue.
    * @param options Additional options for listening to the message queue.
@@ -101,6 +114,28 @@ export class InProcessMessageQueue implements MessageQueue {
       return Promise.resolve();
     }
     this.#messages.push(message);
+    for (const monitorId in this.#monitors) {
+      this.#monitors[monitorId as ReturnType<typeof crypto.randomUUID>]();
+    }
+    return Promise.resolve();
+  }
+
+  enqueueMany(
+    messages: any[],
+    options?: MessageQueueEnqueueOptions,
+  ): Promise<void> {
+    if (messages.length === 0) return Promise.resolve();
+    const delay = options?.delay == null
+      ? 0
+      : Math.max(options.delay.total("millisecond"), 0);
+    if (delay > 0) {
+      setTimeout(
+        () => this.enqueueMany(messages, { ...options, delay: undefined }),
+        delay,
+      );
+      return Promise.resolve();
+    }
+    this.#messages.push(...messages);
     for (const monitorId in this.#monitors) {
       this.#monitors[monitorId as ReturnType<typeof crypto.randomUUID>]();
     }
@@ -181,6 +216,25 @@ export class ParallelMessageQueue implements MessageQueue {
 
   enqueue(message: any, options?: MessageQueueEnqueueOptions): Promise<void> {
     return this.queue.enqueue(message, options);
+  }
+
+  async enqueueMany(
+    messages: any[],
+    options?: MessageQueueEnqueueOptions,
+  ): Promise<void> {
+    if (this.queue.enqueueMany == null) {
+      const results = await Promise.allSettled(
+        messages.map((message) => this.queue.enqueue(message, options)),
+      );
+      const errors = results
+        .filter((r): r is PromiseRejectedResult => r.status === "rejected")
+        .map((r) => r.reason);
+      if (errors.length > 1) {
+        throw new AggregateError(errors, "Failed to enqueue messages.");
+      } else if (errors.length === 1) throw errors[0];
+      return;
+    }
+    await this.queue.enqueueMany(messages, options);
   }
 
   listen(

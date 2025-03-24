@@ -64,6 +64,9 @@ To be released.
      -  Deprecated the fourth parameter of the `ObjectAuthorizePredicate` type
         in favor of the `RequestContext.getSignedKeyOwner()` method.
 
+ -  Added an optional method `enqueueMany()` to `MessageQueue` interface
+    for sending multiple activities at once.
+
  -  Fixed a bug of the `fedify inbox` command where it had failed to render
     the web interface when the `fedify` command was installed using
     `deno install` command from JSR.

@@ -2311,7 +2311,7 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
     if (!this.manuallyStartQueue) this._startQueueInternal(ctx.data);
     const carrier: Record<string, string> = {};
     propagation.inject(context.active(), carrier);
-    const promises: Promise<void>[] = [];
+    const messages: OutboxMessage[] = [];
     for (const inbox in inboxes) {
       const message: OutboxMessage = {
         type: "outbox",
@@ -2334,24 +2334,40 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
         },
         traceContext: carrier,
       };
-      promises.push(this.outboxQueue.enqueue(message));
+      messages.push(message);
     }
-    const results = await Promise.allSettled(promises);
-    const errors = results
-      .filter((r) => r.status === "rejected")
-      .map((r) => (r as PromiseRejectedResult).reason);
-    if (errors.length > 0) {
-      logger.error(
-        "Failed to enqueue activity {activityId} to send later: {errors}",
-        { activityId: activity.id!.href, errors },
+    const { outboxQueue } = this;
+    if (outboxQueue.enqueueMany == null) {
+      const promises: Promise<void>[] = messages.map((m) =>
+        outboxQueue.enqueue(m)
       );
-      if (errors.length > 1) {
-        throw new AggregateError(
-          errors,
-          `Failed to enqueue activity ${activityId} to send later.`,
+      const results = await Promise.allSettled(promises);
+      const errors = results
+        .filter((r) => r.status === "rejected")
+        .map((r) => (r as PromiseRejectedResult).reason);
+      if (errors.length > 0) {
+        logger.error(
+          "Failed to enqueue activity {activityId} to send later: {errors}",
+          { activityId: activity.id!.href, errors },
         );
+        if (errors.length > 1) {
+          throw new AggregateError(
+            errors,
+            `Failed to enqueue activity ${activityId} to send later.`,
+          );
+        }
+        throw errors[0];
       }
-      throw errors[0];
+    } else {
+      try {
+        await outboxQueue.enqueueMany(messages);
+      } catch (error) {
+        logger.error(
+          "Failed to enqueue activity {activityId} to send later: {error}",
+          { activityId: activity.id!.href, error },
+        );
+        throw error;
+      }
     }
   }
 
@@ -3957,7 +3973,7 @@ export class InboxContextImpl<TContextData> extends ContextImpl<TContextData>
     }
     const carrier: Record<string, string> = {};
     propagation.inject(context.active(), carrier);
-    const promises: Promise<void>[] = [];
+    const messages: OutboxMessage[] = [];
     for (const inbox in inboxes) {
       const message: OutboxMessage = {
         type: "outbox",
@@ -3974,24 +3990,40 @@ export class InboxContextImpl<TContextData> extends ContextImpl<TContextData>
         headers: {},
         traceContext: carrier,
       };
-      promises.push(this.federation.outboxQueue.enqueue(message));
+      messages.push(message);
     }
-    const results = await Promise.allSettled(promises);
-    const errors: unknown[] = results
-      .filter((r) => r.status === "rejected")
-      .map((r) => (r as PromiseRejectedResult).reason);
-    if (errors.length > 0) {
-      logger.error(
-        "Failed to enqueue activity {activityId} to forward later:\n{errors}",
-        { activityId: this.activityId, errors },
+    const { outboxQueue } = this.federation;
+    if (outboxQueue.enqueueMany == null) {
+      const promises: Promise<void>[] = messages.map((m) =>
+        outboxQueue.enqueue(m)
       );
-      if (errors.length > 1) {
-        throw new AggregateError(
-          errors,
-          `Failed to enqueue activity ${this.activityId} to forward later.`,
+      const results = await Promise.allSettled(promises);
+      const errors: unknown[] = results
+        .filter((r) => r.status === "rejected")
+        .map((r) => (r as PromiseRejectedResult).reason);
+      if (errors.length > 0) {
+        logger.error(
+          "Failed to enqueue activity {activityId} to forward later:\n{errors}",
+          { activityId: this.activityId, errors },
         );
+        if (errors.length > 1) {
+          throw new AggregateError(
+            errors,
+            `Failed to enqueue activity ${this.activityId} to forward later.`,
+          );
+        }
+        throw errors[0];
       }
-      throw errors[0];
+    } else {
+      try {
+        await outboxQueue.enqueueMany(messages);
+      } catch (error) {
+        logger.error(
+          "Failed to enqueue activity {activityId} to forward later:\n{error}",
+          { activityId: this.activityId, error },
+        );
+        throw error;
+      }
     }
   }
 }

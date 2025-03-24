@@ -256,6 +256,20 @@ Handle the `~MessageQueueEnqueueOptions.delay` option if provided in
 `MessageQueueEnqueueOptions`.  Ensure the method is non-blocking
 (use async operations where necessary).
 
+### Implement `~MessageQueue.enqueueMany()` method (optional)
+
+*This API is available since Fedify 1.5.0.*
+
+This method should add multiple messages to your queue system at once.
+Handle the `~MessageQueueEnqueueOptions.delay` option if provided in
+`MessageQueueEnqueueOptions`.  Ensure the method is non-blocking
+(use async operations where necessary).
+
+Although this method is optional, it's recommended to implement it
+for better performance when enqueuing multiple messages at once.
+Otherwise, Fedify will call `~MessageQueue.enqueue()` for each message
+individually, which may be less efficient.
+
 ### Implement `~MessageQueue.listen()` method
 
 This method should start a process that listens for new messages.
