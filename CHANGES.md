@@ -8,6 +8,10 @@ Version 1.0.22
 
 To be released.
 
+ -  Fixed a bug where the `totalItems` property of `OrderedCollection`
+    objects returned by followers collection dispatcher had been an incorrect
+    value if a `base-url` parameter was provided.
+
 
 Version 1.0.21
 --------------

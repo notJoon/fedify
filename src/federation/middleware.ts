@@ -2585,6 +2585,15 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       this,
       identifier,
     );
+    if (cursor != null) {
+      getLogger(["fedify", "federation", "outbox"]).warn(
+        "Since the followers collection dispatcher returned null for no " +
+          "cursor (i.e., one-shot dispatcher), the pagination is used to fetch " +
+          '"followers".  However, it is recommended to implement the one-shot ' +
+          "dispatcher for better performance.",
+        { identifier },
+      );
+    }
     while (cursor != null) {
       const result = await this.federation.followersCallbacks.dispatcher(
         this,
