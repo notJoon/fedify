@@ -43,6 +43,7 @@ await build({
       url: "https://github.com/fedify-dev/postgres/issues",
     },
     funding: [
+      "https://opencollective.com/fedify",
       "https://github.com/sponsors/dahlia",
     ],
   },
