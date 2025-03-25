@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.1.19
 --------------
 
-To be released.
+Released on March 26, 2025.
 
  -  Fixed a bug where the `totalItems` property of `OrderedCollection`
     objects returned by followers collection dispatcher had been an incorrect
