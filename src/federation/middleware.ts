@@ -2595,7 +2595,13 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
         return await handleCollection(request, {
           name: "followers",
           identifier: route.values.identifier ?? route.values.handle,
-          uriGetter: context.getFollowersUri.bind(context),
+          uriGetter: baseUrl == null
+            ? context.getFollowersUri.bind(context)
+            : (identifier) => {
+              const uri = context.getFollowersUri(identifier);
+              uri.searchParams.set("base-url", baseUrl!);
+              return uri;
+            },
           context,
           filter: baseUrl != null ? new URL(baseUrl) : undefined,
           filterPredicate: baseUrl != null
@@ -3441,6 +3447,15 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       this,
       identifier,
     );
+    if (cursor != null) {
+      getLogger(["fedify", "federation", "outbox"]).warn(
+        "Since the followers collection dispatcher returned null for no " +
+          "cursor (i.e., one-shot dispatcher), the pagination is used to fetch " +
+          '"followers".  However, it is recommended to implement the one-shot ' +
+          "dispatcher for better performance.",
+        { identifier },
+      );
+    }
     while (cursor != null) {
       const result = await this.federation.followersCallbacks.dispatcher(
         this,
