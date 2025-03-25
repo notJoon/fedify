@@ -8,6 +8,14 @@ Version 1.2.19
 
 To be released.
 
+ -  Fixed a bug where the `totalItems` property of `OrderedCollection`
+    objects returned by followers collection dispatcher had been an incorrect
+    value if a `base-url` parameter was provided.
+
+ -  Fixed a bug where the `id` property of `OrderedCollection` and
+    `OrderedCollectionPage` objects returned by followers collection dispatcher
+    had been an incorrect value if a `base-url` parameter was provided.
+
 
 Version 1.2.18
 --------------
@@ -348,6 +356,20 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/dahlia/fedify/issues/118
+
+
+Version 1.1.19
+--------------
+
+Released on March 26, 2025.
+
+ -  Fixed a bug where the `totalItems` property of `OrderedCollection`
+    objects returned by followers collection dispatcher had been an incorrect
+    value if a `base-url` parameter was provided.
+
+ -  Fixed a bug where the `id` property of `OrderedCollection` and
+    `OrderedCollectionPage` objects returned by followers collection dispatcher
+    had been an incorrect value if a `base-url` parameter was provided.
 
 
 Version 1.1.18
@@ -730,6 +752,20 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.22
+--------------
+
+Released on March 26, 2025.
+
+ -  Fixed a bug where the `totalItems` property of `OrderedCollection`
+    objects returned by followers collection dispatcher had been an incorrect
+    value if a `base-url` parameter was provided.
+
+ -  Fixed a bug where the `id` property of `OrderedCollection` and
+    `OrderedCollectionPage` objects returned by followers collection dispatcher
+    had been an incorrect value if a `base-url` parameter was provided.
 
 
 Version 1.0.21
