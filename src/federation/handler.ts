@@ -229,7 +229,9 @@ export async function handleCollection<
       context,
       identifier,
     );
-    const totalItems = await collectionCallbacks.counter?.(context, identifier);
+    const totalItems = filter == null
+      ? await collectionCallbacks.counter?.(context, identifier)
+      : undefined;
     if (firstCursor == null) {
       const itemsOrResponse = await tracer.startActiveSpan(
         `activitypub.dispatch_collection ${spanName}`,
@@ -393,7 +395,8 @@ function filterCollectionItems<TItem extends Object | Link | Recipient | URL>(
         getLogger(["fedify", "federation", "collection"]).warn(
           `The ${collectionName} collection apparently does not implement ` +
             "filtering.  This may result in a large response payload.  " +
-            "Please consider implementing filtering for the collection.",
+            "Please consider implementing filtering for the collection.  " +
+            "See also: https://fedify.dev/manual/collections#filtering-by-server",
         );
         logged = true;
       }
