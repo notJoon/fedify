@@ -68,6 +68,23 @@ Deno.test("RedisMessageQueue", async (t) => {
     assertEquals(new Set(messages.slice(2)), numbers);
   });
 
+  // Reset messages array for the next test:
+  while (messages.length > 0) messages.pop();
+
+  await t.step("enqueueMany()", async () => {
+    const bulkMessages = Array.from({ length: 500 }, (_, i) => `bulk-${i}`);
+    await mq.enqueueMany(bulkMessages);
+  });
+
+  await waitFor(() => messages.length >= 500, 30_000);
+
+  await t.step("listen() after enqueueMany()", () => {
+    const expectedMessages = new Set(
+      Array.from({ length: 500 }, (_, i) => `bulk-${i}`),
+    );
+    assertEquals(new Set(messages), expectedMessages);
+  });
+
   controller.abort();
   await listening;
   await listening2;

@@ -60,7 +60,7 @@ export class RedisKvStore implements KvStore {
       return `${this.#keyPrefix}${suffix}`;
     }
     const suffixBytes = this.#textEncoder.encode(suffix);
-    return Buffer.concat([this.#keyPrefix, suffixBytes]);
+    return Buffer.concat([new Uint8Array(this.#keyPrefix), suffixBytes]);
   }
 
   async get<T = unknown>(key: KvKey): Promise<T | undefined> {

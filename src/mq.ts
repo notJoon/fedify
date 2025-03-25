@@ -115,6 +115,29 @@ export class RedisMessageQueue implements MessageQueue, Disposable {
     if (ts < 1) this.#redis.publish(this.#channelKey, "");
   }
 
+  async enqueueMany(
+    messages: any[],
+    options?: MessageQueueEnqueueOptions,
+  ): Promise<void> {
+    if (messages.length === 0) return;
+    const ts = options?.delay == null
+      ? 0
+      : Temporal.Now.instant().add(options.delay).epochMilliseconds;
+    // Use multi to batch multiple ZADD commands:
+    const multi = this.#redis.multi();
+    for (const message of messages) {
+      const encodedMessage = this.#codec.encode([
+        crypto.randomUUID(),
+        message,
+      ]);
+      multi.zadd(this.#queueKey, ts, encodedMessage);
+    }
+    // Execute all commands in a single transaction:
+    await multi.exec();
+    // Notify only if there's no delay:
+    if (ts < 1) this.#redis.publish(this.#channelKey, "");
+  }
+
   async #poll(): Promise<any | undefined> {
     logger.debug("Polling for messages...");
     const result = await this.#redis.set(
@@ -165,7 +188,7 @@ export class RedisMessageQueue implements MessageQueue, Disposable {
         try {
           message = await this.#poll();
         } catch (error) {
-          logger.error("Error polling for messages: {error}", error);
+          logger.error("Error polling for messages: {error}", { error });
           return;
         }
         if (message === undefined) return;
