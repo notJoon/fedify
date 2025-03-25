@@ -12,6 +12,10 @@ To be released.
     objects returned by followers collection dispatcher had been an incorrect
     value if a `base-url` parameter was provided.
 
+ -  Fixed a bug where the `id` property of `OrderedCollection` and
+    `OrderedCollectionPage` objects returned by followers collection dispatcher
+    had been an incorrect value if a `base-url` parameter was provided.
+
 
 Version 1.0.21
 --------------

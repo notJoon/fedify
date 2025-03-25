@@ -1920,7 +1920,13 @@ export class FederationImpl<TContextData> implements Federation<TContextData> {
         return await handleCollection(request, {
           name: "followers",
           identifier: route.values.identifier ?? route.values.handle,
-          uriGetter: context.getFollowersUri.bind(context),
+          uriGetter: baseUrl == null
+            ? context.getFollowersUri.bind(context)
+            : (identifier) => {
+              const uri = context.getFollowersUri(identifier);
+              uri.searchParams.set("base-url", baseUrl!);
+              return uri;
+            },
           context,
           filter: baseUrl != null ? new URL(baseUrl) : undefined,
           filterPredicate: baseUrl != null
