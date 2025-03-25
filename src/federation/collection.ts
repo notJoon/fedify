@@ -12,7 +12,7 @@ export interface PageItems<TItem> {
 /**
  * Calculates the [partial follower collection digest][1].
  *
- * [1]: https://codeberg.org/fediverse/fep/src/branch/main/fep/8fcf/fep-8fcf.md#partial-follower-collection-digest
+ * [1]: https://w3id.org/fep/8fcf#partial-follower-collection-digest
  * @param uris The URIs to calculate the digest.  Duplicate URIs are ignored.
  * @returns The digest.
  */
@@ -40,7 +40,7 @@ export async function digest(
 /**
  * Builds [`Collection-Synchronization`][1] header content.
  *
- * [1]: https://codeberg.org/fediverse/fep/src/branch/main/fep/8fcf/fep-8fcf.md#the-collection-synchronization-http-header
+ * [1]: https://w3id.org/fep/8fcf#the-collection-synchronization-http-header
  *
  * @param collectionId The sender's followers collection URI.
  * @param actorIds The actor URIs to digest.
