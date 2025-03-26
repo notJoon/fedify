@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.0.23
 --------------
 
-To be released.
+Released on March 26, 2025.
 
  -  Fixed a `TypeError` thrown by the followers collection dispatcher when
     the `base-url` parameter was provided.
