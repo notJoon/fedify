@@ -8,6 +8,9 @@ Version 1.0.23
 
 To be released.
 
+ -  Fixed a `TypeError` thrown by the followers collection dispatcher when
+    the `base-url` parameter was provided.
+
 
 Version 1.0.22
 --------------
