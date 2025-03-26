@@ -3,6 +3,7 @@ import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import * as mf from "mock_fetch";
 import process from "node:process";
 import metadata from "../deno.json" with { type: "json" };
+import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import { MemoryKvStore } from "../federation/kv.ts";
 import { verifyRequest } from "../sig/http.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
@@ -547,6 +548,49 @@ test("kvCache()", async (t) => {
       TypeError,
       "The maximum cache duration is 30 days",
     );
+  });
+
+  await t.step("on kv store exception", async () => {
+    class KvStoreThrowsException implements KvStore {
+      get<T = unknown>(_key: KvKey): Promise<T | undefined> {
+        throw new Error("Failed to get key");
+      }
+      set(
+        _key: KvKey,
+        _value: unknown,
+        _options?: KvStoreSetOptions,
+      ): Promise<void> {
+        throw new Error("Failed to set key");
+      }
+      delete(_key: KvKey): Promise<void> {
+        throw new Error("Failed to delete key");
+      }
+    }
+
+    const loader = kvCache({
+      kv: new KvStoreThrowsException(),
+      loader: mockDocumentLoader,
+      rules: [
+        ["https://example.org/", Temporal.Duration.from({ days: 1 })],
+        [new URL("https://example.net/"), Temporal.Duration.from({ days: 1 })],
+        [
+          new URLPattern("https://example.com/*"),
+          Temporal.Duration.from({ days: 30 }),
+        ],
+      ],
+      prefix: ["_test", "not cached"],
+    });
+    const result = await loader("https://example.com/object");
+    assertEquals(result, {
+      contextUrl: null,
+      documentUrl: "https://example.com/object",
+      document: {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        id: "https://example.com/object",
+        name: "Fetched object",
+        type: "Object",
+      },
+    });
   });
 });
 
