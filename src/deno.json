@@ -40,7 +40,7 @@
     "@std/async": "jsr:@std/async@^1.0.5",
     "@std/bytes": "jsr:@std/bytes@^1.0.2",
     "@std/collections": "jsr:@std/collections@^1.0.6",
-    "@std/encoding": "jsr:@std/encoding@^1.0.5",
+    "@std/encoding": "jsr:@std/encoding@1.0.7",
     "@std/fs": "jsr:@std/fs@^1.0.3",
     "@std/http": "jsr:@std/http@^1.0.6",
     "@std/path": "jsr:@std/path@^1.0.6",

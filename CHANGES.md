@@ -8,6 +8,12 @@ Version 1.3.16
 
 To be released.
 
+ -  Fixed a `TypeError` thrown by the followers collection dispatcher when
+    the `base-url` parameter was provided.
+
+ -  Fixed a `TypeError` thrown by the `signRequest()` function on Node.js.
+    [[#222]]
+
 
 Version 1.3.15
 --------------
@@ -313,6 +319,17 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.20
+--------------
+
+Released on March 26, 2025.
+
+ -  Fixed a `TypeError` thrown by the followers collection dispatcher when
+    the `base-url` parameter was provided.
+ -  Fixed a `TypeError` thrown by the `signRequest()` function on Node.js.
+    [[#222]]
 
 
 Version 1.2.19
@@ -668,6 +685,17 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.20
+--------------
+
+Released on March 26, 2025.
+
+ -  Fixed a `TypeError` thrown by the followers collection dispatcher when
+    the `base-url` parameter was provided.
+ -  Fixed a `TypeError` thrown by the `signRequest()` function on Node.js.
+    [[#222]]
 
 
 Version 1.1.19
@@ -1064,6 +1092,19 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.23
+--------------
+
+Released on March 26, 2025.
+
+ -  Fixed a `TypeError` thrown by the followers collection dispatcher when
+    the `base-url` parameter was provided.
+ -  Fixed a `TypeError` thrown by the `signRequest()` function on Node.js.
+    [[#222]]
+
+[#222]: https://github.com/fedify-dev/fedify/issues/222
 
 
 Version 1.0.22
