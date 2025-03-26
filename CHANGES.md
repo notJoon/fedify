@@ -10,6 +10,10 @@ To be released.
 
  -  Fixed a `TypeError` thrown by the followers collection dispatcher when
     the `base-url` parameter was provided.
+ -  Fixed a `TypeError` thrown by the `signRequest()` function on Node.js.
+    [[#222]]
+
+[#222]: https://github.com/fedify-dev/fedify/issues/222
 
 
 Version 1.0.22
