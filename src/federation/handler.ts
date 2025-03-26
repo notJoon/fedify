@@ -327,7 +327,7 @@ export async function handleCollection<
       }
       collection = new OrderedCollection({
         id: baseUri,
-        totalItems: Number(totalItems),
+        totalItems: totalItems == null ? null : Number(totalItems),
         first,
         last,
       });
