@@ -495,10 +495,27 @@ export function kvCache(
     const match = matchRule(url);
     if (match == null) return await loader(url);
     const key: KvKey = [...keyPrefix, url];
-    const cache = await kv.get<RemoteDocument>(key);
+    let cache: RemoteDocument | undefined = undefined;
+    try {
+      cache = await kv.get<RemoteDocument>(key);
+    } catch (error) {
+      if (error instanceof Error) {
+        logger.warn(
+          "Failed to get the document of {url} from the KV cache: {error}",
+          { url, error },
+        );
+      }
+    }
     if (cache == null) {
       const remoteDoc = await loader(url);
-      await kv.set(key, remoteDoc, { ttl: match });
+      try {
+        await kv.set(key, remoteDoc, { ttl: match });
+      } catch (error) {
+        logger.warn(
+          "Failed to save the document of {url} to the KV cache: {error}",
+          { url, error },
+        );
+      }
       return remoteDoc;
     }
     return cache;
