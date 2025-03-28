@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.5.0
 -------------
 
-To be released.
+Released on March 28, 2025.
 
 -  Improved activity delivery performance with large audiences through
    a two-stage queuing system.  Sending activities to many recipients
