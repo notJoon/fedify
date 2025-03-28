@@ -5,25 +5,25 @@
     "jsr:@david/which-runtime@~0.2.1": "0.2.1",
     "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
     "jsr:@deno/dnt@~0.41.3": "0.41.3",
-    "jsr:@fedify/fedify@1.5.0-dev.732+7b169275": "1.5.0-dev.732+7b169275",
+    "jsr:@fedify/fedify@1.5.0-dev.750": "1.5.0-dev.750+47e9826f",
     "jsr:@hugoalh/http-header-link@^1.0.2": "1.0.3",
     "jsr:@hugoalh/is-string-singleline@^1.0.4": "1.0.4",
     "jsr:@logtape/logtape@0.9": "0.9.0",
     "jsr:@logtape/logtape@~0.8.2": "0.8.2",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.226": "0.226.0",
-    "jsr:@std/async@^1.0.5": "1.0.11",
+    "jsr:@std/async@^1.0.5": "1.0.12",
     "jsr:@std/async@~0.224.2": "0.224.2",
     "jsr:@std/bytes@0.223": "0.223.0",
     "jsr:@std/bytes@^1.0.2": "1.0.5",
-    "jsr:@std/encoding@^1.0.5": "1.0.7",
+    "jsr:@std/encoding@1.0.7": "1.0.7",
     "jsr:@std/fmt@0.223": "0.223.0",
     "jsr:@std/fmt@1": "1.0.1",
     "jsr:@std/fs@0.223": "0.223.0",
     "jsr:@std/fs@1": "1.0.2",
     "jsr:@std/fs@~0.229.3": "0.229.3",
     "jsr:@std/http@^1.0.6": "1.0.13",
-    "jsr:@std/internal@1": "1.0.0",
+    "jsr:@std/internal@1": "1.0.6",
     "jsr:@std/io@0.223": "0.223.0",
     "jsr:@std/path@0.223": "0.223.0",
     "jsr:@std/path@1": "1.0.3",
@@ -45,7 +45,7 @@
     "npm:multicodec@^3.2.1": "3.2.1",
     "npm:pkijs@^3.2.4": "3.2.5",
     "npm:superjson@1.13.3": "1.13.3",
-    "npm:uri-template-router@^0.0.16": "0.0.16",
+    "npm:uri-template-router@^0.0.17": "0.0.17",
     "npm:url-template@^3.1.1": "3.1.1"
   },
   "jsr": {
@@ -75,8 +75,8 @@
         "jsr:@ts-morph/bootstrap"
       ]
     },
-    "@fedify/fedify@1.5.0-dev.732+7b169275": {
-      "integrity": "7b0dbf545b8a568f83dc7419bc75d36decea529e4fa252a31c9929c12cd475db",
+    "@fedify/fedify@1.5.0-dev.750+47e9826f": {
+      "integrity": "514bb9afccb89d090a606e1d2a766502ba9a2946791280037f6edb0186ac3d09",
       "dependencies": [
         "jsr:@david/which-runtime",
         "jsr:@hugoalh/http-header-link",
@@ -126,8 +126,8 @@
     "@std/async@0.224.2": {
       "integrity": "4d277d6e165df43d5e061ba0ef3edfddb8e8d558f5b920e3e6b1d2614b44d074"
     },
-    "@std/async@1.0.11": {
-      "integrity": "eee0d3405275506638a9c8efaa849cf0d35873120c69b7caa1309c9a9e5b6f85"
+    "@std/async@1.0.12": {
+      "integrity": "d1bfcec459e8012846fe4e38dfc4241ab23240ecda3d8d6dfcf6d81a632e803d"
     },
     "@std/bytes@0.223.0": {
       "integrity": "84b75052cd8680942c397c2631318772b295019098f40aac5c36cead4cba51a8"
@@ -164,6 +164,9 @@
     },
     "@std/internal@1.0.0": {
       "integrity": "ac6a6dfebf838582c4b4f61a6907374e27e05bedb6ce276e0f1608fe84e7cd9a"
+    },
+    "@std/internal@1.0.6": {
+      "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
     },
     "@std/io@0.223.0": {
       "integrity": "2d8c3c2ab3a515619b90da2c6ff5ea7b75a94383259ef4d02116b228393f84f1",
@@ -438,8 +441,8 @@
         "@fastify/busboy"
       ]
     },
-    "uri-template-router@0.0.16": {
-      "integrity": "sha512-kvIuR8BtfL/VXFCM5hA7kjfYBdxMKQMmjOOA2zPUR1Xy7K+aVF2cVWMDaQEa2O74WN7zMloyvvmYjNJ38fVUew=="
+    "uri-template-router@0.0.17": {
+      "integrity": "sha512-5h2I/eSN+XFRAFaSR72KTFWg5rf8GB6Ur5+yWHjtwEqmn6cfZqoWsoWTh6NhxW8pIlFq144G2J23OCg3CeAaSg=="
     },
     "url-template@3.1.1": {
       "integrity": "sha512-4oszoaEKE/mQOtAmdMWqIRHmkxWkUZMnXFnjQ5i01CuRSK3uluxcH1MRVVVWmhlnzT1SCDfKxxficm2G37qzCA=="
@@ -461,7 +464,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@deno/dnt@~0.41.3",
-      "jsr:@fedify/fedify@1.5.0-dev.732+7b169275",
+      "jsr:@fedify/fedify@1.5.0-dev.750",
       "jsr:@logtape/logtape@0.9",
       "jsr:@std/assert@0.226",
       "jsr:@std/async@~0.224.2",

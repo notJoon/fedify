@@ -69,6 +69,9 @@ To be released.
  -  Added `RedisMessageQueue.enqueueMany()` method for efficiently enqueueing
     multiple messages in a single transaction.
 
+ -  Updated *@js-temporal/polyfill* to 0.5.0 for Node.js and Bun. On Deno,
+    there is no change because the polyfill is not used.
+
 ### Version 0.3.0
 
 Released on October 4, 2024.
