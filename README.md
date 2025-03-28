@@ -70,7 +70,7 @@ Changelog
 
 ### Version 0.2.0
 
-To be released.
+Released on March 28, 2025.
 
  -  Added `AmqpMessageQueue.enqueueMany()` method for efficiently enqueuing
     multiple messages at once.
