@@ -67,6 +67,9 @@ To be released.
  -  Added an optional method `enqueueMany()` to `MessageQueue` interface
     for sending multiple activities at once.
 
+ -  Updated *@js-temporal/polyfill* to 0.5.0 for Node.js and Bun.  On Deno,
+    there is no change because the polyfill is not used.
+
  -  Fixed a bug of the `fedify inbox` command where it had failed to render
     the web interface when the `fedify` command was installed using
     `deno install` command from JSR.
