@@ -64,6 +64,10 @@ bun add @fedify/postgres
 Changelog
 ---------
 
+### Version 0.4.0
+
+To be released.
+
 ### Version 0.3.0
 
 Released on March 28, 2025.
