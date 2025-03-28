@@ -64,7 +64,7 @@ Changelog
 
 ### Version 0.4.0
 
-To be released.
+Released on March 28, 2025.
 
  -  Added `RedisMessageQueue.enqueueMany()` method for efficiently enqueueing
     multiple messages in a single transaction.
