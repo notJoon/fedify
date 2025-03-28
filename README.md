@@ -71,6 +71,9 @@ To be released.
  -  Added `PostgresMessageQueue.enqueueMany()` method for efficiently enqueuing
     multiple messages at once.
 
+ -  Updated *@js-temporal/polyfill* to 0.5.0 for Node.js and Bun. On Deno,
+    there is no change because the polyfill is not used.
+
  -  Added some logging using [LogTape] for the sake of debugging.  The following
     categories are used:
 
