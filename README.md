@@ -72,6 +72,9 @@ Changelog
 
 To be released.
 
+ -  Added `AmqpMessageQueue.enqueueMany()` method for efficiently enqueuing
+    multiple messages at once.
+
  -  Updated *@js-temporal/polyfill* to 0.5.0 for Node.js and Bun. On Deno,
     there is no change because the polyfill is not used.
 

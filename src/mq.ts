@@ -113,6 +113,40 @@ export class AmqpMessageQueue implements MessageQueue {
     );
   }
 
+  async enqueueMany(
+    // deno-lint-ignore no-explicit-any
+    messages: any[],
+    options?: MessageQueueEnqueueOptions,
+  ): Promise<void> {
+    const channel = await this.#getSenderChannel();
+    const delay = options?.delay?.total("millisecond");
+    let queue: string;
+    if (delay == null || delay <= 0) {
+      queue = this.#queue;
+    } else {
+      const delayStr = delay.toLocaleString("en", { useGrouping: false });
+      queue = this.#delayedQueuePrefix + delayStr;
+      await channel.assertQueue(queue, {
+        autoDelete: true,
+        durable: this.#durable,
+        deadLetterExchange: "",
+        deadLetterRoutingKey: this.#queue,
+        messageTtl: delay,
+      });
+    }
+
+    for (const message of messages) {
+      channel.sendToQueue(
+        queue,
+        Buffer.from(JSON.stringify(message), "utf-8"),
+        {
+          persistent: this.#durable,
+          contentType: "application/json",
+        },
+      );
+    }
+  }
+
   async listen(
     // deno-lint-ignore no-explicit-any
     handler: (message: any) => void | Promise<void>,

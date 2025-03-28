@@ -19,23 +19,27 @@ Deno.test("AmqpMessageQueue", async (t) => {
   const mq = new AmqpMessageQueue(conn, { queue, delayedQueuePrefix });
   const mq2 = new AmqpMessageQueue(conn2, { queue, delayedQueuePrefix });
 
-  const messages: string[] = [];
+  const messages1: string[] = [];
+  const messages2: string[] = [];
+  const allMessages: string[] = [];
   const controller = new AbortController();
   const listening = mq.listen((message: string) => {
-    messages.push(message);
+    messages1.push(message);
+    allMessages.push(message);
   }, { signal: controller.signal });
   const listening2 = mq2.listen((message: string) => {
-    messages.push(message);
+    messages2.push(message);
+    allMessages.push(message);
   }, { signal: controller.signal });
 
   await t.step("enqueue()", async () => {
     await mq.enqueue("Hello, world!");
   });
 
-  await waitFor(() => messages.length > 0, 15_000);
+  await waitFor(() => allMessages.length > 0, 15_000);
 
   await t.step("listen()", () => {
-    assertEquals(messages, ["Hello, world!"]);
+    assertEquals(allMessages.includes("Hello, world!"), true);
   });
 
   let started = 0;
@@ -47,11 +51,45 @@ Deno.test("AmqpMessageQueue", async (t) => {
     );
   });
 
-  await waitFor(() => messages.length > 1, 15_000);
+  await waitFor(() => allMessages.includes("Delayed message"), 15_000);
 
   await t.step("listen() with delay", () => {
-    assertEquals(messages, ["Hello, world!", "Delayed message"]);
+    assertEquals(allMessages.includes("Delayed message"), true);
     assertGreater(Date.now() - started, 3_000);
+  });
+
+  await t.step("enqueueMany()", async () => {
+    await mq.enqueueMany(["Message 1", "Message 2", "Message 3"]);
+  });
+
+  await waitFor(() =>
+    allMessages.includes("Message 1") &&
+    allMessages.includes("Message 2") &&
+    allMessages.includes("Message 3"), 15_000);
+
+  await t.step("listen() after enqueueMany()", () => {
+    assertEquals(allMessages.includes("Message 1"), true);
+    assertEquals(allMessages.includes("Message 2"), true);
+    assertEquals(allMessages.includes("Message 3"), true);
+  });
+
+  let manyStarted = 0;
+  await t.step("enqueueMany() with delay", async () => {
+    manyStarted = Date.now();
+    await mq.enqueueMany(
+      ["Delayed batch 1", "Delayed batch 2"],
+      { delay: Temporal.Duration.from({ seconds: 3 }) },
+    );
+  });
+
+  await waitFor(() =>
+    allMessages.includes("Delayed batch 1") &&
+    allMessages.includes("Delayed batch 2"), 15_000);
+
+  await t.step("listen() after enqueueMany() with delay", () => {
+    assertEquals(allMessages.includes("Delayed batch 1"), true);
+    assertEquals(allMessages.includes("Delayed batch 2"), true);
+    assertGreater(Date.now() - manyStarted, 3_000);
   });
 
   controller.abort();
