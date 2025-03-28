@@ -68,6 +68,10 @@ bun add @fedify/amqp
 Changelog
 ---------
 
+### Version 0.3.0
+
+To be released.
+
 ### Version 0.2.0
 
 Released on March 28, 2025.
