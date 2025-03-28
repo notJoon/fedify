@@ -70,6 +70,9 @@ To be released.
  -  Updated *@js-temporal/polyfill* to 0.5.0 for Node.js and Bun.  On Deno,
     there is no change because the polyfill is not used.
 
+ -  Updated *uri-template-router* to 0.0.17 which fixes bundler errors on
+    Rollup.  [[#221]]
+
  -  Fixed a bug of the `fedify inbox` command where it had failed to render
     the web interface when the `fedify` command was installed using
     `deno install` command from JSR.
@@ -94,6 +97,7 @@ To be released.
 [#211]: https://github.com/fedify-dev/fedify/issues/211
 [#215]: https://github.com/fedify-dev/fedify/pull/215
 [#220]: https://github.com/fedify-dev/fedify/issues/220
+[#221]: https://github.com/fedify-dev/fedify/issues/221
 [multibase]: https://github.com/multiformats/js-multibase
 
 

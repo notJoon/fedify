@@ -42,7 +42,7 @@
     "mock_fetch": "jsr:@hongminhee/deno-mock-fetch@^0.3.2",
     "multicodec": "npm:multicodec@^3.2.1",
     "pkijs": "npm:pkijs@^3.2.4",
-    "uri-template-router": "npm:uri-template-router@^0.0.16",
+    "uri-template-router": "npm:uri-template-router@^0.0.17",
     "url-template": "npm:url-template@^3.1.1"
   },
   "include": [
