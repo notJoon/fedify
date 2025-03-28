@@ -3,6 +3,7 @@ import {
   assertEquals,
   assertFalse,
   assertInstanceOf,
+  assertNotEquals,
   assertRejects,
   assertStrictEquals,
   assertThrows,
@@ -1456,9 +1457,11 @@ test("ContextImpl.sendActivity()", async (t) => {
 
   let verified: ("http" | "ld" | "proof")[] | null = null;
   let request: Request | null = null;
+  let collectionSyncHeader: string | null = null;
   mf.mock("POST@/inbox", async (req) => {
     verified = [];
     request = req.clone();
+    collectionSyncHeader = req.headers.get("Collection-Synchronization");
     const options = {
       async documentLoader(url: string) {
         const response = await federation.fetch(
@@ -1540,6 +1543,18 @@ test("ContextImpl.sendActivity()", async (t) => {
       ];
     })
     .mapHandle((_ctx, username) => username === "john" ? "1" : null);
+
+  federation.setFollowersDispatcher(
+    "/users/{identifier}/followers",
+    () => ({
+      items: [
+        {
+          id: new URL("https://example.com/recipient"),
+          inboxId: new URL("https://example.com/inbox"),
+        },
+      ],
+    }),
+  );
 
   await t.step("success", async () => {
     const activity = new Create({
@@ -1815,6 +1830,55 @@ test("ContextImpl.sendActivity()", async (t) => {
         type: "fanout",
       },
     ]);
+  });
+
+  collectionSyncHeader = null;
+
+  await t.step("followers collection without syncCollection", async () => {
+    const ctx = new ContextImpl({
+      data: undefined,
+      federation,
+      url: new URL("https://example.com/"),
+      documentLoader: fetchDocumentLoader,
+      contextLoader: fetchDocumentLoader,
+    });
+
+    const activity = new Create({
+      id: new URL("https://example.com/activity/1"),
+      actor: ctx.getActorUri("1"),
+      to: ctx.getFollowersUri("1"),
+    });
+
+    await ctx.sendActivity({ identifier: "1" }, "followers", activity);
+
+    assertEquals(collectionSyncHeader, null);
+  });
+
+  collectionSyncHeader = null;
+
+  await t.step("followers collection with syncCollection", async () => {
+    const ctx = new ContextImpl({
+      data: undefined,
+      federation,
+      url: new URL("https://example.com/"),
+      documentLoader: fetchDocumentLoader,
+      contextLoader: fetchDocumentLoader,
+    });
+
+    const activity = new Create({
+      id: new URL("https://example.com/activity/2"),
+      actor: ctx.getActorUri("1"),
+      to: ctx.getFollowersUri("1"),
+    });
+
+    await ctx.sendActivity(
+      { identifier: "1" },
+      "followers",
+      activity,
+      { syncCollection: true, preferSharedInbox: true },
+    );
+
+    assertNotEquals(collectionSyncHeader, null);
   });
 });
 

@@ -360,7 +360,7 @@ export interface Context<TContextData> {
     sender: { identifier: string } | { username: string } | { handle: string },
     recipients: "followers",
     activity: Activity,
-    options?: SendActivityOptions,
+    options?: SendActivityOptionsForCollection,
   ): Promise<void>;
 
   /**
@@ -695,6 +695,20 @@ export interface SendActivityOptions {
    * @since 0.9.0
    */
   excludeBaseUris?: URL[];
+}
+
+/**
+ * Options for {@link Context.sendActivity} method when sending to a collection.
+ * @since 1.5.0
+ */
+export interface SendActivityOptionsForCollection extends SendActivityOptions {
+  /**
+   * Whether to synchronize the collection using `Collection-Synchronization`
+   * header ([FEP-8fcf]).
+   *
+   * [FEP-8fcf]: https://w3id.org/fep/8fcf
+   */
+  syncCollection?: boolean;
 }
 
 /**

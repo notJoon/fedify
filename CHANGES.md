@@ -31,6 +31,15 @@ To be released.
      -  Added `FederationOrigin` interface.
      -  Added `Context.canonicalOrigin` property.
 
+ -  Followers collection synchronization ([FEP-8fcf]) is now turned off by
+    default.
+
+     -  Added `SendActivityOptionsForCollection` interface.
+     -  The type of `Context.sendActivity({ identifier: string } | { username:
+        string } | { handle: string }, "followers", Activity)` overload's
+        fourth parameter became `SendActivityOptionsForCollection | undefined`
+        (was `SendActivityOptions | undefined`).
+
  -  Fedify now accepts PEM-PKCS#1 besides PEM-SPKI for RSA public keys.
     [[#209]]
 
@@ -102,6 +111,7 @@ To be released.
 [#220]: https://github.com/fedify-dev/fedify/issues/220
 [#221]: https://github.com/fedify-dev/fedify/issues/221
 [#223]: https://github.com/fedify-dev/fedify/pull/223
+[FEP-8fcf]: https://w3id.org/fep/8fcf
 [multibase]: https://github.com/multiformats/js-multibase
 
 

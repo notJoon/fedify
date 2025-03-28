@@ -262,6 +262,15 @@ await ctx.sendActivity(
 > an array of `SenderKeyPair` objects.  You need to specify the recipients
 > manually in this case.
 
+> [!TIP]
+> Does the `Context.sendActivity()` method takes quite a long time to complete
+> even if you configured the [`queue`](./federation.md#queue)?  It might be
+> because the followers collection is large and the method under the hood
+> invokes your [followers collection dispatcher](./collections.md#followers)
+> multiple times to paginate the collection.  To improve the performance,
+> you should implement the [one-short followers collection for gathering
+> recipients](./collections.md#one-shot-followers-collection-for-gathering-recipients).
+
 
 Specifying an activity
 ----------------------
@@ -482,7 +491,7 @@ const recipients: Recipient[] = [];
 // ---cut-before---
 await ctx.sendActivity(
   { identifier: "alice" },
-  recipients, 
+  recipients,
   activity,
   { fanout: "skip" }  // [!code highlight]
 );
@@ -498,7 +507,7 @@ const recipients: Recipient[] = [];
 // ---cut-before---
 await ctx.sendActivity(
   { identifier: "alice" },
-  recipients, 
+  recipients,
   activity,
   { fanout: "force" }  // [!code highlight]
 );
@@ -593,7 +602,8 @@ async function sendNote(
 Followers collection synchronization
 ------------------------------------
 
-*This API is available since Fedify 0.8.0.*
+*This API is available since Fedify 0.8.0, and it is optional since
+Fedify 1.5.0.*
 
 > [!NOTE]
 > For efficiency, you should implement
@@ -612,7 +622,8 @@ so that the recipient server can check if it needs to resynchronize
 the followers collection.  Fedify provides a way to include the digest
 of the followers collection in the activity delivery request by specifying
 the recipients parameter of the `~Context.sendActivity()` method as
-the `"followers"` string:
+the `"followers"` string and turning on
+the `~SendActivityOptionsForCollection.syncCollection` option:
 
 ~~~~ typescript twoslash
 import { type Context, Create, Note } from "@fedify/fedify";
@@ -630,13 +641,17 @@ await ctx.sendActivity(
       to: ctx.getFollowersUri(senderId),
     }),
   }),
-  { preferSharedInbox: true },  // [!code highlight]
+  {
+    preferSharedInbox: true,  // [!code highlight]
+    syncCollection: true,  // [!code highlight]
+  },
 );
 ~~~~
 
-If you specify the `"followers"` string as the recipients parameter,
-it automatically sends the activity to the sender's followers and includes
-the digest of the followers collection in the payload.
+The `~SendActivityOptionsForCollection.syncCollection` option is only available
+when you specify the `"followers"` string as the recipients parameter.  With
+turning on this option, it automatically sends the activity to the sender's
+followers and includes the digest of the followers collection in the payload.
 
 > [!NOTE]
 > The `to` and `cc` properties of an `Activity` and its `object` should be set
@@ -645,14 +660,12 @@ the digest of the followers collection in the payload.
 > the `PUBLIC_COLLECTION`, the activity is visible to everyone regardless of
 > the recipients parameter.
 
-> [!TIP]
-> Does the `Context.sendActivity()` method takes quite a long time to complete
-> even if you configured the [`queue`](./federation.md#queue)?  It might be
-> because the followers collection is large and the method under the hood
-> invokes your [followers collection dispatcher](./collections.md#followers)
-> multiple times to paginate the collection.  To improve the performance,
-> you should implement the [one-short followers collection for gathering
-> recipients](./collections.md#one-shot-followers-collection-for-gathering-recipients).
+> [!NOTE]
+> Some history of this feature: The followers collection synchronization was
+> first introduced in Fedify 0.8.0, but it was automatically turned on when
+> the recipients parameter was set to the `"followers"` string then.
+> Since Fedify 1.5.0, it is optional, and you need to explicitly turn on
+> the `~SendActivityOptionsForCollection.syncCollection` option to use it.
 
 [FEP-8fcf]: https://w3id.org/fep/8fcf
 

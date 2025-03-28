@@ -83,7 +83,7 @@ import type {
   ParseUriResult,
   RequestContext,
   RouteActivityOptions,
-  SendActivityOptions,
+  SendActivityOptionsForCollection,
 } from "./context.ts";
 import type {
   ActorCallbackSetters,
@@ -3221,7 +3221,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       | { handle: string },
     recipients: Recipient | Recipient[] | "followers",
     activity: Activity,
-    options: SendActivityOptions = {},
+    options: SendActivityOptionsForCollection = {},
   ): Promise<void> {
     const tracer = this.tracerProvider.getTracer(
       metadata.name,
@@ -3274,7 +3274,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       | { handle: string },
     recipients: Recipient | Recipient[] | "followers",
     activity: Activity,
-    options: SendActivityOptions = {},
+    options: SendActivityOptionsForCollection,
     span: Span,
   ): Promise<void> {
     const logger = getLogger(["fedify", "federation", "outbox"]);
@@ -3350,13 +3350,15 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       ) {
         expandedRecipients.push(recipient);
       }
-      const collectionId = this.federation.router.build(
-        "followers",
-        { identifier, handle: identifier },
-      );
-      opts.collectionSync = collectionId == null
-        ? undefined
-        : new URL(collectionId, this.canonicalOrigin).href;
+      if (options.syncCollection) {
+        const collectionId = this.federation.router.build(
+          "followers",
+          { identifier, handle: identifier },
+        );
+        opts.collectionSync = collectionId == null
+          ? undefined
+          : new URL(collectionId, this.canonicalOrigin).href;
+      }
     } else {
       expandedRecipients = [recipients];
     }
