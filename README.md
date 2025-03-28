@@ -72,6 +72,9 @@ Changelog
 
 To be released.
 
+ -  Updated *@js-temporal/polyfill* to 0.5.0 for Node.js and Bun. On Deno,
+    there is no change because the polyfill is not used.
+
 ### Version 0.1.0
 
 Initial release.  Released on October 14, 2024.

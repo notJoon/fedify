@@ -42,7 +42,7 @@ await build({
       "https://github.com/sponsors/dahlia",
     ],
     devDependencies: {
-      "@types/amqplib": "^0.10.5",
+      "@types/amqplib": "0.10.6",
     },
   },
   outDir: "./npm",
@@ -57,7 +57,7 @@ await build({
       {
         package: {
           name: "@js-temporal/polyfill",
-          version: "^0.4.4",
+          version: "^0.5.0",
         },
         globalNames: [
           {
