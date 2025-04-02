@@ -25,12 +25,12 @@ Supporters
 Backers
 -------
 
-yamanoku, Encyclia, taye, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
+yamanoku, taye, Encyclia, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
 
 One-time donations
 ------------------
 
-Markus P, Rameez, Nils Bergmann
+Markus P, Nils Bergmann, Rameez
 
 <!-- /DO NOT EDIT -->
 <!-- cSpell: enable -->
