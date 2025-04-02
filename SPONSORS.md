@@ -18,9 +18,9 @@ Corporate sponsors
 Supporters
 ----------
 
+- [Daniel Supernault](https://pixelfed.org/)
 - [tkgka](https://opencollective.com/tkgka)
 - [Blaine](https://opencollective.com/blaine)
-- [Daniel Supernault](https://pixelfed.org/)
 
 Backers
 -------
@@ -30,7 +30,7 @@ yamanoku, Encyclia, taye, okin, Andy Piper, box464, Evan Prodromou, Rafael Goula
 One-time donations
 ------------------
 
-Markus P, Nils Bergmann, Rameez
+Markus P, Rameez, Nils Bergmann
 
 <!-- /DO NOT EDIT -->
 <!-- cSpell: enable -->
