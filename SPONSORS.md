@@ -18,9 +18,9 @@ Corporate sponsors
 Supporters
 ----------
 
-- [Daniel Supernault](https://pixelfed.org/)
 - [tkgka](https://opencollective.com/tkgka)
 - [Blaine](https://opencollective.com/blaine)
+- [Daniel Supernault](https://pixelfed.org/)
 
 Backers
 -------
