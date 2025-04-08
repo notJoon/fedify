@@ -8,6 +8,11 @@ Version 1.1.21
 
 To be released.
 
+ -  Activity Vocabulary API became to accept [RFC 3339] date-time strings
+    without a timezone offset.  This is not a bug fix, but improves
+    interoperability with some implementations that do not include a timezone
+    offset in their date-time strings including WordPress.  [[#226]]
+
  -  Added the following default context to `Undo` class:
 
     ~~~~ json
@@ -425,6 +430,20 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.24
+--------------
+
+Released on April 8, 2025.
+
+ -  Activity Vocabulary API became to accept [RFC 3339] date-time strings
+    without a timezone offset.  This is not a bug fix, but improves
+    interoperability with some implementations that do not include a timezone
+    offset in their date-time strings including WordPress.  [[#226]]
+
+[RFC 3339]: https://datatracker.ietf.org/doc/html/rfc3339
+[#226]: https://github.com/fedify-dev/fedify/issues/226
 
 
 Version 1.0.23
