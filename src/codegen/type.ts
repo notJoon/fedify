@@ -184,10 +184,17 @@ const scalarTypes: Record<string, ScalarType> = {
     dataCheck(v) {
       return `typeof ${v} === "object" && "@type" in ${v}
         && "@value" in ${v} && typeof ${v}["@value"] === "string"
-        && ${v}["@type"] === "http://www.w3.org/2001/XMLSchema#dateTime"`;
+        && ${v}["@type"] === "http://www.w3.org/2001/XMLSchema#dateTime"
+        // Check if the value is a valid RFC 3339 date-time string
+        && new Date(${v}["@value"]).toString() !== "Invalid Date"
+        `;
     },
     decoder(v) {
-      return `Temporal.Instant.from(${v}["@value"])`;
+      return `Temporal.Instant.from(
+        ${v}["@value"].substring(19).match(/[Z+-]/)
+          ? ${v}["@value"]
+          : ${v}["@value"] + "Z"
+      )`;
     },
   },
   "http://www.w3.org/2001/XMLSchema#duration": {

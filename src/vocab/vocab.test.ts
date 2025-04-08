@@ -143,6 +143,7 @@ test("Object.fromJsonLd()", async () => {
       "content": "Hello",
       "mediaType": "text/plain",
     },
+    "published": "2025-01-01 12:34:56",
   }, { documentLoader: mockDocumentLoader, contextLoader: mockDocumentLoader });
   assertInstanceOf(obj, Object);
   assertEquals(obj.name, "Test");
@@ -153,6 +154,7 @@ test("Object.fromJsonLd()", async () => {
   assertInstanceOf(obj.source, Source);
   assertEquals(obj.source.content, "Hello");
   assertEquals(obj.source.mediaType, "text/plain");
+  assertEquals(obj.published, Temporal.Instant.from("2025-01-01T12:34:56Z"));
 
   const createJsonLd = {
     "@context": "https://www.w3.org/ns/activitystreams",
