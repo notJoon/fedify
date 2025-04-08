@@ -8,6 +8,17 @@ Version 1.1.21
 
 To be released.
 
+ -  Added the following default context to `Undo` class:
+
+    ~~~~ json
+    {
+      "litepub": "http://litepub.social/ns#",
+      "toot": "http://joinmastodon.org/ns#",
+      "EmojiReact": "litepub:EmojiReact",
+      "Emoji": "toot:Emoji"
+    }
+    ~~~~
+
 
 Version 1.1.20
 --------------

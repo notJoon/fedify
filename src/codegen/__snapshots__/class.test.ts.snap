@@ -52620,7 +52620,7 @@ instruments?: (Object | URL)[];}
       );
     }
     const docContext = options.context ??
-      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/v1\\",\\"https://w3id.org/security/data-integrity/v1\\",\\"https://www.w3.org/ns/did/v1\\",\\"https://w3id.org/security/multikey/v1\\"];
+      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/v1\\",\\"https://w3id.org/security/data-integrity/v1\\",\\"https://www.w3.org/ns/did/v1\\",\\"https://w3id.org/security/multikey/v1\\",{\\"litepub\\":\\"http://litepub.social/ns#\\",\\"toot\\":\\"http://joinmastodon.org/ns#\\",\\"EmojiReact\\":\\"litepub:EmojiReact\\",\\"Emoji\\":\\"toot:Emoji\\"}];
     const compacted = await jsonld.compact(
       values,
       docContext,
