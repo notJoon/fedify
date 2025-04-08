@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.5.1
 -------------
 
-To be released.
+Released on April 8, 2025.
 
  -  Activity Vocabulary API became to accept [RFC 3339] date-time strings
     without a timezone offset.  This is not a bug fix, but improves
