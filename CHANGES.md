@@ -8,6 +8,14 @@ Version 1.0.24
 
 To be released.
 
+ -  Activity Vocabulary API became to accept [RFC 3339] date-time strings
+    without a timezone offset.  This is not a bug fix, but improves
+    interoperability with some implementations that do not include a timezone
+    offset in their date-time strings including WordPress.  [[#226]]
+
+[RFC 3339]: https://datatracker.ietf.org/doc/html/rfc3339
+[#226]: https://github.com/fedify-dev/fedify/issues/226
+
 
 Version 1.0.23
 --------------
