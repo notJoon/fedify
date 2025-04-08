@@ -8,6 +8,22 @@ Version 1.3.17
 
 To be released.
 
+ -  Activity Vocabulary API became to accept [RFC 3339] date-time strings
+    without a timezone offset.  This is not a bug fix, but improves
+    interoperability with some implementations that do not include a timezone
+    offset in their date-time strings including WordPress.  [[#226]]
+
+ -  Added the following default context to `Undo` class:
+
+    ~~~~ json
+    {
+      "litepub": "http://litepub.social/ns#",
+      "toot": "http://joinmastodon.org/ns#",
+      "EmojiReact": "litepub:EmojiReact",
+      "Emoji": "toot:Emoji"
+    }
+    ~~~~
+
 
 Version 1.3.16
 --------------
@@ -325,6 +341,28 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.21
+--------------
+
+Released on April 8, 2025.
+
+ -  Activity Vocabulary API became to accept [RFC 3339] date-time strings
+    without a timezone offset.  This is not a bug fix, but improves
+    interoperability with some implementations that do not include a timezone
+    offset in their date-time strings including WordPress.  [[#226]]
+
+ -  Added the following default context to `Undo` class:
+
+    ~~~~ json
+    {
+      "litepub": "http://litepub.social/ns#",
+      "toot": "http://joinmastodon.org/ns#",
+      "EmojiReact": "litepub:EmojiReact",
+      "Emoji": "toot:Emoji"
+    }
+    ~~~~
 
 
 Version 1.2.20
@@ -691,6 +729,28 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.21
+--------------
+
+Released on April 8, 2025.
+
+ -  Activity Vocabulary API became to accept [RFC 3339] date-time strings
+    without a timezone offset.  This is not a bug fix, but improves
+    interoperability with some implementations that do not include a timezone
+    offset in their date-time strings including WordPress.  [[#226]]
+
+ -  Added the following default context to `Undo` class:
+
+    ~~~~ json
+    {
+      "litepub": "http://litepub.social/ns#",
+      "toot": "http://joinmastodon.org/ns#",
+      "EmojiReact": "litepub:EmojiReact",
+      "Emoji": "toot:Emoji"
+    }
+    ~~~~
 
 
 Version 1.1.20
@@ -1098,6 +1158,20 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.24
+--------------
+
+Released on April 8, 2025.
+
+ -  Activity Vocabulary API became to accept [RFC 3339] date-time strings
+    without a timezone offset.  This is not a bug fix, but improves
+    interoperability with some implementations that do not include a timezone
+    offset in their date-time strings including WordPress.  [[#226]]
+
+[RFC 3339]: https://datatracker.ietf.org/doc/html/rfc3339
+[#226]: https://github.com/fedify-dev/fedify/issues/226
 
 
 Version 1.0.23
