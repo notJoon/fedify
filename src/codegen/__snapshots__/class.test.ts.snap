@@ -5282,7 +5282,11 @@ get urls(): ((URL | Link))[] {
         : _219RwDanjScTv5tYCjwGZVCM7KZ9_endTime__array
     ) {
       if (v == null) continue;
-    _219RwDanjScTv5tYCjwGZVCM7KZ9_endTime.push(Temporal.Instant.from(v[\\"@value\\"]))
+    _219RwDanjScTv5tYCjwGZVCM7KZ9_endTime.push(Temporal.Instant.from(
+        v[\\"@value\\"].substring(19).match(/[Z+-]/)
+          ? v[\\"@value\\"]
+          : v[\\"@value\\"] + \\"Z\\"
+      ))
     }
     instance.#_219RwDanjScTv5tYCjwGZVCM7KZ9_endTime = _219RwDanjScTv5tYCjwGZVCM7KZ9_endTime;
     const _86xFhmgBapoMvYqjbjRuDPayTrS_generator: (Object | Link | URL)[] = [];
@@ -5497,7 +5501,11 @@ get urls(): ((URL | Link))[] {
         : _5e258TDXtuhaFRPZiGoDfEpjdMr_published__array
     ) {
       if (v == null) continue;
-    _5e258TDXtuhaFRPZiGoDfEpjdMr_published.push(Temporal.Instant.from(v[\\"@value\\"]))
+    _5e258TDXtuhaFRPZiGoDfEpjdMr_published.push(Temporal.Instant.from(
+        v[\\"@value\\"].substring(19).match(/[Z+-]/)
+          ? v[\\"@value\\"]
+          : v[\\"@value\\"] + \\"Z\\"
+      ))
     }
     instance.#_5e258TDXtuhaFRPZiGoDfEpjdMr_published = _5e258TDXtuhaFRPZiGoDfEpjdMr_published;
     const _7UpwM3JWcXhADcscukEehBorf6k_replies: (Collection | URL)[] = [];
@@ -5538,7 +5546,11 @@ get urls(): ((URL | Link))[] {
         : _2w3Jmue4up8iVDUA51WZqomEF438_startTime__array
     ) {
       if (v == null) continue;
-    _2w3Jmue4up8iVDUA51WZqomEF438_startTime.push(Temporal.Instant.from(v[\\"@value\\"]))
+    _2w3Jmue4up8iVDUA51WZqomEF438_startTime.push(Temporal.Instant.from(
+        v[\\"@value\\"].substring(19).match(/[Z+-]/)
+          ? v[\\"@value\\"]
+          : v[\\"@value\\"] + \\"Z\\"
+      ))
     }
     instance.#_2w3Jmue4up8iVDUA51WZqomEF438_startTime = _2w3Jmue4up8iVDUA51WZqomEF438_startTime;
     const _4LqirZspQbFWWQEbFcXAxm7tTDN1_summary: ((string | LanguageString))[] = [];
@@ -5614,7 +5626,11 @@ get urls(): ((URL | Link))[] {
         : _385aB7ySixcf5Un6z3VsWmThgCzQ_updated__array
     ) {
       if (v == null) continue;
-    _385aB7ySixcf5Un6z3VsWmThgCzQ_updated.push(Temporal.Instant.from(v[\\"@value\\"]))
+    _385aB7ySixcf5Un6z3VsWmThgCzQ_updated.push(Temporal.Instant.from(
+        v[\\"@value\\"].substring(19).match(/[Z+-]/)
+          ? v[\\"@value\\"]
+          : v[\\"@value\\"] + \\"Z\\"
+      ))
     }
     instance.#_385aB7ySixcf5Un6z3VsWmThgCzQ_updated = _385aB7ySixcf5Un6z3VsWmThgCzQ_updated;
     const _2oPEH9MQ3aj8JVwyYuWkqoVwV865_url: ((URL | Link))[] = [];
@@ -11219,7 +11235,11 @@ cryptosuite?: \\"eddsa-jcs-2022\\" | null;verificationMethod?: Multikey | URL | 
         : _3qzP3ukEZoUziK5FEiA1RhU4aqac__array
     ) {
       if (v == null) continue;
-    _3qzP3ukEZoUziK5FEiA1RhU4aqac.push(Temporal.Instant.from(v[\\"@value\\"]))
+    _3qzP3ukEZoUziK5FEiA1RhU4aqac.push(Temporal.Instant.from(
+        v[\\"@value\\"].substring(19).match(/[Z+-]/)
+          ? v[\\"@value\\"]
+          : v[\\"@value\\"] + \\"Z\\"
+      ))
     }
     instance.#_3qzP3ukEZoUziK5FEiA1RhU4aqac = _3qzP3ukEZoUziK5FEiA1RhU4aqac;
     
@@ -44977,7 +44997,14 @@ instruments?: (Object | URL)[];exclusiveOptions?: (Object | URL)[];inclusiveOpti
       const decoded =
       typeof v === \\"object\\" && \\"@type\\" in v
         && \\"@value\\" in v && typeof v[\\"@value\\"] === \\"string\\"
-        && v[\\"@type\\"] === \\"http://www.w3.org/2001/XMLSchema#dateTime\\" ? Temporal.Instant.from(v[\\"@value\\"]) : typeof v === \\"object\\" && \\"@value\\" in v
+        && v[\\"@type\\"] === \\"http://www.w3.org/2001/XMLSchema#dateTime\\"
+        // Check if the value is a valid RFC 3339 date-time string
+        && new Date(v[\\"@value\\"]).toString() !== \\"Invalid Date\\"
+         ? Temporal.Instant.from(
+        v[\\"@value\\"].substring(19).match(/[Z+-]/)
+          ? v[\\"@value\\"]
+          : v[\\"@value\\"] + \\"Z\\"
+      ) : typeof v === \\"object\\" && \\"@value\\" in v
         && typeof v[\\"@value\\"] === \\"boolean\\" ? v[\\"@value\\"] : undefined
       ;
       if (typeof decoded === \\"undefined\\") continue;
@@ -52627,7 +52654,11 @@ proofs?: (DataIntegrityProof | URL)[];deleted?: Temporal.Instant | null;}
         : _8g8g4LiVMhFTXskuDEqx4ascxUr_deleted__array
     ) {
       if (v == null) continue;
-    _8g8g4LiVMhFTXskuDEqx4ascxUr_deleted.push(Temporal.Instant.from(v[\\"@value\\"]))
+    _8g8g4LiVMhFTXskuDEqx4ascxUr_deleted.push(Temporal.Instant.from(
+        v[\\"@value\\"].substring(19).match(/[Z+-]/)
+          ? v[\\"@value\\"]
+          : v[\\"@value\\"] + \\"Z\\"
+      ))
     }
     instance.#_8g8g4LiVMhFTXskuDEqx4ascxUr_deleted = _8g8g4LiVMhFTXskuDEqx4ascxUr_deleted;
     
@@ -53115,7 +53146,7 @@ instruments?: (Object | URL)[];}
       );
     }
     const docContext = options.context ??
-      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/v1\\",\\"https://w3id.org/security/data-integrity/v1\\",\\"https://www.w3.org/ns/did/v1\\",\\"https://w3id.org/security/multikey/v1\\"];
+      [\\"https://w3id.org/identity/v1\\",\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/v1\\",\\"https://w3id.org/security/data-integrity/v1\\",\\"https://www.w3.org/ns/did/v1\\",\\"https://w3id.org/security/multikey/v1\\",{\\"litepub\\":\\"http://litepub.social/ns#\\",\\"toot\\":\\"http://joinmastodon.org/ns#\\",\\"EmojiReact\\":\\"litepub:EmojiReact\\",\\"Emoji\\":\\"toot:Emoji\\"}];
     const compacted = await jsonld.compact(
       values,
       docContext,
