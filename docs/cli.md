@@ -37,6 +37,17 @@ bun install -g @fedify/cli
 [Node.js]: https://nodejs.org/
 [Bun]: https://bun.sh/
 
+### Using Homebrew on macOS and Linux
+
+If you are using macOS or Linux and have [Homebrew] installed, you can install
+`fedify` by running the following command:
+
+~~~~ sh
+brew install fedify
+~~~~
+
+[Homebrew]: https://brew.sh/
+
 ### Using Scoop on Windows
 
 If you are using Windows and have [Scoop] installed, you can install `fedify`
