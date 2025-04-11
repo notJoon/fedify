@@ -1,0 +1,11 @@
+.devcontainer/
+.git/
+.github/
+.vscode/
+.zed/
+repomix-output.xml
+src/codegen/__snapshots__/
+src/vocab/__snapshots__/
+src/npm/
+scripts/
+t.ts

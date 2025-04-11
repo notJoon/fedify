@@ -1,4 +1,5 @@
 .DS_Store
 deno.lock
+repomix-output.xml
 t.ts
 t2.ts
