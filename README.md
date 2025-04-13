@@ -104,7 +104,7 @@ financial contributors:[^2]
 
 ### Backers
 
-yamanoku, taye, Encyclia, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
+yamanoku, Encyclia, taye, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
 
 ### One-time donations
 
