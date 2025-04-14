@@ -431,7 +431,7 @@ const webfingerData = await ctx.lookupWebFinger("acct:fedify@hollo.social");
 ~~~~
 
 If the lookup fails or the account doesn't exist, the method returns `null`.
-The returned WebFinger document contains links to various resources associated 
+The returned WebFinger document contains links to various resources associated
 with the account, such as profile pages, ActivityPub actor URIs, and more:
 
 ~~~~ typescript twoslash
@@ -441,7 +441,7 @@ const ctx = null as unknown as Context<void>;
 const webfingerData = await ctx.lookupWebFinger("acct:fedify@hollo.social");
 
 // Find the ActivityPub actor URI
-const activityPubActorLink = webfingerData?.links.find(link => 
+const activityPubActorLink = webfingerData?.links?.find(link =>
   link.rel === "self" && link.type === "application/activity+json"
 );
 
