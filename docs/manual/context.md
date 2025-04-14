@@ -413,6 +413,51 @@ const note = await ctx.lookupObject(
 > section for details.
 
 
+WebFinger lookups
+-----------------
+
+*This API is available since Fedify 1.6.0.*
+
+The `Context` provides a dedicated method for WebFinger lookups when you need
+to find information about accounts and resources across federated networks.
+The `~Context.lookupWebFinger()` method allows you to query a remote server's
+WebFinger endpoint directly:
+
+~~~~ typescript twoslash
+import { type Context } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+// ---cut-before---
+const webfingerData = await ctx.lookupWebFinger("acct:fedify@hollo.social");
+~~~~
+
+If the lookup fails or the account doesn't exist, the method returns `null`.
+The returned WebFinger document contains links to various resources associated 
+with the account, such as profile pages, ActivityPub actor URIs, and more:
+
+~~~~ typescript twoslash
+import { type Context } from "@fedify/fedify";
+const ctx = null as unknown as Context<void>;
+// ---cut-before---
+const webfingerData = await ctx.lookupWebFinger("acct:fedify@hollo.social");
+
+// Find the ActivityPub actor URI
+const activityPubActorLink = webfingerData?.links.find(link => 
+  link.rel === "self" && link.type === "application/activity+json"
+);
+
+if (activityPubActorLink?.href) {
+  const actor = await ctx.lookupObject(activityPubActorLink.href);
+  // Work with the actor...
+}
+~~~~
+
+> [!NOTE]
+> In most cases, you can use the higher-level `~Context.lookupObject()` method
+> which automatically performs WebFinger lookups when given a handle.
+> Use `~Context.lookupWebFinger()` when you need the raw WebFinger data or
+> want more direct control over the lookup process.
+
+
 Traversing remote collections
 -----------------------------
 

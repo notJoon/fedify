@@ -9,6 +9,7 @@ import {
   lookupObject as globalLookupObject,
   traverseCollection as globalTraverseCollection,
 } from "../vocab/lookup.ts";
+import { lookupWebFinger as globalLookupWebFinger } from "../webfinger/lookup.ts";
 import { mockDocumentLoader } from "./docloader.ts";
 
 export function createContext<TContextData>(
@@ -35,6 +36,7 @@ export function createContext<TContextData>(
     lookupObject,
     traverseCollection,
     lookupNodeInfo,
+    lookupWebFinger,
     sendActivity,
     routeActivity,
   }: Partial<Context<TContextData>> & { url?: URL; data: TContextData },
@@ -87,6 +89,9 @@ export function createContext<TContextData>(
     }),
     lookupNodeInfo: lookupNodeInfo ?? ((_params) => {
       throw new Error("Not implemented");
+    }),
+    lookupWebFinger: lookupWebFinger ?? ((resource, options = {}) => {
+      return globalLookupWebFinger(resource, options);
     }),
     sendActivity: sendActivity ?? ((_params) => {
       throw new Error("Not implemented");

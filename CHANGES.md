@@ -8,6 +8,11 @@ Version 1.6.0
 
 To be released.
 
+ -  Added `Context.lookupWebFinger()` method to make WebFinger lookups
+    accessible from the context.  [[#227]]
+
+[#227]: https://github.com/fedify-dev/fedify/issues/227
+
 
 Version 1.5.1
 -------------

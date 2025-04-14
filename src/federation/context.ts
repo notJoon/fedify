@@ -16,6 +16,8 @@ import type {
   Multikey,
   Object,
 } from "../vocab/vocab.ts";
+import type { ResourceDescriptor } from "../webfinger/jrd.ts";
+import type { LookupWebFingerOptions } from "../webfinger/lookup.ts";
 import type { SenderKeyPair } from "./send.ts";
 
 /**
@@ -326,6 +328,22 @@ export interface Context<TContextData> {
     url: URL | string,
     options?: GetNodeInfoOptions & { parse: "none" },
   ): Promise<JsonValue | undefined>;
+
+  /**
+   * Looks up a WebFinger resource.
+   *
+   * It's almost the same as the {@link lookupWebFinger} function, but it uses
+   * the context's configuration by default.
+   *
+   * @param resource The resource URL to look up.
+   * @param options Extra options for looking up the resource.
+   * @returns The resource descriptor, or `null` if not found.
+   * @since 1.6.0
+   */
+  lookupWebFinger(
+    resource: URL | string,
+    options?: LookupWebFingerOptions,
+  ): Promise<ResourceDescriptor | null>;
 
   /**
    * Sends an activity to recipients' inboxes.

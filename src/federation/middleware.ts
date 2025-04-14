@@ -56,6 +56,11 @@ import {
   type Object,
 } from "../vocab/vocab.ts";
 import { handleWebFinger } from "../webfinger/handler.ts";
+import type { ResourceDescriptor } from "../webfinger/jrd.ts";
+import {
+  lookupWebFinger,
+  type LookupWebFingerOptions,
+} from "../webfinger/lookup.ts";
 import type {
   ActorAliasMapper,
   ActorDispatcher,
@@ -3210,6 +3215,18 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
         direct: options.direct,
         userAgent: options?.userAgent ?? this.federation.userAgent,
       });
+  }
+
+  lookupWebFinger(
+    resource: URL | string,
+    options: LookupWebFingerOptions = {},
+  ): Promise<ResourceDescriptor | null> {
+    return lookupWebFinger(resource, {
+      ...options,
+      userAgent: options.userAgent ?? this.federation.userAgent,
+      tracerProvider: options.tracerProvider ?? this.tracerProvider,
+      allowPrivateAddress: this.federation.allowPrivateAddress,
+    });
   }
 
   sendActivity(
