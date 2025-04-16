@@ -230,6 +230,9 @@ export default withMermaid(defineConfig({
       md.use(jsrRefPlugin);
     },
   },
+  sitemap: {
+    hostname: process.env.SITEMAP_HOSTNAME,
+  },
 
   vite: {
     plugins: [groupIconVitePlugin()],
