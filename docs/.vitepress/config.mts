@@ -9,6 +9,7 @@ import {
   groupIconMdPlugin,
   groupIconVitePlugin,
 } from "vitepress-plugin-group-icons";
+import llmstxt from "vitepress-plugin-llms";
 import { withMermaid } from "vitepress-plugin-mermaid";
 
 const jsrRefPlugin = await jsrRef({
@@ -235,7 +236,19 @@ export default withMermaid(defineConfig({
   },
 
   vite: {
-    plugins: [groupIconVitePlugin()],
+    plugins: [
+      groupIconVitePlugin(),
+      llmstxt({
+        ignoreFiles: [
+          "changelog.md",
+          "contribute.md",
+          "README.md",
+          "security.md",
+          "sponsors.md",
+          "tutorial.md",
+        ],
+      }),
+    ],
   },
 
   async transformHead(context) {
