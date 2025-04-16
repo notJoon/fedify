@@ -101,6 +101,7 @@ financial contributors:[^2]
 - [Daniel Supernault](https://pixelfed.org/)
 - [tkgka](https://opencollective.com/tkgka)
 - [Blaine](https://opencollective.com/blaine)
+- [Erick González Aguilar](https://opencollective.com/guest-8e956127)
 
 ### Backers
 
