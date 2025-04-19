@@ -4,7 +4,7 @@ import { relationStore } from "~/data/store";
 export default async function Page() {
   return (
     <div className="mx-auto max-w-[780px] p-4 my-8 grid gap-4">
-      <div className="whitespace-pre font-mono">{bannerText}</div>
+      <div className="whitespace-pre font-mono leading-tight">{bannerText}</div>
       <p>
         This small federated server app is a demo of Fedify. The only one thing
         it does is to accept follow requests.
@@ -47,10 +47,10 @@ export default async function Page() {
 }
 
 const bannerText = `
-_____        _ _  __         ____
-|  ___|__  __| (_)/ _|_   _  |  _ \\  ___ _ __ ___   ___
-| |_ / _ \\/ _\` | | |_| | | | | | | |/ _ \\ '_ \` _ \\ / _ \\
-|  _|  __/ (_| | |  _| |_| | | |_| |  __/ | | | | | (_) |
-|_|  \\___|\\__,_|_|_|  \\__, | |____/ \\___|_| |_| |_|\\___/
-                      |___/
+ _______  _______  _______   __   ___________    ____ 
+|   ____||   ____||       \\ |  | |   ____\\   \\  /   / 
+|  |__   |  |__   |  .--.  ||  | |  |__   \\   \\/   /  
+|   __|  |   __|  |  |  |  ||  | |   __|   \\_    _/   
+|  |     |  |____ |  '--'  ||  | |  |        |  |     
+|__|     |_______||_______/ |__| |__|        |__|     
 `;

@@ -13,13 +13,19 @@
 
     ```sh
     nvm use # optional
-    npm i # you can use other package managers such as yarn, bun and pnpm, etc
+
+    # choose according to your taste
+    npm i
+    pnpm i
+    bun i
     ```
 
 3.  Start the server:
 
     ```sh
     npm run dev & npx @fedify/cli tunnel 3000
+    pnpm dev && pnpx @fedify/cli tunnel 3000
+    bun dev && bunx @fedify/cli tunnel 3000
     ```
 
 4.  Open your browser tunneled URL and start interacting with the app.
