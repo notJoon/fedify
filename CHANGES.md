@@ -11,6 +11,17 @@ To be released.
  -  Added `Context.lookupWebFinger()` method to make WebFinger lookups
     accessible from the context.  [[#227]]
 
+ -  Introduced `FederationBuilder` for creating a federation instance with
+    a builder pattern.
+
+     -  Added `createFederationBuilder()` function.
+     -  Added `Federatable` interface.
+     -  Added `FederationBuilder` interface.
+     -  Deprecated `CreateFederationOptions` interface.  Use `FederationOptions`
+         interface.
+
+ -  Added `Router.trailingSlashInsensitive` property.
+
 [#227]: https://github.com/fedify-dev/fedify/issues/227
 
 

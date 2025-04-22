@@ -1,3 +1,11 @@
+import type { TracerProvider } from "@opentelemetry/api";
+import type { ActivityTransformer } from "../compat/types.ts";
+import type {
+  AuthenticatedDocumentLoaderFactory,
+  DocumentLoader,
+  DocumentLoaderFactory,
+  GetUserAgentOptions,
+} from "../runtime/docloader.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import type { Activity, Hashtag, Object } from "../vocab/vocab.ts";
 import type {
@@ -14,9 +22,18 @@ import type {
   NodeInfoDispatcher,
   ObjectAuthorizePredicate,
   ObjectDispatcher,
+  OutboxErrorHandler,
   SharedInboxKeyDispatcher,
 } from "./callback.ts";
 import type { Context, RequestContext } from "./context.ts";
+import type { KvStore } from "./kv.ts";
+import type {
+  FederationKvPrefixes,
+  FederationOrigin,
+  FederationQueueOptions,
+} from "./middleware.ts";
+import type { MessageQueue } from "./mq.ts";
+import type { RetryPolicy } from "./retry.ts";
 
 /**
  * Options for {@link Federation.startQueue} method.
@@ -38,48 +55,11 @@ export interface FederationStartQueueOptions {
 }
 
 /**
- * An object that registers federation-related business logic and dispatches
- * requests to the appropriate handlers.
- *
- * It also provides a middleware interface for handling requests before your
- * web framework's router; see {@link Federation.fetch}.
- *
- * @since 0.13.0
+ * A common interface between {@link Federation} and {@link FederationBuilder}.
+ * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @since 1.6.0
  */
-export interface Federation<TContextData> {
-  /**
-   * Manually start the task queue.
-   *
-   * This method is useful when you set the `manuallyStartQueue` option to
-   * `true` in the {@link createFederation} function.
-   * @param contextData The context data to pass to the context.
-   * @param options Additional options for starting the queue.
-   */
-  startQueue(
-    contextData: TContextData,
-    options?: FederationStartQueueOptions,
-  ): Promise<void>;
-
-  /**
-   * Create a new context.
-   * @param baseUrl The base URL of the server.  The `pathname` remains root,
-   *                and the `search` and `hash` are stripped.
-   * @param contextData The context data to pass to the context.
-   * @returns The new context.
-   */
-  createContext(baseUrl: URL, contextData: TContextData): Context<TContextData>;
-
-  /**
-   * Create a new context for a request.
-   * @param request The request object.
-   * @param contextData The context data to pass to the context.
-   * @returns The new request context.
-   */
-  createContext(
-    request: Request,
-    contextData: TContextData,
-  ): RequestContext<TContextData>;
-
+export interface Federatable<TContextData> {
   /**
    * Registers a NodeInfo dispatcher.
    * @param path The URI path pattern for the NodeInfo dispatcher.  The syntax
@@ -463,6 +443,50 @@ export interface Federation<TContextData> {
     inboxPath: `${string}{identifier}${string}` | `${string}{handle}${string}`,
     sharedInboxPath?: string,
   ): InboxListenerSetters<TContextData>;
+}
+
+/**
+ * An object that registers federation-related business logic and dispatches
+ * requests to the appropriate handlers.
+ *
+ * It also provides a middleware interface for handling requests before your
+ * web framework's router; see {@link Federation.fetch}.
+ * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @since 0.13.0
+ */
+export interface Federation<TContextData> extends Federatable<TContextData> {
+  /**
+   * Manually start the task queue.
+   *
+   * This method is useful when you set the `manuallyStartQueue` option to
+   * `true` in the {@link createFederation} function.
+   * @param contextData The context data to pass to the context.
+   * @param options Additional options for starting the queue.
+   */
+  startQueue(
+    contextData: TContextData,
+    options?: FederationStartQueueOptions,
+  ): Promise<void>;
+
+  /**
+   * Create a new context.
+   * @param baseUrl The base URL of the server.  The `pathname` remains root,
+   *                and the `search` and `hash` are stripped.
+   * @param contextData The context data to pass to the context.
+   * @returns The new context.
+   */
+  createContext(baseUrl: URL, contextData: TContextData): Context<TContextData>;
+
+  /**
+   * Create a new context for a request.
+   * @param request The request object.
+   * @param contextData The context data to pass to the context.
+   * @returns The new request context.
+   */
+  createContext(
+    request: Request,
+    contextData: TContextData,
+  ): RequestContext<TContextData>;
 
   /**
    * Handles a request related to federation.  If a request is not related to
@@ -479,6 +503,206 @@ export interface Federation<TContextData> {
     request: Request,
     options: FederationFetchOptions<TContextData>,
   ): Promise<Response>;
+}
+
+/**
+ * A builder for creating a {@link Federation} object. It defers the actual
+ * instantiation of the {@link Federation} object until the {@link build}
+ * method is called so that dispatchers and listeners can be registered
+ * before the {@link Federation} object is instantiated.
+ * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @since 1.6.0
+ */
+export interface FederationBuilder<TContextData>
+  extends Federatable<TContextData> {
+  /**
+   * Builds the federation object.
+   * @returns The federation object.
+   */
+  build(
+    options: FederationOptions<TContextData>,
+  ): Promise<Federation<TContextData>>;
+}
+
+/**
+ * Options for creating a {@link Federation} object.
+ * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @since 1.6.0
+ */
+export interface FederationOptions<TContextData> {
+  /**
+   * The key-value store used for caching, outbox queues, and inbox idempotence.
+   */
+  kv: KvStore;
+
+  /**
+   * Prefixes for namespacing keys in the Deno KV store.  By default, all keys
+   * are prefixed with `["_fedify"]`.
+   */
+  kvPrefixes?: Partial<FederationKvPrefixes>;
+
+  /**
+   * The message queue for sending and receiving activities.  If not provided,
+   * activities will not be queued and will be processed immediately.
+   *
+   * If a `MessageQueue` is provided, both the `inbox` and `outbox` queues
+   * will be set to the same queue.
+   *
+   * If a `FederationQueueOptions` object is provided, you can set the queues
+   * separately (since Fedify 1.3.0).
+   */
+  queue?: FederationQueueOptions | MessageQueue;
+
+  /**
+   * Whether to start the task queue manually or automatically.
+   *
+   * If `true`, the task queue will not start automatically and you need to
+   * manually start it by calling the {@link Federation.startQueue} method.
+   *
+   * If `false`, the task queue will start automatically as soon as
+   * the first task is enqueued.
+   *
+   * By default, the queue starts automatically.
+   *
+   * @since 0.12.0
+   */
+  manuallyStartQueue?: boolean;
+
+  /**
+   * The canonical base URL of the server.  This is used for constructing
+   * absolute URLs and fediverse handles.
+   * @since 1.5.0
+   */
+  origin?: string | FederationOrigin;
+
+  /**
+   * A custom JSON-LD document loader factory.  By default, this uses
+   * the built-in cache-backed loader that fetches remote documents over
+   * HTTP(S).
+   * @since 1.4.0
+   */
+  documentLoaderFactory?: DocumentLoaderFactory;
+
+  /**
+   * A custom JSON-LD context loader factory.  By default, this uses the same
+   * loader as the document loader.
+   * @since 1.4.0
+   */
+  contextLoaderFactory?: DocumentLoaderFactory;
+
+  /**
+   * A custom JSON-LD document loader.  By default, this uses the built-in
+   * cache-backed loader that fetches remote documents over HTTP(S).
+   * @deprecated Use {@link documentLoaderFactory} instead.
+   */
+  documentLoader?: DocumentLoader;
+
+  /**
+   * A custom JSON-LD context loader.  By default, this uses the same loader
+   * as the document loader.
+   * @deprecated Use {@link contextLoaderFactory} instead.
+   */
+  contextLoader?: DocumentLoader;
+
+  /**
+   * A factory function that creates an authenticated document loader for a
+   * given identity.  This is used for fetching documents that require
+   * authentication.
+   */
+  authenticatedDocumentLoaderFactory?: AuthenticatedDocumentLoaderFactory;
+
+  /**
+   * Whether to allow fetching private network addresses in the document loader.
+   *
+   * If turned on, {@link CreateFederationOptions.documentLoader},
+   * {@link CreateFederationOptions.contextLoader}, and
+   * {@link CreateFederationOptions.authenticatedDocumentLoaderFactory}
+   * cannot be configured.
+   *
+   * Mostly useful for testing purposes.  *Do not use in production.*
+   *
+   * Turned off by default.
+   * @since 0.15.0
+   */
+  allowPrivateAddress?: boolean;
+
+  /**
+   * Options for making `User-Agent` strings for HTTP requests.
+   * If a string is provided, it is used as the `User-Agent` header.
+   * If an object is provided, it is passed to the {@link getUserAgent}
+   * function.
+   * @since 1.3.0
+   */
+  userAgent?: GetUserAgentOptions | string;
+
+  /**
+   * A callback that handles errors during outbox processing.  Note that this
+   * callback can be called multiple times for the same activity, because
+   * the delivery is retried according to the backoff schedule until it
+   * succeeds or reaches the maximum retry count.
+   *
+   * If any errors are thrown in this callback, they are ignored.
+   */
+  onOutboxError?: OutboxErrorHandler;
+
+  /**
+   * The time window for verifying HTTP Signatures of incoming requests.  If the
+   * request is older or newer than this window, it is rejected.  Or if it is
+   * `false`, the request's timestamp is not checked at all.
+   *
+   * By default, the window is an hour.
+   */
+  signatureTimeWindow?: Temporal.Duration | Temporal.DurationLike | false;
+
+  /**
+   * Whether to skip HTTP Signatures verification for incoming activities.
+   * This is useful for testing purposes, but should not be used in production.
+   *
+   * By default, this is `false` (i.e., signatures are verified).
+   * @since 0.13.0
+   */
+  skipSignatureVerification?: boolean;
+
+  /**
+   * The retry policy for sending activities to recipients' inboxes.
+   * By default, this uses an exponential backoff strategy with a maximum of
+   * 10 attempts and a maximum delay of 12 hours.
+   * @since 0.12.0
+   */
+  outboxRetryPolicy?: RetryPolicy;
+
+  /**
+   * The retry policy for processing incoming activities.  By default, this
+   * uses an exponential backoff strategy with a maximum of 10 attempts and a
+   * maximum delay of 12 hours.
+   * @since 0.12.0
+   */
+  inboxRetryPolicy?: RetryPolicy;
+
+  /**
+   * Activity transformers that are applied to outgoing activities.  It is
+   * useful for adjusting outgoing activities to satisfy some ActivityPub
+   * implementations.
+   *
+   * By default, {@link defaultActivityTransformers} are applied.
+   * @since 1.4.0
+   */
+  activityTransformers?: readonly ActivityTransformer<TContextData>[];
+
+  /**
+   * Whether the router should be insensitive to trailing slashes in the URL
+   * paths.  For example, if this option is `true`, `/foo` and `/foo/` are
+   * treated as the same path.  Turned off by default.
+   * @since 0.12.0
+   */
+  trailingSlashInsensitive?: boolean;
+
+  /**
+   * The OpenTelemetry tracer provider for tracing operations.  If not provided,
+   * the default global tracer provider is used.
+   * @since 1.3.0
+   */
+  tracerProvider?: TracerProvider;
 }
 
 /**

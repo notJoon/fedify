@@ -345,7 +345,7 @@ Separating message processing from the main process
 
 On high-traffic servers, it's common to separate message processing from
 the main server process to avoid blocking the main event loop.  To achieve this,
-you can use the `~CreateFederationOptions.manuallyStartQueue` option and
+you can use the `~FederationOptions.manuallyStartQueue` option and
 `Federation.startQueue()` method:
 
 ::: code-group
@@ -429,7 +429,7 @@ Using different message queues for different tasks
 In some cases, you may want to use different message queues for different tasks,
 such as using a faster-but-less-persistent queue for outgoing activities and
 a slower-but-more-persistent queue for incoming activities.  To achieve this,
-you can pass `FederationQueueOptions` to the `CreateFederationOptions.queue`
+you can pass `FederationQueueOptions` to the `FederationOptions.queue`
 option.
 
 For example, the following code shows how to use a [`PostgresMessageQueue`] for

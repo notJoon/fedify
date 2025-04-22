@@ -25,6 +25,7 @@
     "docloader",
     "eddsa",
     "fanout",
+    "federatable",
     "fedi",
     "fedibird",
     "fedify",

@@ -42,7 +42,12 @@ export class Router {
   #router: InnerRouter;
   #templates: Record<string, Template>;
   #templateStrings: Record<string, string>;
-  #trailingSlashInsensitive: boolean;
+
+  /**
+   * Whether to ignore trailing slashes when matching paths.
+   * @since 1.6.0
+   */
+  trailingSlashInsensitive: boolean;
 
   /**
    * Create a new {@link Router}.
@@ -52,7 +57,7 @@ export class Router {
     this.#router = new InnerRouter();
     this.#templates = {};
     this.#templateStrings = {};
-    this.#trailingSlashInsensitive = options.trailingSlashInsensitive ?? false;
+    this.trailingSlashInsensitive = options.trailingSlashInsensitive ?? false;
   }
 
   /**
@@ -89,7 +94,7 @@ export class Router {
   route(url: string): RouterRouteResult | null {
     let match = this.#router.resolveURI(url);
     if (match == null) {
-      if (!this.#trailingSlashInsensitive) return null;
+      if (!this.trailingSlashInsensitive) return null;
       url = url.endsWith("/") ? url.replace(/\/+$/, "") : `${url}/`;
       match = this.#router.resolveURI(url);
       if (match == null) return null;

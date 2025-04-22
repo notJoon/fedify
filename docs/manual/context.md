@@ -69,12 +69,12 @@ Getting the base URL
 
 The `Context` object has properties to get the base URL of the current request:
 
-| Property                  | Description                                                    | Value example              |
-|---------------------------|----------------------------------------------------------------|----------------------------|
-| `Context.hostname`        | A hostname                                                     | `"example.com"`            |
-| `Context.host`            | A hostname followed by an optional port                        | `"example.com:88"`         |
-| `Context.origin`          | A scheme followed by a host                                    | `"https://example.com:88"` |
-| `Context.canonicalOrigin` | An explicitly configured `~CreateFederationOptions.origin`[^1] | `"https://example.com"` |
+| Property                  | Description                                              | Value example              |
+|---------------------------|----------------------------------------------------------|----------------------------|
+| `Context.hostname`        | A hostname                                               | `"example.com"`            |
+| `Context.host`            | A hostname followed by an optional port                  | `"example.com:88"`         |
+| `Context.origin`          | A scheme followed by a host                              | `"https://example.com:88"` |
+| `Context.canonicalOrigin` | An explicitly configured `~FederationOptions.origin`[^1] | `"https://example.com"`    |
 
 For `RequestContext`, there is an additional property named `~RequestContext.url` that
 contains the full URL of the current request.

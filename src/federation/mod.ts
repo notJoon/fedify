@@ -3,6 +3,7 @@
  *
  * @module
  */
+export { createFederationBuilder } from "./builder.ts";
 export * from "./callback.ts";
 export * from "./collection.ts";
 export * from "./context.ts";

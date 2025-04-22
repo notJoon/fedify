@@ -40,7 +40,7 @@ properties.  Some of them are required:
 
 ### `kv`
 
-*Required.*  The `~CreateFederationOptions.kv` property is a `KvStore` instance
+*Required.*  The `~FederationOptions.kv` property is a `KvStore` instance
 that the `Federation` object uses to store several kinds of cache data and
 to maintain the queue of outgoing activities.
 
@@ -65,7 +65,7 @@ Further details are explained in the [*Key–value store* section](./kv.md).
 
 ### `kvPrefixes`
 
-The `~CreateFederationOptions.kvPrefixes` property is an object that contains
+The `~FederationOptions.kvPrefixes` property is an object that contains
 the key prefixes for the cache data.  The following are the key prefixes
 that the `Federation` object uses:
 
@@ -87,7 +87,7 @@ that the `Federation` object uses:
 
 *This API is available since Fedify 0.5.0.*
 
-The `~CreateFederationOptions.queue` property is a `MessageQueue` instance that
+The `~FederationOptions.queue` property is a `MessageQueue` instance that
 the `Federation` object uses to maintain the queue of incoming and outgoing
 activities.  If you don't provide this option, activities will not be queued
 and will be processed immediately.
@@ -363,6 +363,54 @@ For more information, see the [*OpenTelemetry* section](./opentelemetry.md).
 [`trace.getTracerProvider()`]: https://open-telemetry.github.io/opentelemetry-js/classes/_opentelemetry_api.TraceAPI.html#getTracerProvider
 
 
+Builder pattern for structuring
+-------------------------------
+
+*This API is available since Fedify 1.6.0.*
+
+If your federated application is large enough, you may want to defer the
+instantiation of the `Federation` object until all your dispatchers and
+listeners are set up.  This is useful for structuring your code and
+avoiding circular dependencies.  Here's a brief instruction on how to
+do that:
+
+ 1. Instead of instantiating a `Federation` object using `createFederation()`
+    function, create a `FederationBuilder` object using
+    `createFederationBuilder()` function.
+ 2. Register your dispatchers and listeners to the `FederationBuilder`
+    object as you would do with a regular `Federation` object.
+ 3. Call the `FederationBuilder.build()` method to create a `Federation`
+    object.  This method takes the same options as `createFederation()`
+    function, and it returns a `Federation` object.
+
+It looks like this:
+
+~~~~ typescript [federation.ts]
+import { createFederationBuilder } from "@fedify/fedify";
+
+export const builder = createFederationBuilder<void>();
+
+// Register your dispatchers and listeners here...
+builder.setActorDispatcher(
+  "/users/{handle}",
+  async (ctx, handle) => {
+    // Omitted for brevity
+  }
+);
+// ...
+~~~~
+
+~~~~ typescript [main.ts]
+import { builder } from "./federation.ts";
+
+// Build the `Federation` object
+export const federation = await builder.build({
+  kv: new MemoryKvStore(),
+  // Omitted for brevity; see the following sections for details.
+});
+~~~~
+
+
 The `~Federation.fetch()` API
 -----------------------------
 
@@ -546,8 +594,8 @@ Explicitly setting the canonical origin
 *This API is available since Fedify 1.5.0.*
 
 Or you can explicitly set the canonical origin of the server by passing
-the `~CreateFederationOptions.origin` option to the `createFederation()`
-function.  The `~CreateFederationOptions.origin` option is either a string or
+the `~FederationOptions.origin` option to the `createFederation()`
+function.  The `~FederationOptions.origin` option is either a string or
 a `FederationOrigin` object, which consists of two fields:
 `~FederationOrigin.handleHost` and `~FederationOrigin.webOrigin`.
 
@@ -566,7 +614,7 @@ const federation = createFederation({
 ~~~~
 
 > [!NOTE]
-> The `~CreateFederationOptions.origin` option has to include the leading
+> The `~FederationOptions.origin` option has to include the leading
 > `https://` or `http://` scheme.
 
 Such a configuration leads the [constructed URLs using
@@ -602,7 +650,7 @@ to use `https://ap.example.com/actors/alice` as an actor URI but want to use
 `@alice@example.com` as its fediverse handle.
 
 In such cases, you can set the `~FederationOrigin.handleHost` different from
-the `~FederationOrigin.webOrigin` in the `~CreateFederationOptions.origin`
+the `~FederationOrigin.webOrigin` in the `~FederationOptions.origin`
 option.  The `~FederationOrigin.handleHost` is used to construct the WebFinger
 handles, and the `~FederationOrigin.webOrigin` is used to [construct the URLs
 in the `Context` object](./context.md#building-the-object-uris):
