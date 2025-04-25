@@ -109,6 +109,7 @@ export class FederationBuilderImpl<TContextData>
     const trailingSlashInsensitiveValue = f.router.trailingSlashInsensitive;
     f.router = this.router;
     f.router.trailingSlashInsensitive = trailingSlashInsensitiveValue;
+    f._initializeRouter();
 
     f.actorCallbacks = this.actorCallbacks;
     f.nodeInfoDispatcher = this.nodeInfoDispatcher;

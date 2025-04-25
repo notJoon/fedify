@@ -67,6 +67,10 @@ test("FederationBuilder", async (t) => {
 
       const impl = federation as FederationImpl<string>;
 
+      assertEquals(
+        impl.router.route("/.well-known/webfinger")?.name,
+        "webfinger",
+      );
       assertEquals(impl.router.route("/users/test123")?.name, "actor");
       assertEquals(impl.router.route("/users/test123/inbox")?.name, "inbox");
       assertEquals(

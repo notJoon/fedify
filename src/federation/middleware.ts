@@ -297,8 +297,7 @@ export class FederationImpl<TContextData>
     }
     this.router.trailingSlashInsensitive = options.trailingSlashInsensitive ??
       false;
-    this.router.add("/.well-known/webfinger", "webfinger");
-    this.router.add("/.well-known/nodeinfo", "nodeInfoJrd");
+    this._initializeRouter();
     if (options.allowPrivateAddress || options.userAgent != null) {
       if (options.documentLoader != null) {
         throw new TypeError(
@@ -379,6 +378,11 @@ export class FederationImpl<TContextData>
     this.activityTransformers = options.activityTransformers ??
       getDefaultActivityTransformers<TContextData>();
     this.tracerProvider = options.tracerProvider ?? trace.getTracerProvider();
+  }
+
+  _initializeRouter() {
+    this.router.add("/.well-known/webfinger", "webfinger");
+    this.router.add("/.well-known/nodeinfo", "nodeInfoJrd");
   }
 
   override _getTracer() {
