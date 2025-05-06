@@ -232,6 +232,13 @@ the following command:
 deno task -f @fedify/fedify test
 ~~~~
 
+Or you can use `--filter` option to run a specific test.  For example, if you
+want to run the `verifyRequest` test:
+
+~~~~ bash
+deno task -f @fedify/fedify test --filter verifyRequest
+~~~~
+
 If the tests pass, you should run `deno task test-all` command to test
 the library with Deno, Node.js, and [Bun]:
 
