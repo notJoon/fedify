@@ -22,6 +22,15 @@ To be released.
 
  -  Added `Router.trailingSlashInsensitive` property.
 
+ -  Implemented HTTP Message Signatures ([RFC 9421]).  [[#208]]
+
+     -  Added `HttpMessageSignaturesSpec` type.
+     -  Added `SignRequestOptions.spec` option.
+     -  Added `SignRequestOptions.currentTime` option.
+     -  Added `VerifyRequestOptions.spec` option.
+
+[RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
+[#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227
 
 

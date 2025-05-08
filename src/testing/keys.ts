@@ -1,3 +1,4 @@
+import { importSpki } from "../runtime/key.ts";
 import { CryptographicKey, Multikey } from "../vocab/vocab.ts";
 
 export const rsaPublicKey1 = new CryptographicKey({
@@ -196,6 +197,24 @@ export const rsaMultikey4 = new Multikey({
   controller: new URL("https://example.com/person2"),
   publicKey: rsaPublicKey3.publicKey,
 }) as Multikey & { publicKey: CryptoKey };
+
+export const rsaPublicKey5 = new CryptographicKey({
+  id: new URL("https://remote.domain/users/bob#main-key"),
+  owner: new URL("https://remote.domain/users/bob"),
+  publicKey: await importSpki(
+    // cSpell: disable
+    "-----BEGIN PUBLIC KEY-----\n" +
+      "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqIAYvNFGbZ5g4iiK6feS\n" +
+      "dXD4bDStFM58A7tHycYXaYtzZQpIeHXAmaXuZzXIwtrP4N0gIk8JNwZvXj2UPS+S\n" +
+      "07t0V9wNK94he01LV5EMz/GN4eNnFmDL64HIEuKLvV8TvgjbUPRD6Y5X0UpKi2ZI\n" +
+      "FLSb96Q5w0Z/k7ntpVKV52y8kz5Fjr/O/0JuHryZe0yItzJh8kzFfeMf0EXzfSna\n" +
+      "KvT7P9jhgC6uTre+jXyvVZjiHDrnqvvucdI3I7DRfXo1OqARBrLjy+TdseUAjNYJ\n" +
+      "+OuPRI1URIWQI01DCHqcohVu9+Ar+BiCjFp3ua+XMuJvrvbD61d1Fvig/9nbBRR+\n" +
+      "8QIDAQAB\n" +
+      "-----END PUBLIC KEY-----\n",
+    // cSpell: enable
+  ),
+}) as CryptographicKey & { publicKey: CryptoKey };
 
 export const ed25519PrivateKey = await crypto.subtle.importKey(
   "jwk",

@@ -3,3 +3,5 @@ deno.lock
 repomix-output.xml
 t.ts
 t2.ts
+
+**/.claude/settings.local.json
