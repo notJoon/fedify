@@ -801,6 +801,8 @@ If it's the first encounter with the recipient server, Fedify tries
 the RFC 9421 version first, and if it fails, it falls back to the draft
 cavage version.  If the recipient server accepts the RFC 9421 version,
 Fedify remembers it and uses the RFC 9421 version for the next time.
+If the recipient server rejects the RFC 9421 version, Fedify falls back
+to the draft cavage version and remembers it for the next time.
 
 [double-knocking]: https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions
 
