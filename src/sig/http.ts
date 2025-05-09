@@ -150,7 +150,7 @@ async function signRequestDraft(
   const url = new URL(request.url);
   const body: ArrayBuffer | null =
     request.method !== "GET" && request.method !== "HEAD"
-      ? await request.arrayBuffer()
+      ? await request.clone().arrayBuffer()
       : null;
   const headers = new Headers(request.headers);
   if (!headers.has("Host")) {
@@ -389,7 +389,7 @@ async function signRequestRfc9421(
   const url = new URL(request.url);
   const body: ArrayBuffer | null =
     request.method !== "GET" && request.method !== "HEAD"
-      ? await request.arrayBuffer()
+      ? await request.clone().arrayBuffer()
       : null;
 
   const headers = new Headers(request.headers);
@@ -1146,6 +1146,165 @@ async function verifyRequestRfc9421(
   }
 
   return validKey;
+}
+
+/**
+ * A spec determiner for HTTP Message Signatures.
+ * It determines the spec to use for signing requests.
+ * It is used for double-knocking
+ * (see <https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions>).
+ * @since 1.6.0
+ */
+export interface HttpMessageSignaturesSpecDeterminer {
+  /**
+   * Determines the spec to use for signing requests.
+   * @param origin The origin of the URL to make the request to.
+   * @returns The spec to use for signing requests.
+   */
+  determineSpec(
+    origin: string,
+  ): HttpMessageSignaturesSpec | Promise<HttpMessageSignaturesSpec>;
+
+  /**
+   * Remembers the successfully used spec for the given origin.
+   * @param origin The origin of the URL that was requested.
+   * @param spec The spec to remember.
+   */
+  rememberSpec(
+    origin: string,
+    spec: HttpMessageSignaturesSpec,
+  ): void | Promise<void>;
+}
+
+/**
+ * The options for double-knock requests.
+ * @since 1.6.0
+ */
+export interface DoubleKnockOptions {
+  /**
+   * The spec determiner to use for signing requests with double-knocking.
+   */
+  specDeterminer?: HttpMessageSignaturesSpecDeterminer;
+
+  /**
+   * The logging function to use for logging the request.
+   * @param request The request to log.
+   */
+  log?: (request: Request) => void;
+
+  /**
+   * The OpenTelemetry tracer provider.  If omitted, the global tracer provider
+   * is used.
+   */
+  tracerProvider?: TracerProvider;
+}
+
+/**
+ * Performs a double-knock request to the given URL.  For the details of
+ * double-knocking, see
+ * <https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions>.
+ * @param request The request to send.
+ * @param identity The identity to use for signing the request.
+ * @param options The options for double-knock requests.
+ * @returns The response to the request.
+ * @since 1.6.0
+ */
+export async function doubleKnock(
+  request: Request,
+  identity: { keyId: URL; privateKey: CryptoKey },
+  options: DoubleKnockOptions = {},
+): Promise<Response> {
+  const { specDeterminer, log, tracerProvider } = options;
+  const origin = new URL(request.url).origin;
+  const firstTrySpec: HttpMessageSignaturesSpec = specDeterminer == null
+    ? "rfc9421"
+    : await specDeterminer.determineSpec(origin);
+  let signedRequest = await signRequest(
+    request,
+    identity.privateKey,
+    identity.keyId,
+    { spec: firstTrySpec, tracerProvider },
+  );
+  log?.(signedRequest);
+  let response = await fetch(signedRequest, {
+    // Since Bun has a bug that ignores the `Request.redirect` option,
+    // to work around it we specify `redirect: "manual"` here too:
+    // https://github.com/oven-sh/bun/issues/10754
+    redirect: "manual",
+  });
+  // Follow redirects manually to get the final URL:
+  if (
+    response.status >= 300 && response.status < 400 &&
+    response.headers.has("Location")
+  ) {
+    const location = response.headers.get("Location")!;
+    const body = request.method !== "GET" && request.method !== "HEAD"
+      ? request.clone().body
+      : undefined;
+    return doubleKnock(
+      new Request(location, {
+        method: request.method,
+        headers: request.headers,
+        body,
+        redirect: "manual",
+        signal: request.signal,
+        mode: request.mode,
+        cache: request.cache,
+        credentials: request.credentials,
+        referrer: request.referrer,
+        referrerPolicy: request.referrerPolicy,
+        integrity: request.integrity,
+        keepalive: request.keepalive,
+      }),
+      identity,
+      options,
+    );
+  } else if (response.status === 400 || response.status === 401) {
+    // verification failed; retry with the other spec of HTTP Signatures
+    // (double-knocking; see https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions)
+    getLogger(["fedify", "sig", "http"]).debug(
+      "Failed to verify with the spec {spec} ({status} {statusText}); retrying with the other spec... (double-knocking)",
+      {
+        spec: firstTrySpec,
+        status: response.status,
+        statusText: response.statusText,
+      },
+    );
+    const spec = firstTrySpec === "draft-cavage-http-signatures-12"
+      ? "rfc9421"
+      : "draft-cavage-http-signatures-12";
+    signedRequest = await signRequest(
+      request,
+      identity.privateKey,
+      identity.keyId,
+      { spec, tracerProvider },
+    );
+    log?.(signedRequest);
+    response = await fetch(signedRequest, {
+      // Since Bun has a bug that ignores the `Request.redirect` option,
+      // to work around it we specify `redirect: "manual"` here too:
+      // https://github.com/oven-sh/bun/issues/10754
+      redirect: "manual",
+    });
+    // Follow redirects manually to get the final URL:
+    if (
+      response.status >= 300 && response.status < 400 &&
+      response.headers.has("Location")
+    ) {
+      const location = response.headers.get("Location")!;
+      const body = request.method !== "GET" && request.method !== "HEAD"
+        ? request.clone().body
+        : null;
+      return doubleKnock(
+        new Request(location, { ...request, body }),
+        identity,
+        options,
+      );
+    } else if (response.status !== 400 && response.status !== 401) {
+      specDeterminer?.rememberSpec(origin, spec);
+    }
+  }
+  return response;
 }
 
 // cSpell: ignore keyid

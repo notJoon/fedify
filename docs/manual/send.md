@@ -745,16 +745,64 @@ const federation = createFederation({
 HTTP Signatures
 ---------------
 
-[HTTP Signatures] is a de facto standard for signing ActivityPub activities.
-It is widely used in the fediverse to verify the sender's identity and
-the integrity of the activity.
+Draft cavage [HTTP Signatures] is a de facto standard for signing ActivityPub
+activities.  Although it is not a finalized specification, it is still widely
+used in the fediverse to verify the sender's identity and the integrity of
+the activity.
 
 Fedify automatically signs activities with the sender's private key if
 the [actor keys dispatcher is set](./actor.md#public-keys-of-an-actor) and
 the actor has any RSA-PKCS#1-v1.5 key pair.  If there are multiple key pairs,
 Fedify selects the first RSA-PKCS#1-v1.5 key pair among them.
 
-[HTTP Signatures]: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures
+[HTTP Signatures]: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12
+
+
+HTTP Message Signatures
+-----------------------
+
+*This API is available since Fedify 1.6.0.*
+
+[RFC 9421], also known as *HTTP Message Signatures*, is the final revision of
+the HTTP Signatures specification.  Although it is the official standard,
+it is not widely used in the fediverse yet.  As of May 2025, major ActivityPub
+implementations, such as Mastodon, et al., still rely on the draft cavage
+version of HTTP Signatures for signing portable activities.
+
+Fedify automatically signs activities with the sender's private key if
+the [actor keys dispatcher is set](./actor.md#public-keys-of-an-actor) and
+the actor has any RSA-PKCS#1-v1.5 key pair.  If there are multiple key pairs,
+Fedify selects the first RSA-PKCS#1-v1.5 key pair among them.
+
+> [!NOTE]
+> Although HTTP Message Signatures support other than RSA-PKCS#1-v1.5,
+> Fedify currently supports only RSA-PKCS#1-v1.5 key pairs for generating
+> HTTP Message Signatures.  This limitation will be lifted in the future
+> releases.
+
+[RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
+
+
+Double-knocking HTTP Signatures
+-------------------------------
+
+*This API is available since Fedify 1.6.0.*
+
+As you read above, there are two revisions of HTTP Signatures:
+the [draft cavage][HTTP Signatures] version and the [RFC 9421] version.
+The draft cavage version is declared as obsolete, but it is still widely used
+in the fediverse, and many ActivityPub implementations still rely on it.
+On the other hand, the RFC 9421 version is the official standard, but
+it is not widely used yet.
+
+To support both versions of HTTP Signatures, Fedify uses the [double-knocking]
+mechanism: trying one version, then falling back to another if rejected.
+If it's the first encounter with the recipient server, Fedify tries
+the RFC 9421 version first, and if it fails, it falls back to the draft
+cavage version.  If the recipient server accepts the RFC 9421 version,
+Fedify remembers it and uses the RFC 9421 version for the next time.
+
+[double-knocking]: https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions
 
 
 Linked Data Signatures
@@ -914,3 +962,5 @@ new Follow({
 ~~~~
 
 [Threads]: https://www.threads.net/
+
+<!-- cSpell: ignore cavage -->

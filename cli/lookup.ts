@@ -1,5 +1,5 @@
 import { colors } from "@cliffy/ansi";
-import { Command } from "@cliffy/command";
+import { Command, EnumType } from "@cliffy/command";
 import {
   Application,
   Collection,
@@ -22,7 +22,10 @@ import { printJson } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
+const sigSpec = new EnumType(["draft-cavage-http-signatures-12", "rfc9421"]);
+
 export const command = new Command()
+  .type("sig-spec", sigSpec)
   .arguments("<...urls:string>")
   .description(
     "Lookup an Activity Streams object by URL or the actor handle.  " +
@@ -30,6 +33,12 @@ export const command = new Command()
       "(e.g., @username@domain), and it can be multiple.",
   )
   .option("-a, --authorized-fetch", "Sign the request with an one-time key.")
+  .option(
+    "--first-knock <spec:sig-spec>",
+    "The first-knock spec for -a/--authorized-fetch.  It is used for " +
+      "the double-knocking technique.",
+    { depends: ["authorized-fetch"], default: "rfc9421" },
+  )
   .option(
     "-t, --traverse",
     "Traverse the given collection to fetch all items.  If it is turned on, " +
@@ -118,10 +127,21 @@ export const command = new Command()
           { contextLoader },
         );
       });
-      authLoader = getAuthenticatedDocumentLoader({
-        keyId: new URL("#main-key", server.url),
-        privateKey: key.privateKey,
-      });
+      authLoader = getAuthenticatedDocumentLoader(
+        {
+          keyId: new URL("#main-key", server.url),
+          privateKey: key.privateKey,
+        },
+        {
+          specDeterminer: {
+            determineSpec() {
+              return options.firstKnock;
+            },
+            rememberSpec() {
+            },
+          },
+        },
+      );
     }
     spinner.text = `Looking up the ${
       options.traverse ? "collection" : urls.length > 1 ? "objects" : "object"
@@ -255,3 +275,5 @@ export const command = new Command()
       Deno.exit(1);
     }
   });
+
+// cSpell: ignore sigspec

@@ -5,6 +5,7 @@ import {
   assertStringIncludes,
 } from "@std/assert";
 import { encodeBase64 } from "@std/encoding/base64";
+import * as mf from "mock_fetch";
 import { exportSpki } from "../runtime/key.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import {
@@ -17,8 +18,10 @@ import { test } from "../testing/mod.ts";
 import type { CryptographicKey, Multikey } from "../vocab/vocab.ts";
 import {
   createRfc9421SignatureBase,
+  doubleKnock,
   formatRfc9421Signature,
   formatRfc9421SignatureParameters,
+  type HttpMessageSignaturesSpec,
   parseRfc9421Signature,
   parseRfc9421SignatureInput,
   signRequest,
@@ -1155,3 +1158,538 @@ test("verifyRequest() [rfc9421] test vector from Mastodon", async () => {
 });
 
 // cSpell: ignore keyid linzer
+
+test("doubleKnock() function with successful first attempt", async () => {
+  // Install mock fetch handler
+  mf.install();
+
+  // A counter to track the number of times the endpoint is hit
+  let requestCount = 0;
+  let firstRequestSpec: string | null = null;
+
+  // Mock an endpoint that accepts RFC 9421 signatures
+  mf.mock("POST@/inbox-accepts-rfc9421", (req) => {
+    requestCount++;
+    const signatureInputHeader = req.headers.get("Signature-Input");
+    const signatureHeader = req.headers.get("Signature");
+
+    // Check if it's an RFC 9421 signature
+    if (signatureInputHeader && signatureHeader) {
+      firstRequestSpec = "rfc9421";
+      return new Response("", { status: 202 });
+    } else {
+      return new Response("Unauthorized", { status: 401 });
+    }
+  });
+
+  // Create a request
+  const request = new Request("https://example.com/inbox-accepts-rfc9421", {
+    method: "POST",
+    body: "Hello, world!",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+  });
+
+  // Create a simple spec determiner that remembers what was used
+  const specDeterminer = {
+    usedSpec: null as string | null,
+    determineSpec(_origin: string): HttpMessageSignaturesSpec {
+      // Default to RFC 9421
+      return "rfc9421";
+    },
+    rememberSpec(_origin: string, spec: HttpMessageSignaturesSpec): void {
+      this.usedSpec = spec;
+    },
+  };
+
+  // Create a log function to capture what was signed
+  let loggedRequest: Request | undefined;
+  const logFunction = (req: Request) => {
+    loggedRequest = req;
+  };
+
+  // Call doubleKnock
+  const response = await doubleKnock(
+    request,
+    {
+      keyId: rsaPublicKey2.id!,
+      privateKey: rsaPrivateKey2,
+    },
+    {
+      specDeterminer,
+      log: logFunction,
+    },
+  );
+
+  // Verify the response
+  assertEquals(response.status, 202, "Response status should be 202 Accepted");
+  assertEquals(requestCount, 1, "Only one request should have been made");
+  assertEquals(
+    firstRequestSpec,
+    "rfc9421",
+    "First attempt should use RFC 9421",
+  );
+  assertEquals(
+    specDeterminer.usedSpec,
+    null,
+    "rememberSpec should not be called on first success",
+  );
+  assertExists(loggedRequest, "Request should be logged");
+  assert(
+    loggedRequest?.headers.has("Signature-Input"),
+    "Logged request should have RFC 9421 Signature-Input header",
+  );
+  assert(
+    loggedRequest?.headers.has("Signature"),
+    "Logged request should have RFC 9421 Signature header",
+  );
+
+  mf.uninstall();
+});
+
+test("doubleKnock() function with fallback to draft-cavage", async () => {
+  // Install mock fetch handler
+  mf.install();
+
+  // Track request attempts and specs used
+  let requestCount = 0;
+  let firstSpec: string | null = null;
+  let secondSpec: string | null = null;
+
+  // Mock an endpoint that only accepts draft-cavage signatures
+  mf.mock("POST@/inbox-accepts-draft-cavage", (req) => {
+    requestCount++;
+
+    // Check which signature format was used
+    if (req.headers.has("Signature-Input")) {
+      // RFC 9421 format
+      firstSpec = "rfc9421";
+      return new Response("Not Authorized", { status: 401 });
+    } else if (req.headers.has("Signature")) {
+      // draft-cavage format
+      secondSpec = "draft-cavage-http-signatures-12";
+      return new Response("", { status: 202 });
+    } else {
+      return new Response("Bad Request", { status: 400 });
+    }
+  });
+
+  // Create request
+  const request = new Request(
+    "https://example.com/inbox-accepts-draft-cavage",
+    {
+      method: "POST",
+      body: "Test message for double-knocking",
+      headers: {
+        "Content-Type": "text/plain",
+      },
+    },
+  );
+
+  // Create a spec determiner that will track what was remembered
+  const specDeterminer = {
+    rememberedOrigin: null as string | null,
+    rememberedSpec: null as string | null,
+    determineSpec(_origin: string): HttpMessageSignaturesSpec {
+      // Always try RFC 9421 first
+      return "rfc9421";
+    },
+    rememberSpec(origin: string, spec: HttpMessageSignaturesSpec): void {
+      this.rememberedOrigin = origin;
+      this.rememberedSpec = spec;
+    },
+  };
+
+  // Call doubleKnock with the draft-cavage-preferring server
+  const response = await doubleKnock(
+    request,
+    {
+      keyId: rsaPublicKey2.id!,
+      privateKey: rsaPrivateKey2,
+    },
+    {
+      specDeterminer,
+    },
+  );
+
+  // Verify response
+  assertEquals(response.status, 202, "Response status should be 202 Accepted");
+  assertEquals(requestCount, 2, "Two requests should have been made");
+  assertEquals(firstSpec, "rfc9421", "First attempt should use RFC 9421");
+  assertEquals(
+    secondSpec,
+    "draft-cavage-http-signatures-12",
+    "Second attempt should use draft-cavage",
+  );
+  assertEquals(
+    specDeterminer.rememberedOrigin,
+    "https://example.com",
+    "Origin should be remembered",
+  );
+  assertEquals(
+    specDeterminer.rememberedSpec,
+    "draft-cavage-http-signatures-12",
+    "Successful spec should be remembered",
+  );
+
+  mf.uninstall();
+});
+
+test("doubleKnock() function with redirect handling", async () => {
+  // Install mock fetch handler
+  mf.install();
+
+  // Track request attempts and redirects
+  const requestedUrls: string[] = [];
+  const responseCodes: number[] = [];
+
+  // Mock an endpoint that redirects
+  mf.mock("POST@/redirect-endpoint", (req) => {
+    requestedUrls.push(req.url);
+    responseCodes.push(302);
+    return Response.redirect("https://example.com/final-endpoint", 302);
+  });
+
+  // Mock the destination endpoint
+  mf.mock("POST@/final-endpoint", (req) => {
+    requestedUrls.push(req.url);
+    responseCodes.push(202);
+    return new Response("", { status: 202 });
+  });
+
+  // Create request to the redirecting endpoint
+  const request = new Request("https://example.com/redirect-endpoint", {
+    method: "POST",
+    body: "Test message that will be redirected",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+  });
+
+  // Call doubleKnock with the redirecting server
+  const response = await doubleKnock(
+    request,
+    {
+      keyId: rsaPublicKey2.id!,
+      privateKey: rsaPrivateKey2,
+    },
+  );
+
+  // Verify response handling and redirect following
+  assertEquals(
+    response.status,
+    202,
+    "Final response status should be 202 Accepted",
+  );
+  assertEquals(requestedUrls.length, 2, "Two URLs should have been requested");
+  assertEquals(
+    requestedUrls[0],
+    "https://example.com/redirect-endpoint",
+    "First request should be to redirect-endpoint",
+  );
+  assertEquals(
+    requestedUrls[1],
+    "https://example.com/final-endpoint",
+    "Second request should be to final-endpoint",
+  );
+  assertEquals(
+    responseCodes,
+    [302, 202],
+    "Response status codes should match expected sequence",
+  );
+
+  mf.uninstall();
+});
+
+test("doubleKnock() function with both specs rejected", async () => {
+  // Install mock fetch handler
+  mf.install();
+
+  // Track request attempts
+  let requestCount = 0;
+  const attempts: string[] = [];
+
+  // Mock an endpoint that rejects all signatures
+  mf.mock("POST@/inbox-rejects-all", (req) => {
+    requestCount++;
+
+    if (req.headers.has("Signature-Input")) {
+      attempts.push("rfc9421");
+    } else if (req.headers.has("Signature")) {
+      attempts.push("draft-cavage");
+    } else {
+      attempts.push("unknown");
+    }
+
+    return new Response("Unauthorized", { status: 401 });
+  });
+
+  // Create request
+  const request = new Request("https://example.com/inbox-rejects-all", {
+    method: "POST",
+    body: "Test message that will be rejected regardless of signature format",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+  });
+
+  // Call doubleKnock with the rejecting server
+  const response = await doubleKnock(
+    request,
+    {
+      keyId: rsaPublicKey2.id!,
+      privateKey: rsaPrivateKey2,
+    },
+  );
+
+  // Verify both specs were tried and 401 was returned
+  assertEquals(
+    response.status,
+    401,
+    "Final response status should be 401 Unauthorized",
+  );
+  assertEquals(requestCount, 2, "Two requests should have been made");
+  assertEquals(
+    attempts.length,
+    2,
+    "Two signature attempts should have been made",
+  );
+  assertEquals(attempts[0], "rfc9421", "First attempt should use RFC 9421");
+  assertEquals(
+    attempts[1],
+    "draft-cavage",
+    "Second attempt should use draft-cavage",
+  );
+
+  mf.uninstall();
+});
+
+test("doubleKnock() function with specDeterminer choosing draft-cavage first", async () => {
+  // Install mock fetch handler
+  mf.install();
+
+  // Track request attempts
+  let requestCount = 0;
+  let firstSpec: string | null = null;
+
+  // Mock an endpoint that accepts draft-cavage signatures
+  mf.mock("POST@/inbox-accepts-any", (req) => {
+    requestCount++;
+
+    if (req.headers.has("Signature-Input")) {
+      firstSpec = "rfc9421";
+    } else if (req.headers.has("Signature")) {
+      firstSpec = "draft-cavage";
+    }
+
+    return new Response("", { status: 202 });
+  });
+
+  // Create a spec determiner that will prefer draft-cavage
+  const specDeterminer = {
+    determineSpec(_origin: string): HttpMessageSignaturesSpec {
+      // Prefer draft-cavage
+      return "draft-cavage-http-signatures-12";
+    },
+    rememberSpec(_origin: string, _spec: HttpMessageSignaturesSpec): void {
+      // Not needed for this test
+    },
+  };
+
+  // Create request
+  const request = new Request("https://example.com/inbox-accepts-any", {
+    method: "POST",
+    body: "Test message with draft-cavage preference",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+  });
+
+  // Call doubleKnock with the determiner that prefers draft-cavage
+  const response = await doubleKnock(
+    request,
+    {
+      keyId: rsaPublicKey2.id!,
+      privateKey: rsaPrivateKey2,
+    },
+    {
+      specDeterminer,
+    },
+  );
+
+  // Verify draft-cavage was used and succeeded
+  assertEquals(response.status, 202, "Response status should be 202 Accepted");
+  assertEquals(requestCount, 1, "Only one request should have been made");
+  assertEquals(
+    firstSpec,
+    "draft-cavage",
+    "First attempt should use draft-cavage",
+  );
+
+  mf.uninstall();
+});
+
+test("doubleKnock() complex redirect chain test", async () => {
+  // Install mock fetch handler
+  mf.install();
+
+  // Track request attempts
+  const requestedUrls: string[] = [];
+
+  // Create a redirect chain with 3 redirects
+  mf.mock("POST@/redirect1", (req) => {
+    requestedUrls.push(req.url);
+    return Response.redirect("https://example.com/redirect2", 302);
+  });
+
+  mf.mock("POST@/redirect2", (req) => {
+    requestedUrls.push(req.url);
+    return Response.redirect("https://example.com/redirect3", 307);
+  });
+
+  mf.mock("POST@/redirect3", (req) => {
+    requestedUrls.push(req.url);
+    return Response.redirect("https://example.com/final", 301);
+  });
+
+  mf.mock("POST@/final", (req) => {
+    requestedUrls.push(req.url);
+    return new Response("Success", { status: 200 });
+  });
+
+  // Create request to start of redirect chain
+  const request = new Request("https://example.com/redirect1", {
+    method: "POST",
+    body: "Test message for redirect chain",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+  });
+
+  // Capture logs for debugging
+  const logs: Request[] = [];
+  const logFunction = (req: Request) => {
+    logs.push(req);
+  };
+
+  // Call doubleKnock with the redirect chain
+  const response = await doubleKnock(
+    request,
+    {
+      keyId: rsaPublicKey2.id!,
+      privateKey: rsaPrivateKey2,
+    },
+    {
+      log: logFunction,
+    },
+  );
+
+  // Verify the entire redirect chain was followed
+  assertEquals(response.status, 200, "Final response status should be 200 OK");
+  assertEquals(
+    await response.text(),
+    "Success",
+    "Response body should be 'Success'",
+  );
+  assertEquals(requestedUrls.length, 4, "Four URLs should have been requested");
+  assertEquals(
+    requestedUrls[0],
+    "https://example.com/redirect1",
+    "First request should be to redirect1",
+  );
+  assertEquals(
+    requestedUrls[1],
+    "https://example.com/redirect2",
+    "Second request should be to redirect2",
+  );
+  assertEquals(
+    requestedUrls[2],
+    "https://example.com/redirect3",
+    "Third request should be to redirect3",
+  );
+  assertEquals(
+    requestedUrls[3],
+    "https://example.com/final",
+    "Fourth request should be to final",
+  );
+
+  // Verify each request in the chain was properly signed
+  assertEquals(logs.length, 4, "Four requests should have been logged");
+  for (const loggedReq of logs) {
+    assert(
+      loggedReq.headers.has("Signature-Input") ||
+        loggedReq.headers.has("Signature"),
+      "Each request should be signed with either RFC 9421 or draft-cavage",
+    );
+  }
+
+  mf.uninstall();
+});
+
+test("doubleKnock() async specDeterminer test", async () => {
+  // Install mock fetch handler
+  mf.install();
+
+  // Track request attempts
+  let requestCount = 0;
+  let specUsed: string | null = null;
+
+  // Mock an endpoint that accepts both types of signatures
+  mf.mock("POST@/inbox-async-determiner", (req) => {
+    requestCount++;
+
+    if (req.headers.has("Signature-Input")) {
+      specUsed = "rfc9421";
+    } else if (req.headers.has("Signature")) {
+      specUsed = "draft-cavage-http-signatures-12";
+    }
+
+    return new Response("", { status: 202 });
+  });
+
+  // Create an async spec determiner that returns after a delay
+  const specDeterminer = {
+    async determineSpec(_origin: string): Promise<HttpMessageSignaturesSpec> {
+      // Simulate async database lookup
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      return "draft-cavage-http-signatures-12";
+    },
+    async rememberSpec(_origin: string, _spec: string): Promise<void> {
+      // Simulate async database write
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    },
+  };
+
+  // Create request
+  const request = new Request("https://example.com/inbox-async-determiner", {
+    method: "POST",
+    body: "Test message with async spec determiner",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+  });
+
+  // Call doubleKnock with the async determiner
+  const response = await doubleKnock(
+    request,
+    {
+      keyId: rsaPublicKey2.id!,
+      privateKey: rsaPrivateKey2,
+    },
+    {
+      specDeterminer,
+    },
+  );
+
+  // Verify the async determiner was used correctly
+  assertEquals(response.status, 202, "Response status should be 202 Accepted");
+  assertEquals(requestCount, 1, "Only one request should have been made");
+  assertEquals(
+    specUsed,
+    "draft-cavage-http-signatures-12",
+    "Should use spec from async determiner",
+  );
+
+  mf.uninstall();
+});

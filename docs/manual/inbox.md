@@ -15,6 +15,28 @@ handle incoming activities from other actors.
 [inbox]: https://www.w3.org/TR/activitypub/#inbox
 
 
+Signature verification
+----------------------
+
+The inbox listeners automatically verify the signature of the incoming
+activities with various specifications, such as:
+
+ -  Draft cavage [HTTP Signatures]
+ -  HTTP Message Signatures ([RFC 9421])
+ -  [Linked Data Signatures]
+ -  Object Integrity Proofs ([FEP-8b32])
+
+You don't mind about the signature verification at all—unsigned activities and
+invalid signatures are silently ignored.  If you want to see why some activities
+are ignored, you can turn on [logging](./log.md) for `["fedify", "sig"]`
+category.
+
+[HTTP Signatures]: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12
+[RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
+[Linked Data Signatures]: https://web.archive.org/web/20170923124140/https://w3c-dvcg.github.io/ld-signatures/
+[FEP-8b32]: https://w3id.org/fep/8b32
+
+
 Registering an inbox listener
 -----------------------------
 
@@ -555,3 +577,5 @@ for await (const item of context.traverseCollection(collection)) {
 >  -  The `Activity` is dereferenceable by its `~Object.id` and
 >     the dereferenced object has an actor that belongs to the same origin
 >     as the `Activity` object.
+
+<!-- cSpell: ignore cavage -->

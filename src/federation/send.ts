@@ -6,7 +6,11 @@ import {
   type TracerProvider,
 } from "@opentelemetry/api";
 import metadata from "../deno.json" with { type: "json" };
-import { signRequest } from "../sig/http.ts";
+import {
+  doubleKnock,
+  type HttpMessageSignaturesSpecDeterminer,
+  signRequest,
+} from "../sig/http.ts";
 import type { Recipient } from "../vocab/actor.ts";
 
 /**
@@ -131,6 +135,12 @@ export interface SendActivityParameters {
   headers?: Headers;
 
   /**
+   * The spec determiner to use for signing requests with double-knocking.
+   * @since 1.6.0
+   */
+  specDeterminer?: HttpMessageSignaturesSpecDeterminer;
+
+  /**
    * The tracer provider for tracing the request.
    * If omitted, the global tracer provider is used.
    * @since 1.3.0
@@ -184,6 +194,7 @@ async function sendActivityInternal(
     keys,
     inbox,
     headers,
+    specDeterminer,
     tracerProvider,
   }: SendActivityParameters,
 ): Promise<void> {
@@ -226,7 +237,9 @@ async function sendActivityInternal(
   }
   let response: Response;
   try {
-    response = await fetch(request);
+    response = rsaKey == null
+      ? await fetch(request)
+      : await doubleKnock(request, rsaKey, { tracerProvider, specDeterminer });
   } catch (error) {
     logger.error(
       "Failed to send activity {activityId} to {inbox}:\n{error}",

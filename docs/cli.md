@@ -727,6 +727,36 @@ Person {
 }
 ~~~~
 
+### `--first-knock`: First-knock spec for `-a`/`--authorized-fetch`
+
+*This option is available since Fedify 1.6.0.*
+
+The `--first-knock` option is used to specify which HTTP Signatures spec to
+try first when using the `-a`/`--authorized-fetch` option.  The ActivityPub
+ecosystem currently uses different versions of HTTP Signatures specifications,
+and the [double-knocking] technique (trying one version, then falling back to
+another if rejected) allows for better compatibility across servers.
+
+Available options are:
+
+`draft-cavage-http-signatures-12`
+:   [HTTP Signatures], which is obsolete but still widely adopted in
+    the fediverse as of May 2025.
+
+`rfc9421` (default)
+:   [RFC 9421]: HTTP Message Signatures, which is the final revision of
+    the specification and is recommended, but not yet widely adopted
+    in the fediverse as of May 2025.
+
+If the first signature attempt fails, Fedify will automatically try the other
+specification format, implementing the [double-knocking] technique described in
+the [ActivityPub HTTP Signatures] specification.
+
+[double-knocking]: https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions
+[HTTP Signatures]: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12
+[RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
+[ActivityPub HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
+
 ### `-u`/`--user-agent`: Custom `User-Agent` header
 
 *This option is available since Fedify 1.3.0.*

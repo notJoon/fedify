@@ -32,7 +32,11 @@ import {
   type GetUserAgentOptions,
   kvCache,
 } from "../runtime/docloader.ts";
-import { verifyRequest } from "../sig/http.ts";
+import {
+  type HttpMessageSignaturesSpec,
+  type HttpMessageSignaturesSpecDeterminer,
+  verifyRequest,
+} from "../sig/http.ts";
 import { exportJwk, importJwk, validateCryptoKey } from "../sig/key.ts";
 import { hasSignature, signJsonLd } from "../sig/ld.ts";
 import { getKeyOwner, type GetKeyOwnerOptions } from "../sig/owner.ts";
@@ -142,22 +146,32 @@ export interface FederationQueueOptions {
 export interface FederationKvPrefixes {
   /**
    * The key prefix used for storing whether activities have already been
-   * processed or not.  `["_fedify", "activityIdempotence"]` by default.
+   * processed or not.
+   * @default `["_fedify", "activityIdempotence"]`
    */
   activityIdempotence: KvKey;
 
   /**
    * The key prefix used for storing remote JSON-LD documents.
-   * `["_fedify", "remoteDocument"]` by default.
+   * @default `["_fedify", "remoteDocument"]`
    */
   remoteDocument: KvKey;
 
   /**
    * The key prefix used for caching public keys.
-   * `["_fedify", "publicKey"]` by default.
+   * @default `["_fedify", "publicKey"]`
    * @since 0.12.0
    */
   publicKey: KvKey;
+
+  /**
+   * The key prefix used for caching HTTP Message Signatures specs.
+   * The cached spec is used to reduce the number of requests to make signed
+   * requests ("double-knocking" technique).
+   * @default `["_fedify", "httpMessageSignaturesSpec"]`
+   * @since 1.6.0
+   */
+  httpMessageSignaturesSpec: KvKey;
 }
 
 /**
@@ -227,6 +241,7 @@ export class FederationImpl<TContextData>
         activityIdempotence: ["_fedify", "activityIdempotence"],
         remoteDocument: ["_fedify", "remoteDocument"],
         publicKey: ["_fedify", "publicKey"],
+        httpMessageSignaturesSpec: ["_fedify", "httpMessageSignaturesSpec"],
       } satisfies FederationKvPrefixes),
       ...(options.kvPrefixes ?? {}),
     };
@@ -366,6 +381,11 @@ export class FederationImpl<TContextData>
           getAuthenticatedDocumentLoader(identity, {
             allowPrivateAddress,
             userAgent,
+            specDeterminer: new KvSpecDeterminer(
+              this.kv,
+              this.kvPrefixes.httpMessageSignaturesSpec,
+            ),
+            tracerProvider: this.tracerProvider,
           }));
     this.userAgent = userAgent;
     this.onOutboxError = options.onOutboxError;
@@ -617,6 +637,10 @@ export class FederationImpl<TContextData>
         inbox: new URL(message.inbox),
         sharedInbox: message.sharedInbox,
         headers: new Headers(message.headers),
+        specDeterminer: new KvSpecDeterminer(
+          this.kv,
+          this.kvPrefixes.httpMessageSignaturesSpec,
+        ),
         tracerProvider: this.tracerProvider,
       });
     } catch (error) {
@@ -1039,6 +1063,10 @@ export class FederationImpl<TContextData>
                   inboxes[inbox].actorIds,
                 ),
             }),
+            specDeterminer: new KvSpecDeterminer(
+              this.kv,
+              this.kvPrefixes.httpMessageSignaturesSpec,
+            ),
             tracerProvider: this.tracerProvider,
           }),
         );
@@ -2732,6 +2760,10 @@ export class InboxContextImpl<TContextData> extends ContextImpl<TContextData>
             inbox: new URL(inbox),
             sharedInbox: inboxes[inbox].sharedInbox,
             tracerProvider: this.tracerProvider,
+            specDeterminer: new KvSpecDeterminer(
+              this.federation.kv,
+              this.federation.kvPrefixes.httpMessageSignaturesSpec,
+            ),
           }),
         );
       }
@@ -2808,6 +2840,38 @@ interface SendActivityInternalOptions<TContextData> {
   immediate?: boolean;
   collectionSync?: string;
   context: Context<TContextData>;
+}
+
+export class KvSpecDeterminer implements HttpMessageSignaturesSpecDeterminer {
+  kv: KvStore;
+  prefix: KvKey;
+  defaultSpec: HttpMessageSignaturesSpec;
+
+  constructor(
+    kv: KvStore,
+    prefix: KvKey,
+    defaultSpec: HttpMessageSignaturesSpec = "rfc9421",
+  ) {
+    this.kv = kv;
+    this.prefix = prefix;
+    this.defaultSpec = defaultSpec;
+  }
+
+  async determineSpec(
+    origin: string,
+  ): Promise<HttpMessageSignaturesSpec> {
+    return await this.kv.get<HttpMessageSignaturesSpec>([
+      ...this.prefix,
+      origin,
+    ]) ?? this.defaultSpec;
+  }
+
+  async rememberSpec(
+    origin: string,
+    spec: HttpMessageSignaturesSpec,
+  ): Promise<void> {
+    await this.kv.set([...this.prefix, origin], spec);
+  }
 }
 
 function notFound(_request: Request): Response {
