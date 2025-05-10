@@ -9,7 +9,6 @@ import metadata from "../deno.json" with { type: "json" };
 import {
   doubleKnock,
   type HttpMessageSignaturesSpecDeterminer,
-  signRequest,
 } from "../sig/http.ts";
 import type { Recipient } from "../vocab/actor.ts";
 
@@ -201,7 +200,7 @@ async function sendActivityInternal(
   const logger = getLogger(["fedify", "federation", "outbox"]);
   headers = new Headers(headers);
   headers.set("Content-Type", "application/activity+json");
-  let request = new Request(inbox, {
+  const request = new Request(inbox, {
     method: "POST",
     headers,
     body: JSON.stringify(activity),
@@ -226,13 +225,6 @@ async function sendActivityInternal(
           privateKey: pair.privateKey,
         })),
       },
-    );
-  } else {
-    request = await signRequest(
-      request,
-      rsaKey.privateKey,
-      rsaKey.keyId,
-      { tracerProvider },
     );
   }
   let response: Response;

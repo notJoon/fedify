@@ -1230,11 +1230,7 @@ test("doubleKnock() function with successful first attempt", async () => {
     "rfc9421",
     "First attempt should use RFC 9421",
   );
-  assertEquals(
-    specDeterminer.usedSpec,
-    null,
-    "rememberSpec should not be called on first success",
-  );
+  assertEquals(specDeterminer.usedSpec, "rfc9421", "Spec should be remembered");
   assertExists(loggedRequest, "Request should be logged");
   assert(
     loggedRequest?.headers.has("Signature-Input"),

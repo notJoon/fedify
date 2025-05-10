@@ -1239,7 +1239,7 @@ export async function doubleKnock(
   ) {
     const location = response.headers.get("Location")!;
     const body = request.method !== "GET" && request.method !== "HEAD"
-      ? request.clone().body
+      ? await request.clone().arrayBuffer()
       : undefined;
     return doubleKnock(
       new Request(location, {
@@ -1249,7 +1249,6 @@ export async function doubleKnock(
         redirect: "manual",
         signal: request.signal,
         mode: request.mode,
-        cache: request.cache,
         credentials: request.credentials,
         referrer: request.referrer,
         referrerPolicy: request.referrerPolicy,
@@ -1262,17 +1261,18 @@ export async function doubleKnock(
   } else if (response.status === 400 || response.status === 401) {
     // verification failed; retry with the other spec of HTTP Signatures
     // (double-knocking; see https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions)
+    const spec = firstTrySpec === "draft-cavage-http-signatures-12"
+      ? "rfc9421"
+      : "draft-cavage-http-signatures-12";
     getLogger(["fedify", "sig", "http"]).debug(
-      "Failed to verify with the spec {spec} ({status} {statusText}); retrying with the other spec... (double-knocking)",
+      "Failed to verify with the spec {spec} ({status} {statusText}); retrying with spec {secondSpec}... (double-knocking)",
       {
         spec: firstTrySpec,
+        secondSpec: spec,
         status: response.status,
         statusText: response.statusText,
       },
     );
-    const spec = firstTrySpec === "draft-cavage-http-signatures-12"
-      ? "rfc9421"
-      : "draft-cavage-http-signatures-12";
     signedRequest = await signRequest(
       request,
       identity.privateKey,
@@ -1301,8 +1301,10 @@ export async function doubleKnock(
         options,
       );
     } else if (response.status !== 400 && response.status !== 401) {
-      specDeterminer?.rememberSpec(origin, spec);
+      await specDeterminer?.rememberSpec(origin, spec);
     }
+  } else {
+    await specDeterminer?.rememberSpec(origin, firstTrySpec);
   }
   return response;
 }
