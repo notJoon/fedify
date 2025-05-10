@@ -9374,6 +9374,7 @@ get urls(): ((URL | Link))[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -9382,6 +9383,7 @@ get urls(): ((URL | Link))[] {
     return \\"Object \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -9700,6 +9702,7 @@ proofs?: (DataIntegrityProof | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -9708,6 +9711,7 @@ proofs?: (DataIntegrityProof | URL)[];}
     return \\"Emoji \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -10167,6 +10171,7 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -10175,6 +10180,7 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
     return \\"ChatMessage \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -12896,6 +12902,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -12904,6 +12911,7 @@ instruments?: (Object | URL)[];}
     return \\"Activity \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -13218,6 +13226,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -13226,6 +13235,7 @@ instruments?: (Object | URL)[];}
     return \\"EmojiReact \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -13804,6 +13814,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -13812,6 +13823,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
     return \\"PropertyValue \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -14289,6 +14301,7 @@ get endpoints(): (URL)[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -14297,6 +14310,7 @@ get endpoints(): (URL)[] {
     return \\"DidService \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -14558,6 +14572,7 @@ endpoints?: (URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -14566,6 +14581,7 @@ endpoints?: (URL)[];}
     return \\"Export \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -15501,6 +15517,7 @@ cryptosuite?: \\"eddsa-jcs-2022\\" | null;verificationMethod?: Multikey | URL | 
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -15509,6 +15526,7 @@ cryptosuite?: \\"eddsa-jcs-2022\\" | null;verificationMethod?: Multikey | URL | 
     return \\"DataIntegrityProof \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -16286,6 +16304,7 @@ owner?: Application | Group | Organization | Person | Service | URL | null;publi
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -16294,6 +16313,7 @@ owner?: Application | Group | Organization | Person | Service | URL | null;publi
     return \\"CryptographicKey \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -17082,6 +17102,7 @@ controller?: Application | Group | Organization | Person | Service | URL | null;
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -17090,6 +17111,7 @@ controller?: Application | Group | Organization | Person | Service | URL | null;
     return \\"Multikey \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -17410,6 +17432,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -17418,6 +17441,7 @@ instruments?: (Object | URL)[];}
     return \\"Accept \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -17735,6 +17759,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -17743,6 +17768,7 @@ instruments?: (Object | URL)[];}
     return \\"Add \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -18059,6 +18085,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -18067,6 +18094,7 @@ instruments?: (Object | URL)[];}
     return \\"Announce \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -23657,6 +23685,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -23665,6 +23694,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return \\"Application \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -23993,6 +24023,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -24001,6 +24032,7 @@ instruments?: (Object | URL)[];}
     return \\"IntransitiveActivity \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -24317,6 +24349,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -24325,6 +24358,7 @@ instruments?: (Object | URL)[];}
     return \\"Arrive \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -24779,6 +24813,7 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -24787,6 +24822,7 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
     return \\"Article \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -25339,6 +25375,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -25347,6 +25384,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return \\"Document \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -25665,6 +25703,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -25673,6 +25712,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return \\"Audio \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -25992,6 +26032,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -26000,6 +26041,7 @@ instruments?: (Object | URL)[];}
     return \\"Ignore \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -26317,6 +26359,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -26325,6 +26368,7 @@ instruments?: (Object | URL)[];}
     return \\"Block \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -27884,6 +27928,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -27892,6 +27937,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     return \\"Collection \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -29024,6 +29070,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -29032,6 +29079,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     return \\"CollectionPage \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -29345,6 +29393,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -29353,6 +29402,7 @@ instruments?: (Object | URL)[];}
     return \\"Create \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -29668,6 +29718,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -29676,6 +29727,7 @@ instruments?: (Object | URL)[];}
     return \\"Delete \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -29989,6 +30041,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -29997,6 +30050,7 @@ instruments?: (Object | URL)[];}
     return \\"Dislike \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -30980,6 +31034,7 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -30988,6 +31043,7 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
     return \\"Endpoints \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -31306,6 +31362,7 @@ proofs?: (DataIntegrityProof | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -31314,6 +31371,7 @@ proofs?: (DataIntegrityProof | URL)[];}
     return \\"Event \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -31630,6 +31688,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -31638,6 +31697,7 @@ instruments?: (Object | URL)[];}
     return \\"Flag \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -31955,6 +32015,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -31963,6 +32024,7 @@ instruments?: (Object | URL)[];}
     return \\"Follow \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -37553,6 +37615,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -37561,6 +37624,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return \\"Group \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -39105,6 +39169,7 @@ get names(): ((string | LanguageString))[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -39113,6 +39178,7 @@ get names(): ((string | LanguageString))[] {
     return \\"Link \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -39395,6 +39461,7 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -39403,6 +39470,7 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
     return \\"Hashtag \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -39721,6 +39789,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -39729,6 +39798,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return \\"Image \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -40049,6 +40119,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -40057,6 +40128,7 @@ instruments?: (Object | URL)[];}
     return \\"Offer \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -40372,6 +40444,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -40380,6 +40453,7 @@ instruments?: (Object | URL)[];}
     return \\"Invite \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -40695,6 +40769,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -40703,6 +40778,7 @@ instruments?: (Object | URL)[];}
     return \\"Join \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -41018,6 +41094,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -41026,6 +41103,7 @@ instruments?: (Object | URL)[];}
     return \\"Leave \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -41341,6 +41419,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -41349,6 +41428,7 @@ instruments?: (Object | URL)[];}
     return \\"Like \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -41662,6 +41742,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -41670,6 +41751,7 @@ instruments?: (Object | URL)[];}
     return \\"Listen \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -41949,6 +42031,7 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -41957,6 +42040,7 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
     return \\"Mention \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -42273,6 +42357,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -42281,6 +42366,7 @@ instruments?: (Object | URL)[];}
     return \\"Move \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -42737,6 +42823,7 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -42745,6 +42832,7 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
     return \\"Note \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -43366,6 +43454,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -43374,6 +43463,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     return \\"OrderedCollection \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -44105,6 +44195,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -44113,6 +44204,7 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     return \\"OrderedCollectionPage \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -49703,6 +49795,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -49711,6 +49804,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return \\"Organization \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -50029,6 +50123,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -50037,6 +50132,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return \\"Page \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -55627,6 +55723,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -55635,6 +55732,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return \\"Person \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -56616,6 +56714,7 @@ proofs?: (DataIntegrityProof | URL)[];accuracy?: number | null;altitude?: number
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -56624,6 +56723,7 @@ proofs?: (DataIntegrityProof | URL)[];accuracy?: number | null;altitude?: number
     return \\"Place \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -57217,6 +57317,7 @@ proofs?: (DataIntegrityProof | URL)[];describes?: Object | URL | null;}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -57225,6 +57326,7 @@ proofs?: (DataIntegrityProof | URL)[];describes?: Object | URL | null;}
     return \\"Profile \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -58380,6 +58482,7 @@ instruments?: (Object | URL)[];exclusiveOptions?: (Object | URL)[];inclusiveOpti
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -58388,6 +58491,7 @@ instruments?: (Object | URL)[];exclusiveOptions?: (Object | URL)[];inclusiveOpti
     return \\"Question \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -58702,6 +58806,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -58710,6 +58815,7 @@ instruments?: (Object | URL)[];}
     return \\"Read \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -59029,6 +59135,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -59037,6 +59144,7 @@ instruments?: (Object | URL)[];}
     return \\"Reject \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -60416,6 +60524,7 @@ relationships?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -60424,6 +60533,7 @@ relationships?: (Object | URL)[];}
     return \\"Relationship \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -60739,6 +60849,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -60747,6 +60858,7 @@ instruments?: (Object | URL)[];}
     return \\"Remove \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -66337,6 +66449,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -66345,6 +66458,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
     return \\"Service \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -66961,6 +67075,7 @@ get contents(): ((string | LanguageString))[] {
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -66969,6 +67084,7 @@ get contents(): ((string | LanguageString))[] {
     return \\"Source \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
    [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -67284,6 +67400,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -67292,6 +67409,7 @@ instruments?: (Object | URL)[];}
     return \\"TentativeAccept \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -67607,6 +67725,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -67615,6 +67734,7 @@ instruments?: (Object | URL)[];}
     return \\"TentativeReject \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -68049,6 +68169,7 @@ proofs?: (DataIntegrityProof | URL)[];deleted?: Temporal.Instant | null;}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -68057,6 +68178,7 @@ proofs?: (DataIntegrityProof | URL)[];deleted?: Temporal.Instant | null;}
     return \\"Tombstone \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -68374,6 +68496,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -68382,6 +68505,7 @@ instruments?: (Object | URL)[];}
     return \\"Travel \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -68702,6 +68826,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -68710,6 +68835,7 @@ instruments?: (Object | URL)[];}
     return \\"Undo \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -69028,6 +69154,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -69036,6 +69163,7 @@ instruments?: (Object | URL)[];}
     return \\"Update \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -69354,6 +69482,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -69362,6 +69491,7 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
     return \\"Video \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
@@ -69676,6 +69806,7 @@ instruments?: (Object | URL)[];}
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"Deno.customInspect\\")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -69684,6 +69815,7 @@ instruments?: (Object | URL)[];}
     return \\"View \\" + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   override [Symbol.for(\\"nodejs.util.inspect.custom\\")](
     _depth: number,
     options: unknown,
