@@ -34,6 +34,9 @@ To be released.
      -  Added `HttpMessageSignaturesSpecDeterminer` interface.
      -  Added `--first-knock` option to `fedify lookup` command.
 
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
+
 [RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
 [#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227
