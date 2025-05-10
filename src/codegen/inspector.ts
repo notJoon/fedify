@@ -73,6 +73,7 @@ export async function* generateInspector(
     return proxy;
   }
 
+  // @ts-ignore: suppressing TS4127
   ${emitOverride(typeUri, types)} [Symbol.for("Deno.customInspect")](
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
@@ -81,6 +82,7 @@ export async function* generateInspector(
     return ${JSON.stringify(type.name + " ")} + inspect(proxy, options);
   }
 
+  // @ts-ignore: suppressing TS4127
   ${emitOverride(typeUri, types)} [Symbol.for("nodejs.util.inspect.custom")](
     _depth: number,
     options: unknown,
