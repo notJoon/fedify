@@ -1,10 +1,14 @@
 import { isDeno, isNode } from "@david/which-runtime";
 import { HTTPHeaderLink } from "@hugoalh/http-header-link";
 import { getLogger } from "@logtape/logtape";
+import type { TracerProvider } from "@opentelemetry/api";
 import process from "node:process";
 import metadata from "../deno.json" with { type: "json" };
 import type { KvKey, KvStore } from "../federation/kv.ts";
-import { signRequest } from "../sig/http.ts";
+import {
+  doubleKnock,
+  type HttpMessageSignaturesSpecDeterminer,
+} from "../sig/http.ts";
 import { validateCryptoKey } from "../sig/key.ts";
 import preloadedContexts from "./contexts.ts";
 import { UrlError, validatePublicUrl } from "./url.ts";
@@ -371,6 +375,21 @@ export function fetchDocumentLoader(
  */
 export interface GetAuthenticatedDocumentLoaderOptions
   extends DocumentLoaderFactoryOptions {
+  /**
+   * An optional spec determiner for HTTP Message Signatures.
+   * It determines the spec to use for signing requests.
+   * It is used for double-knocking
+   * (see <https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions>).
+   * @since 1.6.0
+   */
+  specDeterminer?: HttpMessageSignaturesSpecDeterminer;
+
+  /**
+   * The OpenTelemetry tracer provider.  If omitted, the global tracer provider
+   * is used.
+   * @since 1.6.0
+   */
+  tracerProvider?: TracerProvider;
 }
 
 /**
@@ -386,8 +405,8 @@ export interface GetAuthenticatedDocumentLoaderOptions
  */
 export function getAuthenticatedDocumentLoader(
   identity: { keyId: URL; privateKey: CryptoKey },
-  { allowPrivateAddress, userAgent }: GetAuthenticatedDocumentLoaderOptions =
-    {},
+  { allowPrivateAddress, userAgent, specDeterminer, tracerProvider }:
+    GetAuthenticatedDocumentLoaderOptions = {},
 ): DocumentLoader {
   validateCryptoKey(identity.privateKey);
   async function load(url: string): Promise<RemoteDocument> {
@@ -401,22 +420,12 @@ export function getAuthenticatedDocumentLoader(
         throw error;
       }
     }
-    let request = createRequest(url, { userAgent });
-    request = await signRequest(request, identity.privateKey, identity.keyId);
-    logRequest(request);
-    const response = await fetch(request, {
-      // Since Bun has a bug that ignores the `Request.redirect` option,
-      // to work around it we specify `redirect: "manual"` here too:
-      // https://github.com/oven-sh/bun/issues/10754
-      redirect: "manual",
-    });
-    // Follow redirects manually to get the final URL:
-    if (
-      response.status >= 300 && response.status < 400 &&
-      response.headers.has("Location")
-    ) {
-      return load(response.headers.get("Location")!);
-    }
+    const originalRequest = createRequest(url, { userAgent });
+    const response = await doubleKnock(
+      originalRequest,
+      identity,
+      { specDeterminer, log: logRequest, tracerProvider },
+    );
     return getRemoteDocument(url, response, load);
   }
   return load;

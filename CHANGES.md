@@ -22,6 +22,23 @@ To be released.
 
  -  Added `Router.trailingSlashInsensitive` property.
 
+ -  Implemented HTTP Message Signatures ([RFC 9421]) with double-knocking.
+    Currently, it only works with RSA-PKCS#1-v1.5.  [[#208]]
+
+     -  Added `HttpMessageSignaturesSpec` type.
+     -  Added `SignRequestOptions.spec` option.
+     -  Added `SignRequestOptions.currentTime` option.
+     -  Added `VerifyRequestOptions.spec` option.
+     -  Added `GetAuthenticatedDocumentLoaderOptions.specDeterminer` option.
+     -  Added `GetAuthenticatedDocumentLoaderOptions.traceProvider` option.
+     -  Added `HttpMessageSignaturesSpecDeterminer` interface.
+     -  Added `--first-knock` option to `fedify lookup` command.
+
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
+
+[RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
+[#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227
 
 

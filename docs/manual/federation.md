@@ -83,6 +83,16 @@ that the `Federation` object uses:
     The key prefix used for caching public keys.  `["_fedify", "publicKey"]`
     by default.
 
+`~FederationKvPrefixes.httpMessageSignaturesSpec`
+:   *This API is available since Fedify 1.6.0.*
+
+    The key prefix used for caching HTTP Message Signatures spec.  The cached
+    spec is used to reduce the number of attempts to make signed requests
+    ([double-knocking] technique).
+    `["_fedify", "httpMessageSignaturesSpec"]` by default.
+
+[double-knocking]: https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions
+
 ### `queue`
 
 *This API is available since Fedify 0.5.0.*

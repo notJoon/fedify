@@ -4,6 +4,8 @@
  * @module
  */
 export {
+  type HttpMessageSignaturesSpec,
+  type HttpMessageSignaturesSpecDeterminer,
   signRequest,
   type SignRequestOptions,
   verifyRequest,
