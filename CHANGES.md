@@ -8,6 +8,9 @@ Version 1.5.2
 
 To be released.
 
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
+
 
 Version 1.5.1
 -------------

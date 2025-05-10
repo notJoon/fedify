@@ -100,7 +100,9 @@ export function generateCryptoKeyPair(
  */
 export async function exportJwk(key: CryptoKey): Promise<JsonWebKey> {
   validateCryptoKey(key);
-  return await crypto.subtle.exportKey("jwk", key);
+  const jwk = await crypto.subtle.exportKey("jwk", key);
+  if (jwk.crv === "Ed25519") jwk.alg = "Ed25519";
+  return jwk;
 }
 
 /**
