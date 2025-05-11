@@ -8,13 +8,15 @@ Supported federation protocols and standards
 
  -  [ActivityPub] (S2S)
  -  [WebFinger]
- -  [HTTP Signatures]
+ -  [HTTP Message Signatures] (RFC 9421)
+ -  [HTTP Signatures] (draft-cavage-http-signatures-12)
  -  [Linked Data Signatures]
  -  [NodeInfo]
 
 [ActivityPub]: https://www.w3.org/TR/activitypub/
 [WebFinger]: https://datatracker.ietf.org/doc/html/rfc7033
-[HTTP Signatures]: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures
+[HTTP Message Signatures]: https://www.rfc-editor.org/rfc/rfc9421
+[HTTP Signatures]: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12
 [Linked Data Signatures]: https://web.archive.org/web/20170923124140/https://w3c-dvcg.github.io/ld-signatures/
 [NodeInfo]: https://nodeinfo.diaspora.software/
 
@@ -30,6 +32,7 @@ Supported FEPs
  -  [FEP-5feb][]: Search indexing consent for actors
  -  [FEP-c7d3][]: Ownership
  -  [FEP-c0e0][]: Emoji reactions
+ -  [FEP-e232][]: Object Links
 
 [FEP-67ff]: https://w3id.org/fep/67ff
 [FEP-8fcf]: https://w3id.org/fep/8fcf
@@ -39,6 +42,7 @@ Supported FEPs
 [FEP-5feb]: https://w3id.org/fep/5feb
 [FEP-c7d3]: https://w3id.org/fep/c7d3
 [FEP-c0e0]: https://w3id.org/fep/c0e0
+[FEP-e232]: https://w3id.org/fep/e232
 
 
 ActivityPub
