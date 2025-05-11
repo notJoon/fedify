@@ -24,23 +24,12 @@ jobs:
       env:
         RUST_BACKTRACE: ${{ runner.debug }}
       working-directory: ${{ github.workspace }}/src/
-    - uses: EnricoMi/publish-unit-test-result-action@v2
-      if: runner.os == 'Linux' && always()
+    - uses: dorny/test-reporter@v2
+      if: success() || failure()
       with:
-        check_name: "Test Results (Linux)"
-        files: src/.test-report.xml
-      continue-on-error: true
-    - uses: EnricoMi/publish-unit-test-result-action/macos@v2
-      if: runner.os == 'macOS' && always()
-      with:
-        check_name: "Test Results (macOS)"
-        files: src/.test-report.xml
-      continue-on-error: true
-    - uses: EnricoMi/publish-unit-test-result-action/windows@v2
-      if: runner.os == 'Windows' && always()
-      with:
-        check_name: "Test Results (Windows)"
-        files: src/.test-report.xml
+        name: "Test Results (${{ matrix.os }})"
+        path: src/.test-report.xml
+        reporter: jest-junit
       continue-on-error: true
     - if: '!cancelled()'
       uses: codecov/test-results-action@v1
