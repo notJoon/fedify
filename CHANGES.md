@@ -34,12 +34,24 @@ To be released.
      -  Added `HttpMessageSignaturesSpecDeterminer` interface.
      -  Added `--first-knock` option to `fedify lookup` command.
 
- -  The `exportJwk()` function now populates the `alg` property of a returned
-    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
-
 [RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
 [#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227
+
+
+Version 1.5.2
+-------------
+
+Released on May 11, 2025.
+
+ -  Fixed the `fedify init` command to install the correct version of
+    *@fedify/express* package.  [[#230], [#231] by Emelia Smith]
+
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
+
+[#230]: https://github.com/fedify-dev/fedify/issues/230
+[#231]: https://github.com/fedify-dev/fedify/pull/231
 
 
 Version 1.5.1
