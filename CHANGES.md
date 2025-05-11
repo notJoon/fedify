@@ -6,10 +6,16 @@ Fedify changelog
 Version 1.5.2
 -------------
 
-To be released.
+Released on May 11, 2025.
+
+ -  Fixed the `fedify init` command to install the correct version of
+    *@fedify/express* package.  [[#230], [#231] by Emelia Smith]
 
  -  The `exportJwk()` function now populates the `alg` property of a returned
     `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
+
+[#230]: https://github.com/fedify-dev/fedify/issues/230
+[#231]: https://github.com/fedify-dev/fedify/pull/231
 
 
 Version 1.5.1
