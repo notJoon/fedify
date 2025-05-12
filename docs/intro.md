@@ -12,7 +12,7 @@ Currently, Fedify provides the following features out of the box:
  -  Type-safe objects for [Activity Vocabulary] (including some vendor-specific
     extensions)
  -  [WebFinger] client and server
- -  [HTTP Signatures]
+ -  [HTTP Signatures] & [HTTP Message Signatures]
  -  [Object Integrity Proofs][FEP-8b32] & [Linked Data Signatures]
  -  Middlewares for handling webhooks
  -  [NodeInfo] protocol
@@ -42,6 +42,7 @@ join our [Matrix chat space] or [Discord server] or [GitHub Discussions].
 [Activity Vocabulary]: https://www.w3.org/TR/activitystreams-vocabulary/
 [WebFinger]: https://datatracker.ietf.org/doc/html/rfc7033
 [HTTP Signatures]: https://tools.ietf.org/html/draft-cavage-http-signatures-12
+[HTTP Message Signatures]: https://www.rfc-editor.org/rfc/rfc9421
 [FEP-8b32]: https://w3id.org/fep/8b32
 [Linked Data Signatures]: https://web.archive.org/web/20170923124140/https://w3c-dvcg.github.io/ld-signatures/
 [NodeInfo]: https://nodeinfo.diaspora.software/

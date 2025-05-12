@@ -55,7 +55,8 @@ features:
   details: >-
     Signing and verifying <a
     href="https://tools.ietf.org/html/draft-cavage-http-signatures-12">HTTP
-    Signatures</a>
+    Signatures</a> and <a href="https://www.rfc-editor.org/rfc/rfc9421">HTTP
+    Message Signatures</a>
   link: /manual/send.md#http-signatures
 - icon: 🔗
   title: Linked Data Signatures

@@ -155,6 +155,7 @@ Fedify provides:
  -  Comprehensive cryptographic support (RSA-PKCS#1-v1.5 and Ed25519 keys)
  -  Multiple authentication methods
     ([HTTP Signatures](./manual/send.md#http-signatures),
+    [HTTP Message Signatures](./manual/send.md#http-message-signatures),
     [Object Integrity Proofs](./manual/send.md#object-integrity-proofs),
     [Linked Data Signatures](./manual/send.md#linked-data-signatures))
  -  SSRF protection and other security best practices
