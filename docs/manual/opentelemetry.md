@@ -21,6 +21,11 @@ Fedify.
 Setting up OpenTelemetry
 ------------------------
 
+> [!TIP]
+> If you are using Deno 2.2 or later, you can use Deno's built-in OpenTelemetry
+> support.  See the [*Using Deno's built-in OpenTelemetry support*
+> section](#using-deno-s-built-in-opentelemetry-support) for more details.
+
 To trace your Fedify application with OpenTelemetry, you need to set up the
 OpenTelemetry SDK.  First of all, you need to install the OpenTelemetry SDK and
 the tracer exporter you want to use.  For example, if you want to use the trace
@@ -64,6 +69,36 @@ sdk.start();
 > [!CAUTION]
 > The above code which sets up the OpenTelemetry SDK needs to be executed before
 > the Fedify server starts.  Otherwise, the tracing may not work as expected.
+
+
+Using Deno's built-in OpenTelemetry support
+-------------------------------------------
+
+Since Deno 2.2, Deno has [built-in support for OpenTelemetry][deno-otel].
+This means you can use OpenTelemetry with your Fedify application on Deno
+without manually setting up the OpenTelemetry SDK.
+
+To enable the OpenTelemetry integration in Deno, you need to:
+
+1. Run your Deno script with the `--unstable-otel` flag
+2. Set the environment variable `OTEL_DENO=true`
+
+For example:
+
+~~~~ sh
+OTEL_DENO=true deno run --unstable-otel your_fedify_app.ts
+~~~~
+
+This will automatically collect and export runtime observability data to
+an OpenTelemetry endpoint at `localhost:4318` using Protobuf over HTTP
+(http/protobuf). 
+
+You can customize the endpoint and protocol using environment variables like
+`OTEL_EXPORTER_OTLP_ENDPOINT` and `OTEL_EXPORTER_OTLP_PROTOCOL`.
+For authentication, you can use the `OTEL_EXPORTER_OTLP_HEADERS` environment
+variable.
+
+[deno-otel]: https://docs.deno.com/runtime/fundamentals/open_telemetry/
 
 
 Explicit [`TracerProvider`] configuration
