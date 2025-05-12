@@ -17,8 +17,11 @@ hero:
   image: /logo.png
   actions:
   - theme: brand
-    text: What is Fedify?
+    text: What's Fedify?
     link: /intro.md
+  - theme: brand
+    text: Why?
+    link: /why.md
   - theme: alt
     text: Quick demo
     link: https://dash.deno.com/playground/fedify-demo
