@@ -96,6 +96,7 @@ export default withMermaid(defineConfig({
 
     sidebar: [
       { text: "What is Fedify?", link: "/intro.md" },
+      { text: "Why Fedify?", link: "/why.md" },
       { text: "Installation", link: "/install.md" },
       {
         text: "CLI toolchain",

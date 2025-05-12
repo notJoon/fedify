@@ -29,3 +29,8 @@ section.footnotes > ol > li > p:last-child {
   margin-bottom: 0;
   padding-bottom: 0;
 }
+
+main dl dd {
+  margin-top: .25rem;
+  margin-bottom: 1rem;
+}
