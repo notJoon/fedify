@@ -256,7 +256,7 @@ Handle the `~MessageQueueEnqueueOptions.delay` option if provided in
 `MessageQueueEnqueueOptions`.  Ensure the method is non-blocking
 (use async operations where necessary).
 
-### Implement `~MessageQueue.enqueueMany()` method (optional)
+### Implement `~MessageQueue.enqueueMany` method (optional)
 
 *This API is available since Fedify 1.5.0.*
 
