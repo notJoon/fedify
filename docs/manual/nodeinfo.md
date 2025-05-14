@@ -33,8 +33,8 @@ Exposing NodeInfo endpoint
 --------------------------
 
 To expose a NodeInfo endpoint, you need to register a NodeInfo dispatcher with
-`Federation.setNodeInfoDispatcher()` method.  The following shows how to expose
-a NodeInfo endpoint:
+`~Federatable.setNodeInfoDispatcher()` method.  The following shows how to
+expose a NodeInfo endpoint:
 
 ~~~~ typescript twoslash
 // @noErrors: 2345

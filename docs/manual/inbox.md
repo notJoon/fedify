@@ -73,7 +73,7 @@ federation
   });
 ~~~~
 
-In the above example, the `~Federation.setInboxListeners()` method registers
+In the above example, the `~Federatable.setInboxListeners()` method registers
 path patterns for the personal inbox and the shared inbox, and the following
 `~InboxListenerSetters.on()` method registers an inbox listener for the `Follow`
 activity.  The `~InboxListenerSetters.on()` method takes a class of the activity

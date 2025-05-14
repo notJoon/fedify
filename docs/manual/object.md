@@ -48,7 +48,7 @@ federation.setObjectDispatcher(
 );
 ~~~~
 
-In the above example, the `~Federation.setObjectDispatcher()` method registers
+In the above example, the `~Federatable.setObjectDispatcher()` method registers
 an object dispatcher for the `Note` class and
 the `/users/{userId}/notes/{noteId}` path.  This pattern syntax follows
 the [URI Template] specification.

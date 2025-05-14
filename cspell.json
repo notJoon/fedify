@@ -98,6 +98,7 @@
     "vitepress",
     "vtsls",
     "webfinger",
-    "webp"
+    "webp",
+    "Federatable"
   ]
 }

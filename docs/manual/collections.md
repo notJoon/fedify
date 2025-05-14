@@ -29,7 +29,7 @@ First, let's see how to construct an [outbox] collection.  An outbox collection
 consists of the activities that an actor has sent.  As each collection has its
 own URI, the outbox collection has its own URI, too.  The URI of the outbox
 collection is determined by the first parameter of
-the `Federation.setOutboxDispatcher()` method:
+the `~Federatable.setOutboxDispatcher()` method:
 
 ~~~~ typescript twoslash
 // @noErrors: 2345
@@ -162,7 +162,7 @@ If your database system supports only offset-based pagination (the most
 relational databases), you can use the offset as the cursor.
 
 Although it's omitted in the previous example, there is the third parameter to
-a callback that `~Federation.setOutboxDispatcher()` method takes: the cursor.
+a callback that `~Federatable.setOutboxDispatcher()` method takes: the cursor.
 When the request is for a collection page, the cursor is passed to the callback
 as the third parameter.  When the request is for a whole collection, the cursor
 is `null` (that the previous example assumes).

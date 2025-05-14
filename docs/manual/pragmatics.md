@@ -342,9 +342,9 @@ For example, the above actor object is displayed like the following in Mastodon:
 ![Screenshot: An actor profile with a memorialized status in
 Mastodon](pragmatics/mastodon-memorial.png)
 
-### `Federation.setFollowingDispatcher()`: Following collection
+### `~Federatable.setFollowingDispatcher()`: Following collection
 
-The `Federation.setFollowingDispatcher()` method registers a dispatcher for
+The `~Federatable.setFollowingDispatcher()` method registers a dispatcher for
 the collection of actors that the actor follows.  The number of the collection
 is displayed in the profile page of the actor.  Each item in the collection is
 a URI of the actor that the actor follows, or an actor object itself.
@@ -379,9 +379,9 @@ Mastodon](pragmatics/mastodon-following.png)
 > Mastodon does not display the following collection of a remote actor,
 > but other ActivityPub implementations may display it.
 
-### `Federation.setFollowersDispatcher()`: Followers collection
+### `~Federatable.setFollowersDispatcher()`: Followers collection
 
-The `Federation.setFollowersDispatcher()` method registers a dispatcher for
+The `~Federatable.setFollowersDispatcher()` method registers a dispatcher for
 the collection of actors that follow the actor.  The number of the collection
 is displayed in the profile page of the actor.  Each item in the collection is
 a `Recipient` or an `Actor` that follows the actor.

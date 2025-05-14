@@ -49,7 +49,7 @@ federation.setActorDispatcher("/users/{identifier}", async (ctx, identifier) => 
 });
 ~~~~
 
-In the above example, the `~Federation.setActorDispatcher()` method registers
+In the above example, the `~Federatable.setActorDispatcher()` method registers
 an actor dispatcher for the `/users/{identifier}` path.  This pattern syntax
 follows the [URI Template] specification.
 
