@@ -21,16 +21,17 @@ Supporters
 - [Daniel Supernault](https://pixelfed.org/)
 - [tkgka](https://opencollective.com/tkgka)
 - [Blaine](https://opencollective.com/blaine)
+- [Erick González Aguilar](https://opencollective.com/erick-gonzalez-aguilar)
 
 Backers
 -------
 
-yamanoku, taye, Encyclia, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
+Robin Riley, yamanoku, Encyclia, taye, okin, Andy Piper, box464, Evan Prodromou, Rafael Goulart, malte
 
 One-time donations
 ------------------
 
-Markus P, Nils Bergmann, Rameez
+Robin Riley, Markus P, Nils Bergmann, Rameez
 
 <!-- /DO NOT EDIT -->
 <!-- cSpell: enable -->
