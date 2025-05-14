@@ -14,7 +14,7 @@ import { withMermaid } from "vitepress-plugin-mermaid";
 
 const jsrRefPlugin = await jsrRef({
   package: "@fedify/fedify",
-  version: "unstable",
+  version: process.env.JSR_REF_VERSION ?? "unstable",
   cachePath: ".jsr-cache.json",
 });
 

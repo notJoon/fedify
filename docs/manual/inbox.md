@@ -121,7 +121,7 @@ collection objects.  In such cases, you may need to recursively resolve the
 collection objects to determine the recipients of the activity:
 
 ~~~~ typescript twoslash
-import { 
+import {
   Collection,
   Create,
   type InboxListenerSetters,
@@ -431,8 +431,7 @@ federation.setInboxListeners("/{identifier}/inbox", "/inbox")
 > probably won't trust the forwarded activity.[^2]
 >
 > If you don't want to forward unsigned activities, you can turn on
-> the `~ForwardActivityOptions.skipIfUnsigned` option in
-> the `~InboxContext.forwardActivity()` method:
+> the `skipIfUnsigned` option in the `~InboxContext.forwardActivity()` method:
 >
 > ~~~~ typescript twoslash
 > import { type InboxContext } from "@fedify/fedify";
@@ -447,7 +446,7 @@ federation.setInboxListeners("/{identifier}/inbox", "/inbox")
 
 > [!NOTE]
 > The `~InboxContext.forwardActivity()` method does not use a [two-stage
-> delivery process](./send.md#optimizing-activity-delivery-for-large-audiences), 
+> delivery process](./send.md#optimizing-activity-delivery-for-large-audiences),
 > because `~InboxContext.forwardActivity()` method is invoked inside inbox
 > listeners, which are usually running in the background task worker.
 
