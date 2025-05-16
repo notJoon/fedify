@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.0.25
 --------------
 
-To be released.
+Released on May 16, 2025.
 
  -  Fixed a bug where inbox handler had thrown a `jsonld.SyntaxError` which
     caused a `500 Internal Server Error` when the received activity had
