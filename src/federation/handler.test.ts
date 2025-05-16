@@ -1202,6 +1202,41 @@ test("handleInbox()", async () => {
   });
   assertEquals(onNotFoundCalled, null);
   assertEquals(response.status, 202);
+
+  const invalidRequest = new Request("https://example.com/", {
+    method: "POST",
+    body: JSON.stringify({
+      "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        true,
+        23,
+      ],
+      type: "Create",
+      object: { type: "Note", content: "Hello, world!" },
+      actor: "https://example.com/users/alice",
+    }),
+  });
+  const signedInvalidRequest = await signRequest(
+    invalidRequest,
+    rsaPrivateKey3,
+    rsaPublicKey3.id!,
+  );
+  const signedInvalidContext = createRequestContext({
+    request: signedInvalidRequest,
+    url: new URL(signedInvalidRequest.url),
+    data: undefined,
+    documentLoader: mockDocumentLoader,
+  });
+  response = await handleInbox(signedInvalidRequest, {
+    identifier: null,
+    context: signedContext,
+    inboxContextFactory(_activity) {
+      return createInboxContext(signedInvalidContext);
+    },
+    ...inboxOptions,
+  });
+  assertEquals(onNotFoundCalled, null);
+  assertEquals(response.status, 400);
 });
 
 test("respondWithObject()", async () => {

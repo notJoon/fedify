@@ -53,6 +53,7 @@ const ed25519Pem = "-----BEGIN PUBLIC KEY-----\n" +
 // cSpell: enable
 
 const ed25519Jwk = {
+  alg: "Ed25519",
   kty: "OKP",
   crv: "Ed25519",
   // cSpell: disable
@@ -130,6 +131,7 @@ test("exportMultibaseKey()", async () => {
   );
 
   const ed25519Key2 = await importJwk({
+    alg: "Ed25519",
     crv: "Ed25519",
     ext: true,
     key_ops: ["verify"],
