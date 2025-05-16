@@ -596,12 +596,24 @@ async function handleInboxInternal<TContextData>(
     });
   }
   const keyCache = new KvKeyCache(kv, kvPrefixes.publicKey, ctx);
-  const ldSigVerified = await verifyJsonLd(json, {
-    contextLoader: ctx.contextLoader,
-    documentLoader: ctx.documentLoader,
-    keyCache,
-    tracerProvider,
-  });
+  let ldSigVerified: boolean;
+  try {
+    ldSigVerified = await verifyJsonLd(json, {
+      contextLoader: ctx.contextLoader,
+      documentLoader: ctx.documentLoader,
+      keyCache,
+      tracerProvider,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === "jsonld.SyntaxError") {
+      logger.error("Failed to parse JSON-LD:\n{error}", { recipient, error });
+      return new Response("Invalid JSON-LD.", {
+        status: 400,
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      });
+    }
+    ldSigVerified = false;
+  }
   const jsonWithoutSig = detachSignature(json);
   let activity: Activity | null = null;
   if (ldSigVerified) {
