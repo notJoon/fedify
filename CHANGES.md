@@ -8,6 +8,14 @@ Version 1.4.11
 
 To be released.
 
+ -  Fixed a bug where inbox handler had thrown a `jsonld.SyntaxError` which
+    caused a `500 Internal Server Error` when the received activity had
+    an invalid JSON-LD syntax.  Now it logs the error and responds with
+    a `400 Bad Request` error instead.  [[#232]]
+
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
+
 
 Version 1.4.10
 --------------
@@ -231,6 +239,20 @@ Released on February 5, 2025.
 
 [#3]: https://github.com/fedify-dev/fedify/issues/3
 [#195]: https://github.com/fedify-dev/fedify/issues/195
+
+
+Version 1.3.18
+--------------
+
+Released on May 16, 2025.
+
+ -  Fixed a bug where inbox handler had thrown a `jsonld.SyntaxError` which
+    caused a `500 Internal Server Error` when the received activity had
+    an invalid JSON-LD syntax.  Now it logs the error and responds with
+    a `400 Bad Request` error instead.  [[#232]]
+
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
 
 
 Version 1.3.17
@@ -571,6 +593,20 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.22
+--------------
+
+Released on May 16, 2025.
+
+ -  Fixed a bug where inbox handler had thrown a `jsonld.SyntaxError` which
+    caused a `500 Internal Server Error` when the received activity had
+    an invalid JSON-LD syntax.  Now it logs the error and responds with
+    a `400 Bad Request` error instead.  [[#232]]
+
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
 
 
 Version 1.2.21
@@ -959,6 +995,20 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.22
+--------------
+
+Released on May 16, 2025.
+
+ -  Fixed a bug where inbox handler had thrown a `jsonld.SyntaxError` which
+    caused a `500 Internal Server Error` when the received activity had
+    an invalid JSON-LD syntax.  Now it logs the error and responds with
+    a `400 Bad Request` error instead.  [[#232]]
+
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
 
 
 Version 1.1.21
@@ -1388,6 +1438,22 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.25
+--------------
+
+Released on May 16, 2025.
+
+ -  Fixed a bug where inbox handler had thrown a `jsonld.SyntaxError` which
+    caused a `500 Internal Server Error` when the received activity had
+    an invalid JSON-LD syntax.  Now it logs the error and responds with
+    a `400 Bad Request` error instead.  [[#232]]
+
+ -  The `exportJwk()` function now populates the `alg` property of a returned
+    `JsonWebKey` object with `"Ed25519"` if the input key is an Ed25519 key.
+
+[#232]: https://github.com/fedify-dev/fedify/issues/232
 
 
 Version 1.0.24
