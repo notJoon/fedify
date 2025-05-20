@@ -1,4 +1,3 @@
-import { toArray } from "@hongminhee/aitertools";
 import { assertEquals, assertInstanceOf } from "@std/assert";
 import * as mf from "mock_fetch";
 import { mockDocumentLoader } from "../testing/docloader.ts";
@@ -110,7 +109,7 @@ test("traverseCollection()", async () => {
   );
   assertInstanceOf(collection, Collection);
   assertEquals(
-    await toArray(traverseCollection(collection, options)),
+    await Array.fromAsync(traverseCollection(collection, options)),
     [
       new Note({ content: "This is a simple note" }),
       new Note({ content: "This is another simple note" }),
@@ -123,7 +122,7 @@ test("traverseCollection()", async () => {
   );
   assertInstanceOf(pagedCollection, Collection);
   assertEquals(
-    await toArray(traverseCollection(pagedCollection, options)),
+    await Array.fromAsync(traverseCollection(pagedCollection, options)),
     [
       new Note({ content: "This is a simple note" }),
       new Note({ content: "This is another simple note" }),
@@ -131,7 +130,7 @@ test("traverseCollection()", async () => {
     ],
   );
   assertEquals(
-    await toArray(
+    await Array.fromAsync(
       traverseCollection(pagedCollection, {
         ...options,
         interval: { milliseconds: 250 },

@@ -1,4 +1,3 @@
-import { toSet } from "@hongminhee/aitertools";
 import { assertEquals } from "@std/assert";
 import { join } from "@std/path";
 import { test } from "../testing/mod.ts";
@@ -18,7 +17,7 @@ test("readDirRecursive()", async () => {
 
   // Read the directory recursively:
   assertEquals(
-    await toSet(readDirRecursive(dir)),
+    new Set(await Array.fromAsync(readDirRecursive(dir))),
     new Set([
       join("a", "aa", "aaa.txt"),
       join("a", "aa.txt"),

@@ -1,5 +1,4 @@
 import { isDeno } from "@david/which-runtime";
-import { toArray } from "@hongminhee/aitertools";
 import { parseLanguageTag } from "@phensley/language-tag";
 import {
   assertEquals,
@@ -444,7 +443,7 @@ test("Activity.getObjects()", async () => {
       }),
     ],
   });
-  const objects = await toArray(
+  const objects = await Array.fromAsync(
     activity.getObjects({
       documentLoader: mockDocumentLoader,
       contextLoader: mockDocumentLoader,
@@ -465,7 +464,9 @@ test("Activity.getObjects()", async () => {
       }),
     ],
   });
-  const objects2 = await toArray(activity2.getObjects({ suppressError: true }));
+  const objects2 = await Array.fromAsync(
+    activity2.getObjects({ suppressError: true }),
+  );
   assertEquals(objects2.length, 1);
   assertInstanceOf(objects2[0], Object);
   assertEquals(objects2[0].name, "Second object");
@@ -910,7 +911,7 @@ for (const typeUri in types) {
         }
         if (!property.functional) {
           assertEquals(
-            await toArray(
+            await Array.fromAsync(
               instance[`get${toPascalCase(property.pluralName)}`].call(
                 instance,
                 { documentLoader: mockDocumentLoader },
@@ -949,7 +950,7 @@ for (const typeUri in types) {
           }
           if (!property.functional) {
             assertEquals(
-              await toArray(
+              await Array.fromAsync(
                 empty[`get${toPascalCase(property.pluralName)}`].call(
                   empty,
                   { documentLoader: mockDocumentLoader },
@@ -1104,7 +1105,9 @@ for (const typeUri in types) {
           instance,
           { documentLoader: docLoader },
         );
-        assertEquals(await toArray(value), [sampleValues[property.range[0]]]);
+        assertEquals(await Array.fromAsync(value), [
+          sampleValues[property.range[0]],
+        ]);
 
         if (property.untyped) return;
         const wrongRef = new cls({
@@ -1112,12 +1115,14 @@ for (const typeUri in types) {
         });
         await assertRejects(
           () =>
-            toArray(wrongRef[`get${toPascalCase(property.pluralName)}`].call(
-              wrongRef,
-              {
-                documentLoader: mockDocumentLoader,
-              },
-            )),
+            Array.fromAsync(
+              wrongRef[`get${toPascalCase(property.pluralName)}`].call(
+                wrongRef,
+                {
+                  documentLoader: mockDocumentLoader,
+                },
+              ),
+            ),
           TypeError,
         );
       });
