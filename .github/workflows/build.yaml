@@ -19,30 +19,30 @@ jobs:
       with:
         deno-version: v2.x
     - run: deno task cache
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - run: deno task test --coverage=.cov --junit-path=.test-report.xml
       env:
         RUST_BACKTRACE: ${{ runner.debug }}
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - uses: dorny/test-reporter@v2
       if: success() || failure()
       with:
         name: "Test Results (${{ matrix.os }})"
-        path: src/.test-report.xml
+        path: fedify/.test-report.xml
         reporter: jest-junit
       continue-on-error: true
     - if: '!cancelled()'
       uses: codecov/test-results-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: src/.test-report.xml
+        files: fedify/.test-report.xml
     - run: deno coverage --lcov .cov > .cov.lcov
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
       continue-on-error: true
     - uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: src/.cov.lcov
+        files: fedify/.cov.lcov
       continue-on-error: true
     - run: "true"
 
@@ -64,11 +64,11 @@ jobs:
       with:
         bun-version: latest
     - run: deno task cache
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - run: deno task dnt
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - run: bun test_runner.js
-      working-directory: ${{ github.workspace }}/src/npm/
+      working-directory: ${{ github.workspace }}/fedify/npm/
 
   lint:
     runs-on: ubuntu-latest
@@ -93,11 +93,11 @@ jobs:
       with:
         node-version: lts/*
     - run: deno task publish --dry-run
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - run: deno task dnt
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - run: npm publish --dry-run
-      working-directory: ${{ github.workspace }}/src/npm/
+      working-directory: ${{ github.workspace }}/fedify/npm/
       env:
         DNT_SKIP_TEST: "true"
     - run: deno task publish-dry-run
@@ -125,23 +125,23 @@ jobs:
           '.version = .version + "-dev." + $build + "+" + $commit' \
           deno.json > deno.json.tmp
         mv deno.json.tmp deno.json
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - if: github.ref_type == 'tag'
       run: |
         set -ex
         [[ "$(jq -r .version deno.json)" = "$GITHUB_REF_NAME" ]]
         ! grep -i "to be released" CHANGES.md
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     # Don't know why, but the .gitignore list is not overridden by include list
     # in deno.json:
     - run: rm vocab/.gitignore
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - run: 'deno task dnt "$(jq -r .version deno.json)"'
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
       env:
         DNT_SKIP_TEST: "true"
     - run: npm pack
-      working-directory: ${{ github.workspace }}/src/npm/
+      working-directory: ${{ github.workspace }}/fedify/npm/
     - run: deno task pack
       working-directory: ${{ github.workspace }}/cli/
     - run: 'deno task npm "$(jq -r .version deno.json)"'
@@ -161,7 +161,7 @@ jobs:
       with:
         name: dist
         path: |
-          src/npm/*.tgz
+          fedify/npm/*.tgz
           cli/fedify-cli-*
     - if: github.event_name == 'push' && github.ref_type == 'tag'
       uses: softprops/action-gh-release@v1
@@ -169,14 +169,14 @@ jobs:
         body_path: ${{ steps.extract-changelog.outputs.output-file }}
         name: Fedify ${{ github.ref_name }}
         files: |
-          src/npm/*.tgz
+          fedify/npm/*.tgz
           cli/fedify-cli-*
         generate_release_notes: false
     - if: |
         github.event_name == 'push' &&
         github.ref_type == 'tag' || github.ref == 'refs/heads/main'
       run: deno task publish --allow-dirty
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - if: |
         github.event_name == 'push' &&
         github.ref_type == 'tag' || github.ref == 'refs/heads/main'
@@ -195,7 +195,7 @@ jobs:
         fi
       env:
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      working-directory: ${{ github.workspace }}/src/npm/
+      working-directory: ${{ github.workspace }}/fedify/npm/
     - if: github.event_name == 'push' && github.ref_type == 'tag'
       run: |
         set -ex
@@ -218,7 +218,7 @@ jobs:
       with:
         deno-version: v2.x
     - run: deno task codegen
-      working-directory: ${{ github.workspace }}/src/
+      working-directory: ${{ github.workspace }}/fedify/
     - uses: denoland/deployctl@v1
       with:
         project: fedify-blog

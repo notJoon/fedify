@@ -1978,7 +1978,7 @@ test("ContextImpl.routeActivity()", async () => {
       new Announce({
         id: new URL("https://example.com/announce"),
         // Although the actor is set here, the fetched document has no actor.
-        // See also src/testing/fixtures/example.com/announce
+        // See also fedify/testing/fixtures/example.com/announce
         actor: new URL("https://example.com/person"),
       }),
     ),

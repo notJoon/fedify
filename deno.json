@@ -1,6 +1,6 @@
 {
   "workspace": [
-    "./src",
+    "./fedify",
     "./cli",
     "./examples/blog",
     "./examples/hono-sample"
