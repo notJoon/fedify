@@ -1,5 +1,5 @@
+import { delay } from "@es-toolkit/es-toolkit";
 import { assertEquals, assertGreater } from "@std/assert";
-import { delay } from "@std/async/delay";
 import { test } from "../testing/mod.ts";
 import { DenoKvMessageQueue, DenoKvStore } from "./denokv.ts";
 
