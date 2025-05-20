@@ -1,4 +1,4 @@
-import { toPascalCase } from "@std/text/to-pascal-case";
+import { pascalCase } from "@es-toolkit/es-toolkit";
 import metadata from "../deno.json" with { type: "json" };
 import { getFieldName } from "./field.ts";
 import type { PropertySchema, TypeSchema } from "./schema.ts";
@@ -56,7 +56,7 @@ async function* generateProperty(
     }
   } else {
     yield `
-    async #fetch${toPascalCase(property.singularName)}(
+    async #fetch${pascalCase(property.singularName)}(
       url: URL,
       options: {
         documentLoader?: DocumentLoader,
@@ -165,7 +165,7 @@ async function* generateProperty(
       yield `
       /**
        * Similar to
-       * {@link ${type.name}.get${toPascalCase(property.singularName)}},
+       * {@link ${type.name}.get${pascalCase(property.singularName)}},
        * but returns its \`@id\` URL instead of the object itself.
        */
       ${override} get ${property.singularName}Id(): URL | null {
@@ -183,7 +183,7 @@ async function* generateProperty(
       `;
       yield doc;
       yield `
-      ${override} async get${toPascalCase(property.singularName)}(
+      ${override} async get${pascalCase(property.singularName)}(
         options: {
           documentLoader?: DocumentLoader,
           contextLoader?: DocumentLoader,
@@ -201,7 +201,7 @@ async function* generateProperty(
         const v = this.${await getFieldName(property.uri)}[0];
         if (v instanceof URL) {
           const fetched =
-            await this.#fetch${toPascalCase(property.singularName)}(v, options);
+            await this.#fetch${pascalCase(property.singularName)}(v, options);
           if (fetched == null) return null;
           this.${await getFieldName(property.uri)}[0] = fetched;
           this._cachedJsonLd = undefined;
@@ -234,7 +234,7 @@ async function* generateProperty(
       yield `
       /**
        * Similar to
-       * {@link ${type.name}.get${toPascalCase(property.pluralName)}},
+       * {@link ${type.name}.get${pascalCase(property.pluralName)}},
        * but returns their \`@id\`s instead of the objects themselves.
        */
       ${override} get ${property.singularName}Ids(): URL[] {
@@ -251,7 +251,7 @@ async function* generateProperty(
       `;
       yield doc;
       yield `
-      ${override} async* get${toPascalCase(property.pluralName)}(
+      ${override} async* get${pascalCase(property.pluralName)}(
         options: {
           documentLoader?: DocumentLoader,
           contextLoader?: DocumentLoader,
@@ -270,7 +270,7 @@ async function* generateProperty(
           const v = vs[i];
           if (v instanceof URL) {
             const fetched =
-              await this.#fetch${toPascalCase(property.singularName)}(
+              await this.#fetch${pascalCase(property.singularName)}(
                 v, options);
             if (fetched == null) continue;
             vs[i] = fetched;

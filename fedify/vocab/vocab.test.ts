@@ -1,4 +1,5 @@
 import { isDeno } from "@david/which-runtime";
+import { pascalCase } from "@es-toolkit/es-toolkit";
 import { parseLanguageTag } from "@phensley/language-tag";
 import {
   assertEquals,
@@ -9,7 +10,6 @@ import {
   assertThrows,
 } from "@std/assert";
 import { assertSnapshot } from "@std/testing/snapshot";
-import { toPascalCase } from "@std/text/to-pascal-case";
 import { decode } from "../runtime/multibase/index.ts";
 import {
   loadSchemaFiles,
@@ -898,7 +898,7 @@ for (const typeUri in types) {
       } else {
         if (property.functional || property.singularAccessor) {
           assertEquals(
-            await instance[`get${toPascalCase(property.singularName)}`].call(
+            await instance[`get${pascalCase(property.singularName)}`].call(
               instance,
               { documentLoader: mockDocumentLoader },
             ),
@@ -912,7 +912,7 @@ for (const typeUri in types) {
         if (!property.functional) {
           assertEquals(
             await Array.fromAsync(
-              instance[`get${toPascalCase(property.pluralName)}`].call(
+              instance[`get${pascalCase(property.pluralName)}`].call(
                 instance,
                 { documentLoader: mockDocumentLoader },
               ),
@@ -940,7 +940,7 @@ for (const typeUri in types) {
         } else {
           if (property.functional || property.singularAccessor) {
             assertEquals(
-              await empty[`get${toPascalCase(property.singularName)}`].call(
+              await empty[`get${pascalCase(property.singularName)}`].call(
                 empty,
                 { documentLoader: mockDocumentLoader },
               ),
@@ -951,7 +951,7 @@ for (const typeUri in types) {
           if (!property.functional) {
             assertEquals(
               await Array.fromAsync(
-                empty[`get${toPascalCase(property.pluralName)}`].call(
+                empty[`get${pascalCase(property.pluralName)}`].call(
                   empty,
                   { documentLoader: mockDocumentLoader },
                 ),
@@ -1071,13 +1071,12 @@ for (const typeUri in types) {
     };
 
     if (property.functional || property.singularAccessor) {
-      test(`${type.name}.get${toPascalCase(property.singularName)}() [auto]`, async () => {
+      test(`${type.name}.get${pascalCase(property.singularName)}() [auto]`, async () => {
         const instance = new cls({
           [property.singularName]: new URL("https://example.com/test"),
         });
-        const value =
-          await instance[`get${toPascalCase(property.singularName)}`]
-            .call(instance, { documentLoader: docLoader });
+        const value = await instance[`get${pascalCase(property.singularName)}`]
+          .call(instance, { documentLoader: docLoader });
         assertEquals(value, sampleValues[property.range[0]]);
 
         if (property.untyped) return;
@@ -1086,7 +1085,7 @@ for (const typeUri in types) {
         });
         await assertRejects(
           () =>
-            wrongRef[`get${toPascalCase(property.singularName)}`].call(
+            wrongRef[`get${pascalCase(property.singularName)}`].call(
               wrongRef,
               {
                 documentLoader: mockDocumentLoader,
@@ -1097,11 +1096,11 @@ for (const typeUri in types) {
       });
     }
     if (!property.functional) {
-      test(`${type.name}.get${toPascalCase(property.pluralName)}() [auto]`, async () => {
+      test(`${type.name}.get${pascalCase(property.pluralName)}() [auto]`, async () => {
         const instance = new cls({
           [property.pluralName]: [new URL("https://example.com/test")],
         });
-        const value = instance[`get${toPascalCase(property.pluralName)}`].call(
+        const value = instance[`get${pascalCase(property.pluralName)}`].call(
           instance,
           { documentLoader: docLoader },
         );
@@ -1116,7 +1115,7 @@ for (const typeUri in types) {
         await assertRejects(
           () =>
             Array.fromAsync(
-              wrongRef[`get${toPascalCase(property.pluralName)}`].call(
+              wrongRef[`get${pascalCase(property.pluralName)}`].call(
                 wrongRef,
                 {
                   documentLoader: mockDocumentLoader,
