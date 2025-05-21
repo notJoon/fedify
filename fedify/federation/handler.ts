@@ -1,7 +1,6 @@
 import { getLogger } from "@logtape/logtape";
 import type { Span, TracerProvider } from "@opentelemetry/api";
 import { SpanKind, SpanStatusCode, trace } from "@opentelemetry/api";
-import { accepts } from "@std/http/negotiation";
 import metadata from "../deno.json" with { type: "json" };
 import type { DocumentLoader } from "../runtime/docloader.ts";
 import { verifyRequest } from "../sig/http.ts";
@@ -33,9 +32,11 @@ import { type InboxListenerSet, routeActivity } from "./inbox.ts";
 import { KvKeyCache } from "./keycache.ts";
 import type { KvKey, KvStore } from "./kv.ts";
 import type { MessageQueue } from "./mq.ts";
+import { preferredMediaTypes } from "./negotiation.ts";
 
 export function acceptsJsonLd(request: Request): boolean {
-  const types = accepts(request);
+  const accept = request.headers.get("Accept");
+  const types = accept ? preferredMediaTypes(accept) : ["*/*"];
   if (types == null) return true;
   if (types[0] === "text/html" || types[0] === "application/xhtml+xml") {
     return false;
