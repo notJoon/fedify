@@ -1,9 +1,9 @@
 import { assertEquals } from "@std/assert";
-import { parse } from "@std/semver";
 import type { NodeInfoDispatcher } from "../federation/callback.ts";
 import { createRequestContext } from "../testing/context.ts";
 import { test } from "../testing/mod.ts";
 import { handleNodeInfo, handleNodeInfoJrd } from "./handler.ts";
+import { parseSemVer } from "./semver.ts";
 
 test("handleNodeInfo()", async () => {
   const request = new Request("https://example.com/nodeinfo/2.1");
@@ -15,7 +15,7 @@ test("handleNodeInfo()", async () => {
   const nodeInfoDispatcher: NodeInfoDispatcher<void> = (_ctx) => ({
     software: {
       name: "test",
-      version: parse("1.2.3"),
+      version: parseSemVer("1.2.3"),
     },
     protocols: ["activitypub"],
     usage: {

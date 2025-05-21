@@ -1,10 +1,10 @@
 import { getLogger } from "@logtape/logtape";
-import { parse, type SemVer } from "@std/semver";
 import {
   getUserAgent,
   type GetUserAgentOptions,
 } from "../runtime/docloader.ts";
 import type { ResourceDescriptor } from "../webfinger/jrd.ts";
+import { parseSemVer, type SemVer } from "./semver.ts";
 import type {
   InboundService,
   JsonValue,
@@ -268,7 +268,7 @@ export function parseSoftware(
   let version: SemVer;
   if ("version" in data && typeof data.version === "string") {
     try {
-      version = parse(data.version);
+      version = parseSemVer(data.version);
     } catch {
       if (!options.tryBestEffort) return null;
       version = { major: 0, minor: 0, patch: 0, build: [], prerelease: [] };

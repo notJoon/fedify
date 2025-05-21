@@ -1,4 +1,4 @@
-import { format, type SemVer } from "@std/semver";
+import { formatSemVer, type SemVer } from "./semver.ts";
 
 /**
  * The type of the result of parsing JSON.
@@ -249,7 +249,7 @@ export function nodeInfoToJson(nodeInfo: NodeInfo): JsonValue {
     version: "2.1",
     software: {
       name: nodeInfo.software.name,
-      version: format(nodeInfo.software.version),
+      version: formatSemVer(nodeInfo.software.version),
       repository: nodeInfo.software.repository?.href,
       homepage: nodeInfo.software.homepage?.href,
     },

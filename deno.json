@@ -10,7 +10,6 @@
     "@multiformats/base-x": "npm:@multiformats/base-x@^4.0.1",
     "@std/fs": "jsr:@std/fs@^1.0.3",
     "@std/path": "jsr:@std/path@^1.0.6",
-    "@std/semver": "jsr:@std/semver@^1.0.3",
     "preact": "npm:preact@10.19.6"
   },
   "unstable": [

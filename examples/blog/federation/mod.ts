@@ -1,4 +1,3 @@
-import { parse } from "@std/semver";
 import { dirname, join } from "@std/path";
 import { createFederation } from "@fedify/fedify/federation";
 import {
@@ -15,6 +14,7 @@ import {
   Person,
   Undo,
 } from "@fedify/fedify/vocab";
+import { parseSemVer } from "@fedify/fedify/nodeinfo";
 import { DenoKvMessageQueue, DenoKvStore } from "@fedify/fedify/x/denokv";
 import { getBlog } from "../models/blog.ts";
 import { addComment, Comment, getComments } from "../models/comment.ts";
@@ -322,7 +322,7 @@ federation.setNodeInfoDispatcher("/nodeinfo/2.1", async (_ctx) => {
   return {
     software: {
       name: "fedify-example-blog",
-      version: parse(denoJson.version),
+      version: parseSemVer(denoJson.version),
       repository: new URL(
         "https://github.com/fedify-dev/fedify/tree/main/examples/blog",
       ),
