@@ -10,7 +10,6 @@ import {
   ATTR_HTTP_REQUEST_METHOD,
   ATTR_URL_FULL,
 } from "@opentelemetry/semantic-conventions";
-import { timingSafeEqual } from "@std/crypto/timing-safe-equal";
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { encodeHex } from "@std/encoding/hex";
 import {
@@ -1307,6 +1306,45 @@ export async function doubleKnock(
     await specDeterminer?.rememberSpec(origin, firstTrySpec);
   }
   return response;
+}
+
+/**
+ * Performs a timing-safe equality comparison between two `Uint8Array` values.
+ *
+ * This function is designed to take a constant amount of time to execute,
+ * dependent only on the length of the longer of the two arrays,
+ * regardless of where the first difference in bytes occurs. This helps
+ * prevent timing attacks.
+ *
+ * @param a The first bytes.
+ * @param b The second bytes.
+ * @returns `true` if the arrays are of the same length and contain the same
+ *          bytes, `false` otherwise.
+ * @since 1.6.0
+ */
+export function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
+  const lenA = a.length;
+  const lenB = b.length;
+  const commonLength = Math.max(lenA, lenB);
+  let result = 0;
+
+  // Perform byte-wise XOR comparison for the length of the longer array.
+  // If one array is shorter, its out-of-bounds "bytes" are treated as 0 for the comparison.
+  // All byte differences are accumulated into the `result` using bitwise OR.
+  for (let i = 0; i < commonLength; i++) {
+    const byteA = i < lenA ? a[i] : 0;
+    const byteB = i < lenB ? b[i] : 0;
+    result |= byteA ^ byteB;
+  }
+
+  // Incorporate the length difference into the result.
+  // If lengths are different, (lenA ^ lenB) will be non-zero, making `result` non-zero.
+  // This ensures that arrays are only considered equal if both their contents
+  // (up to their respective lengths) and their lengths are identical.
+  result |= lenA ^ lenB;
+
+  // `result` will be 0 if and only if all XORed byte pairs were 0 AND lengths were equal.
+  return result === 0;
 }
 
 // cSpell: ignore keyid

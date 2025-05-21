@@ -2,6 +2,7 @@ import {
   assert,
   assertEquals,
   assertExists,
+  assertFalse,
   assertStringIncludes,
 } from "@std/assert";
 import { encodeBase64 } from "@std/encoding/base64";
@@ -25,6 +26,7 @@ import {
   parseRfc9421Signature,
   parseRfc9421SignatureInput,
   signRequest,
+  timingSafeEqual,
   verifyRequest,
   type VerifyRequestOptions,
 } from "./http.ts";
@@ -1688,4 +1690,121 @@ test("doubleKnock() async specDeterminer test", async () => {
   );
 
   mf.uninstall();
+});
+
+test("timingSafeEqual()", async (t) => {
+  await t.step("should return true for equal empty arrays", () => {
+    const a = new Uint8Array([]);
+    const b = new Uint8Array([]);
+    assert(timingSafeEqual(a, b));
+  });
+
+  await t.step("should return true for equal non-empty arrays", async (t2) => {
+    const testCases = [
+      { a: [1, 2, 3], b: [1, 2, 3], name: "simple sequence" },
+      { a: [0, 0, 0], b: [0, 0, 0], name: "sequence of zeros" },
+      { a: [255, 128, 0, 42], b: [255, 128, 0, 42], name: "varied bytes" },
+      {
+        a: Array.from({ length: 100 }, (_, i) => i),
+        b: Array.from({ length: 100 }, (_, i) => i),
+        name: "longer sequence (0-99)",
+      },
+    ];
+
+    for (const tc of testCases) {
+      await t2.step(tc.name, () => {
+        assert(timingSafeEqual(new Uint8Array(tc.a), new Uint8Array(tc.b)));
+      });
+    }
+  });
+
+  await t.step("should return true for reference equality", () => {
+    const arr = new Uint8Array([10, 20, 30, 99, 100, 0]);
+    assert(
+      timingSafeEqual(arr, arr),
+      "Array should be equal to itself by reference",
+    );
+  });
+
+  await t.step(
+    "should return false for arrays with same length but different content",
+    async (t2) => {
+      const testCases = [
+        { a: [1, 2, 3], b: [0, 2, 3], name: "difference at start" },
+        { a: [1, 2, 3], b: [1, 0, 3], name: "difference in middle" },
+        { a: [1, 2, 3], b: [1, 2, 0], name: "difference at end" },
+        { a: [0], b: [1], name: "single byte difference" },
+        {
+          a: [255, 0, 255],
+          b: [255, 1, 255],
+          name: "middle byte differs with edge values",
+        },
+      ];
+
+      for (const tc of testCases) {
+        await t2.step(tc.name, () => {
+          assertFalse(
+            timingSafeEqual(new Uint8Array(tc.a), new Uint8Array(tc.b)),
+          );
+        });
+      }
+    },
+  );
+
+  await t.step(
+    "should return false for arrays with different lengths",
+    async (t2) => {
+      const testCases = [
+        { a: [1, 2, 3], b: [1, 2], name: "b shorter" },
+        { a: [1, 2], b: [1, 2, 3], name: "a shorter" },
+        { a: [], b: [1, 2, 3], name: "a empty, b non-empty" },
+        { a: [1, 2, 3], b: [], name: "a non-empty, b empty" },
+      ];
+
+      for (const tc of testCases) {
+        await t2.step(tc.name, () => {
+          assertFalse(
+            timingSafeEqual(new Uint8Array(tc.a), new Uint8Array(tc.b)),
+          );
+        });
+      }
+    },
+  );
+
+  await t.step(
+    "should return false where content matches up to shorter length",
+    async (t2) => {
+      const testCases = [
+        { a: [1, 2], b: [1, 2, 0], name: "a is prefix, b has trailing zero" },
+        { a: [1, 2, 0], b: [1, 2], name: "b is prefix, a has trailing zero" },
+        { a: [0], b: [0, 0], name: "single zero vs two zeros" },
+        { a: [0, 0], b: [0], name: "two zeros vs single zero" },
+      ];
+
+      for (const tc of testCases) {
+        await t2.step(tc.name, () => {
+          assertFalse(
+            timingSafeEqual(new Uint8Array(tc.a), new Uint8Array(tc.b)),
+          );
+        });
+      }
+    },
+  );
+
+  await t.step(
+    "should correctly handle comparisons involving padding bytes",
+    async (t2) => {
+      await t2.step("a=[1], b=[1,0] (b longer with trailing zero)", () => {
+        const a1 = new Uint8Array([1]);
+        const b1 = new Uint8Array([1, 0]);
+        assertFalse(timingSafeEqual(a1, b1));
+      });
+
+      await t2.step("a=[1,0], b=[1] (a longer with trailing zero)", () => {
+        const a2 = new Uint8Array([1, 0]);
+        const b2 = new Uint8Array([1]);
+        assertFalse(timingSafeEqual(a2, b2));
+      });
+    },
+  );
 });
