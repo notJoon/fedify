@@ -1,4 +1,3 @@
-import { concat } from "@std/bytes/concat";
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { decodeBase64Url } from "@std/encoding/base64url";
 import { decodeHex } from "@std/encoding/hex";
@@ -153,7 +152,9 @@ export async function exportMultibaseKey(key: CryptoKey): Promise<string> {
       "SHA-256"
   ) {
     const jwk = await crypto.subtle.exportKey("jwk", key);
-    const n = concat([new Uint8Array([0]), decodeBase64Url(jwk.n!)]);
+    const decodedN = decodeBase64Url(jwk.n!);
+    const n = new Uint8Array(decodedN.length + 1);
+    n.set(decodedN, 1);
     const sequence = new Sequence({
       value: [
         new Integer({
