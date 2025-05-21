@@ -1,4 +1,4 @@
-import { encodeHex } from "@std/encoding/hex";
+import { encodeHex } from "byte-encodings/hex";
 
 /**
  * A page of items.

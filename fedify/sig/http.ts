@@ -10,8 +10,8 @@ import {
   ATTR_HTTP_REQUEST_METHOD,
   ATTR_URL_FULL,
 } from "@opentelemetry/semantic-conventions";
-import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
-import { encodeHex } from "@std/encoding/hex";
+import { decodeBase64, encodeBase64 } from "byte-encodings/base64";
+import { encodeHex } from "byte-encodings/hex";
 import {
   decodeDict,
   type Dictionary,

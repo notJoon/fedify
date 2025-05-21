@@ -34,6 +34,8 @@ To be released.
      -  Added `HttpMessageSignaturesSpecDeterminer` interface.
      -  Added `--first-knock` option to `fedify lookup` command.
 
+ -  The minimum supported version of Node.js is now 22.0.0.
+
 [RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
 [#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227

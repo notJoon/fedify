@@ -1,6 +1,6 @@
 import { getLogger } from "@logtape/logtape";
 import { SpanStatusCode, trace, type TracerProvider } from "@opentelemetry/api";
-import { encodeHex } from "@std/encoding/hex";
+import { encodeHex } from "byte-encodings/hex";
 // @ts-ignore: json-canon is not typed
 import serialize from "json-canon";
 import metadata from "../deno.json" with { type: "json" };

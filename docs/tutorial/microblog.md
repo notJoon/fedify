@@ -102,7 +102,7 @@ for this tutorial.
 > Node.js is widely used. Recently, cloud edge functions like
 > [Cloudflare Workers] have also gained popularity as JavaScript runtimes.
 
-To use Fedify, you need Node.js version 20.0.0 or higher. There are
+To use Fedify, you need Node.js version 22.0.0 or higher. There are
 [various installation methods]—choose the one that suits you best.
 
 Once Node.js is installed, you'll have access to the `node` and `npm` commands:

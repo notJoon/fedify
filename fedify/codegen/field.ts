@@ -1,4 +1,4 @@
-import { encodeBase58 } from "@std/encoding/base58";
+import { encodeBase58 } from "byte-encodings/base58";
 import type { PropertySchema, TypeSchema } from "./schema.ts";
 import { areAllScalarTypes, getTypeNames } from "./type.ts";
 

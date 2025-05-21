@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { decodeHex } from "@std/encoding/hex";
+import { decodeHex } from "byte-encodings/hex";
 import { test } from "../testing/mod.ts";
 import { buildCollectionSynchronizationHeader, digest } from "./collection.ts";
 

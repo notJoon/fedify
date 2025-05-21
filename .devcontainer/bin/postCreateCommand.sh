@@ -3,7 +3,7 @@
 set -e
 
 export BUN_VERSION="v1.1.29"
-export NODE_VERSION="20"
+export NODE_VERSION="22"
 export NVM_VERSION="v0.40.0"
 export PNPM_VERSION="9.11.0"
 

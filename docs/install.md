@@ -111,7 +111,7 @@ bun add @fedify/fedify
 ### Node.js
 
 Fedify can also be used in Node.js.  As a prerequisite, you need to have Node.js
-20.0.0 or later installed on your system.  Then you can install Fedify via
+22.0.0 or later installed on your system.  Then you can install Fedify via
 the following command:
 
 ~~~~ sh

@@ -3,7 +3,7 @@ import { assertEquals } from "@std/assert/assert-equals";
 import { assertFalse } from "@std/assert/assert-false";
 import { assertRejects } from "@std/assert/assert-rejects";
 import { assertThrows } from "@std/assert/assert-throws";
-import { encodeBase64 } from "@std/encoding/base64";
+import { encodeBase64 } from "byte-encodings/base64";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import {
   ed25519Multikey,
