@@ -1,4 +1,3 @@
-import { isDeno } from "@david/which-runtime";
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import * as mf from "mock_fetch";
 import process from "node:process";
@@ -595,7 +594,8 @@ test("kvCache()", async (t) => {
 });
 
 test("getUserAgent()", () => {
-  if (isDeno) {
+  // dnt-shim-ignore
+  if ("Deno" in globalThis) {
     assertEquals(
       getUserAgent(),
       `Fedify/${metadata.version} (Deno/${Deno.version.deno})`,
@@ -615,7 +615,8 @@ test("getUserAgent()", () => {
       }),
       `MyApp/1.0.0 (Fedify/${metadata.version}; Deno/${Deno.version.deno}; +https://example.com/)`,
     );
-  } else if ("Bun" in globalThis) {
+  } // dnt-shim-ignore
+  else if ("Bun" in globalThis) {
     assertEquals(
       getUserAgent(),
       // @ts-ignore: `Bun` is a global variable in Bun
@@ -642,22 +643,22 @@ test("getUserAgent()", () => {
   } else {
     assertEquals(
       getUserAgent(),
-      `Fedify/${metadata.version} (Node.js/${process.version})`,
+      `Fedify/${metadata.version} (Node.js/${process.versions.node})`,
     );
     assertEquals(
       getUserAgent({ software: "MyApp/1.0.0" }),
-      `MyApp/1.0.0 (Fedify/${metadata.version}; Node.js/${process.version})`,
+      `MyApp/1.0.0 (Fedify/${metadata.version}; Node.js/${process.versions.node})`,
     );
     assertEquals(
       getUserAgent({ url: "https://example.com/" }),
-      `Fedify/${metadata.version} (Node.js/${process.version}; +https://example.com/)`,
+      `Fedify/${metadata.version} (Node.js/${process.versions.node}; +https://example.com/)`,
     );
     assertEquals(
       getUserAgent({
         software: "MyApp/1.0.0",
         url: new URL("https://example.com/"),
       }),
-      `MyApp/1.0.0 (Fedify/${metadata.version}; Node.js/${process.version}; +https://example.com/)`,
+      `MyApp/1.0.0 (Fedify/${metadata.version}; Node.js/${process.versions.node}; +https://example.com/)`,
     );
   }
 });

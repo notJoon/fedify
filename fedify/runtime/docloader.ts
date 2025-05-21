@@ -1,4 +1,3 @@
-import { isDeno, isNode } from "@david/which-runtime";
 import { HTTPHeaderLink } from "@hugoalh/http-header-link";
 import { getLogger } from "@logtape/logtape";
 import type { TracerProvider } from "@opentelemetry/api";
@@ -558,12 +557,19 @@ export function getUserAgent(
   { software, url }: GetUserAgentOptions = {},
 ): string {
   const fedify = `Fedify/${metadata.version}`;
-  const runtime = isDeno ? `Deno/${Deno.version.deno}` : "Bun" in globalThis
-    // @ts-ignore: `Bun` is a global variable in Bun
-    ? `Bun/${Bun.version}`
-    : isNode
-    ? `Node.js/${process.version}`
-    : null;
+  const runtime = // dnt-shim-ignore
+    // deno-lint-ignore no-explicit-any
+    (globalThis as any).Deno?.version?.deno != null
+      ? `Deno/${Deno.version.deno}`
+      // dnt-shim-ignore
+      // deno-lint-ignore no-explicit-any
+      : (globalThis as any).process?.versions?.bun != null
+      ? `Bun/${process.versions.bun}`
+      // dnt-shim-ignore
+      // deno-lint-ignore no-explicit-any
+      : (globalThis as any).process?.versions?.node != null
+      ? `Node.js/${process.versions.node}`
+      : null;
   const userAgent = software == null ? [fedify] : [software, fedify];
   if (runtime != null) userAgent.push(runtime);
   if (url != null) userAgent.push(`+${url.toString()}`);

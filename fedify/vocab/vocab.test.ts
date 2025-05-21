@@ -1,4 +1,3 @@
-import { isDeno } from "@david/which-runtime";
 import { pascalCase } from "@es-toolkit/es-toolkit";
 import { parseLanguageTag } from "@phensley/language-tag";
 import {
@@ -517,7 +516,8 @@ test("Deno.inspect(Object)", () => {
   });
   assertEquals(
     Deno.inspect(obj, { colors: false, sorted: true, compact: false }),
-    isDeno
+    // dnt-shim-ignore
+    "Deno" in globalThis
       ? "Object {\n" +
         '  attribution: URL "https://example.com/foo",\n' +
         "  contents: [\n" +
@@ -1249,7 +1249,8 @@ for (const typeUri in types) {
     );
   });
 
-  if (isDeno) {
+  // dnt-shim-ignore
+  if ("Deno" in globalThis) {
     test(`Deno.inspect(${type.name}) [auto]`, async (t) => {
       const empty = new cls({});
       assertEquals(Deno.inspect(empty), `${type.name} {}`);
