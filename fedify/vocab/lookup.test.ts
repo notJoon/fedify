@@ -1,5 +1,5 @@
+import * as mf from "@hongminhee/deno-mock-fetch";
 import { assertEquals, assertInstanceOf } from "@std/assert";
-import * as mf from "mock_fetch";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import { test } from "../testing/mod.ts";
 import { lookupObject, traverseCollection } from "./lookup.ts";

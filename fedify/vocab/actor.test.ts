@@ -1,3 +1,4 @@
+import * as mf from "@hongminhee/deno-mock-fetch";
 import {
   assert,
   assertEquals,
@@ -7,7 +8,6 @@ import {
   assertThrows,
 } from "@std/assert";
 import * as fc from "fast-check";
-import * as mf from "mock_fetch";
 import { test } from "../testing/mod.ts";
 import {
   type Actor,

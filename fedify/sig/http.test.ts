@@ -1,3 +1,4 @@
+import * as mf from "@hongminhee/deno-mock-fetch";
 import {
   assert,
   assertEquals,
@@ -6,7 +7,6 @@ import {
   assertStringIncludes,
 } from "@std/assert";
 import { encodeBase64 } from "byte-encodings/base64";
-import * as mf from "mock_fetch";
 import { exportSpki } from "../runtime/key.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import {

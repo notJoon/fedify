@@ -1,7 +1,9 @@
 import { type Schema as JsonSchema, Validator } from "@cfworker/json-schema";
-import { join } from "@std/path";
+import { fromFileUrl } from "@std/path";
 import * as url from "@std/url";
 import { parse } from "@std/yaml";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { readDirRecursive } from "./fs.ts";
 
 /**
@@ -233,7 +235,7 @@ async function loadSchemaValidator(): Promise<Validator> {
     const response = await fetch(schemaFile);
     content = await response.text();
   } else {
-    content = await Deno.readTextFile(schemaFile);
+    content = await readFile(fromFileUrl(schemaFile), { encoding: "utf-8" });
   }
   const schemaObject = parse(content);
   return new Validator(schemaObject as JsonSchema);
@@ -242,7 +244,7 @@ async function loadSchemaValidator(): Promise<Validator> {
 const schemaValidator: Validator = await loadSchemaValidator();
 
 async function loadSchema(path: string): Promise<TypeSchema> {
-  const content = await Deno.readTextFile(path);
+  const content = await readFile(path, { encoding: "utf-8" });
   const schema = parse(content);
   const result = schemaValidator.validate(schema);
   const errors: SchemaError[] = [];

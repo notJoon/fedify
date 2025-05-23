@@ -22,12 +22,12 @@ import metadata from "../deno.json" with { type: "json" };
 import { getNodeInfo, type GetNodeInfoOptions } from "../nodeinfo/client.ts";
 import { handleNodeInfo, handleNodeInfoJrd } from "../nodeinfo/handler.ts";
 import type { JsonValue, NodeInfo } from "../nodeinfo/types.ts";
+import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
 import {
   type AuthenticatedDocumentLoaderFactory,
   type DocumentLoader,
   type DocumentLoaderFactory,
   type DocumentLoaderFactoryOptions,
-  getAuthenticatedDocumentLoader,
   getDocumentLoader,
   type GetUserAgentOptions,
   kvCache,

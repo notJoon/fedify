@@ -1,0 +1,119 @@
+{
+  "name": "@fedify/fedify",
+  "version": "1.6.0",
+  "description": "An ActivityPub server framework",
+  "keywords": [
+    "ActivityPub",
+    "fediverse"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Hong Minhee",
+    "email": "hong@minhee.org",
+    "url": "https://hongminhee.org/"
+  },
+  "homepage": "https://fedify.dev/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fedify-dev/fedify.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fedify-dev/fedify/issues"
+  },
+  "funding": [
+    "https://opencollective.com/fedify",
+    "https://github.com/sponsors/dahlia"
+  ],
+  "engines": {
+    "deno": ">=2.0.0",
+    "node": ">=22.0.0",
+    "bun": ">=1.1.0"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "module": "./dist/mod.js",
+  "types": "./dist/mod.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/mod.d.ts",
+      "import": "./dist/mod.js"
+    },
+    "./compat": {
+      "types": "./dist/compat/mod.d.ts",
+      "import": "./dist/compat/mod.js"
+    },
+    "./federation": {
+      "types": "./dist/federation/mod.d.ts",
+      "import": "./dist/federation/mod.js"
+    },
+    "./nodeinfo": {
+      "types": "./dist/nodeinfo/mod.d.ts",
+      "import": "./dist/nodeinfo/mod.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime/mod.d.ts",
+      "import": "./dist/runtime/mod.js"
+    },
+    "./sig": {
+      "types": "./dist/sig/mod.d.ts",
+      "import": "./dist/sig/mod.js"
+    },
+    "./vocab": {
+      "types": "./dist/vocab/mod.d.ts",
+      "import": "./dist/vocab/mod.js"
+    },
+    "./webfinger": {
+      "types": "./dist/webfinger/mod.d.ts",
+      "import": "./dist/webfinger/mod.js"
+    },
+    "./x/hono": {
+      "types": "./dist/x/hono.d.ts",
+      "import": "./dist/x/hono.js"
+    },
+    "./x/sveltekit": {
+      "types": "./dist/x/sveltekit.d.ts",
+      "import": "./dist/x/sveltekit.js"
+    }
+  },
+  "dependencies": {
+    "@cfworker/json-schema": "^4.1.1",
+    "@es-toolkit/es-toolkit": "npm:es-toolkit@^1.38.0",
+    "@hugoalh/http-header-link": "^1.0.2",
+    "@js-temporal/polyfill": "^0.5.1",
+    "@logtape/logtape": "^0.10.0",
+    "@multiformats/base-x": "^4.0.1",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/semantic-conventions": "^1.27.0",
+    "@phensley/language-tag": "^1.9.0",
+    "@types/bun": "^1.2.14",
+    "asn1js": "^3.0.5",
+    "byte-encodings": "^1.0.11",
+    "json-canon": "^1.0.1",
+    "jsonld": "^8.3.2",
+    "multicodec": "^3.2.1",
+    "pkijs": "^3.2.4",
+    "structured-field-values": "^2.0.4",
+    "uri-template-router": "^0.0.17",
+    "url-template": "^3.1.1",
+    "urlpattern-polyfill": "^10.1.0"
+  },
+  "devDependencies": {
+    "@hongminhee/deno-mock-fetch": "jsr:^0.3.2",
+    "@std/assert": "jsr:^0.226.0",
+    "@std/path": "jsr:^1.0.9",
+    "@std/url": "jsr:1.0.0-rc.3",
+    "@std/yaml": "jsr:^1.0.6",
+    "@types/node": "^22.15.21",
+    "fast-check": "^3.22.0",
+    "tsdown": "^0.12.2",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "deno task codegen && tsdown",
+    "prepack": "deno task codegen && tsdown",
+    "prepublish": "deno task codegen && tsdown",
+    "test": "deno task codegen && tsdown && cd dist/ && node --test"
+  }
+}

@@ -1,7 +1,7 @@
+import { getFileSink } from "@logtape/file";
 import {
   configure,
   getConsoleSink,
-  getFileSink,
   type LogRecord,
   type Sink,
 } from "@logtape/logtape";

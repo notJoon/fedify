@@ -1,3 +1,4 @@
+import * as mf from "@hongminhee/deno-mock-fetch";
 import {
   assert,
   assertEquals,
@@ -9,12 +10,9 @@ import {
   assertThrows,
 } from "@std/assert";
 import { dirname, join } from "@std/path";
-import * as mf from "mock_fetch";
-import {
-  fetchDocumentLoader,
-  FetchError,
-  getAuthenticatedDocumentLoader,
-} from "../runtime/docloader.ts";
+import { readFile } from "node:fs/promises";
+import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
+import { fetchDocumentLoader, FetchError } from "../runtime/docloader.ts";
 import { signRequest, verifyRequest } from "../sig/http.ts";
 import type { KeyCache } from "../sig/key.ts";
 import { detachSignature, signJsonLd, verifyJsonLd } from "../sig/ld.ts";
@@ -895,7 +893,7 @@ test("Federation.setInboxListeners()", async (t) => {
 
   mf.mock("GET@/person", async () => {
     return new Response(
-      await Deno.readFile(
+      await readFile(
         join(
           dirname(import.meta.dirname!),
           "testing",
@@ -910,7 +908,7 @@ test("Federation.setInboxListeners()", async (t) => {
 
   mf.mock("GET@/person2", async () => {
     return new Response(
-      await Deno.readFile(
+      await readFile(
         join(
           dirname(import.meta.dirname!),
           "testing",
