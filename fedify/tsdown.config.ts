@@ -17,7 +17,8 @@ export default defineConfig({
     ...(await Array.fromAsync(glob(`**/*.test.ts`)))
       .filter((f) =>
         !f.startsWith(`codegen${sep}`) && f !== `x${sep}denokv.test.ts`
-      ),
+      )
+      .map((f) => f.replace(sep, "/")),
   ],
   dts: true,
   unbundle: true,
@@ -25,13 +26,13 @@ export default defineConfig({
     onwarn(warning, defaultHandler) {
       if (
         warning.code === "UNRESOLVED_IMPORT" &&
-        warning.id?.endsWith("vocab/vocab.test.ts") &&
+        warning.id?.endsWith(join("vocab", "vocab.test.ts")) &&
         warning.exporter === "@std/testing/snapshot"
       ) {
         return;
       } else if (
         warning.code === "UNRESOLVED_IMPORT" &&
-        warning.id?.endsWith("testing/mod.ts") &&
+        warning.id?.endsWith(join("testing", "mod.ts")) &&
         warning.exporter === "bun:test"
       ) {
         return;
