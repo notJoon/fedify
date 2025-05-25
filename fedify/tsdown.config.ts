@@ -14,7 +14,7 @@ export default defineConfig({
     "./webfinger/mod.ts",
     "./x/hono.ts",
     "./x/sveltekit.ts",
-    ...(await Array.fromAsync(glob(`**${sep}*.test.ts`)))
+    ...(await Array.fromAsync(glob(`**/*.test.ts`)))
       .filter((f) =>
         !f.startsWith(`codegen${sep}`) && f !== `x${sep}denokv.test.ts`
       ),
@@ -27,6 +27,12 @@ export default defineConfig({
         warning.code === "UNRESOLVED_IMPORT" &&
         warning.id?.endsWith("vocab/vocab.test.ts") &&
         warning.exporter === "@std/testing/snapshot"
+      ) {
+        return;
+      } else if (
+        warning.code === "UNRESOLVED_IMPORT" &&
+        warning.id?.endsWith("testing/mod.ts") &&
+        warning.exporter === "bun:test"
       ) {
         return;
       }
@@ -55,7 +61,7 @@ export default defineConfig({
         join(ctx.options.outDir, "codegen", "schema.yaml"),
         { force: true },
       );
-      for await (const file of glob(`vocab${sep}**${sep}*.yaml`)) {
+      for await (const file of glob(`vocab/**/*.yaml`)) {
         await cp(
           file,
           join(ctx.options.outDir, file),

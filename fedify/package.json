@@ -87,7 +87,6 @@
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/semantic-conventions": "^1.27.0",
     "@phensley/language-tag": "^1.9.0",
-    "@types/bun": "^1.2.14",
     "asn1js": "^3.0.5",
     "byte-encodings": "^1.0.11",
     "json-canon": "^1.0.1",
@@ -114,6 +113,7 @@
     "build": "deno task codegen && tsdown",
     "prepack": "deno task codegen && tsdown",
     "prepublish": "deno task codegen && tsdown",
-    "test": "deno task codegen && tsdown && cd dist/ && node --test"
+    "test": "deno task codegen && tsdown && cd dist/ && node --test",
+    "test:bun": "deno task codegen && tsdown && cd dist/ && bun test"
   }
 }

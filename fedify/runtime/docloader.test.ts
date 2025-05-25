@@ -543,7 +543,6 @@ test("kvCache()", async (t) => {
 });
 
 test("getUserAgent()", () => {
-  // dnt-shim-ignore
   if ("Deno" in globalThis) {
     assertEquals(
       getUserAgent(),
@@ -564,8 +563,7 @@ test("getUserAgent()", () => {
       }),
       `MyApp/1.0.0 (Fedify/${metadata.version}; Deno/${Deno.version.deno}; +https://example.com/)`,
     );
-  } // dnt-shim-ignore
-  else if ("Bun" in globalThis) {
+  } else if ("Bun" in globalThis) {
     assertEquals(
       getUserAgent(),
       // @ts-ignore: `Bun` is a global variable in Bun

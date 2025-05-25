@@ -15638,7 +15638,6 @@ owner?: Application | Group | Organization | Person | Service | URL | null;publi
         if (\\"publicKey\\" in values &&             values.publicKey != null) {
           if (
         // @ts-ignore: CryptoKey exists in the global scope.
-        // dnt-shim-ignore
         values.publicKey instanceof CryptoKey
       ) {
             // @ts-ignore: type is checked above.
@@ -15700,7 +15699,6 @@ owner?: Application | Group | Organization | Person | Service | URL | null;publi
         if (\\"publicKey\\" in values &&             values.publicKey != null) {
           if (
         // @ts-ignore: CryptoKey exists in the global scope.
-        // dnt-shim-ignore
         values.publicKey instanceof CryptoKey
       ) {
             // @ts-ignore: type is checked above.
@@ -16429,7 +16427,6 @@ controller?: Application | Group | Organization | Person | Service | URL | null;
         if (\\"publicKey\\" in values &&             values.publicKey != null) {
           if (
         // @ts-ignore: CryptoKey exists in the global scope.
-        // dnt-shim-ignore
         values.publicKey instanceof CryptoKey
       ) {
             // @ts-ignore: type is checked above.
@@ -16491,7 +16488,6 @@ controller?: Application | Group | Organization | Person | Service | URL | null;
         if (\\"publicKey\\" in values &&             values.publicKey != null) {
           if (
         // @ts-ignore: CryptoKey exists in the global scope.
-        // dnt-shim-ignore
         values.publicKey instanceof CryptoKey
       ) {
             // @ts-ignore: type is checked above.

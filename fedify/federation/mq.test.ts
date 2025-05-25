@@ -99,17 +99,14 @@ const queues: Record<string, () => Promise<MessageQueue>> = {
 };
 if (
   // @ts-ignore: Works on Deno
-  // dnt-shim-ignore
   "Deno" in globalThis && "openKv" in globalThis.Deno &&
   // @ts-ignore: Works on Deno
-  // dnt-shim-ignore
   typeof globalThis.Deno.openKv === "function"
 ) {
   const { DenoKvMessageQueue } = await import(".." + "/x/denokv.ts");
   queues.DenoKvMessageQueue = async () =>
     new DenoKvMessageQueue(
       // @ts-ignore: Works on Deno
-      // dnt-shim-ignore
       await globalThis.Deno.openKv(":memory:"),
     );
 }

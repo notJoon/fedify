@@ -97,13 +97,38 @@
         "codegen"
       ]
     },
-    "npm": "pnpm install && pnpm pack",
-    "test:node": "pnpm install && pnpm test",
+    "pnpm:install": "pnpm install",
+    "pnpm:build": {
+      "command": "pnpm exec tsdown",
+      "dependencies": [
+        "codegen",
+        "pnpm:install"
+      ]
+    },
+    "npm": {
+      "command": "pnpm pack",
+      "dependencies": [
+        "pnpm:install"
+      ]
+    },
+    "test:node": {
+      "command": "cd dist/ && node --test",
+      "dependencies": [
+        "pnpm:build"
+      ]
+    },
+    "test:bun": {
+      "command": "cd dist/ && bun test",
+      "dependencies": [
+        "pnpm:build"
+      ]
+    },
     "test-all": {
       "dependencies": [
         "check",
         "test",
-        "test:node"
+        "test:node",
+        "test:bun"
       ]
     }
   }

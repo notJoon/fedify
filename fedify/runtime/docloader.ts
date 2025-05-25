@@ -513,15 +513,13 @@ export function getUserAgent(
   { software, url }: GetUserAgentOptions = {},
 ): string {
   const fedify = `Fedify/${metadata.version}`;
-  const runtime = // dnt-shim-ignore
+  const runtime =
     // deno-lint-ignore no-explicit-any
     (globalThis as any).Deno?.version?.deno != null
       ? `Deno/${Deno.version.deno}`
-      // dnt-shim-ignore
       // deno-lint-ignore no-explicit-any
       : (globalThis as any).process?.versions?.bun != null
       ? `Bun/${process.versions.bun}`
-      // dnt-shim-ignore
       // deno-lint-ignore no-explicit-any
       : (globalThis as any).process?.versions?.node != null
       ? `Node.js/${process.versions.node}`

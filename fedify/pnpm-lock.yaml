@@ -35,9 +35,6 @@ importers:
       '@phensley/language-tag':
         specifier: ^1.9.0
         version: 1.12.0
-      '@types/bun':
-        specifier: ^1.2.14
-        version: 1.2.14
       asn1js:
         specifier: ^3.0.5
         version: 3.0.6
@@ -284,9 +281,6 @@ packages:
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
 
-  '@types/bun@1.2.14':
-    resolution: {integrity: sha512-VsFZKs8oKHzI7zwvECiAJ5oSorWndIWEVhfbYqZd4HI/45kzW7PN2Rr5biAzvGvRuNmYLSANY+H59ubHq8xw7Q==}
-
   '@types/node@22.15.21':
     resolution: {integrity: sha512-EV/37Td6c+MgKAbkcLG6vqZ2zEYHD7bvSrzqqs2RIhbA6w3x+Dqz8MZM3sP6kGTeLrdoOgKZe+Xja7tUB2DNkQ==}
 
@@ -308,9 +302,6 @@ packages:
 
   birpc@2.3.0:
     resolution: {integrity: sha512-ijbtkn/F3Pvzb6jHypHRyve2QApOCZDR25D/VnkY2G/lBNcXCTsnsCxgY4k4PkVB7zfwzYbY3O9Lcqe3xufS5g==}
-
-  bun-types@1.2.14:
-    resolution: {integrity: sha512-Kuh4Ub28ucMRWeiUUWMHsT9Wcbr4H3kLIO72RZZElSDxSu7vpetRvxIUDUaW6QtaIeixIpm7OXtNnZPf82EzwA==}
 
   byte-encodings@1.0.11:
     resolution: {integrity: sha512-+/xR2+ySc2yKGtud3DGkGSH1DNwHfRVK0KTnMhoeH36/KwG+tHQ4d9B3jxJFq7dW27YcfudkywaYJRPA2dmxzg==}
@@ -753,10 +744,6 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@types/bun@1.2.14':
-    dependencies:
-      bun-types: 1.2.14
-
   '@types/node@22.15.21':
     dependencies:
       undici-types: 6.21.0
@@ -779,10 +766,6 @@ snapshots:
       pathe: 2.0.3
 
   birpc@2.3.0: {}
-
-  bun-types@1.2.14:
-    dependencies:
-      '@types/node': 22.15.21
 
   byte-encodings@1.0.11: {}
 
