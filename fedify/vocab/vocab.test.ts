@@ -518,7 +518,6 @@ test({
     });
     assertEquals(
       Deno.inspect(obj, { colors: false, sorted: true, compact: false }),
-      // dnt-shim-ignore
       "Deno" in globalThis
         ? "Object {\n" +
           '  attribution: URL "https://example.com/foo",\n' +
@@ -1252,7 +1251,6 @@ for (const typeUri in types) {
     );
   });
 
-  // dnt-shim-ignore
   if ("Deno" in globalThis) {
     const { assertSnapshot } = await import("@std/testing/snapshot");
 

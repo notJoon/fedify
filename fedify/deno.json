@@ -18,7 +18,6 @@
   },
   "imports": {
     "@cfworker/json-schema": "npm:@cfworker/json-schema@^4.1.1",
-    "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.38.0",
     "@hongminhee/deno-mock-fetch": "jsr:@hongminhee/deno-mock-fetch@^0.3.2",
     "@hugoalh/http-header-link": "jsr:@hugoalh/http-header-link@^1.0.2",
@@ -46,7 +45,6 @@
     "vocab/vocab.ts"
   ],
   "exclude": [
-    ".dnt-import-map.json",
     "apidoc/",
     "codegen/schema.yaml",
     "dist/",
