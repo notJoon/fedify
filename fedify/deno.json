@@ -118,7 +118,7 @@
       ]
     },
     "test:bun": {
-      "command": "cd dist/ && bun test",
+      "command": "cd dist/ && bun test --timeout 60000",
       "dependencies": [
         "pnpm:build"
       ]

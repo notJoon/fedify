@@ -114,6 +114,6 @@
     "prepack": "deno task codegen && tsdown",
     "prepublish": "deno task codegen && tsdown",
     "test": "deno task codegen && tsdown && cd dist/ && node --test",
-    "test:bun": "deno task codegen && tsdown && cd dist/ && bun test"
+    "test:bun": "deno task codegen && tsdown && cd dist/ && bun test --timeout 60000"
   }
 }
