@@ -1,6 +1,6 @@
 {
   "name": "@fedify/cli",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
@@ -20,7 +20,6 @@
     "hono": "jsr:@hono/hono@^4.5.9",
     "icojs": "npm:icojs@^0.19.4",
     "jimp": "npm:jimp@^1.6.0",
-    "json-preserve-indent": "npm:json-preserve-indent@^1.1.3",
     "ora": "npm:ora@^8.0.1",
     "shiki": "npm:shiki@^1.6.4"
   },

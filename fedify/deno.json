@@ -1,6 +1,6 @@
 {
   "name": "@fedify/fedify",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
@@ -57,6 +57,7 @@
   "tasks": {
     "codegen": "deno run --allow-read --allow-write --check codegen/main.ts vocab/ ../runtime/ > vocab/vocab.ts && deno fmt vocab/vocab.ts && deno cache vocab/vocab.ts && deno check vocab/vocab.ts",
     "check-version": "deno run --allow-read=package.json scripts/check_version.ts && deno run ../cli/scripts/check_version.ts",
+    "sync-version": "deno run --allow-read=package.json --allow-write=package.json scripts/sync_version.ts && deno run --allow-read=../cli/deno.json --allow-write=../cli/deno.json ../cli/scripts/sync_version.ts",
     "cache": {
       "command": "deno cache mod.ts",
       "dependencies": [
@@ -92,6 +93,7 @@
     "publish": {
       "command": "deno publish",
       "dependencies": [
+        "check-version",
         "codegen"
       ]
     },
@@ -106,6 +108,7 @@
     "npm": {
       "command": "pnpm pack",
       "dependencies": [
+        "sync-version",
         "pnpm:install"
       ]
     },

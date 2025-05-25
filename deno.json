@@ -10,6 +10,7 @@
     "@logtape/logtape": "jsr:@logtape/logtape@^0.10.0",
     "@std/fs": "jsr:@std/fs@^1.0.3",
     "@std/path": "jsr:@std/path@^1.0.6",
+    "json-preserve-indent": "npm:json-preserve-indent@^1.1.3",
     "preact": "npm:preact@10.19.6"
   },
   "unstable": [
@@ -20,7 +21,13 @@
   ],
   "tasks": {
     "codegen": "deno task -f @fedify/cli codegen",
-    "check": "deno task -f @fedify/fedify check && deno task -f @fedify/cli check && deno task -f @fedify/blog check && deno task -f @fedify/hono-sample check",
+    "check": {
+      "command": "deno task -f @fedify/fedify check && deno task -f @fedify/cli check && deno task -f @fedify/blog check && deno task -f @fedify/hono-sample check",
+      "dependencies": [
+        "check-version"
+      ]
+    },
+    "check-version": "deno task -f @fedify/fedify check-version",
     "test-all": "deno task -f @fedify/fedify test-all && deno task -f @fedify/cli check && deno task -f @fedify/blog check && deno task -f @fedify/hono-sample check",
     "publish": "deno task -f @fedify/fedify publish && deno task -f @fedify/cli publish",
     "cli": "deno task -f @fedify/cli run",

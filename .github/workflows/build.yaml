@@ -153,6 +153,12 @@ jobs:
           '.version = .version + "-dev." + $build + "+" + $commit' \
           deno.json > deno.json.tmp
         mv deno.json.tmp deno.json
+        jq \
+          --arg build "$GITHUB_RUN_NUMBER" \
+          --arg commit "${GITHUB_SHA::8}" \
+          '.version = .version + "-dev." + $build + "+" + $commit' \
+          package.json > package.json.tmp
+        mv package.json.tmp package.json
       working-directory: ${{ github.workspace }}/fedify/
     - if: github.ref_type == 'tag'
       run: |

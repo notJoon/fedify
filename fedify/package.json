@@ -1,6 +1,6 @@
 {
   "name": "@fedify/fedify",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "An ActivityPub server framework",
   "keywords": [
     "ActivityPub",
@@ -111,8 +111,8 @@
   },
   "scripts": {
     "build": "deno task codegen && tsdown",
-    "prepack": "deno task codegen && tsdown",
-    "prepublish": "deno task codegen && tsdown",
+    "prepack": "deno task codegen && tsdown && deno task check-version",
+    "prepublish": "deno task codegen && tsdown && deno task check-version",
     "test": "deno task codegen && tsdown && cd dist/ && node --test",
     "test:bun": "deno task codegen && tsdown && cd dist/ && bun test --timeout 60000"
   }
