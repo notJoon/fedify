@@ -17,10 +17,11 @@
     "./x/sveltekit": "./x/sveltekit.ts"
   },
   "imports": {
-    "@cfworker/json-schema": "npm:@cfworker/json-schema@^2.0.1",
-    "@deno/dnt": "jsr:@deno/dnt@0.41.3",
+    "@cfworker/json-schema": "npm:@cfworker/json-schema@^4.1.1",
     "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.38.0",
+    "@hongminhee/deno-mock-fetch": "jsr:@hongminhee/deno-mock-fetch@^0.3.2",
     "@hugoalh/http-header-link": "jsr:@hugoalh/http-header-link@^1.0.2",
+    "@multiformats/base-x": "npm:@multiformats/base-x@^4.0.1",
     "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
     "@opentelemetry/semantic-conventions": "npm:@opentelemetry/semantic-conventions@^1.27.0",
     "@phensley/language-tag": "npm:@phensley/language-tag@^1.9.0",
@@ -33,10 +34,10 @@
     "fast-check": "npm:fast-check@^3.22.0",
     "json-canon": "npm:json-canon@^1.0.1",
     "jsonld": "npm:jsonld@^8.3.2",
-    "mock_fetch": "jsr:@hongminhee/deno-mock-fetch@^0.3.2",
     "multicodec": "npm:multicodec@^3.2.1",
     "pkijs": "npm:pkijs@^3.2.4",
     "structured-field-values": "npm:structured-field-values@^2.0.4",
+    "tsdown": "npm:tsdown@^0.12.2",
     "uri-template-router": "npm:uri-template-router@^0.0.17",
     "url-template": "npm:url-template@^3.1.1"
   },
@@ -44,16 +45,18 @@
     "vocab/vocab.ts"
   ],
   "exclude": [
-    ".dnt-import-map.json",
     "apidoc/",
     "codegen/schema.yaml",
+    "dist/",
+    "node_modules/",
     "npm/",
+    "pnpm-lock.yaml",
     "vocab/*.yaml",
     "!vocab/vocab.ts"
   ],
   "tasks": {
     "codegen": "deno run --allow-read --allow-write --check codegen/main.ts vocab/ ../runtime/ > vocab/vocab.ts && deno fmt vocab/vocab.ts && deno cache vocab/vocab.ts && deno check vocab/vocab.ts",
-    "check-version": "deno run ../cli/scripts/check_version.ts",
+    "check-version": "deno run --allow-read=package.json scripts/check_version.ts && deno run ../cli/scripts/check_version.ts",
     "cache": {
       "command": "deno cache mod.ts",
       "dependencies": [
@@ -92,18 +95,38 @@
         "codegen"
       ]
     },
-    "dnt": {
-      "command": "deno run -A dnt.ts",
+    "pnpm:install": "pnpm install",
+    "pnpm:build": {
+      "command": "pnpm exec tsdown",
       "dependencies": [
-        "codegen"
+        "codegen",
+        "pnpm:install"
+      ]
+    },
+    "npm": {
+      "command": "pnpm pack",
+      "dependencies": [
+        "pnpm:install"
+      ]
+    },
+    "test:node": {
+      "command": "cd dist/ && node --test",
+      "dependencies": [
+        "pnpm:build"
+      ]
+    },
+    "test:bun": {
+      "command": "cd dist/ && bun test --timeout 60000",
+      "dependencies": [
+        "pnpm:build"
       ]
     },
     "test-all": {
-      "command": "cd npm/ && bun run ./test_runner.js && cd ../",
       "dependencies": [
         "check",
         "test",
-        "dnt"
+        "test:node",
+        "test:bun"
       ]
     }
   }

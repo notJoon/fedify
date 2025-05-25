@@ -1,10 +1,6 @@
+import { getFileSink } from "@logtape/file";
+import { configure, getConsoleSink, type LogLevel } from "@logtape/logtape";
 import { AsyncLocalStorage } from "node:async_hooks";
-import {
-  configure,
-  getConsoleSink,
-  getFileSink,
-  type LogLevel,
-} from "@logtape/logtape";
 
 await configure({
   contextLocalStorage: new AsyncLocalStorage(),

@@ -1,4 +1,5 @@
-import { join } from "@std/path";
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
 
 /**
  * Recursively read a directory, yielding the paths of all files.  File paths
@@ -7,8 +8,8 @@ import { join } from "@std/path";
  * @returns An async iterable of file paths.
  */
 export async function* readDirRecursive(dir: string): AsyncIterable<string> {
-  for await (const entry of Deno.readDir(dir)) {
-    if (entry.isDirectory) {
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
       const path = join(dir, entry.name);
       for await (const subentry of readDirRecursive(path)) {
         yield join(entry.name, subentry);

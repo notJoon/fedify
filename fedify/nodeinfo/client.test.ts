@@ -1,5 +1,5 @@
+import * as mf from "@hongminhee/deno-mock-fetch";
 import { assertEquals } from "@std/assert";
-import * as mf from "mock_fetch";
 import { test } from "../testing/mod.ts";
 import {
   getNodeInfo,

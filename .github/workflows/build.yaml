@@ -23,6 +23,7 @@ jobs:
     - run: deno task test --coverage=.cov --junit-path=.test-report.xml
       env:
         RUST_BACKTRACE: ${{ runner.debug }}
+        LOG: ${{ runner.debug && 'always' || '' }}
       working-directory: ${{ github.workspace }}/fedify/
     - uses: dorny/test-reporter@v2
       if: success() || failure()
@@ -46,7 +47,27 @@ jobs:
       continue-on-error: true
     - run: "true"
 
-  test-dnt:
+  test-node:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: denoland/setup-deno@v2
+      with:
+        deno-version: v2.x
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
+    - run: deno task test:node
+      working-directory: ${{ github.workspace }}/fedify/
+
+  test-bun:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -63,12 +84,11 @@ jobs:
     - uses: oven-sh/setup-bun@v1
       with:
         bun-version: latest
-    - run: deno task cache
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
+    - run: deno task test:bun
       working-directory: ${{ github.workspace }}/fedify/
-    - run: deno task dnt
-      working-directory: ${{ github.workspace }}/fedify/
-    - run: bun test_runner.js
-      working-directory: ${{ github.workspace }}/fedify/npm/
 
   lint:
     runs-on: ubuntu-latest
@@ -92,19 +112,24 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
+    - run: '[[ "$(jq -r .version deno.json)" = "$(jq -r .version package.json)" ]]'
+      working-directory: ${{ github.workspace }}/fedify/
     - run: deno task publish --dry-run
       working-directory: ${{ github.workspace }}/fedify/
-    - run: deno task dnt
+    - run: deno task npm
       working-directory: ${{ github.workspace }}/fedify/
-    - run: npm publish --dry-run
-      working-directory: ${{ github.workspace }}/fedify/npm/
+    - run: npm publish --dry-run fedify-fedify-*.tgz
+      working-directory: ${{ github.workspace }}/fedify/
       env:
         DNT_SKIP_TEST: "true"
     - run: deno task publish-dry-run
       working-directory: ${{ github.workspace }}/cli/
 
   publish:
-    needs: [test, test-dnt, lint, release-test]
+    needs: [test, test-node, test-bun, lint, release-test]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -117,6 +142,9 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
     - if: github.ref_type == 'branch'
       run: |
         jq \
@@ -136,12 +164,8 @@ jobs:
     # in deno.json:
     - run: rm vocab/.gitignore
       working-directory: ${{ github.workspace }}/fedify/
-    - run: 'deno task dnt "$(jq -r .version deno.json)"'
+    - run: deno task npm
       working-directory: ${{ github.workspace }}/fedify/
-      env:
-        DNT_SKIP_TEST: "true"
-    - run: npm pack
-      working-directory: ${{ github.workspace }}/fedify/npm/
     - run: deno task pack
       working-directory: ${{ github.workspace }}/cli/
     - run: 'deno task npm "$(jq -r .version deno.json)"'
@@ -161,7 +185,7 @@ jobs:
       with:
         name: dist
         path: |
-          fedify/npm/*.tgz
+          fedify/fedify-fedify-*.tgz
           cli/fedify-cli-*
     - if: github.event_name == 'push' && github.ref_type == 'tag'
       uses: softprops/action-gh-release@v1
@@ -169,7 +193,7 @@ jobs:
         body_path: ${{ steps.extract-changelog.outputs.output-file }}
         name: Fedify ${{ github.ref_name }}
         files: |
-          fedify/npm/*.tgz
+          fedify/fedify-fedify-*.tgz
           cli/fedify-cli-*
         generate_release_notes: false
     - if: |
@@ -189,13 +213,13 @@ jobs:
         set -ex
         npm config set //registry.npmjs.org/:_authToken "$NPM_AUTH_TOKEN"
         if [[ "$GITHUB_REF_TYPE" = "tag" ]]; then
-          npm publish --provenance --access public *.tgz
+          npm publish --provenance --access public fedify-fedify-*.tgz
         else
-          npm publish --provenance --access public --tag dev *.tgz
+          npm publish --provenance --access public --tag dev fedify-fedify-*.tgz
         fi
       env:
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      working-directory: ${{ github.workspace }}/fedify/npm/
+      working-directory: ${{ github.workspace }}/fedify/
     - if: github.event_name == 'push' && github.ref_type == 'tag'
       run: |
         set -ex

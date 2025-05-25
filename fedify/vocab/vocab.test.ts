@@ -8,8 +8,6 @@ import {
   assertRejects,
   assertThrows,
 } from "@std/assert";
-import { assertSnapshot } from "@std/testing/snapshot";
-import { decode } from "../runtime/multibase/index.ts";
 import {
   loadSchemaFiles,
   type PropertySchema,
@@ -17,6 +15,7 @@ import {
 } from "../codegen/schema.ts";
 import { areAllScalarTypes } from "../codegen/type.ts";
 import { LanguageString } from "../runtime/langstr.ts";
+import { decode } from "../runtime/multibase/index.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import { ed25519PublicKey, rsaPublicKey1 } from "../testing/keys.ts";
 import { test } from "../testing/mod.ts";
@@ -504,39 +503,42 @@ test("Activity.clone()", async () => {
   );
 });
 
-test("Deno.inspect(Object)", () => {
-  const obj = new Object({
-    id: new URL("https://example.com/"),
-    attribution: new URL("https://example.com/foo"),
-    name: "Test",
-    contents: [
-      new LanguageString("Hello", "en"),
-      new LanguageString("你好", "zh"),
-    ],
-  });
-  assertEquals(
-    Deno.inspect(obj, { colors: false, sorted: true, compact: false }),
-    // dnt-shim-ignore
-    "Deno" in globalThis
-      ? "Object {\n" +
-        '  attribution: URL "https://example.com/foo",\n' +
-        "  contents: [\n" +
-        '    <en> "Hello",\n' +
-        '    <zh> "你好"\n' +
-        "  ],\n" +
-        '  id: URL "https://example.com/",\n' +
-        '  name: "Test"\n' +
-        "}"
-      : "Object {\n" +
-        "  attribution: URL 'https://example.com/foo',\n" +
-        "  contents: [\n" +
-        "    <en> 'Hello',\n" +
-        "    <zh> '你好'\n" +
-        "  ],\n" +
-        "  id: URL 'https://example.com/',\n" +
-        "  name: 'Test'\n" +
-        "}",
-  );
+test({
+  name: "Deno.inspect(Object)",
+  ignore: !("Deno" in globalThis),
+  fn() {
+    const obj = new Object({
+      id: new URL("https://example.com/"),
+      attribution: new URL("https://example.com/foo"),
+      name: "Test",
+      contents: [
+        new LanguageString("Hello", "en"),
+        new LanguageString("你好", "zh"),
+      ],
+    });
+    assertEquals(
+      Deno.inspect(obj, { colors: false, sorted: true, compact: false }),
+      "Deno" in globalThis
+        ? "Object {\n" +
+          '  attribution: URL "https://example.com/foo",\n' +
+          "  contents: [\n" +
+          '    <en> "Hello",\n' +
+          '    <zh> "你好"\n' +
+          "  ],\n" +
+          '  id: URL "https://example.com/",\n' +
+          '  name: "Test"\n' +
+          "}"
+        : "Object {\n" +
+          "  attribution: URL 'https://example.com/foo',\n" +
+          "  contents: [\n" +
+          "    <en> 'Hello',\n" +
+          "    <zh> '你好'\n" +
+          "  ],\n" +
+          "  id: URL 'https://example.com/',\n" +
+          "  name: 'Test'\n" +
+          "}",
+    );
+  },
 });
 
 test("Person.fromJsonLd()", async () => {
@@ -1249,8 +1251,9 @@ for (const typeUri in types) {
     );
   });
 
-  // dnt-shim-ignore
   if ("Deno" in globalThis) {
+    const { assertSnapshot } = await import("@std/testing/snapshot");
+
     test(`Deno.inspect(${type.name}) [auto]`, async (t) => {
       const empty = new cls({});
       assertEquals(Deno.inspect(empty), `${type.name} {}`);

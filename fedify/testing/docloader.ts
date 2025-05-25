@@ -1,5 +1,6 @@
 import { getLogger } from "@logtape/logtape";
 import { dirname, fromFileUrl, join } from "@std/path";
+import { readFileSync } from "node:fs";
 import type { RemoteDocument } from "../runtime/docloader.ts";
 
 const logger = getLogger(["fedify", "testing", "docloader"]);
@@ -26,7 +27,7 @@ export function mockDocumentLoader(
 
   let content: string;
   try {
-    content = Deno.readTextFileSync(filePath);
+    content = readFileSync(filePath, { encoding: "utf-8" });
   } catch (error) {
     logger.error("Failed to read fixture file {filePath}: {error}", {
       filePath,

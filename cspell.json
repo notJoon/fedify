@@ -5,6 +5,7 @@
     "activitystreams",
     "aitertools",
     "apidoc",
+    "authdocloader",
     "bccs",
     "biomejs",
     "Bluesky",
@@ -27,6 +28,7 @@
     "eddsa",
     "fanout",
     "federatable",
+    "Federatable",
     "fedi",
     "fedibird",
     "fedify",
@@ -87,6 +89,7 @@
     "tempserver",
     "traceparent",
     "ts-nocheck",
+    "tsdown",
     "twoslash",
     "typeof",
     "unfollow",
@@ -98,7 +101,6 @@
     "vitepress",
     "vtsls",
     "webfinger",
-    "webp",
-    "Federatable"
+    "webp"
   ]
 }

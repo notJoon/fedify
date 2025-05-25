@@ -305,7 +305,6 @@ const scalarTypes: Record<string, ScalarType> = {
     typeGuard(v) {
       return `
         // @ts-ignore: CryptoKey exists in the global scope.
-        // dnt-shim-ignore
         ${v} instanceof CryptoKey
       `;
     },
@@ -328,7 +327,6 @@ const scalarTypes: Record<string, ScalarType> = {
     typeGuard(v) {
       return `
         // @ts-ignore: CryptoKey exists in the global scope.
-        // dnt-shim-ignore
         ${v} instanceof CryptoKey
       `;
     },

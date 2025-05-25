@@ -1,3 +1,4 @@
+import * as mf from "@hongminhee/deno-mock-fetch";
 import {
   assert,
   assertEquals,
@@ -5,7 +6,6 @@ import {
   assertNotEquals,
   assertRejects,
 } from "@std/assert";
-import * as mf from "mock_fetch";
 import { verifyRequest } from "../sig/http.ts";
 import { doesActorOwnKey } from "../sig/owner.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";

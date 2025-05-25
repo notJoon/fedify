@@ -1,5 +1,6 @@
 import { Command, CompletionsCommand, HelpCommand } from "@cliffy/command";
-import { configure, getConsoleSink, getFileSink } from "@logtape/logtape";
+import { getFileSink } from "@logtape/file";
+import { configure, getConsoleSink } from "@logtape/logtape";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { DEFAULT_CACHE_DIR, setCacheDir } from "./cache.ts";
 import metadata from "./deno.json" with { type: "json" };

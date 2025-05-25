@@ -59,7 +59,6 @@ To build the project, see the [*Build* section](#build).
 Please run the following commands before opening a pull request:
 
 ~~~~ bash
-cd src/
 deno task check
 ~~~~
 
@@ -145,8 +144,8 @@ The repository consists of the following directories:
     [VitePress].
  -  *examples/*: The example projects.  Some examples are built with Deno, and
     some are built with Node.js.
- -  *src/*: The Fedify library.  The library is built with Deno, and tested with
-    Deno, Node.js, and [Bun].
+ -  *fedify/*: The Fedify library.  The library is built with Deno, and tested
+    with Deno, Node.js, and [Bun].
      -  *codegen/*: The code generation scripts.
 
 [Deno]: https://deno.com/
