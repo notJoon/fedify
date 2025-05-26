@@ -268,26 +268,26 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - uses: actions/checkout@v4
-    - uses: oven-sh/setup-bun@v1
+    - uses: pnpm/action-setup@v4
       with:
-        bun-version: latest
+        version: 10
     - run: |
         set -ex
-        bun install
+        pnpm install
         if [[ "$GITHUB_EVENT_NAME" = "push" && "$GITHUB_REF_TYPE" = "tag" ]]; then
-          bun add -Df --no-cache "@fedify/fedify@$GITHUB_REF_NAME"
+          pnpm add -D "@fedify/fedify@$GITHUB_REF_NAME"
           EXTRA_NAV_TEXT=Unstable \
           EXTRA_NAV_LINK="$UNSTABLE_DOCS_URL" \
           SITEMAP_HOSTNAME="$STABLE_DOCS_URL" \
           JSR_REF_VERSION=stable \
-          bun run build
+          pnpm run build
         else
-          bun add -Df --no-cache @fedify/fedify@dev
+          pnpm add -D @fedify/fedify@dev
           EXTRA_NAV_TEXT=Stable \
           EXTRA_NAV_LINK="$STABLE_DOCS_URL" \
           SITEMAP_HOSTNAME="$UNSTABLE_DOCS_URL" \
           JSR_REF_VERSION=unstable \
-          bun run build
+          pnpm run build
         fi
       env:
         PLAUSIBLE_DOMAIN: ${{ secrets.PLAUSIBLE_DOMAIN }}

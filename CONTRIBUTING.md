@@ -259,13 +259,15 @@ with Node.js and Bun.
 ### Building the docs
 
 If you want to change the Fedify docs, you would like to preview the changes
-in the browser.  To do that, you need to install [Bun] first.
+in the browser.  To do that, you need to install [Node.js] and [pnpm] first.
 Then you can run the following commands at the *docs/* directory:
 
 ~~~~ bash
-bun install
-bun dev
+pnpm install
+pnpm dev
 ~~~~
 
 Once the development server is running, you can open your browser and navigate
 to *http://localhost:5173/* to view the docs.
+
+[pnpm]: https://pnpm.io/

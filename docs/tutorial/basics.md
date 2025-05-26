@@ -894,6 +894,7 @@ federation
 ~~~~
 
 ~~~~ typescript{15-16,19-39} twoslash [Bun]
+// @noErrors: 2307
 import {
   exportJwk,
   generateCryptoKeyPair,

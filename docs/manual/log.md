@@ -376,7 +376,8 @@ class AsyncLocalStorage<T> implements ContextLocalStorage<T> {
 }
 // ---cut-before---
 import { AsyncLocalStorage } from "node:async_hooks";
-import { type LogRecord, configure, getFileSink } from "@logtape/logtape";
+import { getFileSink } from "@logtape/file";
+import { type LogRecord, configure } from "@logtape/logtape";
 
 await configure({
   sinks: {
