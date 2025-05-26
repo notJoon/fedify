@@ -14,14 +14,21 @@ import { lookupWebFinger as globalLookupWebFinger } from "../webfinger/lookup.ts
 import { mockDocumentLoader } from "./docloader.ts";
 
 export function createContext<TContextData>(
-  {
+  values: Partial<Context<TContextData>> & {
+    url?: URL;
+    data: TContextData;
+    federation: Federation<TContextData>;
+  },
+): Context<TContextData> {
+  const {
     federation,
-    url,
+    url = new URL("http://example.com/"),
     canonicalOrigin,
     data,
     documentLoader,
     contextLoader,
     tracerProvider,
+    clone,
     getNodeInfoUri,
     getActorUri,
     getObjectUri,
@@ -41,16 +48,10 @@ export function createContext<TContextData>(
     lookupWebFinger,
     sendActivity,
     routeActivity,
-  }: Partial<Context<TContextData>> & {
-    url?: URL;
-    data: TContextData;
-    federation: Federation<TContextData>;
-  },
-): Context<TContextData> {
+  } = values;
   function throwRouteError(): URL {
     throw new RouterError("Not implemented");
   }
-  url ??= new URL("http://example.com/");
   return {
     federation,
     data,
@@ -61,6 +62,7 @@ export function createContext<TContextData>(
     documentLoader: documentLoader ?? mockDocumentLoader,
     contextLoader: contextLoader ?? mockDocumentLoader,
     tracerProvider: tracerProvider ?? trace.getTracerProvider(),
+    clone: clone ?? ((data) => createContext({ ...values, data })),
     getNodeInfoUri: getNodeInfoUri ?? throwRouteError,
     getActorUri: getActorUri ?? throwRouteError,
     getObjectUri: getObjectUri ?? throwRouteError,
@@ -118,6 +120,7 @@ export function createRequestContext<TContextData>(
 ): RequestContext<TContextData> {
   return {
     ...createContext(args),
+    clone: args.clone ?? ((data) => createRequestContext({ ...args, data })),
     request: args.request ?? new Request(args.url),
     url: args.url,
     getActor: args.getActor ?? (() => Promise.resolve(null)),
@@ -140,6 +143,7 @@ export function createInboxContext<TContextData>(
 ): InboxContext<TContextData> {
   return {
     ...createContext(args),
+    clone: args.clone ?? ((data) => createInboxContext({ ...args, data })),
     recipient: args.recipient ?? null,
     forwardActivity: args.forwardActivity ?? ((_params) => {
       throw new Error("Not implemented");

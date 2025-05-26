@@ -1180,7 +1180,7 @@ test("handleInbox()", async () => {
     recipient: null,
     context: unsignedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext(unsignedContext);
+      return createInboxContext({ ...unsignedContext, clone: undefined });
     },
     ...inboxOptions,
     actorDispatcher: undefined,
@@ -1193,7 +1193,11 @@ test("handleInbox()", async () => {
     recipient: "nobody",
     context: unsignedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext({ ...unsignedContext, recipient: "nobody" });
+      return createInboxContext({
+        ...unsignedContext,
+        clone: undefined,
+        recipient: "nobody",
+      });
     },
     ...inboxOptions,
   });
@@ -1205,7 +1209,7 @@ test("handleInbox()", async () => {
     recipient: null,
     context: unsignedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext(unsignedContext);
+      return createInboxContext({ ...unsignedContext, clone: undefined });
     },
     ...inboxOptions,
   });
@@ -1216,7 +1220,11 @@ test("handleInbox()", async () => {
     recipient: "someone",
     context: unsignedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext({ ...unsignedContext, recipient: "someone" });
+      return createInboxContext({
+        ...unsignedContext,
+        clone: undefined,
+        recipient: "someone",
+      });
     },
     ...inboxOptions,
   });
@@ -1240,7 +1248,7 @@ test("handleInbox()", async () => {
     recipient: null,
     context: signedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext(unsignedContext);
+      return createInboxContext({ ...unsignedContext, clone: undefined });
     },
     ...inboxOptions,
   });
@@ -1251,7 +1259,11 @@ test("handleInbox()", async () => {
     recipient: "someone",
     context: signedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext({ ...unsignedContext, recipient: "someone" });
+      return createInboxContext({
+        ...unsignedContext,
+        clone: undefined,
+        recipient: "someone",
+      });
     },
     ...inboxOptions,
   });
@@ -1262,7 +1274,7 @@ test("handleInbox()", async () => {
     recipient: null,
     context: unsignedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext(unsignedContext);
+      return createInboxContext({ ...unsignedContext, clone: undefined });
     },
     ...inboxOptions,
     skipSignatureVerification: true,
@@ -1274,7 +1286,11 @@ test("handleInbox()", async () => {
     recipient: "someone",
     context: unsignedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext({ ...unsignedContext, recipient: "someone" });
+      return createInboxContext({
+        ...unsignedContext,
+        clone: undefined,
+        recipient: "someone",
+      });
     },
     ...inboxOptions,
     skipSignatureVerification: true,
@@ -1311,7 +1327,7 @@ test("handleInbox()", async () => {
     recipient: null,
     context: signedContext,
     inboxContextFactory(_activity) {
-      return createInboxContext(signedInvalidContext);
+      return createInboxContext({ ...signedInvalidContext, clone: undefined });
     },
     ...inboxOptions,
   });

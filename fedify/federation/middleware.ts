@@ -1474,6 +1474,18 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       invokedFromActorKeyPairsDispatcher;
   }
 
+  clone(data: TContextData): Context<TContextData> {
+    return new ContextImpl<TContextData>({
+      url: this.url,
+      federation: this.federation,
+      data,
+      documentLoader: this.documentLoader,
+      contextLoader: this.contextLoader,
+      invokedFromActorKeyPairsDispatcher:
+        this.invokedFromActorKeyPairsDispatcher,
+    });
+  }
+
   toInboxContext(
     recipient: string | null,
     activity: unknown,
@@ -2461,6 +2473,21 @@ class RequestContextImpl<TContextData> extends ContextImpl<TContextData>
     this.url = options.url;
   }
 
+  override clone(data: TContextData): RequestContext<TContextData> {
+    return new RequestContextImpl<TContextData>({
+      url: this.url,
+      federation: this.federation,
+      data,
+      documentLoader: this.documentLoader,
+      contextLoader: this.contextLoader,
+      invokedFromActorKeyPairsDispatcher:
+        this.invokedFromActorKeyPairsDispatcher,
+      invokedFromActorDispatcher: this.#invokedFromActorDispatcher,
+      invokedFromObjectDispatcher: this.#invokedFromObjectDispatcher,
+      request: this.request,
+    });
+  }
+
   async getActor(identifier: string): Promise<Actor | null> {
     if (
       this.federation.actorCallbacks == null ||
@@ -2577,6 +2604,24 @@ export class InboxContextImpl<TContextData> extends ContextImpl<TContextData>
     this.activity = activity;
     this.activityId = activityId;
     this.activityType = activityType;
+  }
+
+  override clone(data: TContextData): InboxContext<TContextData> {
+    return new InboxContextImpl<TContextData>(
+      this.recipient,
+      this.activity,
+      this.activityId,
+      this.activityType,
+      {
+        url: this.url,
+        federation: this.federation,
+        data,
+        documentLoader: this.documentLoader,
+        contextLoader: this.contextLoader,
+        invokedFromActorKeyPairsDispatcher:
+          this.invokedFromActorKeyPairsDispatcher,
+      },
+    );
   }
 
   forwardActivity(

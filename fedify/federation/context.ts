@@ -85,6 +85,16 @@ export interface Context<TContextData> {
   readonly federation: Federation<TContextData>;
 
   /**
+   * Creates a new context with the same properties as this one,
+   * but with the given data.
+   * @param data The new data to associate with the context.
+   * @returns A new context with the same properties as this one,
+   *          but with the given data.
+   * @since 1.6.0
+   */
+  clone(data: TContextData): Context<TContextData>;
+
+  /**
    * Builds the URI of the NodeInfo document.
    * @returns The NodeInfo URI.
    * @throws {RouterError} If no NodeInfo dispatcher is available.
@@ -430,6 +440,16 @@ export interface RequestContext<TContextData> extends Context<TContextData> {
   readonly url: URL;
 
   /**
+   * Creates a new context with the same properties as this one,
+   * but with the given data.
+   * @param data The new data to associate with the context.
+   * @returns A new context with the same properties as this one,
+   *          but with the given data.
+   * @since 1.6.0
+   */
+  clone(data: TContextData): RequestContext<TContextData>;
+
+  /**
    * Gets an {@link Actor} object for the given identifier.
    * @param identifier The actor's identifier.
    * @returns The actor object, or `null` if the actor is not found.
@@ -538,6 +558,16 @@ export interface InboxContext<TContextData> extends Context<TContextData> {
    * @since 1.2.0
    */
   recipient: string | null;
+
+  /**
+   * Creates a new context with the same properties as this one,
+   * but with the given data.
+   * @param data The new data to associate with the context.
+   * @returns A new context with the same properties as this one,
+   *          but with the given data.
+   * @since 1.6.0
+   */
+  clone(data: TContextData): InboxContext<TContextData>;
 
   /**
    * Forwards a received activity to the recipients' inboxes.  The forwarded

@@ -482,3 +482,21 @@ if (isActor(actor)) {
   }
 }
 ~~~~
+
+
+Replacing the context data
+--------------------------
+
+*This API is available since Fedify 1.6.0.*
+
+You can replace the context data by calling the `Context.clone()` method.
+This is useful when you want to create a new context based on the existing one
+but with different data.  The following shows an example of replacing the
+context data:
+
+~~~~ typescript twoslash
+import { type Context } from "@fedify/fedify";
+const ctx = null as unknown as Context<{ foo: string; bar: number }>;
+// ---cut-before---
+const newCtx = ctx.clone({ ...ctx.data, foo: "new value" });
+~~~~
