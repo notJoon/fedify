@@ -49,6 +49,7 @@ list of the objects, please refer to the [API reference].
 [API reference]: https://jsr.io/@fedify/fedify/doc/vocab/~
 [`Object`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 
+
 Instantiation
 -------------
 
@@ -492,3 +493,45 @@ corresponding TypeScript types:
 [BCP 47]: https://www.rfc-editor.org/info/bcp47
 [`LanguageTag`]: https://phensley.github.io/cldr-engine/docs/en/api-languagetag
 [`CryptoKey`]: https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey
+
+
+Extending the vocabulary
+------------------------
+
+While Fedify's vocabulary API offers many advantages, it has a limitation due to
+its implementation through code generation: it is difficult to extend with
+custom types or custom properties that are not included in the Activity
+Vocabulary and major vendor extensions provided by Fedify.  This means that
+adding custom types or properties at runtime is challenging, and if you want to
+add new types or properties, you need to contribute to the Fedify upstream
+repository.
+
+Fortunately, Fedify's vocabulary API is very open to external contributions,
+and technically, adding new types or properties to the vocabulary API is not
+difficult.
+
+The Fedify project accepts contributions to the vocabulary API almost
+unconditionally if any of the following conditions are met:
+
+ -  The type or property is specified in some form as a [FEP] (Fediverse
+    Enhancement Proposal) or equivalent specification document
+ -  The type or property is already adopted and used by widely-used
+    implementations in the fediverse such as Mastodon, Pleroma, etc.
+ -  The type or property has been sufficiently discussed in the Fedify
+    community ([Discord], [Matrix], [GitHub Discussions], etc.)
+
+If you want to contribute to Fedify's vocabulary API, the process is
+straightforward.  The _\*.yaml_ files located in the *fedify/vocab/* directory
+of the Fedify repository serve as the source data for code generation.  To add
+a new type, you simply need to add a new *.yaml* file, and to add a new
+property, you need to define the new property in the `properties` section of an
+existing *.yaml* file.
+
+For detailed information on how to contribute to the vocabulary API, please
+refer to the [*Contributing guide*](../contribute.md) and the existing YAML
+files in the *fedify/vocab/* directory for examples.
+
+[FEP]: https://w3id.org/fep/
+[Discord]: https://discord.gg/bhtwpzURwd
+[Matrix]: https://matrix.to/#/#fedify:matrix.org
+[GitHub Discussions]: https://github.com/fedify-dev/fedify/discussions
