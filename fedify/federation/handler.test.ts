@@ -36,6 +36,7 @@ import {
   respondWithObjectIfAcceptable,
 } from "./handler.ts";
 import { MemoryKvStore } from "./kv.ts";
+import { createFederation } from "./middleware.ts";
 
 test("acceptsJsonLd()", () => {
   assert(acceptsJsonLd(
@@ -68,7 +69,9 @@ test("acceptsJsonLd()", () => {
 });
 
 test("handleActor()", async () => {
+  const federation = createFederation<void>({ kv: new MemoryKvStore() });
   let context = createRequestContext<void>({
+    federation,
     data: undefined,
     url: new URL("https://example.com/"),
     getActorUri(identifier) {
@@ -332,7 +335,9 @@ test("handleActor()", async () => {
 });
 
 test("handleObject()", async () => {
+  const federation = createFederation<void>({ kv: new MemoryKvStore() });
   let context = createRequestContext<void>({
+    federation,
     data: undefined,
     url: new URL("https://example.com/"),
     getObjectUri(_cls, values) {
@@ -591,7 +596,9 @@ test("handleObject()", async () => {
 });
 
 test("handleCollection()", async () => {
+  const federation = createFederation<void>({ kv: new MemoryKvStore() });
   let context = createRequestContext<void>({
+    federation,
     data: undefined,
     url: new URL("https://example.com/"),
     getActorUri(identifier) {
@@ -1142,7 +1149,9 @@ test("handleInbox()", async () => {
     method: "POST",
     body: JSON.stringify(await activity.toJsonLd()),
   });
+  const federation = createFederation<void>({ kv: new MemoryKvStore() });
   const unsignedContext = createRequestContext({
+    federation,
     request: unsignedRequest,
     url: new URL(unsignedRequest.url),
     data: undefined,
@@ -1221,6 +1230,7 @@ test("handleInbox()", async () => {
     rsaPublicKey3.id!,
   );
   const signedContext = createRequestContext({
+    federation,
     request: signedRequest,
     url: new URL(signedRequest.url),
     data: undefined,
@@ -1291,6 +1301,7 @@ test("handleInbox()", async () => {
     rsaPublicKey3.id!,
   );
   const signedInvalidContext = createRequestContext({
+    federation,
     request: signedInvalidRequest,
     url: new URL(signedInvalidRequest.url),
     data: undefined,

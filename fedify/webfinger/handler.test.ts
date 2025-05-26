@@ -5,6 +5,8 @@ import type {
   ActorHandleMapper,
 } from "../federation/callback.ts";
 import type { RequestContext } from "../federation/context.ts";
+import { MemoryKvStore } from "../federation/kv.ts";
+import { createFederation } from "../federation/middleware.ts";
 import { createRequestContext } from "../testing/context.ts";
 import { test } from "../testing/mod.ts";
 import type { Actor } from "../vocab/actor.ts";
@@ -15,7 +17,9 @@ test("handleWebFinger()", async (t) => {
   const url = new URL("https://example.com/.well-known/webfinger");
 
   function createContext(url: URL): RequestContext<void> {
+    const federation = createFederation<void>({ kv: new MemoryKvStore() });
     const context = createRequestContext<void>({
+      federation,
       url,
       data: undefined,
       getActorUri(identifier) {

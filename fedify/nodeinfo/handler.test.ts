@@ -1,5 +1,7 @@
 import { assertEquals } from "@std/assert";
 import type { NodeInfoDispatcher } from "../federation/callback.ts";
+import { MemoryKvStore } from "../federation/kv.ts";
+import { createFederation } from "../federation/middleware.ts";
 import { createRequestContext } from "../testing/context.ts";
 import { test } from "../testing/mod.ts";
 import { handleNodeInfo, handleNodeInfoJrd } from "./handler.ts";
@@ -7,7 +9,9 @@ import { parseSemVer } from "./semver.ts";
 
 test("handleNodeInfo()", async () => {
   const request = new Request("https://example.com/nodeinfo/2.1");
+  const federation = createFederation<void>({ kv: new MemoryKvStore() });
   const context = createRequestContext<void>({
+    federation,
     data: undefined,
     request,
     url: new URL(request.url),
@@ -59,7 +63,9 @@ test("handleNodeInfo()", async () => {
 
 test("handleNodeInfoJrd()", async () => {
   const request = new Request("https://example.com/.well-known/nodeinfo");
+  const federation = createFederation<void>({ kv: new MemoryKvStore() });
   let context = createRequestContext<void>({
+    federation,
     data: undefined,
     request,
     url: new URL(request.url),

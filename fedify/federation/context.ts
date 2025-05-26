@@ -18,6 +18,7 @@ import type {
 } from "../vocab/vocab.ts";
 import type { ResourceDescriptor } from "../webfinger/jrd.ts";
 import type { LookupWebFingerOptions } from "../webfinger/lookup.ts";
+import type { Federation } from "./federation.ts";
 import type { SenderKeyPair } from "./send.ts";
 
 /**
@@ -76,6 +77,12 @@ export interface Context<TContextData> {
    * The context loader for loading remote JSON-LD contexts.
    */
   readonly contextLoader: DocumentLoader;
+
+  /**
+   * The federation object that this context belongs to.
+   * @since 1.6.0
+   */
+  readonly federation: Federation<TContextData>;
 
   /**
    * Builds the URI of the NodeInfo document.

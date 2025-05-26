@@ -11,6 +11,9 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
  -  Added `Context.lookupWebFinger()` method to make WebFinger lookups
     accessible from the context.  [[#227]]
 
+ -  Added `Context.federation` property to access the `Federation`
+    object from the context.  [[#235]]
+
  -  Introduced `FederationBuilder` for creating a federation instance with
     a builder pattern.
 
@@ -39,6 +42,7 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
 [RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
 [#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227
+[#235]: https://github.com/fedify-dev/fedify/pull/235
 
 
 Version 1.5.3
