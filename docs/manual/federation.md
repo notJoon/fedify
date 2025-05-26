@@ -420,6 +420,29 @@ export const federation = await builder.build({
 });
 ~~~~
 
+If you want to access the `Federation` object inside dispatchers or listeners
+before the `FederationBuilder` instantiates it, you can use
+the `Context.federation` property.  The `Context.federation` property refers
+to the `Federation` object that is to be instantiated by the `FederationBuilder`
+and is available in the `Context` object passed to the dispatchers and
+listeners.  For example, you can access the `Federation` object like this:
+
+~~~~ typescript twoslash
+import { type FederationBuilder, Person } from "@fedify/fedify";
+const builder = null as unknown as FederationBuilder<void>;
+// ---cut-before---
+builder.setActorDispatcher(
+  "/users/{handle}",
+  async (ctx, handle) => {
+    const federation = ctx.federation; // Access the `Federation` object
+    // Omitted for brevity
+// ---cut-start---
+    return new Person({});
+// ---cut-end---
+  }
+);
+~~~~
+
 
 The `~Federation.fetch()` API
 -----------------------------

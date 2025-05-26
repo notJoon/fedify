@@ -4,6 +4,7 @@ import type {
   InboxContext,
   RequestContext,
 } from "../federation/context.ts";
+import type { Federation } from "../federation/federation.ts";
 import { RouterError } from "../federation/router.ts";
 import {
   lookupObject as globalLookupObject,
@@ -14,6 +15,7 @@ import { mockDocumentLoader } from "./docloader.ts";
 
 export function createContext<TContextData>(
   {
+    federation,
     url,
     canonicalOrigin,
     data,
@@ -39,13 +41,18 @@ export function createContext<TContextData>(
     lookupWebFinger,
     sendActivity,
     routeActivity,
-  }: Partial<Context<TContextData>> & { url?: URL; data: TContextData },
+  }: Partial<Context<TContextData>> & {
+    url?: URL;
+    data: TContextData;
+    federation: Federation<TContextData>;
+  },
 ): Context<TContextData> {
   function throwRouteError(): URL {
     throw new RouterError("Not implemented");
   }
   url ??= new URL("http://example.com/");
   return {
+    federation,
     data,
     origin: url.origin,
     canonicalOrigin: canonicalOrigin ?? url.origin,
@@ -106,6 +113,7 @@ export function createRequestContext<TContextData>(
   args: Partial<RequestContext<TContextData>> & {
     url: URL;
     data: TContextData;
+    federation: Federation<TContextData>;
   },
 ): RequestContext<TContextData> {
   return {
@@ -127,6 +135,7 @@ export function createInboxContext<TContextData>(
     url?: URL;
     data: TContextData;
     recipient?: string | null;
+    federation: Federation<TContextData>;
   },
 ): InboxContext<TContextData> {
   return {

@@ -235,6 +235,7 @@ test("Federation.createContext()", async (t) => {
     assertEquals(ctx.hostname, "example.com");
     assertStrictEquals(ctx.documentLoader, documentLoader);
     assertStrictEquals(ctx.contextLoader, mockDocumentLoader);
+    assertStrictEquals(ctx.federation, federation);
     assertThrows(() => ctx.getNodeInfoUri(), RouterError);
     assertThrows(() => ctx.getActorUri("handle"), RouterError);
     assertThrows(
