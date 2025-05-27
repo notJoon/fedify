@@ -726,6 +726,22 @@ test("Federation.createContext()", async (t) => {
     );
   });
 
+  await t.step("Context.clone()", () => {
+    const federation = createFederation<number>({
+      kv,
+    });
+    const ctx = federation.createContext(new URL("https://example.com/"), 123);
+    const clone = ctx.clone(456);
+    assertStrictEquals(clone.canonicalOrigin, ctx.canonicalOrigin);
+    assertStrictEquals(clone.origin, ctx.origin);
+    assertEquals(clone.data, 456);
+    assertEquals(clone.host, ctx.host);
+    assertEquals(clone.hostname, ctx.hostname);
+    assertStrictEquals(clone.documentLoader, ctx.documentLoader);
+    assertStrictEquals(clone.contextLoader, ctx.contextLoader);
+    assertStrictEquals(clone.federation, ctx.federation);
+  });
+
   mf.mock("GET@/.well-known/nodeinfo", (req) => {
     assertEquals(new URL(req.url).host, "example.com");
     assertEquals(req.headers.get("User-Agent"), "CustomUserAgent/1.2.3");
@@ -873,6 +889,24 @@ test("Federation.createContext()", async (t) => {
       await ctx2.getObject(Note, { identifier: "john", id: "123" }),
       new Note({ summary: "Note 123 by john" }),
     );
+  });
+
+  await t.step("RequestContext.clone()", () => {
+    const federation = createFederation<number>({
+      kv,
+    });
+    const req = new Request("https://example.com/");
+    const ctx = federation.createContext(req, 123);
+    const clone = ctx.clone(456);
+    assertStrictEquals(clone.request, ctx.request);
+    assertEquals(clone.url, ctx.url);
+    assertEquals(clone.data, 456);
+    assertEquals(clone.origin, ctx.origin);
+    assertEquals(clone.host, ctx.host);
+    assertEquals(clone.hostname, ctx.hostname);
+    assertStrictEquals(clone.documentLoader, ctx.documentLoader);
+    assertStrictEquals(clone.contextLoader, ctx.contextLoader);
+    assertStrictEquals(clone.federation, ctx.federation);
   });
 
   mf.uninstall();

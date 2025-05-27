@@ -14,6 +14,8 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
  -  Added `Context.federation` property to access the `Federation`
     object from the context.  [[#235]]
 
+ -  Added `Context.clone()` method.  [[#237]]
+
  -  Introduced `FederationBuilder` for creating a federation instance with
     a builder pattern.
 
@@ -43,6 +45,7 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
 [#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227
 [#235]: https://github.com/fedify-dev/fedify/pull/235
+[#237]: https://github.com/fedify-dev/fedify/pull/237
 
 
 Version 1.5.3
