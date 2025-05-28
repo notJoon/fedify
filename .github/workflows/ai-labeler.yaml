@@ -1,0 +1,29 @@
+name: ai-labeler
+on:
+  issues:
+    types: [opened, edited, reopened, labeled]
+  pull_request:
+    types: [opened, edited, reopened, labeled]
+
+jobs:
+  ai-labeler:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/checkout@v4
+    - if: >-
+        github.event.action != 'labeled' ||
+        github.event.label.name == 'status/needs triage'
+      uses: jlowin/ai-labeler@v0.5.1
+      with:
+        include-repo-labels: true
+        openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+    - if: >-
+        github.event.action == 'labeled' &&
+        github.event.label.name == 'status/needs triage'
+      uses: actions-ecosystem/action-remove-labels@v1
+      with:
+        labels: "status/needs triage"
