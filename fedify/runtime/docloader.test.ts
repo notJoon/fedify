@@ -587,6 +587,26 @@ test("getUserAgent()", () => {
       // @ts-ignore: `Bun` is a global variable in Bun
       `MyApp/1.0.0 (Fedify/${metadata.version}; Bun/${Bun.version}; +https://example.com/)`,
     );
+  } else if (navigator.userAgent === "Cloudflare-Workers") {
+    assertEquals(
+      getUserAgent(),
+      `Fedify/${metadata.version} (Cloudflare-Workers)`,
+    );
+    assertEquals(
+      getUserAgent({ software: "MyApp/1.0.0" }),
+      `MyApp/1.0.0 (Fedify/${metadata.version}; Cloudflare-Workers)`,
+    );
+    assertEquals(
+      getUserAgent({ url: "https://example.com/" }),
+      `Fedify/${metadata.version} (Cloudflare-Workers; +https://example.com/)`,
+    );
+    assertEquals(
+      getUserAgent({
+        software: "MyApp/1.0.0",
+        url: new URL("https://example.com/"),
+      }),
+      `MyApp/1.0.0 (Fedify/${metadata.version}; Cloudflare-Workers; +https://example.com/)`,
+    );
   } else {
     assertEquals(
       getUserAgent(),

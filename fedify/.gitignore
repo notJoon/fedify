@@ -3,6 +3,12 @@
 .dnt-import-map.json
 .test-report.xml
 apidoc/
+cfworkers/dist/
+cfworkers/fixtures/
+cfworkers/imports.ts
+cfworkers/README.md
+cfworkers/server.js
+cfworkers/server.js.map
 coverage/
 dist/
 fedify-fedify-*.tgz

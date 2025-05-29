@@ -1,4 +1,3 @@
-import * as mf from "@hongminhee/deno-mock-fetch";
 import {
   assert,
   assertEquals,
@@ -6,6 +5,7 @@ import {
   assertNotEquals,
   assertRejects,
 } from "@std/assert";
+import fetchMock from "fetch-mock";
 import { verifyRequest } from "../sig/http.ts";
 import { doesActorOwnKey } from "../sig/owner.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
@@ -161,25 +161,28 @@ test("extractInboxes()", () => {
 });
 
 test("sendActivity()", async (t) => {
-  mf.install();
+  fetchMock.spyGlobal();
 
   let httpSigVerified: boolean | null = null;
   let request: Request | null = null;
-  mf.mock("POST@/inbox", async (req) => {
-    httpSigVerified = false;
-    request = req.clone();
-    const options = {
-      documentLoader: mockDocumentLoader,
-      contextLoader: mockDocumentLoader,
-    };
-    const key = await verifyRequest(request, options);
-    const activity = await Activity.fromJsonLd(await request.json(), options);
-    if (key != null && await doesActorOwnKey(activity, key, options)) {
-      httpSigVerified = true;
-    }
-    if (httpSigVerified) return new Response("", { status: 202 });
-    return new Response("", { status: 401 });
-  });
+  fetchMock.post(
+    "https://example.com/inbox",
+    async (cl) => {
+      httpSigVerified = false;
+      request = cl.request!.clone();
+      const options = {
+        documentLoader: mockDocumentLoader,
+        contextLoader: mockDocumentLoader,
+      };
+      const key = await verifyRequest(request, options);
+      const activity = await Activity.fromJsonLd(await request.json(), options);
+      if (key != null && await doesActorOwnKey(activity, key, options)) {
+        httpSigVerified = true;
+      }
+      if (httpSigVerified) return new Response("", { status: 202 });
+      return new Response("", { status: 401 });
+    },
+  );
 
   await t.step("success", async () => {
     const activity = {
@@ -225,11 +228,9 @@ test("sendActivity()", async (t) => {
     );
   });
 
-  mf.mock("POST@/inbox2", (_req) => {
-    return new Response("something went wrong", {
-      status: 500,
-      statusText: "Internal Server Error",
-    });
+  fetchMock.post("https://example.com/inbox2", {
+    status: 500,
+    body: "something went wrong",
   });
 
   await t.step("failure", async () => {
@@ -254,5 +255,5 @@ test("sendActivity()", async (t) => {
     );
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });

@@ -1,4 +1,4 @@
-import { cp, glob, rm } from "node:fs/promises";
+import { cp, glob } from "node:fs/promises";
 import { join, sep } from "node:path";
 import { defineConfig } from "tsdown";
 
@@ -10,6 +10,7 @@ export default defineConfig({
     "./nodeinfo/mod.ts",
     "./runtime/mod.ts",
     "./sig/mod.ts",
+    "./testing/mod.ts",
     "./vocab/mod.ts",
     "./webfinger/mod.ts",
     "./x/hono.ts",
@@ -22,6 +23,7 @@ export default defineConfig({
   ],
   dts: true,
   unbundle: true,
+  external: [/^node:/],
   inputOptions: {
     onwarn(warning, defaultHandler) {
       if (
@@ -48,10 +50,6 @@ export default defineConfig({
   },
   hooks: {
     "build:done": async (ctx) => {
-      await rm(join(ctx.options.outDir, "testing", "fixtures"), {
-        recursive: true,
-        force: true,
-      });
       await cp(
         join("testing", "fixtures"),
         join(ctx.options.outDir, "testing", "fixtures"),

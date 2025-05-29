@@ -32,6 +32,7 @@
     "asn1js": "npm:asn1js@^3.0.5",
     "byte-encodings": "npm:byte-encodings@^1.0.11",
     "fast-check": "npm:fast-check@^3.22.0",
+    "fetch-mock": "npm:fetch-mock@^12.5.2",
     "json-canon": "npm:json-canon@^1.0.1",
     "jsonld": "npm:jsonld@^8.3.2",
     "multicodec": "npm:multicodec@^3.2.1",
@@ -46,6 +47,13 @@
   ],
   "exclude": [
     "apidoc/",
+    "cfworkers/dist/",
+    "cfworkers/fixtures/",
+    "cfworkers/imports.ts",
+    "cfworkers/README.md",
+    "cfworkers/server.ts",
+    "cfworkers/server.js",
+    "cfworkers/server.js.map",
     "codegen/schema.yaml",
     "dist/",
     "node_modules/",
@@ -124,12 +132,14 @@
         "pnpm:build"
       ]
     },
+    "test:cfworkers": "pnpm run test:cfworkers",
     "test-all": {
       "dependencies": [
         "check",
         "test",
         "test:node",
-        "test:bun"
+        "test:bun",
+        "test:cfworkers"
       ]
     }
   }

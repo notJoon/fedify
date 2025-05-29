@@ -1,5 +1,5 @@
-import * as mf from "@hongminhee/deno-mock-fetch";
 import { assertEquals, assertRejects } from "@std/assert";
+import fetchMock from "fetch-mock";
 import { verifyRequest } from "../sig/http.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import { rsaPrivateKey2 } from "../testing/keys.ts";
@@ -8,21 +8,24 @@ import { getAuthenticatedDocumentLoader } from "./authdocloader.ts";
 import { UrlError } from "./url.ts";
 
 test("getAuthenticatedDocumentLoader()", async (t) => {
-  mf.install();
+  fetchMock.spyGlobal();
 
-  mf.mock("GET@/object", async (req) => {
-    const v = await verifyRequest(
-      req,
-      {
-        documentLoader: mockDocumentLoader,
-        contextLoader: mockDocumentLoader,
-        currentTime: Temporal.Now.instant(),
-      },
-    );
-    return new Response(JSON.stringify(v != null), {
-      headers: { "Content-Type": "application/json" },
-    });
-  });
+  fetchMock.get(
+    "begin:https://example.com/object",
+    async (cl) => {
+      const v = await verifyRequest(
+        cl.request!,
+        {
+          documentLoader: mockDocumentLoader,
+          contextLoader: mockDocumentLoader,
+          currentTime: Temporal.Now.instant(),
+        },
+      );
+      return new Response(JSON.stringify(v != null), {
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+  );
 
   await t.step("test", async () => {
     const loader = await getAuthenticatedDocumentLoader({
@@ -36,7 +39,7 @@ test("getAuthenticatedDocumentLoader()", async (t) => {
     });
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 
   await t.step("deny non-HTTP/HTTPS", async () => {
     const loader = await getAuthenticatedDocumentLoader({
