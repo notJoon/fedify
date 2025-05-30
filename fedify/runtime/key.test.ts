@@ -33,7 +33,7 @@ const rsaPkcs1 = "-----BEGIN RSA PUBLIC KEY-----\n" +
   "-----END RSA PUBLIC KEY-----\n";
 // cSpell: enable
 
-const rsaJwk = {
+const rsaJwk: JsonWebKey = {
   alg: "RS256",
   // cSpell: disable
   e: "AQAB",
@@ -65,7 +65,7 @@ const ed25519Pem = "-----BEGIN PUBLIC KEY-----\n" +
   "-----END PUBLIC KEY-----\n";
 // cSpell: enable
 
-const ed25519Jwk = {
+const ed25519Jwk: JsonWebKey = {
   alg: "Ed25519",
   kty: "OKP",
   crv: "Ed25519",

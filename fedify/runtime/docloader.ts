@@ -520,6 +520,9 @@ export function getUserAgent(
       // deno-lint-ignore no-explicit-any
       : (globalThis as any).process?.versions?.bun != null
       ? `Bun/${process.versions.bun}`
+      : "navigator" in globalThis &&
+          navigator.userAgent === "Cloudflare-Workers"
+      ? navigator.userAgent
       // deno-lint-ignore no-explicit-any
       : (globalThis as any).process?.versions?.node != null
       ? `Node.js/${process.versions.node}`

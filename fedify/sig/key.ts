@@ -126,6 +126,10 @@ export async function importJwk(
       type === "public" ? ["verify"] : ["sign"],
     );
   } else if (jwk.kty === "OKP" && jwk.crv === "Ed25519") {
+    if (navigator?.userAgent === "Cloudflare-Workers") {
+      jwk = { ...jwk };
+      delete jwk.alg;
+    }
     key = await crypto.subtle.importKey(
       "jwk",
       jwk,

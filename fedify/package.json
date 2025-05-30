@@ -106,14 +106,19 @@
     "@std/yaml": "jsr:^1.0.6",
     "@types/node": "^22.15.21",
     "fast-check": "^3.22.0",
+    "fetch-mock": "^12.5.2",
+    "miniflare": "^4.20250523.0",
     "tsdown": "^0.12.2",
-    "typescript": "^5.8.3"
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.17.0"
   },
   "scripts": {
     "build": "deno task codegen && tsdown",
     "prepack": "deno task codegen && tsdown && deno task check-version",
     "prepublish": "deno task codegen && tsdown && deno task check-version",
     "test": "deno task codegen && tsdown && cd dist/ && node --test",
-    "test:bun": "deno task codegen && tsdown && cd dist/ && bun test --timeout 60000"
+    "test:bun": "deno task codegen && tsdown && cd dist/ && bun test --timeout 60000",
+    "test:cfworkers": "deno task codegen && wrangler deploy --dry-run --outdir cfworkers && node --import=tsx cfworkers/client.ts"
   }
 }

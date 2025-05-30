@@ -1,6 +1,4 @@
 import { getLogger } from "@logtape/logtape";
-import { dirname, fromFileUrl, join } from "@std/path";
-import { readFileSync } from "node:fs";
 import type { RemoteDocument } from "../runtime/docloader.ts";
 
 const logger = getLogger(["fedify", "testing", "docloader"]);
@@ -13,31 +11,47 @@ const logger = getLogger(["fedify", "testing", "docloader"]);
  * the file `testing/fixtures/http/example.com/foo/bar` (no suffix) and return
  * its content as the response.
  */
-export function mockDocumentLoader(
+export async function mockDocumentLoader(
   resource: string,
 ): Promise<RemoteDocument> {
   const url = new URL(resource);
-  const path = (url.host + url.pathname).split("/");
-  if (url.search) path.push(url.search);
-  const filePath = join(
-    dirname(fromFileUrl(import.meta.url)),
-    "fixtures",
-    ...path,
-  );
-
-  let content: string;
+  if (
+    "navigator" in globalThis && navigator.userAgent === "Cloudflare-Workers"
+  ) {
+    const testUrl = new URL(url);
+    testUrl.hostname += ".test";
+    const resp = await fetch(testUrl);
+    if (resp.ok) {
+      const document = await resp.json();
+      logger.debug(
+        "Successfully fetched fixture {resource}: {status} {statusText}\n{body}",
+        {
+          resource,
+          status: resp.status,
+          statusText: resp.statusText,
+          body: document,
+        },
+      );
+      return { contextUrl: null, document, documentUrl: resource };
+    }
+    const error = await resp.text();
+    logger.error("Failed to fetch fixture {resource}: {error}", {
+      resource,
+      error,
+    });
+    throw new Error(error);
+  }
+  const path = `./fixtures/${url.host}${url.pathname}.json`;
+  // deno-lint-ignore no-explicit-any
+  let document: any;
   try {
-    content = readFileSync(filePath, { encoding: "utf-8" });
+    document = (await import(path, { with: { type: "json" } })).default;
   } catch (error) {
-    logger.error("Failed to read fixture file {filePath}: {error}", {
-      filePath,
+    logger.error("Failed to read fixture file {path}: {error}", {
+      path,
       error,
     });
     throw error;
   }
-  return Promise.resolve({
-    contextUrl: null,
-    document: JSON.parse(content),
-    documentUrl: resource,
-  });
+  return { contextUrl: null, document, documentUrl: resource };
 }

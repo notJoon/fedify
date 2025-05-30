@@ -1,4 +1,3 @@
-import * as mf from "@hongminhee/deno-mock-fetch";
 import {
   assert,
   assertEquals,
@@ -9,8 +8,7 @@ import {
   assertStrictEquals,
   assertThrows,
 } from "@std/assert";
-import { dirname, join } from "@std/path";
-import { readFile } from "node:fs/promises";
+import fetchMock from "fetch-mock";
 import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
 import { fetchDocumentLoader, FetchError } from "../runtime/docloader.ts";
 import { signRequest, verifyRequest } from "../sig/http.ts";
@@ -19,6 +17,12 @@ import { detachSignature, signJsonLd, verifyJsonLd } from "../sig/ld.ts";
 import { doesActorOwnKey } from "../sig/owner.ts";
 import { signObject, verifyObject } from "../sig/proof.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
+import personFixture from "../testing/fixtures/example.com/person.json" with {
+  type: "json",
+};
+import person2Fixture from "../testing/fixtures/example.com/person2.json" with {
+  type: "json",
+};
 import {
   ed25519Multikey,
   ed25519PrivateKey,
@@ -202,11 +206,11 @@ test("Federation.createContext()", async (t) => {
     throw new FetchError(new URL(url), "Not found");
   };
 
-  mf.install();
+  fetchMock.spyGlobal();
 
-  mf.mock("GET@/object", async (req) => {
+  fetchMock.get("https://example.com/object", async (cl) => {
     const v = await verifyRequest(
-      req,
+      cl.request!,
       {
         contextLoader: mockDocumentLoader,
         documentLoader: mockDocumentLoader,
@@ -742,9 +746,15 @@ test("Federation.createContext()", async (t) => {
     assertStrictEquals(clone.federation, ctx.federation);
   });
 
-  mf.mock("GET@/.well-known/nodeinfo", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    assertEquals(req.headers.get("User-Agent"), "CustomUserAgent/1.2.3");
+  fetchMock.get("https://example.com/.well-known/nodeinfo", (cl) => {
+    const headers = (cl.options.headers ?? {}) as
+      | [string, string][]
+      | Record<string, string>
+      | Headers;
+    assertEquals(
+      new Headers(headers).get("User-Agent"),
+      "CustomUserAgent/1.2.3",
+    );
     return new Response(
       JSON.stringify({
         links: [
@@ -757,9 +767,15 @@ test("Federation.createContext()", async (t) => {
     );
   });
 
-  mf.mock("GET@/nodeinfo/2.1", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    assertEquals(req.headers.get("User-Agent"), "CustomUserAgent/1.2.3");
+  fetchMock.get("https://example.com/nodeinfo/2.1", (cl) => {
+    const headers = (cl.options.headers ?? {}) as
+      | [string, string][]
+      | Record<string, string>
+      | Headers;
+    assertEquals(
+      new Headers(headers).get("User-Agent"),
+      "CustomUserAgent/1.2.3",
+    );
     return new Response(JSON.stringify({
       software: { name: "foo", version: "1.2.3" },
       protocols: ["activitypub", "diaspora"],
@@ -909,51 +925,27 @@ test("Federation.createContext()", async (t) => {
     assertStrictEquals(clone.federation, ctx.federation);
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("Federation.setInboxListeners()", async (t) => {
   const kv = new MemoryKvStore();
 
-  mf.install();
+  fetchMock.spyGlobal();
 
-  mf.mock("GET@/key2", async () => {
-    return new Response(
-      JSON.stringify(
-        await rsaPublicKey2.toJsonLd({ contextLoader: mockDocumentLoader }),
-      ),
-      { headers: { "Content-Type": "application/activity+json" } },
-    );
+  fetchMock.get("https://example.com/key2", {
+    headers: { "Content-Type": "application/activity+json" },
+    body: await rsaPublicKey2.toJsonLd({ contextLoader: mockDocumentLoader }),
   });
 
-  mf.mock("GET@/person", async () => {
-    return new Response(
-      await readFile(
-        join(
-          dirname(import.meta.dirname!),
-          "testing",
-          "fixtures",
-          "example.com",
-          "person",
-        ),
-      ),
-      { headers: { "Content-Type": "application/activity+json" } },
-    );
+  fetchMock.get("begin:https://example.com/person2", {
+    headers: { "Content-Type": "application/activity+json" },
+    body: person2Fixture,
   });
 
-  mf.mock("GET@/person2", async () => {
-    return new Response(
-      await readFile(
-        join(
-          dirname(import.meta.dirname!),
-          "testing",
-          "fixtures",
-          "example.com",
-          "person2",
-        ),
-      ),
-      { headers: { "Content-Type": "application/activity+json" } },
-    );
+  fetchMock.get("begin:https://example.com/person", {
+    headers: { "Content-Type": "application/activity+json" },
+    body: personFixture,
   });
 
   await t.step("path match", () => {
@@ -1238,7 +1230,7 @@ test("Federation.setInboxListeners()", async (t) => {
     assertEquals(response.status, 500);
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("Federation.setInboxDispatcher()", async (t) => {
@@ -1305,18 +1297,18 @@ test("Federation.setInboxDispatcher()", async (t) => {
 });
 
 test("FederationImpl.sendActivity()", async (t) => {
-  mf.install();
+  fetchMock.spyGlobal();
 
   let verified: ("http" | "ld" | "proof")[] | null = null;
   let request: Request | null = null;
-  mf.mock("POST@/inbox", async (req) => {
+  fetchMock.post("https://example.com/inbox", async (cl) => {
     verified = [];
-    request = req.clone();
+    request = cl.request!.clone();
     const options = {
       documentLoader: mockDocumentLoader,
       contextLoader: mockDocumentLoader,
     };
-    let json = await req.json();
+    let json = await cl.request!.json();
     if (await verifyJsonLd(json, options)) verified.push("ld");
     json = detachSignature(json);
     let activity = await verifyObject(Activity, json, options);
@@ -1426,7 +1418,7 @@ test("FederationImpl.sendActivity()", async (t) => {
     );
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("ContextImpl.lookupObject()", async (t) => {
@@ -1434,31 +1426,31 @@ test("ContextImpl.lookupObject()", async (t) => {
   // the ContextImpl.lookupObject() method.  Other aspects of the method are
   // tested in the lookupObject() tests.
 
-  mf.install();
-  mf.mock("GET@/.well-known/webfinger", () =>
-    new Response(
-      JSON.stringify({
-        subject: "acct:test@localhost",
-        links: [
-          {
-            rel: "self",
-            type: "application/activity+json",
-            href: "https://localhost/actor",
-          },
-        ],
-      }),
-      { headers: { "Content-Type": "application/jrd+json" } },
-    ));
-  mf.mock("GET@/actor", () =>
-    new Response(
-      JSON.stringify({
-        "@context": "https://www.w3.org/ns/activitystreams",
-        "type": "Person",
-        "id": "https://localhost/actor",
-        "preferredUsername": "test",
-      }),
-      { headers: { "Content-Type": "application/activity+json" } },
-    ));
+  fetchMock.spyGlobal();
+
+  fetchMock.get("begin:https://localhost/.well-known/webfinger", {
+    headers: { "Content-Type": "application/jrd+json" },
+    body: {
+      subject: "acct:test@localhost",
+      links: [
+        {
+          rel: "self",
+          type: "application/activity+json",
+          href: "https://localhost/actor",
+        },
+      ],
+    },
+  });
+
+  fetchMock.get("https://localhost/actor", {
+    headers: { "Content-Type": "application/activity+json" },
+    body: {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      "type": "Person",
+      "id": "https://localhost/actor",
+      "preferredUsername": "test",
+    },
+  });
 
   await t.step("allowPrivateAddress: true", async () => {
     const federation = createFederation<void>({
@@ -1482,19 +1474,21 @@ test("ContextImpl.lookupObject()", async (t) => {
     assertEquals(result, null);
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("ContextImpl.sendActivity()", async (t) => {
-  mf.install();
+  fetchMock.spyGlobal();
 
   let verified: ("http" | "ld" | "proof")[] | null = null;
   let request: Request | null = null;
   let collectionSyncHeader: string | null = null;
-  mf.mock("POST@/inbox", async (req) => {
+  fetchMock.post("https://example.com/inbox", async (cl) => {
     verified = [];
-    request = req.clone();
-    collectionSyncHeader = req.headers.get("Collection-Synchronization");
+    request = cl.request!.clone();
+    collectionSyncHeader = cl.request!.headers.get(
+      "Collection-Synchronization",
+    );
     const options = {
       async documentLoader(url: string) {
         const response = await federation.fetch(
@@ -1531,7 +1525,7 @@ test("ContextImpl.sendActivity()", async (t) => {
         },
       } satisfies KeyCache,
     };
-    let json = await req.json();
+    let json = await cl.request!.json();
     if (await verifyJsonLd(json, options)) verified.push("ld");
     json = detachSignature(json);
     let activity = await verifyObject(Activity, json, options);
@@ -1913,6 +1907,8 @@ test("ContextImpl.sendActivity()", async (t) => {
 
     assertNotEquals(collectionSyncHeader, null);
   });
+
+  fetchMock.hardReset();
 });
 
 test("ContextImpl.routeActivity()", async () => {
@@ -2070,18 +2066,18 @@ test("ContextImpl.routeActivity()", async () => {
 });
 
 test("InboxContextImpl.forwardActivity()", async (t) => {
-  mf.install();
+  fetchMock.spyGlobal();
 
   let verified: ("http" | "ld" | "proof")[] | null = null;
   let request: Request | null = null;
-  mf.mock("POST@/inbox", async (req) => {
+  fetchMock.post("https://example.com/inbox", async (cl) => {
     verified = [];
-    request = req.clone();
+    request = cl.request!.clone();
     const options = {
       documentLoader: mockDocumentLoader,
       contextLoader: mockDocumentLoader,
     };
-    let json = await req.json();
+    let json = await cl.request!.json();
     if (await verifyJsonLd(json, options)) verified.push("ld");
     json = detachSignature(json);
     let activity = await verifyObject(Activity, json, options);
@@ -2237,5 +2233,5 @@ test("InboxContextImpl.forwardActivity()", async (t) => {
     assertEquals(verified, ["ld"]);
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });

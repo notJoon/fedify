@@ -1,38 +1,36 @@
-import * as mf from "@hongminhee/deno-mock-fetch";
 import { assertEquals, assertInstanceOf } from "@std/assert";
+import fetchMock from "fetch-mock";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import { test } from "../testing/mod.ts";
 import { lookupObject, traverseCollection } from "./lookup.ts";
 import { Collection, Note, Object, Person } from "./vocab.ts";
 
 test("lookupObject()", async (t) => {
-  mf.install();
+  fetchMock.spyGlobal();
 
-  mf.mock("GET@/.well-known/webfinger", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    return new Response(
-      JSON.stringify({
-        subject: "acct:johndoe@example.com",
-        links: [
-          {
-            rel: "alternate",
-            href: "https://example.com/object",
-            type: "application/activity+json",
-          },
-          {
-            rel: "self",
-            href: "https://example.com/html/person",
-            type: "text/html",
-          },
-          {
-            rel: "self",
-            href: "https://example.com/person",
-            type: "application/activity+json",
-          },
-        ],
-      }),
-    );
-  });
+  fetchMock.get(
+    "begin:https://example.com/.well-known/webfinger",
+    {
+      subject: "acct:johndoe@example.com",
+      links: [
+        {
+          rel: "alternate",
+          href: "https://example.com/object",
+          type: "application/activity+json",
+        },
+        {
+          rel: "self",
+          href: "https://example.com/html/person",
+          type: "text/html",
+        },
+        {
+          rel: "self",
+          href: "https://example.com/person",
+          type: "application/activity+json",
+        },
+      ],
+    },
+  );
 
   const options = {
     documentLoader: mockDocumentLoader,
@@ -74,20 +72,16 @@ test("lookupObject()", async (t) => {
     );
   });
 
-  mf.mock("GET@/.well-known/webfinger", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    return new Response(
-      JSON.stringify({
-        subject: "acct:janedoe@example.com",
-        links: [
-          {
-            rel: "self",
-            href: "https://example.com/404",
-            type: "application/activity+json",
-          },
-        ],
-      }),
-    );
+  fetchMock.removeRoutes();
+  fetchMock.get("begin:https://example.com/.well-known/webfinger", {
+    subject: "acct:janedoe@example.com",
+    links: [
+      {
+        rel: "self",
+        href: "https://example.com/404",
+        type: "application/activity+json",
+      },
+    ],
   });
 
   await t.step("not found", async () => {
@@ -95,7 +89,7 @@ test("lookupObject()", async (t) => {
     assertEquals(await lookupObject("https://example.com/404", options), null);
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("traverseCollection()", async () => {

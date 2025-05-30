@@ -5,7 +5,9 @@ import {
   reset,
   type Sink,
 } from "@logtape/logtape";
-import { test as nodeTest, type TestContext } from "node:test";
+import type { TestContext } from "node:test";
+
+export const testDefinitions: Deno.TestDefinition[] = [];
 
 export function test(options: Deno.TestDefinition): void;
 export function test(
@@ -31,8 +33,9 @@ export function test(
       ? { name, fn: options }
       : { name, ...options, fn: fn! }
     : (name satisfies Deno.TestDefinition);
-  const func: (t: Deno.TestContext) => void | Promise<void> = def.fn;
+  testDefinitions.push(def);
   if ("Deno" in globalThis) {
+    const func: (t: Deno.TestContext) => void | Promise<void> = def.fn;
     Deno.test({
       ...def,
       async fn(t: Deno.TestContext) {
@@ -126,9 +129,18 @@ export function test(
     else if (def.only) bunTest.only(def.name, fn);
     else bunTest(def.name, fn);
   } else {
-    nodeTest(def.name, { only: def.only, skip: def.ignore }, async (t) => {
-      await def.fn(intoDenoTestContext(def.name, t));
-    });
+    try {
+      const { test: nodeTest } = require("node:test");
+      nodeTest(
+        def.name,
+        { only: def.only, skip: def.ignore },
+        async (t: TestContext) => {
+          await def.fn(intoDenoTestContext(def.name, t));
+        },
+      );
+    } catch {
+      // Fallback for environments without `node:test`
+    }
   }
 }
 
