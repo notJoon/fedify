@@ -132,7 +132,12 @@
         "pnpm:build"
       ]
     },
-    "test:cfworkers": "pnpm run test:cfworkers",
+    "test:cfworkers": {
+      "command": "pnpm exec wrangler deploy --dry-run --outdir cfworkers && node --import=tsx cfworkers/client.ts",
+      "dependencies": [
+        "pnpm:build"
+      ]
+    },
     "test-all": {
       "dependencies": [
         "check",
