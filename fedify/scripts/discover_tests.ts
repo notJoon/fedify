@@ -17,7 +17,6 @@ for await (const file of files) {
     path = path.slice(baseDir.length + SEPARATOR.length);
   }
   if (path.startsWith(`codegen${SEPARATOR}`)) continue;
-  else if (path.endsWith(`${SEPARATOR}vocab.test.js`)) continue;
   const relPath = `./${path.replaceAll(SEPARATOR, "/")}`;
   console.log(`import "${relPath}";`);
 }

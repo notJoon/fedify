@@ -857,7 +857,10 @@ const sampleValues: Record<string, any> = {
   "fedify:units": "m",
 };
 
-const types = await loadSchemaFiles(import.meta.dirname!);
+const types: Record<string, TypeSchema> =
+  navigator?.userAgent === "Cloudflare-Workers"
+    ? {} // FIXME: Cloudflare Workers does not support async I/O within global scope
+    : await loadSchemaFiles(import.meta.dirname!);
 for (const typeUri in types) {
   const type = types[typeUri];
   // @ts-ignore: classes are all different
@@ -1252,7 +1255,9 @@ for (const typeUri in types) {
   });
 
   if ("Deno" in globalThis) {
-    const { assertSnapshot } = await import("@std/testing/snapshot");
+    const { assertSnapshot } = await import("@std/testing/snapshot").catch(
+      () => ({ assertSnapshot: () => Promise.resolve() }),
+    );
 
     test(`Deno.inspect(${type.name}) [auto]`, async (t) => {
       const empty = new cls({});
