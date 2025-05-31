@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0(web-streams-polyfill@3.3.3)
       '@fedify/fedify':
-        specifier: 1.6.1-pr.242.861
-        version: 1.6.1-pr.242.861(web-streams-polyfill@3.3.3)
+        specifier: 1.6.1-pr.242.863
+        version: 1.6.1-pr.242.863(web-streams-polyfill@3.3.3)
       '@fedify/postgres':
         specifier: ^0.3.0
         version: 0.3.0(web-streams-polyfill@3.3.3)
@@ -460,8 +460,8 @@ packages:
     resolution: {integrity: sha512-s4ev+HMu6TNH1/RMNvIGvyn17D2dahq8Fpn/aDuBBngi0rHuOodZsoOnQMvEl9MoU0isv9GhPq5BP8oPYSmGaw==}
     engines: {bun: '>=1.1.0', deno: '>=2.0.0', node: '>=20.0.0'}
 
-  '@fedify/fedify@1.6.1-pr.242.861':
-    resolution: {integrity: sha512-EiBxK8oJsiqrvnQzzqZj4HaPEpIa09PuGQT6v8aC9ZlOoqwzsNId4d6R7FnyfzLUNtPCKHmOaCCWVh6xSqfWvA==}
+  '@fedify/fedify@1.6.1-pr.242.863':
+    resolution: {integrity: sha512-NyjF5dUSLPiCXqe6yHMf9cdrNRv/LiWkB7mYtophRWfkHNoawSi2TsPfbBruvxH03+CyApOO22S0l7bSAgZPDg==}
     engines: {bun: '>=1.1.0', deno: '>=2.0.0', node: '>=22.0.0'}
 
   '@fedify/postgres@0.3.0':
@@ -3009,7 +3009,7 @@ snapshots:
     transitivePeerDependencies:
       - web-streams-polyfill
 
-  '@fedify/fedify@1.6.1-pr.242.861(web-streams-polyfill@3.3.3)':
+  '@fedify/fedify@1.6.1-pr.242.863(web-streams-polyfill@3.3.3)':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       '@es-toolkit/es-toolkit': es-toolkit@1.38.0

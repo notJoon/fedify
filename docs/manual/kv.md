@@ -181,7 +181,8 @@ export default {
 > [!NOTE]
 > Since your `KVNamespace` is not bound to a global variable, but rather
 > passed as an argument to the `fetch()` method, you need to instantiate
-> your `Federation` object inside the `fetch()` method.
+> your `Federation` object inside the `fetch()` method, rather than the top
+> level.
 >
 > For better organization, you probably want to use a builder pattern to
 > register your dispatchers and listeners before instantiating the `Federation`

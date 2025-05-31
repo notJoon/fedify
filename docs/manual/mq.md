@@ -213,6 +213,88 @@ const federation = createFederation({
 [@fedify/amqp]: https://github.com/fedify-dev/amqp
 [RabbitMQ]: https://www.rabbitmq.com/
 
+### `WorkersMessageQueue` (Cloudflare Workers only)
+
+*This API is available since Fedify 1.6.0.*
+
+`WorkersMessageQueue` is a message queue implementation for [Cloudflare Workers]
+that uses Cloudflare's built-in [Cloudflare Queues] API.  It provides
+scalability and high performance, making it suitable for production use in
+Cloudflare Workers environments.  It requires a Cloudflare Queues setup and
+management.
+
+Best for
+:   Production use in Cloudflare Workers environments.
+
+Pros
+:   Persistent, reliable, scalable, easy to set up.
+
+Cons
+:   Only available in Cloudflare Workers runtime.
+
+~~~~ typescript twoslash
+// @noErrors: 2322 2345
+import type { FederationBuilder, KvStore } from "@fedify/fedify";
+const builder = undefined as unknown as FederationBuilder<void>;
+// ---cut-before---
+import type { Federation, Message } from "@fedify/fedify";
+import { WorkersMessageQueue } from "@fedify/fedify/x/cfworkers";
+
+export default {
+  async fetch(request, env, ctx) {
+    const federation: Federation<void> = await builder.build({
+// ---cut-start---
+      kv: undefined as unknown as KvStore,
+// ---cut-end---
+      queue: new WorkersMessageQueue(env.QUEUE_BINDING),
+    });
+    // Omit the rest of the code for brevity
+  },
+
+  // Since defining a `queue()` method is the only way to consume messages
+  // from the queue in Cloudflare Workers, we need to define it so that
+  // the messages can be manually processed by `Federation.processQueuedTask()`
+  // method:
+  async queue(batch, env, ctx) {
+    const federation: Federation<void> = await builder.build({
+// ---cut-start---
+      kv: undefined as unknown as KvStore,
+// ---cut-end---
+      queue: new WorkersMessageQueue(env.QUEUE_BINDING),
+    });
+    for (const msg of batch.messages) {
+      await federation.processQueuedTask(
+        undefined,  // You need to pass your context data here
+        msg.body as Message,  // You need to cast the message body to `Message`
+      );
+    }
+  }
+} satisfies ExportedHandler<{ QUEUE_BINDING: Queue }>;
+~~~~
+
+> [!NOTE]
+> Since your `Queue` is not bound to a global variable, but rather passed as
+> an argument to the `fetch()` and `queue()` methods, you need to instantiate
+> your `Federation` object inside these methods, rather than at the top level.
+>
+> For better organization, you probably want to use a builder pattern to
+> register your dispatchers and listeners before instantiating the `Federation`
+> object.  See the [*Builder pattern for structuring*
+> section](./federation.md#builder-pattern-for-structuring) for details.
+
+> [!NOTE]
+> The [Cloudflare Queues] API does not provide a way to poll messages from
+> the queue, so `WorkersMessageQueue.listen()` method always throws
+> a `TypeError` when invoked.  Instead, you should define a `queue()` method
+> in your Cloudflare worker, which will be called by the Cloudflare Queues
+> API when new messages are available in the queue.  Inside the `queue()`
+> method, you need to call `Federation.processQueuedTask()` method to manually
+> process the messages.  The `queue()` method is the only way to consume
+> messages from the queue in Cloudflare Workers.
+
+[Cloudflare Workers]: https://workers.cloudflare.com/
+[Cloudflare Queues]: https://developers.cloudflare.com/queues/
+
 
 Implementing a custom `MessageQueue`
 ------------------------------------
