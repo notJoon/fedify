@@ -4,6 +4,7 @@ import deflist from "markdown-it-deflist";
 import footnote from "markdown-it-footnote";
 import { jsrRef } from "markdown-it-jsr-ref";
 import process from "node:process";
+import { ModuleKind, ModuleResolutionKind, ScriptTarget } from "typescript";
 import { defineConfig } from "vitepress";
 import {
   groupIconMdPlugin,
@@ -210,12 +211,16 @@ export default withMermaid(defineConfig({
       transformerTwoslash({
         twoslashOptions: {
           compilerOptions: {
+            moduleResolution: ModuleResolutionKind.Bundler,
+            module: ModuleKind.ESNext,
+            target: ScriptTarget.ESNext,
             lib: ["dom", "dom.iterable", "esnext"],
             types: [
               "dom",
               "dom.iterable",
               "esnext",
               "@teidesu/deno-types/full",
+              "@cloudflare/workers-types/experimental",
             ],
             // @ts-ignore: Although it's typed as string, it's actually an array
             jsx: ["react-jsx"],

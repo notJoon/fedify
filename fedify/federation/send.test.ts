@@ -169,7 +169,7 @@ test("sendActivity()", async (t) => {
     "https://example.com/inbox",
     async (cl) => {
       httpSigVerified = false;
-      request = cl.request!.clone();
+      request = cl.request!.clone() as Request;
       const options = {
         documentLoader: mockDocumentLoader,
         contextLoader: mockDocumentLoader,

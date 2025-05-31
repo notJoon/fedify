@@ -11,6 +11,7 @@
     "./sig": "./sig/mod.ts",
     "./vocab": "./vocab/mod.ts",
     "./webfinger": "./webfinger/mod.ts",
+    "./x/cfworkers": "./x/cfworkers.ts",
     "./x/denokv": "./x/denokv.ts",
     "./x/fresh": "./x/fresh.ts",
     "./x/hono": "./x/hono.ts",
@@ -18,6 +19,7 @@
   },
   "imports": {
     "@cfworker/json-schema": "npm:@cfworker/json-schema@^4.1.1",
+    "@cloudflare/workers-types": "npm:@cloudflare/workers-types@^4.20250529.0",
     "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.38.0",
     "@hongminhee/deno-mock-fetch": "jsr:@hongminhee/deno-mock-fetch@^0.3.2",
     "@hugoalh/http-header-link": "jsr:@hugoalh/http-header-link@^1.0.2",

@@ -1,7 +1,7 @@
 import {
-  ansiColorFormatter,
-  configure,
-  type LogRecord,
+        ansiColorFormatter,
+        configure,
+        type LogRecord,
 } from "@logtape/logtape";
 import { AsyncLocalStorage } from "node:async_hooks";
 // @ts-ignore: The following code is generated
@@ -21,6 +21,7 @@ interface TestDefinition {
 // @ts-ignore: testDefinitions is untyped
 const tests: TestDefinition[] = testDefinitions;
 const logs: LogRecord[] = [];
+const messageBatches: MessageBatch[] = [];
 
 await configure({
   sinks: {
@@ -33,7 +34,7 @@ await configure({
 });
 
 export default {
-  async fetch(request: Request): Promise<Response> {
+  async fetch(request: Request, env: unknown): Promise<Response> {
     if (request.method === "GET") {
       return new Response(
         JSON.stringify(tests.map(({ name }) => name)),
@@ -98,7 +99,7 @@ export default {
       }
       logs.splice(0, logs.length); // Clear logs
       try {
-        await fn({ name, origin: "", step });
+        await fn({ name, origin: "", step, env, messageBatches });
       } catch (e) {
         failed ??= e;
       }
@@ -130,4 +131,11 @@ export default {
       },
     );
   },
+  async queue(
+    batch: MessageBatch,
+    env: unknown,
+    ctx: ExecutionContext
+  ): Promise<void> {
+    messageBatches.push(batch);
+  }
 };

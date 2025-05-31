@@ -1233,7 +1233,7 @@ test("handleInbox()", async () => {
 
   onNotFoundCalled = null;
   const signedRequest = await signRequest(
-    unsignedRequest.clone(),
+    unsignedRequest.clone() as Request,
     rsaPrivateKey3,
     rsaPublicKey3.id!,
   );

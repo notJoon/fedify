@@ -275,6 +275,7 @@ export async function loadSchemaFiles(
   const errors: SchemaError[] = [];
   for await (const relPath of readDirRecursive(dir)) {
     if (!relPath.match(/\.ya?ml$/i)) continue;
+    if (relPath.match(/(^|[/\\])schema.yaml$/i)) continue;
     const path = join(dir, relPath);
     let schema: TypeSchema;
     try {
