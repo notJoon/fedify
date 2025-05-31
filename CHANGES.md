@@ -46,6 +46,7 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
      -  Added `Federation.processQueuedTask()` method.  [[#242]]
      -  Added `Message` type.  [[#242]]
      -  Added `WorkersKvStore` class.  [[#241], [#242]]
+     -  Added `WorkersMessageQueue` class.  [[#241], [#242]]
 
  -  The minimum supported version of Node.js is now 22.0.0.
 

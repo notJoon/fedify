@@ -21,6 +21,7 @@ interface TestDefinition {
 // @ts-ignore: testDefinitions is untyped
 const tests: TestDefinition[] = testDefinitions;
 const logs: LogRecord[] = [];
+const messageBatches: MessageBatch[] = [];
 
 await configure({
   sinks: {
@@ -98,7 +99,7 @@ export default {
       }
       logs.splice(0, logs.length); // Clear logs
       try {
-        await fn({ name, origin: "", step, env });
+        await fn({ name, origin: "", step, env, messageBatches });
       } catch (e) {
         failed ??= e;
       }
@@ -130,4 +131,11 @@ export default {
       },
     );
   },
+  async queue(
+    batch: MessageBatch,
+    env: unknown,
+    ctx: ExecutionContext
+  ): Promise<void> {
+    messageBatches.push(batch);
+  }
 };
