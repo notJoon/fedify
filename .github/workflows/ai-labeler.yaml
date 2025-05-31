@@ -2,7 +2,7 @@ name: ai-labeler
 on:
   issues:
     types: [opened, edited, reopened, labeled]
-  pull_request:
+  pull_request_target:
     types: [opened, edited, reopened, labeled]
 
 jobs:
