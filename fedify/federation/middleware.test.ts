@@ -1303,7 +1303,7 @@ test("FederationImpl.sendActivity()", async (t) => {
   let request: Request | null = null;
   fetchMock.post("https://example.com/inbox", async (cl) => {
     verified = [];
-    request = cl.request!.clone();
+    request = cl.request!.clone() as Request;
     const options = {
       documentLoader: mockDocumentLoader,
       contextLoader: mockDocumentLoader,
@@ -1485,7 +1485,7 @@ test("ContextImpl.sendActivity()", async (t) => {
   let collectionSyncHeader: string | null = null;
   fetchMock.post("https://example.com/inbox", async (cl) => {
     verified = [];
-    request = cl.request!.clone();
+    request = cl.request!.clone() as Request;
     collectionSyncHeader = cl.request!.headers.get(
       "Collection-Synchronization",
     );
@@ -2072,7 +2072,7 @@ test("InboxContextImpl.forwardActivity()", async (t) => {
   let request: Request | null = null;
   fetchMock.post("https://example.com/inbox", async (cl) => {
     verified = [];
-    request = cl.request!.clone();
+    request = cl.request!.clone() as Request;
     const options = {
       documentLoader: mockDocumentLoader,
       contextLoader: mockDocumentLoader,

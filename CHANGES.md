@@ -41,13 +41,18 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
      -  Added `HttpMessageSignaturesSpecDeterminer` interface.
      -  Added `--first-knock` option to `fedify lookup` command.
 
+ -  Added `WorkersKvStore` class.  [[#233], [#241], [#242]]
+
  -  The minimum supported version of Node.js is now 22.0.0.
 
 [RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
 [#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227
+[#233]: https://github.com/fedify-dev/fedify/issues/233
 [#235]: https://github.com/fedify-dev/fedify/pull/235
 [#237]: https://github.com/fedify-dev/fedify/pull/237
+[#241]: https://github.com/fedify-dev/fedify/issues/241
+[#242]: https://github.com/fedify-dev/fedify/pull/242
 
 
 Version 1.5.3

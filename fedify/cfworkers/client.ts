@@ -11,6 +11,7 @@ const mf = new Miniflare({
   modules: [
     { type: "ESModule", path: join(import.meta.dirname ?? ".", "server.js") },
   ],
+  kvNamespaces: ["KV1", "KV2", "KV3"],
   async outboundService(request: Request) {
     const url = new URL(request.url);
     if (url.hostname.endsWith(".test")) {

@@ -610,7 +610,7 @@ async function verifyRequestDraft(
     return null;
   }
   const originalRequest = request;
-  request = request.clone();
+  request = request.clone() as Request;
   const dateHeader = request.headers.get("Date");
   if (dateHeader == null) {
     logger.debug(
@@ -909,7 +909,7 @@ async function verifyRequestRfc9421(
   }
 
   const originalRequest = request;
-  request = request.clone();
+  request = request.clone() as Request;
 
   // Check for required headers
   const signatureInputHeader = request.headers.get("Signature-Input");

@@ -13,6 +13,7 @@ export default defineConfig({
     "./testing/mod.ts",
     "./vocab/mod.ts",
     "./webfinger/mod.ts",
+    "./x/cfworkers.ts",
     "./x/hono.ts",
     "./x/sveltekit.ts",
     ...(await Array.fromAsync(glob(`**/*.test.ts`)))

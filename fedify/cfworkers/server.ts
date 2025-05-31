@@ -1,7 +1,7 @@
 import {
-  ansiColorFormatter,
-  configure,
-  type LogRecord,
+        ansiColorFormatter,
+        configure,
+        type LogRecord,
 } from "@logtape/logtape";
 import { AsyncLocalStorage } from "node:async_hooks";
 // @ts-ignore: The following code is generated
@@ -33,7 +33,7 @@ await configure({
 });
 
 export default {
-  async fetch(request: Request): Promise<Response> {
+  async fetch(request: Request, env: unknown): Promise<Response> {
     if (request.method === "GET") {
       return new Response(
         JSON.stringify(tests.map(({ name }) => name)),
@@ -98,7 +98,7 @@ export default {
       }
       logs.splice(0, logs.length); // Clear logs
       try {
-        await fn({ name, origin: "", step });
+        await fn({ name, origin: "", step, env });
       } catch (e) {
         failed ??= e;
       }
