@@ -102,6 +102,8 @@ test("FederationBuilder", async (t) => {
         impl.router.build("inbox", { identifier: "user1" }),
         "/users/user1/inbox",
       );
+
+      await builder.build({ kv }); // Ensure build can be called multiple times
     },
   );
 

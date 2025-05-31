@@ -27,6 +27,12 @@ export class InboxListenerSet<TContextData> {
     this.#listeners = new Map();
   }
 
+  clone(): InboxListenerSet<TContextData> {
+    const clone = new InboxListenerSet<TContextData>();
+    clone.#listeners = new Map(this.#listeners);
+    return clone;
+  }
+
   add<TActivity extends Activity>(
     // deno-lint-ignore no-explicit-any
     type: new (...args: any[]) => TActivity,

@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "@std/assert";
+import { assert, assertEquals, assertFalse, assertThrows } from "@std/assert";
 import { test } from "../testing/mod.ts";
 import { Router, RouterError, type RouterOptions } from "./router.ts";
 
@@ -12,6 +12,21 @@ function setUp(options: RouterOptions = {}): Router {
   );
   return router;
 }
+
+test("Router.clone()", () => {
+  const original = setUp();
+  const clone = original.clone();
+  clone.add("/users/{name}/friends", "friends");
+
+  assert(clone.has("friends"));
+  assertEquals(clone.route("/users/alice/friends"), {
+    name: "friends",
+    template: "/users/{name}/friends",
+    values: { name: "alice" },
+  });
+  assertFalse(original.has("friends"));
+  assertEquals(original.route("/users/alice/friends"), null);
+});
 
 test("Router.add()", () => {
   const router = new Router();

@@ -27,6 +27,8 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
 
  -  Added `Router.trailingSlashInsensitive` property.
 
+ -  Added `Router.clone()` method.
+
  -  Implemented HTTP Message Signatures ([RFC 9421]) with double-knocking.
     Currently, it only works with RSA-PKCS#1-v1.5.  [[#208]]
 

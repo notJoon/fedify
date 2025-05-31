@@ -1,4 +1,5 @@
 // @ts-ignore TS7016
+import { cloneDeep } from "@es-toolkit/es-toolkit";
 import { Router as InnerRouter } from "uri-template-router";
 import { parseTemplate, type Template } from "url-template";
 
@@ -34,6 +35,17 @@ export interface RouterRouteResult {
   values: Record<string, string>;
 }
 
+function cloneInnerRouter(router: InnerRouter): InnerRouter {
+  const clone = new InnerRouter();
+  clone.nid = router.nid;
+  clone.fsm = cloneDeep(router.fsm);
+  clone.routeSet = new Set(router.routeSet);
+  clone.templateRouteMap = new Map(router.templateRouteMap);
+  clone.valueRouteMap = new Map(router.valueRouteMap);
+  clone.hierarchy = cloneDeep(router.hierarchy);
+  return clone;
+}
+
 /**
  * URL router and constructor based on URI Template
  * ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
@@ -58,6 +70,16 @@ export class Router {
     this.#templates = {};
     this.#templateStrings = {};
     this.trailingSlashInsensitive = options.trailingSlashInsensitive ?? false;
+  }
+
+  clone(): Router {
+    const clone = new Router({
+      trailingSlashInsensitive: this.trailingSlashInsensitive,
+    });
+    clone.#router = cloneInnerRouter(this.#router);
+    clone.#templates = { ...this.#templates };
+    clone.#templateStrings = { ...this.#templateStrings };
+    return clone;
   }
 
   /**

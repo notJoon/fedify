@@ -104,26 +104,46 @@ export class FederationBuilderImpl<TContextData>
     const { FederationImpl } = await import("./middleware.ts");
     const f = new FederationImpl(options);
 
+    // In order to ensure `build()` can be called multiple times and
+    // each instance does not share their state, we clone everything
+    // that is mutable.  This includes the router and callbacks.
+
     // Assign the existing router instance but preserve the settings
     // Keep the original trailingSlashInsensitive configuration
     const trailingSlashInsensitiveValue = f.router.trailingSlashInsensitive;
-    f.router = this.router;
+    f.router = this.router.clone();
     f.router.trailingSlashInsensitive = trailingSlashInsensitiveValue;
     f._initializeRouter();
 
-    f.actorCallbacks = this.actorCallbacks;
+    f.actorCallbacks = this.actorCallbacks == null
+      ? undefined
+      : { ...this.actorCallbacks };
     f.nodeInfoDispatcher = this.nodeInfoDispatcher;
-    f.objectCallbacks = this.objectCallbacks;
-    f.objectTypeIds = this.objectTypeIds;
+    f.objectCallbacks = { ...this.objectCallbacks };
+    f.objectTypeIds = { ...this.objectTypeIds };
     f.inboxPath = this.inboxPath;
-    f.inboxCallbacks = this.inboxCallbacks;
-    f.outboxCallbacks = this.outboxCallbacks;
-    f.followingCallbacks = this.followingCallbacks;
-    f.followersCallbacks = this.followersCallbacks;
-    f.likedCallbacks = this.likedCallbacks;
-    f.featuredCallbacks = this.featuredCallbacks;
-    f.featuredTagsCallbacks = this.featuredTagsCallbacks;
-    f.inboxListeners = this.inboxListeners;
+    f.inboxCallbacks = this.inboxCallbacks == null
+      ? undefined
+      : { ...this.inboxCallbacks };
+    f.outboxCallbacks = this.outboxCallbacks == null
+      ? undefined
+      : { ...this.outboxCallbacks };
+    f.followingCallbacks = this.followingCallbacks == null
+      ? undefined
+      : { ...this.followingCallbacks };
+    f.followersCallbacks = this.followersCallbacks == null
+      ? undefined
+      : { ...this.followersCallbacks };
+    f.likedCallbacks = this.likedCallbacks == null
+      ? undefined
+      : { ...this.likedCallbacks };
+    f.featuredCallbacks = this.featuredCallbacks == null
+      ? undefined
+      : { ...this.featuredCallbacks };
+    f.featuredTagsCallbacks = this.featuredTagsCallbacks == null
+      ? undefined
+      : { ...this.featuredTagsCallbacks };
+    f.inboxListeners = this.inboxListeners?.clone();
     f.inboxErrorHandler = this.inboxErrorHandler;
     f.sharedInboxKeyDispatcher = this.sharedInboxKeyDispatcher;
     return f;
