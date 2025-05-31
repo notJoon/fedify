@@ -425,7 +425,7 @@ export class FederationImpl<TContextData>
       this.inboxQueueStarted = true;
       promises.push(
         this.inboxQueue.listen(
-          (msg) => this.#listenQueue(ctxData, msg),
+          (msg) => this.processQueuedTask(ctxData, msg),
           { signal },
         ),
       );
@@ -440,7 +440,7 @@ export class FederationImpl<TContextData>
       this.outboxQueueStarted = true;
       promises.push(
         this.outboxQueue.listen(
-          (msg) => this.#listenQueue(ctxData, msg),
+          (msg) => this.processQueuedTask(ctxData, msg),
           { signal },
         ),
       );
@@ -456,7 +456,7 @@ export class FederationImpl<TContextData>
       this.fanoutQueueStarted = true;
       promises.push(
         this.fanoutQueue.listen(
-          (msg) => this.#listenQueue(ctxData, msg),
+          (msg) => this.processQueuedTask(ctxData, msg),
           { signal },
         ),
       );
@@ -464,7 +464,10 @@ export class FederationImpl<TContextData>
     await Promise.all(promises);
   }
 
-  #listenQueue(ctxData: TContextData, message: Message): Promise<void> {
+  processQueuedTask(
+    contextData: TContextData,
+    message: Message,
+  ): Promise<void> {
     const tracer = this._getTracer();
     const extractedContext = propagation.extract(
       context.active(),
@@ -486,7 +489,7 @@ export class FederationImpl<TContextData>
               span.setAttribute("activitypub.activity.id", message.activityId);
             }
             try {
-              await this.#listenFanoutMessage(ctxData, message);
+              await this.#listenFanoutMessage(contextData, message);
             } catch (e) {
               span.setStatus({
                 code: SpanStatusCode.ERROR,
@@ -514,7 +517,7 @@ export class FederationImpl<TContextData>
               span.setAttribute("activitypub.activity.id", message.activityId);
             }
             try {
-              await this.#listenOutboxMessage(ctxData, message, span);
+              await this.#listenOutboxMessage(contextData, message, span);
             } catch (e) {
               span.setStatus({
                 code: SpanStatusCode.ERROR,
@@ -538,7 +541,7 @@ export class FederationImpl<TContextData>
           extractedContext,
           async (span) => {
             try {
-              await this.#listenInboxMessage(ctxData, message, span);
+              await this.#listenInboxMessage(contextData, message, span);
             } catch (e) {
               span.setStatus({
                 code: SpanStatusCode.ERROR,

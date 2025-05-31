@@ -33,6 +33,7 @@ import type {
   FederationQueueOptions,
 } from "./middleware.ts";
 import type { MessageQueue } from "./mq.ts";
+import type { Message } from "./queue.ts";
 import type { RetryPolicy } from "./retry.ts";
 
 /**
@@ -467,6 +468,20 @@ export interface Federation<TContextData> extends Federatable<TContextData> {
     contextData: TContextData,
     options?: FederationStartQueueOptions,
   ): Promise<void>;
+
+  /**
+   * Processes a queued message task.  This method handles different types of
+   * tasks such as fanout, outbox, and inbox messages.
+   *
+   * Note that you usually do not need to call this method directly unless you
+   * are deploying your federated application on a platform that does not
+   * support long-running processing, such as Cloudflare Workers.
+   * @param contextData The context data to pass to the context.
+   * @param message The message that represents the task to be processed.
+   * @returns A promise that resolves when the message has been processed.
+   * @since 1.6.0
+   */
+  processQueuedTask(contextData: TContextData, message: Message): Promise<void>;
 
   /**
    * Create a new context.
