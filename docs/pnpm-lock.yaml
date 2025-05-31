@@ -11,6 +11,9 @@ importers:
       '@braintree/sanitize-url':
         specifier: ^7.1.1
         version: 7.1.1
+      '@cloudflare/workers-types':
+        specifier: 4.20250529.0
+        version: 4.20250529.0
       '@deno/kv':
         specifier: ^0.8.4
         version: 0.8.4
@@ -18,8 +21,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0(web-streams-polyfill@3.3.3)
       '@fedify/fedify':
-        specifier: ^1.6.1-dev.828
-        version: 1.6.1-dev.828(web-streams-polyfill@3.3.3)
+        specifier: 1.6.1-pr.242.861
+        version: 1.6.1-pr.242.861(web-streams-polyfill@3.3.3)
       '@fedify/postgres':
         specifier: ^0.3.0
         version: 0.3.0(web-streams-polyfill@3.3.3)
@@ -98,6 +101,9 @@ importers:
       stringify-entities:
         specifier: ^4.0.4
         version: 4.0.4
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
       vitepress:
         specifier: ^1.5.0
         version: 1.6.3(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3)
@@ -234,6 +240,9 @@ packages:
 
   '@chevrotain/utils@11.0.3':
     resolution: {integrity: sha512-YslZMgtJUyuMbZ+aKvfF3x1f5liK4mWNxghFRv7jqRR9C3R3fAOGTTKvxXDa2Y1s9zSbcpuO0cAxDYsc9SrXoQ==}
+
+  '@cloudflare/workers-types@4.20250529.0':
+    resolution: {integrity: sha512-l6tVFpI6MUChMD0wK+Jhikb+aCbrmIR58CVpV/BhRT4THjl+nFhTT5N5ZqX42FDXdE3hCPLjueBMpPRhPUOB2A==}
 
   '@deno/kv-darwin-arm64@0.8.4':
     resolution: {integrity: sha512-j86nnE1QdLw20OrUs/6Iw6ZYzC8pmfU1+K4hNSVHO9K0bfy3VBd4JSHkHLmYCiHDkgIm+wTxct33thl6HxXz0Q==}
@@ -451,8 +460,8 @@ packages:
     resolution: {integrity: sha512-s4ev+HMu6TNH1/RMNvIGvyn17D2dahq8Fpn/aDuBBngi0rHuOodZsoOnQMvEl9MoU0isv9GhPq5BP8oPYSmGaw==}
     engines: {bun: '>=1.1.0', deno: '>=2.0.0', node: '>=20.0.0'}
 
-  '@fedify/fedify@1.6.1-dev.828':
-    resolution: {integrity: sha512-2yDwPBDOSfPvOusHb6f7fzF9M/o/tsOLeQtu7IclXJPFAzCkVa5FKd8w696+5X1j21f91LgvEwZ/fQvPAp06Vg==}
+  '@fedify/fedify@1.6.1-pr.242.861':
+    resolution: {integrity: sha512-EiBxK8oJsiqrvnQzzqZj4HaPEpIa09PuGQT6v8aC9ZlOoqwzsNId4d6R7FnyfzLUNtPCKHmOaCCWVh6xSqfWvA==}
     engines: {bun: '>=1.1.0', deno: '>=2.0.0', node: '>=22.0.0'}
 
   '@fedify/postgres@0.3.0':
@@ -2816,6 +2825,8 @@ snapshots:
 
   '@chevrotain/utils@11.0.3': {}
 
+  '@cloudflare/workers-types@4.20250529.0': {}
+
   '@deno/kv-darwin-arm64@0.8.4':
     optional: true
 
@@ -2998,7 +3009,7 @@ snapshots:
     transitivePeerDependencies:
       - web-streams-polyfill
 
-  '@fedify/fedify@1.6.1-dev.828(web-streams-polyfill@3.3.3)':
+  '@fedify/fedify@1.6.1-pr.242.861(web-streams-polyfill@3.3.3)':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       '@es-toolkit/es-toolkit': es-toolkit@1.38.0

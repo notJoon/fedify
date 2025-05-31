@@ -142,6 +142,55 @@ const federation = createFederation<void>({
 [`PostgresKvStore`]: https://jsr.io/@fedify/postgres/doc/kv/~/PostgresKvStore
 [@fedify/postgres]: https://github.com/fedify-dev/postgres
 
+### `WorkersKvStore` (Cloudflare Workers only)
+
+*This API is available since Fedify 1.6.0.*
+
+`WorkersKvStore` is a key–value store implementation for [Cloudflare Workers]
+that uses Cloudflare's built-in [Cloudflare Workers KV] API.  It provides
+persistent storage and good performance for Cloudflare Workers environments.
+It's suitable for production use in Cloudflare Workers applications.
+
+Best for
+:   Production use in Cloudflare Workers environments.
+
+Pros
+:   Persistent storage, good performance, easy to set up.
+
+Cons
+:   Only available in Cloudflare Workers runtime.
+
+~~~~ typescript twoslash
+// @noErrors: 2345
+import type { FederationBuilder } from "@fedify/fedify";
+const builder = undefined as unknown as FederationBuilder<void>;
+// ---cut-before---
+import type { Federation } from "@fedify/fedify";
+import { WorkersKvStore } from "@fedify/fedify/x/cfworkers";
+
+export default {
+  async fetch(request, env, ctx) {
+    const federation: Federation<void> = await builder.build({
+      kv: new WorkersKvStore(env.KV_BINDING),
+    });
+    return await federation.fetch(request, { contextData: undefined });
+  }
+} satisfies ExportedHandler<{ KV_BINDING: KVNamespace<string> }>;
+~~~~
+
+> [!NOTE]
+> Since your `KVNamespace` is not bound to a global variable, but rather
+> passed as an argument to the `fetch()` method, you need to instantiate
+> your `Federation` object inside the `fetch()` method.
+>
+> For better organization, you probably want to use a builder pattern to
+> register your dispatchers and listeners before instantiating the `Federation`
+> object.  See the [*Builder pattern for structuring*
+> section](./federation.md#builder-pattern-for-structuring) for details.
+
+[Cloudflare Workers]: https://workers.cloudflare.com/
+[Cloudflare Workers KV]: https://developers.cloudflare.com/kv/
+
 
 Implementing a custom `KvStore`
 -------------------------------
