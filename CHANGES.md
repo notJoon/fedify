@@ -29,7 +29,7 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
 
  -  Added `Router.clone()` method.
 
- -  Implemented HTTP Message Signatures ([RFC 9421]) with double-knocking.
+ -  Implemented HTTP Message Signatures ([RFC 9421]) with [double-knocking].
     Currently, it only works with RSA-PKCS#1-v1.5.  [[#208]]
 
      -  Added `HttpMessageSignaturesSpec` type.
@@ -51,6 +51,7 @@ To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
  -  The minimum supported version of Node.js is now 22.0.0.
 
 [RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
+[double-knocking]: https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions
 [Cloudflare Workers]: https://workers.cloudflare.com/
 [#208]: https://github.com/fedify-dev/fedify/issues/208
 [#227]: https://github.com/fedify-dev/fedify/issues/227
