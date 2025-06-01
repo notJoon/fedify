@@ -311,7 +311,8 @@ await kv.set(["keypair", "ed25519", identifier], {
 > Fedify currently supports two key types:
 >
 >  -  RSA-PKCS#1-v1.5 (`"RSASSA-PKCS1-v1_5"`) is used for [HTTP
->     Signatures](./send.md#http-signatures) and [Linked Data
+>     Signatures](./send.md#http-signatures), [HTTP Message
+>     Signatures](./send.md#http-message-signatures), and [Linked Data
 >     Signatures](./send.md#linked-data-signatures).
 >  -  Ed25519 (`"Ed25519"`) is used for [Object Integrity
 >     Proofs](./send.md#object-integrity-proofs).
