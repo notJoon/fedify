@@ -76,6 +76,7 @@ const MANUAL = {
     { text: "Testing", link: "/manual/test.md" },
     { text: "Logging", link: "/manual/log.md" },
     { text: "OpenTelemetry", link: "/manual/opentelemetry.md" },
+    { text: "Deployment", link: "/manual/deploy.md" }
   ],
   activeMatch: "/manual",
 };
