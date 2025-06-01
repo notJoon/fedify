@@ -3,6 +3,7 @@
     "./fedify",
     "./cli",
     "./examples/blog",
+    "./examples/cloudflare-workers",
     "./examples/hono-sample"
   ],
   "imports": {
