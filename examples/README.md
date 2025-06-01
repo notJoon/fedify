@@ -16,7 +16,9 @@ added in the future.[^1]
      software](https://github.com/fedify-dev/hollo)
   -  [Hono integration sample](./hono-sample/)
   -  [Fedify–Express integration example](./express/)
-  -  [Fedify–Next.js integration example](./next-app-router/)
+  -  [Fedify–Next.js 14 integration example](./next14-app-router/)
+  -  [Fedify–Next.js 15 integration example](./next15-app-router/)
+  -  [Fedify on Cloudflare Workers example](./cloudflare-workers/)
 
 [^1]: Contributions are welcome!  If you have built an application with the
       Fedify framework and want to share it with others, please consider adding
