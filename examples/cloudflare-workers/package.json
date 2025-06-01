@@ -1,5 +1,5 @@
 {
-  "name": "@fedify/cloudflare-workers-sample",
+  "name": "@fedify/cloudflare-workers-example",
   "version": "0.1.0",
   "private": true,
   "scripts": {
