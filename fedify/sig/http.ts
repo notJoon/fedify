@@ -406,8 +406,8 @@ async function signRequestRfc9421(
   }
 
   // Use provided timestamp or current time
-  const created = (currentTime ?? Temporal.Now.instant()).epochMilliseconds /
-    1000;
+  const created = ((currentTime ?? Temporal.Now.instant()).epochMilliseconds /
+    1000) | 0; // Convert to seconds and truncate to integer
 
   // Define components to include in the signature
   const components = [
