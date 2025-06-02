@@ -253,7 +253,9 @@ export function createRfc9421SignatureBase(
       throw new Error(`Unsupported derived component: ${component}`);
     } else {
       // Regular header
-      value = request.headers.get(component) || "";
+      const header = request.headers.get(component);
+      if (header == null) throw new Error(`Missing header: ${component}`);
+      value = header;
     }
 
     // Format the component as per RFC 9421 Section 2.1
@@ -406,8 +408,12 @@ async function signRequestRfc9421(
   }
 
   // Use provided timestamp or current time
-  const created = ((currentTime ?? Temporal.Now.instant()).epochMilliseconds /
-    1000) | 0; // Convert to seconds and truncate to integer
+  currentTime ??= Temporal.Now.instant();
+  const created = (currentTime.epochMilliseconds / 1000) | 0; // Convert to seconds and truncate to integer
+
+  if (!headers.has("Date")) {
+    headers.set("Date", new Date(currentTime.toString()).toUTCString());
+  }
 
   // Define components to include in the signature
   const components = [
