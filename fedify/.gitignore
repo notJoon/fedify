@@ -14,3 +14,4 @@ dist/
 fedify-fedify-*.tgz
 node_modules/
 npm/
+pnpm-lock.yaml

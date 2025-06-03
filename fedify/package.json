@@ -86,7 +86,7 @@
     "@es-toolkit/es-toolkit": "npm:es-toolkit@^1.38.0",
     "@hugoalh/http-header-link": "^1.0.2",
     "@js-temporal/polyfill": "^0.5.1",
-    "@logtape/logtape": "^0.10.0",
+    "@logtape/logtape": "^0.11.0",
     "@multiformats/base-x": "^4.0.1",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/semantic-conventions": "^1.27.0",

@@ -7,8 +7,8 @@
     "./examples/hono-sample"
   ],
   "imports": {
-    "@logtape/file": "jsr:@logtape/file@^0.10.0",
-    "@logtape/logtape": "jsr:@logtape/logtape@^0.10.0",
+    "@logtape/file": "jsr:@logtape/file@^0.11.0",
+    "@logtape/logtape": "jsr:@logtape/logtape@^0.11.0",
     "@std/fs": "jsr:@std/fs@^1.0.3",
     "@std/path": "jsr:@std/path@^1.0.6",
     "json-preserve-indent": "npm:json-preserve-indent@^1.1.3",
