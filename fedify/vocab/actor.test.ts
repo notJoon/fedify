@@ -1,4 +1,3 @@
-import * as mf from "@hongminhee/deno-mock-fetch";
 import {
   assert,
   assertEquals,
@@ -8,6 +7,7 @@ import {
   assertThrows,
 } from "@std/assert";
 import * as fc from "fast-check";
+import fetchMock from "fetch-mock";
 import { test } from "../testing/mod.ts";
 import {
   type Actor,
@@ -94,15 +94,14 @@ test("getActorClassByTypeName()", () => {
 });
 
 test("getActorHandle()", async (t) => {
-  mf.install();
+  fetchMock.spyGlobal();
 
-  mf.mock(
-    "GET@/.well-known/webfinger",
-    (_) =>
-      new Response(
-        JSON.stringify({ subject: "acct:johndoe@foo.example.com" }),
-        { headers: { "Content-Type": "application/jrd+json" } },
-      ),
+  fetchMock.get(
+    "begin:https://foo.example.com/.well-known/webfinger?",
+    {
+      body: { subject: "acct:johndoe@foo.example.com" },
+      headers: { "Content-Type": "application/jrd+json" },
+    },
   );
 
   const actorId = new URL("https://foo.example.com/@john");
@@ -124,19 +123,19 @@ test("getActorHandle()", async (t) => {
     );
   });
 
-  mf.mock(
-    "GET@/.well-known/webfinger",
-    (_) =>
-      new Response(
-        JSON.stringify({
-          subject: "https://foo.example.com/@john",
-          aliases: [
-            "acct:john@bar.example.com",
-            "acct:johndoe@foo.example.com",
-          ],
-        }),
-        { headers: { "Content-Type": "application/jrd+json" } },
-      ),
+  fetchMock.removeRoutes();
+  fetchMock.get(
+    "begin:https://foo.example.com/.well-known/webfinger?",
+    {
+      body: {
+        subject: "https://foo.example.com/@john",
+        aliases: [
+          "acct:john@bar.example.com",
+          "acct:johndoe@foo.example.com",
+        ],
+      },
+      headers: { "Content-Type": "application/jrd+json" },
+    },
   );
 
   await t.step("WebFinger aliases", async () => {
@@ -152,27 +151,27 @@ test("getActorHandle()", async (t) => {
     );
   });
 
-  mf.mock(
-    "GET@/.well-known/webfinger",
-    (_) =>
-      new Response(
-        JSON.stringify({
-          subject: "acct:john@bar.example.com",
-          aliases: [
-            "https://foo.example.com/@john",
-          ],
-        }),
-        { headers: { "Content-Type": "application/jrd+json" } },
-      ),
+  fetchMock.get(
+    "begin:https://bar.example.com/.well-known/webfinger?",
+    {
+      body: {
+        subject: "acct:john@bar.example.com",
+        aliases: [
+          "https://foo.example.com/@john",
+        ],
+      },
+      headers: { "Content-Type": "application/jrd+json" },
+    },
   );
 
   await t.step("cross-origin WebFinger resources", async () => {
     assertEquals(await getActorHandle(actor), "@john@bar.example.com");
   });
 
-  mf.mock(
-    "GET@/.well-known/webfinger",
-    (_) => new Response(null, { status: 404 }),
+  fetchMock.removeRoutes();
+  fetchMock.get(
+    "begin:https://foo.example.com/.well-known/webfinger?",
+    { status: 404 },
   );
 
   await t.step("no WebFinger", async () => {
@@ -180,7 +179,7 @@ test("getActorHandle()", async (t) => {
     assertRejects(() => getActorHandle(actorId), TypeError);
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("normalizeActorHandle()", () => {

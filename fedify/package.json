@@ -104,7 +104,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250529.0",
-    "@hongminhee/deno-mock-fetch": "jsr:^0.3.2",
     "@std/assert": "jsr:^0.226.0",
     "@std/path": "jsr:^1.0.9",
     "@std/url": "jsr:1.0.0-rc.3",

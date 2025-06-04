@@ -21,7 +21,6 @@
     "@cfworker/json-schema": "npm:@cfworker/json-schema@^4.1.1",
     "@cloudflare/workers-types": "npm:@cloudflare/workers-types@^4.20250529.0",
     "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.38.0",
-    "@hongminhee/deno-mock-fetch": "jsr:@hongminhee/deno-mock-fetch@^0.3.2",
     "@hugoalh/http-header-link": "jsr:@hugoalh/http-header-link@^1.0.2",
     "@multiformats/base-x": "npm:@multiformats/base-x@^4.0.1",
     "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
