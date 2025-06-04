@@ -1,5 +1,5 @@
-import * as mf from "@hongminhee/deno-mock-fetch";
 import { assertEquals } from "@std/assert";
+import fetchMock from "fetch-mock";
 import { test } from "../testing/mod.ts";
 import {
   getNodeInfo,
@@ -19,20 +19,17 @@ import type {
 } from "./types.ts";
 
 test("getNodeInfo()", async (t) => {
-  mf.install();
+  fetchMock.spyGlobal();
 
-  mf.mock("GET@/.well-known/nodeinfo", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    return new Response(
-      JSON.stringify({
-        links: [
-          {
-            rel: "http://nodeinfo.diaspora.software/ns/schema/2.1",
-            href: "https://example.com/nodeinfo/2.1",
-          },
-        ],
-      }),
-    );
+  fetchMock.get("https://example.com/.well-known/nodeinfo", {
+    body: {
+      links: [
+        {
+          rel: "http://nodeinfo.diaspora.software/ns/schema/2.1",
+          href: "https://example.com/nodeinfo/2.1",
+        },
+      ],
+    },
   });
 
   const rawExpected = {
@@ -41,17 +38,8 @@ test("getNodeInfo()", async (t) => {
     usage: { users: {}, localPosts: 123, localComments: 456 },
   };
 
-  mf.mock("GET@/nodeinfo/2.1", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    return new Response(
-      JSON.stringify(rawExpected),
-    );
-  });
-
-  mf.mock("GET@/404", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    return new Response(null, { status: 404 });
-  });
+  fetchMock.get("https://example.com/nodeinfo/2.1", { body: rawExpected });
+  fetchMock.get("https://example.com/404", { status: 404 });
 
   const expected: NodeInfo = {
     software: {
@@ -78,11 +66,9 @@ test("getNodeInfo()", async (t) => {
     assertEquals(info, expected);
   });
 
-  mf.mock("GET@/.well-known/nodeinfo", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    return new Response(JSON.stringify({
-      links: [],
-    }));
+  fetchMock.removeRoutes();
+  fetchMock.get("https://example.com/.well-known/nodeinfo", {
+    body: { links: [] },
   });
 
   await t.step("indirect: no links", async () => {
@@ -90,9 +76,9 @@ test("getNodeInfo()", async (t) => {
     assertEquals(info, undefined);
   });
 
-  mf.mock("GET@/.well-known/nodeinfo", (req) => {
-    assertEquals(new URL(req.url).host, "example.com");
-    return new Response(null, { status: 404 });
+  fetchMock.removeRoutes();
+  fetchMock.get("https://example.com/.well-known/nodeinfo", {
+    status: 404,
   });
 
   await t.step("indirect: 404", async () => {
@@ -113,7 +99,7 @@ test("getNodeInfo()", async (t) => {
     assertEquals(info2, undefined);
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("parseNodeInfo()", () => {

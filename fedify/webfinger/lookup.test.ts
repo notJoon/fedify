@@ -1,6 +1,6 @@
 import { withTimeout } from "@es-toolkit/es-toolkit";
-import * as mf from "@hongminhee/deno-mock-fetch";
 import { assertEquals } from "@std/assert";
+import fetchMock from "fetch-mock";
 import { test } from "../testing/mod.ts";
 import type { ResourceDescriptor } from "./jrd.ts";
 import { lookupWebFinger } from "./lookup.ts";
@@ -28,11 +28,11 @@ test({
       );
     });
 
-    mf.install();
-    mf.mock("GET@/.well-known/webfinger", (req) => {
-      assertEquals(new URL(req.url).host, "example.com");
-      return new Response("", { status: 404 });
-    });
+    fetchMock.spyGlobal();
+    fetchMock.get(
+      "begin:https://example.com/.well-known/webfinger?",
+      { status: 404 },
+    );
 
     await t.step("not found", async () => {
       assertEquals(await lookupWebFinger("acct:johndoe@example.com"), null);
@@ -43,13 +43,11 @@ test({
       subject: "acct:johndoe@example.com",
       links: [],
     };
-    mf.mock("GET@/.well-known/webfinger", (req) => {
-      assertEquals(
-        req.url,
-        "https://example.com/.well-known/webfinger?resource=acct%3Ajohndoe%40example.com",
-      );
-      return new Response(JSON.stringify(expected));
-    });
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "https://example.com/.well-known/webfinger?resource=acct%3Ajohndoe%40example.com",
+      { body: expected },
+    );
 
     await t.step("acct", async () => {
       assertEquals(await lookupWebFinger("acct:johndoe@example.com"), expected);
@@ -59,40 +57,40 @@ test({
       subject: "https://example.com/foo",
       links: [],
     };
-    mf.mock("GET@/.well-known/webfinger", (req) => {
-      assertEquals(
-        req.url,
-        "https://example.com/.well-known/webfinger?resource=https%3A%2F%2Fexample.com%2Ffoo",
-      );
-      return new Response(JSON.stringify(expected2));
-    });
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "https://example.com/.well-known/webfinger?resource=https%3A%2F%2Fexample.com%2Ffoo",
+      { body: expected2 },
+    );
 
     await t.step("https", async () => {
       assertEquals(await lookupWebFinger("https://example.com/foo"), expected2);
     });
 
-    mf.mock("GET@/.well-known/webfinger", (_req) => {
-      return new Response("not json");
-    });
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "begin:https://example.com/.well-known/webfinger?",
+      { body: "not json" },
+    );
 
     await t.step("invalid response", async () => {
       assertEquals(await lookupWebFinger("acct:johndoe@example.com"), null);
     });
 
-    mf.mock("GET@/.well-known/webfinger", (_req) => {
-      return new Response(
-        JSON.stringify({
-          subject: "acct:test@localhost",
-          links: [
-            {
-              rel: "self",
-              type: "application/activity+json",
-              href: "https://localhost/actor",
-            },
-          ],
-        }),
-      );
-    });
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "begin:https://localhost/.well-known/webfinger?",
+      {
+        subject: "acct:test@localhost",
+        links: [
+          {
+            rel: "self",
+            type: "application/activity+json",
+            href: "https://localhost/actor",
+          },
+        ],
+      },
+    );
 
     await t.step("private address", async () => {
       assertEquals(await lookupWebFinger("acct:test@localhost"), null);
@@ -113,30 +111,30 @@ test({
       );
     });
 
-    mf.mock(
-      "GET@/.well-known/webfinger",
-      (_) =>
-        new Response("", {
-          status: 302,
-          headers: { Location: "/.well-known/webfinger2" },
-        }),
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "begin:https://example.com/.well-known/webfinger?",
+      {
+        status: 302,
+        headers: { Location: "/.well-known/webfinger2" },
+      },
     );
-    mf.mock(
-      "GET@/.well-known/webfinger2",
-      (_) => new Response(JSON.stringify(expected)),
+    fetchMock.get(
+      "begin:https://example.com/.well-known/webfinger2",
+      { body: expected },
     );
 
     await t.step("redirection", async () => {
       assertEquals(await lookupWebFinger("acct:johndoe@example.com"), expected);
     });
 
-    mf.mock(
-      "GET@/.well-known/webfinger",
-      (_) =>
-        new Response("", {
-          status: 302,
-          headers: { Location: "/.well-known/webfinger" },
-        }),
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "begin:https://example.com/.well-known/webfinger?",
+      {
+        status: 302,
+        headers: { Location: "/.well-known/webfinger" },
+      },
     );
 
     await t.step("infinite redirection", async () => {
@@ -147,33 +145,33 @@ test({
       assertEquals(result, null);
     });
 
-    mf.mock(
-      "GET@/.well-known/webfinger",
-      (_) =>
-        new Response("", {
-          status: 302,
-          headers: { Location: "ftp://example.com/" },
-        }),
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "begin:https://example.com/.well-known/webfinger?",
+      {
+        status: 302,
+        headers: { Location: "ftp://example.com/" },
+      },
     );
 
     await t.step("redirection to different protocol", async () => {
       assertEquals(await lookupWebFinger("acct:johndoe@example.com"), null);
     });
 
-    mf.mock(
-      "GET@/.well-known/webfinger",
-      (_) =>
-        new Response("", {
-          status: 302,
-          headers: { Location: "https://localhost/" },
-        }),
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "begin:https://example.com/.well-known/webfinger?",
+      {
+        status: 302,
+        headers: { Location: "https://localhost/" },
+      },
     );
 
     await t.step("redirection to private address", async () => {
       assertEquals(await lookupWebFinger("acct:johndoe@example.com"), null);
     });
 
-    mf.uninstall();
+    fetchMock.hardReset();
   },
 });
 

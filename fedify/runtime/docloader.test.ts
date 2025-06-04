@@ -1,5 +1,5 @@
-import * as mf from "@hongminhee/deno-mock-fetch";
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
+import fetchMock from "fetch-mock";
 import process from "node:process";
 import metadata from "../deno.json" with { type: "json" };
 import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
@@ -29,18 +29,16 @@ test("new FetchError()", () => {
 test("getDocumentLoader()", async (t) => {
   const fetchDocumentLoader = getDocumentLoader();
 
-  mf.install();
+  fetchMock.spyGlobal();
 
-  mf.mock("GET@/object", (_req) =>
-    new Response(
-      JSON.stringify({
-        "@context": "https://www.w3.org/ns/activitystreams",
-        id: "https://example.com/object",
-        name: "Fetched object",
-        type: "Object",
-      }),
-      { status: 200 },
-    ));
+  fetchMock.get("https://example.com/object", {
+    body: {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      id: "https://example.com/object",
+      name: "Fetched object",
+      type: "Object",
+    },
+  });
 
   await t.step("ok", async () => {
     assertEquals(await fetchDocumentLoader("https://example.com/object"), {
@@ -55,67 +53,49 @@ test("getDocumentLoader()", async (t) => {
     });
   });
 
-  mf.mock("GET@/link-ctx", (_req) =>
-    new Response(
-      JSON.stringify({
-        id: "https://example.com/link-ctx",
-        name: "Fetched object",
-        type: "Object",
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/activity+json",
-          Link: "<https://www.w3.org/ns/activitystreams>; " +
-            'rel="http://www.w3.org/ns/json-ld#context"; ' +
-            'type="application/ld+json"',
-        },
-      },
-    ));
+  fetchMock.get("https://example.com/link-ctx", {
+    body: {
+      id: "https://example.com/link-ctx",
+      name: "Fetched object",
+      type: "Object",
+    },
+    headers: {
+      "Content-Type": "application/activity+json",
+      Link: "<https://www.w3.org/ns/activitystreams>; " +
+        'rel="http://www.w3.org/ns/json-ld#context"; ' +
+        'type="application/ld+json"',
+    },
+  });
 
-  mf.mock("GET@/link-obj", (_req) =>
-    new Response(
-      "",
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          Link: '<https://example.com/object>; rel="alternate"; ' +
-            'type="application/activity+json"',
-        },
-      },
-    ));
+  fetchMock.get("https://example.com/link-obj", {
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      Link: '<https://example.com/object>; rel="alternate"; ' +
+        'type="application/activity+json"',
+    },
+  });
 
-  mf.mock("GET@/link-obj-relative", (_req) =>
-    new Response(
-      "",
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          Link: '</object>; rel="alternate"; ' +
-            'type="application/activity+json"',
-        },
-      },
-    ));
+  fetchMock.get("https://example.com/link-obj-relative", {
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      Link: '</object>; rel="alternate"; ' +
+        'type="application/activity+json"',
+    },
+  });
 
-  mf.mock("GET@/obj-w-wrong-link", (_req) =>
-    new Response(
-      JSON.stringify({
-        "@context": "https://www.w3.org/ns/activitystreams",
-        id: "https://example.com/obj-w-wrong-link",
-        name: "Fetched object",
-        type: "Object",
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          Link: '<https://example.com/object>; rel="alternate"; ' +
-            'type="application/ld+json; profile="https://www.w3.org/ns/activitystreams""',
-        },
-      },
-    ));
+  fetchMock.get("https://example.com/obj-w-wrong-link", {
+    body: {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      id: "https://example.com/obj-w-wrong-link",
+      name: "Fetched object",
+      type: "Object",
+    },
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      Link: '<https://example.com/object>; rel="alternate"; ' +
+        'type="application/ld+json; profile="https://www.w3.org/ns/activitystreams""',
+    },
+  });
 
   await t.step("Link header", async () => {
     assertEquals(await fetchDocumentLoader("https://example.com/link-ctx"), {
@@ -182,9 +162,8 @@ test("getDocumentLoader()", async (t) => {
     );
   });
 
-  mf.mock("GET@/html-link", (_req) =>
-    new Response(
-      `<html>
+  fetchMock.get("https://example.com/html-link", {
+    body: `<html>
         <head>
           <meta charset=utf-8>
           <link
@@ -193,11 +172,8 @@ test("getDocumentLoader()", async (t) => {
             href="https://example.com/object">
         </head>
       </html>`,
-      {
-        status: 200,
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      },
-    ));
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
 
   await t.step("HTML <link>", async () => {
     assertEquals(await fetchDocumentLoader("https://example.com/html-link"), {
@@ -212,9 +188,8 @@ test("getDocumentLoader()", async (t) => {
     });
   });
 
-  mf.mock("GET@/html-a", (_req) =>
-    new Response(
-      `<html>
+  fetchMock.get("https://example.com/html-a", {
+    body: `<html>
         <head>
           <meta charset=utf-8>
         </head>
@@ -225,11 +200,8 @@ test("getDocumentLoader()", async (t) => {
             href=https://example.com/object>test</a>
         </body>
       </html>`,
-      {
-        status: 200,
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      },
-    ));
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
 
   await t.step("HTML <a>", async () => {
     assertEquals(await fetchDocumentLoader("https://example.com/html-a"), {
@@ -244,16 +216,15 @@ test("getDocumentLoader()", async (t) => {
     });
   });
 
-  mf.mock("GET@/wrong-content-type", (_req) =>
-    new Response(
-      JSON.stringify({
-        "@context": "https://www.w3.org/ns/activitystreams",
-        id: "https://example.com/wrong-content-type",
-        name: "Fetched object",
-        type: "Object",
-      }),
-      { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } },
-    ));
+  fetchMock.get("https://example.com/wrong-content-type", {
+    body: {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      id: "https://example.com/wrong-content-type",
+      name: "Fetched object",
+      type: "Object",
+    },
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
 
   await t.step("Wrong Content-Type", async () => {
     assertEquals(
@@ -271,7 +242,7 @@ test("getDocumentLoader()", async (t) => {
     );
   });
 
-  mf.mock("GET@/404", (_req) => new Response("", { status: 404 }));
+  fetchMock.get("https://example.com/404", { status: 404 });
 
   await t.step("not ok", async () => {
     await assertRejects(
@@ -298,14 +269,13 @@ test("getDocumentLoader()", async (t) => {
     );
   });
 
-  mf.mock(
-    "GET@/localhost-redirect",
-    (_req) => Response.redirect("https://localhost/object", 302),
-  );
+  fetchMock.get("https://example.com/localhost-redirect", {
+    status: 302,
+    headers: { Location: "https://localhost/object" },
+  });
 
-  mf.mock("GET@/localhost-link", (_req) =>
-    new Response(
-      `<html>
+  fetchMock.get("https://example.com/localhost-link", {
+    body: `<html>
         <head>
           <meta charset=utf-8>
           <link
@@ -314,11 +284,17 @@ test("getDocumentLoader()", async (t) => {
             href="https://localhost/object">
         </head>
       </html>`,
-      {
-        status: 200,
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      },
-    ));
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+
+  fetchMock.get("https://localhost/object", {
+    body: {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      id: "https://localhost/object",
+      name: "Fetched object",
+      type: "Object",
+    },
+  });
 
   await t.step("allowPrivateAddress: false", async () => {
     await assertRejects(
@@ -343,7 +319,7 @@ test("getDocumentLoader()", async (t) => {
       documentUrl: "https://localhost/object",
       document: {
         "@context": "https://www.w3.org/ns/activitystreams",
-        id: "https://example.com/object",
+        id: "https://localhost/object",
         name: "Fetched object",
         type: "Object",
       },
@@ -362,7 +338,7 @@ test("getDocumentLoader()", async (t) => {
     );
   });
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("kvCache()", async (t) => {

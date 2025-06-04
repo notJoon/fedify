@@ -1,4 +1,3 @@
-import * as mf from "@hongminhee/deno-mock-fetch";
 import {
   assert,
   assertEquals,
@@ -7,6 +6,7 @@ import {
   assertStringIncludes,
 } from "@std/assert";
 import { encodeBase64 } from "byte-encodings/base64";
+import fetchMock from "fetch-mock";
 import { exportSpki } from "../runtime/key.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import {
@@ -1163,15 +1163,16 @@ test("verifyRequest() [rfc9421] test vector from Mastodon", async () => {
 
 test("doubleKnock() function with successful first attempt", async () => {
   // Install mock fetch handler
-  mf.install();
+  fetchMock.spyGlobal();
 
   // A counter to track the number of times the endpoint is hit
   let requestCount = 0;
   let firstRequestSpec: string | null = null;
 
   // Mock an endpoint that accepts RFC 9421 signatures
-  mf.mock("POST@/inbox-accepts-rfc9421", (req) => {
+  fetchMock.post("https://example.com/inbox-accepts-rfc9421", (cl) => {
     requestCount++;
+    const req = cl.request!;
     const signatureInputHeader = req.headers.get("Signature-Input");
     const signatureHeader = req.headers.get("Signature");
 
@@ -1243,12 +1244,12 @@ test("doubleKnock() function with successful first attempt", async () => {
     "Logged request should have RFC 9421 Signature header",
   );
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("doubleKnock() function with fallback to draft-cavage", async () => {
   // Install mock fetch handler
-  mf.install();
+  fetchMock.spyGlobal();
 
   // Track request attempts and specs used
   let requestCount = 0;
@@ -1256,7 +1257,8 @@ test("doubleKnock() function with fallback to draft-cavage", async () => {
   let secondSpec: string | null = null;
 
   // Mock an endpoint that only accepts draft-cavage signatures
-  mf.mock("POST@/inbox-accepts-draft-cavage", (req) => {
+  fetchMock.post("https://example.com/inbox-accepts-draft-cavage", (cl) => {
+    const req = cl.request!;
     requestCount++;
 
     // Check which signature format was used
@@ -1331,27 +1333,27 @@ test("doubleKnock() function with fallback to draft-cavage", async () => {
     "Successful spec should be remembered",
   );
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("doubleKnock() function with redirect handling", async () => {
   // Install mock fetch handler
-  mf.install();
+  fetchMock.spyGlobal();
 
   // Track request attempts and redirects
   const requestedUrls: string[] = [];
   const responseCodes: number[] = [];
 
   // Mock an endpoint that redirects
-  mf.mock("POST@/redirect-endpoint", (req) => {
-    requestedUrls.push(req.url);
+  fetchMock.post("https://example.com/redirect-endpoint", (cl) => {
+    requestedUrls.push(cl.url);
     responseCodes.push(302);
     return Response.redirect("https://example.com/final-endpoint", 302);
   });
 
   // Mock the destination endpoint
-  mf.mock("POST@/final-endpoint", (req) => {
-    requestedUrls.push(req.url);
+  fetchMock.post("https://example.com/final-endpoint", (cl) => {
+    requestedUrls.push(cl.url);
     responseCodes.push(202);
     return new Response("", { status: 202 });
   });
@@ -1397,19 +1399,20 @@ test("doubleKnock() function with redirect handling", async () => {
     "Response status codes should match expected sequence",
   );
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("doubleKnock() function with both specs rejected", async () => {
   // Install mock fetch handler
-  mf.install();
+  fetchMock.spyGlobal();
 
   // Track request attempts
   let requestCount = 0;
   const attempts: string[] = [];
 
   // Mock an endpoint that rejects all signatures
-  mf.mock("POST@/inbox-rejects-all", (req) => {
+  fetchMock.post("https://example.com/inbox-rejects-all", (cl) => {
+    const req = cl.request!;
     requestCount++;
 
     if (req.headers.has("Signature-Input")) {
@@ -1460,19 +1463,20 @@ test("doubleKnock() function with both specs rejected", async () => {
     "Second attempt should use draft-cavage",
   );
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("doubleKnock() function with specDeterminer choosing draft-cavage first", async () => {
   // Install mock fetch handler
-  mf.install();
+  fetchMock.spyGlobal();
 
   // Track request attempts
   let requestCount = 0;
   let firstSpec: string | null = null;
 
   // Mock an endpoint that accepts draft-cavage signatures
-  mf.mock("POST@/inbox-accepts-any", (req) => {
+  fetchMock.post("https://example.com/inbox-accepts-any", (cl) => {
+    const req = cl.request!;
     requestCount++;
 
     if (req.headers.has("Signature-Input")) {
@@ -1525,34 +1529,34 @@ test("doubleKnock() function with specDeterminer choosing draft-cavage first", a
     "First attempt should use draft-cavage",
   );
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("doubleKnock() complex redirect chain test", async () => {
   // Install mock fetch handler
-  mf.install();
+  fetchMock.spyGlobal();
 
   // Track request attempts
   const requestedUrls: string[] = [];
 
   // Create a redirect chain with 3 redirects
-  mf.mock("POST@/redirect1", (req) => {
-    requestedUrls.push(req.url);
+  fetchMock.post("https://example.com/redirect1", (cl) => {
+    requestedUrls.push(cl.url);
     return Response.redirect("https://example.com/redirect2", 302);
   });
 
-  mf.mock("POST@/redirect2", (req) => {
-    requestedUrls.push(req.url);
+  fetchMock.post("https://example.com/redirect2", (cl) => {
+    requestedUrls.push(cl.url);
     return Response.redirect("https://example.com/redirect3", 307);
   });
 
-  mf.mock("POST@/redirect3", (req) => {
-    requestedUrls.push(req.url);
+  fetchMock.post("https://example.com/redirect3", (cl) => {
+    requestedUrls.push(cl.url);
     return Response.redirect("https://example.com/final", 301);
   });
 
-  mf.mock("POST@/final", (req) => {
-    requestedUrls.push(req.url);
+  fetchMock.post("https://example.com/final", (cl) => {
+    requestedUrls.push(cl.url);
     return new Response("Success", { status: 200 });
   });
 
@@ -1622,19 +1626,20 @@ test("doubleKnock() complex redirect chain test", async () => {
     );
   }
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("doubleKnock() async specDeterminer test", async () => {
   // Install mock fetch handler
-  mf.install();
+  fetchMock.spyGlobal();
 
   // Track request attempts
   let requestCount = 0;
   let specUsed: string | null = null;
 
   // Mock an endpoint that accepts both types of signatures
-  mf.mock("POST@/inbox-async-determiner", (req) => {
+  fetchMock.post("https://example.com/inbox-async-determiner", (cl) => {
+    const req = cl.request!;
     requestCount++;
 
     if (req.headers.has("Signature-Input")) {
@@ -1689,7 +1694,7 @@ test("doubleKnock() async specDeterminer test", async () => {
     "Should use spec from async determiner",
   );
 
-  mf.uninstall();
+  fetchMock.hardReset();
 });
 
 test("timingSafeEqual()", async (t) => {
