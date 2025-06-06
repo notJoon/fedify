@@ -347,7 +347,7 @@ section](./context.md#looking-up-remote-objects) in the *Context* docs.
 Traversing remote collections
 -----------------------------
 
-See the [*Traversing remote collections* 
+See the [*Traversing remote collections*
 section](./context.md#traversing-remote-collections) in the *Context* docs.
 
 
@@ -487,8 +487,8 @@ corresponding TypeScript types:
 | Units                    | `"cm" \| "feet" \| "inches" \| "km" \| "m" \| "miles" \| URL` |
 
 [`URL`]: https://developer.mozilla.org/en-US/docs/Web/API/URL
-[`Temporal.Instant`]: https://tc39.es/proposal-temporal/docs/instant.html
-[`Temporal.Duration`]: https://tc39.es/proposal-temporal/docs/duration.html
+[`Temporal.Instant`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Instant
+[`Temporal.Duration`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration
 [`Uint8Array`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
 [BCP 47]: https://www.rfc-editor.org/info/bcp47
 [`LanguageTag`]: https://phensley.github.io/cldr-engine/docs/en/api-languagetag
