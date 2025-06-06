@@ -26,6 +26,7 @@ Supported FEPs
 
  -  [FEP-67ff][]: FEDERATION.md
  -  [FEP-8fcf][]: Followers collection synchronization across servers
+ -  [FEP-9091][]: Export Actor service
  -  [FEP-f1d5][]: NodeInfo in Fediverse Software
  -  [FEP-8b32][]: Object Integrity Proofs
  -  [FEP-521a][]: Representing actor's public keys
@@ -36,6 +37,7 @@ Supported FEPs
 
 [FEP-67ff]: https://w3id.org/fep/67ff
 [FEP-8fcf]: https://w3id.org/fep/8fcf
+[FEP-9091]: https://w3id.org/fep/9091
 [FEP-f1d5]: https://w3id.org/fep/f1d5
 [FEP-8b32]: https://w3id.org/fep/8b32
 [FEP-521a]: https://w3id.org/fep/521a
@@ -49,9 +51,11 @@ ActivityPub
 -----------
 
 Since Fedify is a framework, what activity types it uses is up to
-the application developers.  However, Fedify provides a set of
-activity types that are commonly used in the fediverse.  The following
-lists the activity types that Fedify provides:
+the application developers.  However, Fedify provides a comprehensive
+set of ActivityPub vocabulary types that are commonly used in the
+fediverse.
+
+### Activity types
 
  -  [`Accept`](https://jsr.io/@fedify/fedify/doc/vocab/~/Accept)
  -  [`Add`](https://jsr.io/@fedify/fedify/doc/vocab/~/Add)
@@ -83,3 +87,55 @@ lists the activity types that Fedify provides:
  -  [`Undo`](https://jsr.io/@fedify/fedify/doc/vocab/~/Undo)
  -  [`Update`](https://jsr.io/@fedify/fedify/doc/vocab/~/Update)
  -  [`View`](https://jsr.io/@fedify/fedify/doc/vocab/~/View)
+
+### Actor types
+
+ -  [`Application`](https://jsr.io/@fedify/fedify/doc/vocab/~/Application)
+ -  [`Group`](https://jsr.io/@fedify/fedify/doc/vocab/~/Group)
+ -  [`Organization`](https://jsr.io/@fedify/fedify/doc/vocab/~/Organization)
+ -  [`Person`](https://jsr.io/@fedify/fedify/doc/vocab/~/Person)
+ -  [`Service`](https://jsr.io/@fedify/fedify/doc/vocab/~/Service)
+
+### Object types
+
+ -  [`Article`](https://jsr.io/@fedify/fedify/doc/vocab/~/Article)
+ -  [`Audio`](https://jsr.io/@fedify/fedify/doc/vocab/~/Audio)
+ -  [`Document`](https://jsr.io/@fedify/fedify/doc/vocab/~/Document)
+ -  [`Event`](https://jsr.io/@fedify/fedify/doc/vocab/~/Event)
+ -  [`Image`](https://jsr.io/@fedify/fedify/doc/vocab/~/Image)
+ -  [`Note`](https://jsr.io/@fedify/fedify/doc/vocab/~/Note)
+ -  [`Page`](https://jsr.io/@fedify/fedify/doc/vocab/~/Page)
+ -  [`Place`](https://jsr.io/@fedify/fedify/doc/vocab/~/Place)
+ -  [`Profile`](https://jsr.io/@fedify/fedify/doc/vocab/~/Profile)
+ -  [`Tombstone`](https://jsr.io/@fedify/fedify/doc/vocab/~/Tombstone)
+ -  [`Video`](https://jsr.io/@fedify/fedify/doc/vocab/~/Video)
+
+### Collection types
+
+ -  [`Collection`](https://jsr.io/@fedify/fedify/doc/vocab/~/Collection)
+ -  [`CollectionPage`](https://jsr.io/@fedify/fedify/doc/vocab/~/CollectionPage)
+ -  [`OrderedCollection`](https://jsr.io/@fedify/fedify/doc/vocab/~/OrderedCollection)
+ -  [`OrderedCollectionPage`](https://jsr.io/@fedify/fedify/doc/vocab/~/OrderedCollectionPage)
+
+### Link types
+
+ -  [`Link`](https://jsr.io/@fedify/fedify/doc/vocab/~/Link)
+ -  [`Mention`](https://jsr.io/@fedify/fedify/doc/vocab/~/Mention)
+
+### Extended types
+
+ -  [`Emoji`](https://jsr.io/@fedify/fedify/doc/vocab/~/Emoji) (Mastodon extension)
+ -  [`Hashtag`](https://jsr.io/@fedify/fedify/doc/vocab/~/Hashtag)
+ -  [`PropertyValue`](https://jsr.io/@fedify/fedify/doc/vocab/~/PropertyValue) (Schema.org)
+ -  [`Relationship`](https://jsr.io/@fedify/fedify/doc/vocab/~/Relationship)
+
+### Cryptographic types
+
+ -  [`Key`](https://jsr.io/@fedify/fedify/doc/vocab/~/Key)
+ -  [`Multikey`](https://jsr.io/@fedify/fedify/doc/vocab/~/Multikey)
+ -  [`DataIntegrityProof`](https://jsr.io/@fedify/fedify/doc/vocab/~/DataIntegrityProof)
+
+### Service types
+
+ -  [`DidService`](https://jsr.io/@fedify/fedify/doc/vocab/~/DidService)
+ -  [`Endpoints`](https://jsr.io/@fedify/fedify/doc/vocab/~/Endpoints)
