@@ -6,7 +6,8 @@ Fedify changelog
 Version 1.6.1
 -------------
 
-To be released.  Note that 1.6.0 was skipped due to a mistake in the versioning.
+Released on June 7, 2025.  Note that 1.6.0 was skipped due to a mistake in
+the versioning.
 
  -  Added `Context.lookupWebFinger()` method to make WebFinger lookups
     accessible from the context.  [[#227]]
