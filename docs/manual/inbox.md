@@ -355,10 +355,15 @@ in production environments to prevent the server from being overwhelmed by
 incoming activities.
 
 With the `queue` enabled, the failed activities are automatically retried
-after a certain period of time.  The default retry strategy is exponential
-backoff with a maximum of 10 retries, but you can customize it by providing
-an [`inboxRetryPolicy`](./federation.md#inboxretrypolicy) option to
-the `createFederation()` function.
+after a certain period of time.  By default, Fedify handles retries using
+exponential backoff with a maximum of 10 retries, but you can customize it
+by providing an [`inboxRetryPolicy`](./federation.md#inboxretrypolicy) option
+to the `createFederation()` function.
+
+However, if your message queue backend provides native retry mechanisms
+(indicated by `MessageQueue.nativeRetrial` being `true`), Fedify will skip
+its own retry logic and rely on the backend to handle retries.  This avoids
+duplicate retry mechanisms and leverages the backend's optimized retry features.
 
 > [!NOTE]
 > Activities with invalid signatures/proofs are silently ignored and not queued.

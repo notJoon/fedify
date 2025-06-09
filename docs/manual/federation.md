@@ -324,6 +324,11 @@ satisfies the `RetryPolicy` type.  Or you can adjust the parameters of
 the `createExponentialBackoffRetryPolicy()` function, which is a default
 implementation of the retry policy.
 
+> [!NOTE]
+> This policy is ignored when using message queue backends that provide native
+> retry mechanisms (`MessageQueue.nativeRetrial` is `true`).  In such cases,
+> the backend's native retry logic takes precedence.
+
 ### `inboxRetryPolicy`
 
 *This API is available since Fedify 0.12.0.*
@@ -337,6 +342,11 @@ In the same way as the `outboxRetryPolicy` option, you can fully customize
 the retry policy by providing a custom function that satisfies the `RetryPolicy`
 type.  Or you can adjust the parameters of the built-in
 `createExponentialBackoffRetryPolicy()` function.
+
+> [!NOTE]
+> This policy is ignored when using message queue backends that provide native
+> retry mechanisms (`MessageQueue.nativeRetrial` is `true`).  In such cases,
+> the backend's native retry logic takes precedence.
 
 ### `activityTransformers`
 

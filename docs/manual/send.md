@@ -393,10 +393,15 @@ const federation = createFederation({
 > For further information, see the [*Message queue* section](./mq.md).
 
 The failed activities are automatically retried after a certain period of time.
-The default retry strategy is exponential backoff with a maximum of 10 retries,
-but you can customize it by providing
+By default, Fedify handles retries using exponential backoff with a maximum of
+10 retries, but you can customize it by providing
 an [`outboxRetryPolicy`](./federation.md#outboxretrypolicy) option to
 the `createFederation()` function.
+
+However, if your message queue backend provides native retry mechanisms
+(indicated by `MessageQueue.nativeRetrial` being `true`), Fedify will skip
+its own retry logic and rely on the backend to handle retries.  This avoids
+duplicate retry mechanisms and leverages the backend's optimized retry features.
 
 If the `queue` is not set, the `~Context.sendActivity()` method immediately
 sends the activity to the recipient's inbox.  If the delivery fails, it throws
