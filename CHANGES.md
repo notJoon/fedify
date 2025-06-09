@@ -8,6 +8,20 @@ Version 1.7.0
 
 To be released.
 
+ -  Added optional `MessageQueue.nativeRetrial` property to indicate whether
+    the message queue backend provides native retry mechanisms.  When `true`,
+    Fedify will skip its own retry logic and rely on the backend to handle
+    retries.  When `false` or omitted, Fedify will handle retries using its
+    own retry policies.  [[#250], [#251]]
+
+     -  `DenoKvMessageQueue.nativeRetrial` is `true`.
+     -  `WorkersMessageQueue.nativeRetrial` is `true`.
+     -  `InProcessMessageQueue.nativeRetrial` is `false`.
+     -  `ParallelMessageQueue.nativeRetrial` inherits from the wrapped queue.
+
+[#250]: https://github.com/fedify-dev/fedify/issues/250
+[#251]: https://github.com/fedify-dev/fedify/pull/251
+
 
 Version 1.6.1
 -------------

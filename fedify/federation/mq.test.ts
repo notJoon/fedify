@@ -1,5 +1,11 @@
 import { delay } from "@es-toolkit/es-toolkit";
-import { assertEquals, assertGreater, assertGreaterOrEqual } from "@std/assert";
+import {
+  assert,
+  assertEquals,
+  assertFalse,
+  assertGreater,
+  assertGreaterOrEqual,
+} from "@std/assert";
 import { test } from "../testing/mod.ts";
 import {
   InProcessMessageQueue,
@@ -9,6 +15,10 @@ import {
 
 test("InProcessMessageQueue", async (t) => {
   const mq = new InProcessMessageQueue();
+
+  await t.step("nativeRetrial property", () => {
+    assertFalse(mq.nativeRetrial);
+  });
 
   const messages: string[] = [];
   const controller = new AbortController();
@@ -94,6 +104,66 @@ test("InProcessMessageQueue", async (t) => {
   await listening;
 });
 
+test("MessageQueue.nativeRetrial", async (t) => {
+  if (
+    // @ts-ignore: Works on Deno
+    "Deno" in globalThis && "openKv" in globalThis.Deno &&
+    // @ts-ignore: Works on Deno
+    typeof globalThis.Deno.openKv === "function"
+  ) {
+    await t.step("DenoKvMessageQueue", async () => {
+      const { DenoKvMessageQueue } = await import(".." + "/x/denokv.ts");
+      const mq = new DenoKvMessageQueue(
+        // @ts-ignore: Works on Deno
+        await globalThis.Deno.openKv(":memory:"),
+      );
+      assert(mq.nativeRetrial);
+      if (Symbol.dispose in mq) {
+        const dispose = mq[Symbol.dispose];
+        if (typeof dispose === "function") dispose.call(mq);
+      }
+    });
+  }
+
+  await t.step("WorkersMessageQueue mock", () => {
+    // Mock Cloudflare Workers Queue for testing
+    class MockQueue {
+      send(_message: unknown, _options?: unknown): Promise<void> {
+        return Promise.resolve();
+      }
+      sendBatch(_messages: unknown[], _options?: unknown): Promise<void> {
+        return Promise.resolve();
+      }
+    }
+
+    // We need to mock the WorkersMessageQueue since Cloudflare Workers types
+    // might not be available in test environment
+    class TestWorkersMessageQueue implements MessageQueue {
+      readonly nativeRetrial = true;
+      #queue: MockQueue;
+
+      constructor(queue: MockQueue) {
+        this.#queue = queue;
+      }
+
+      enqueue(message: unknown): Promise<void> {
+        return this.#queue.send(message);
+      }
+
+      enqueueMany(messages: unknown[]): Promise<void> {
+        return this.#queue.sendBatch(messages);
+      }
+
+      listen(): Promise<void> {
+        throw new TypeError("WorkersMessageQueue does not support listen()");
+      }
+    }
+
+    const mq = new TestWorkersMessageQueue(new MockQueue());
+    assert(mq.nativeRetrial);
+  });
+});
+
 const queues: Record<string, () => Promise<MessageQueue>> = {
   InProcessMessageQueue: () => Promise.resolve(new InProcessMessageQueue()),
 };
@@ -118,6 +188,10 @@ for (const mqName in queues) {
     async fn(t) {
       const mq = await queues[mqName]();
       const workers = new ParallelMessageQueue(mq, 5);
+
+      await t.step("nativeRetrial property inheritance", () => {
+        assertEquals(workers.nativeRetrial, mq.nativeRetrial);
+      });
 
       const messages: string[] = [];
       const controller = new AbortController();

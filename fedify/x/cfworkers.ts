@@ -93,6 +93,13 @@ export class WorkersKvStore implements KvStore {
 export class WorkersMessageQueue implements MessageQueue {
   #queue: Queue;
 
+  /**
+   * Cloudflare Queues provide automatic retry with exponential backoff
+   * and Dead Letter Queues.
+   * @since 1.7.0
+   */
+  readonly nativeRetrial = true;
+
   constructor(queue: Queue) {
     this.#queue = queue;
   }

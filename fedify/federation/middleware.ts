@@ -664,6 +664,15 @@ export class FederationImpl<TContextData>
           { ...logData, error },
         );
       }
+      // Skip retry logic if the message queue backend handles retries automatically
+      if (this.outboxQueue?.nativeRetrial) {
+        logger.error(
+          "Failed to send activity {activityId} to {inbox}; backend will handle retry:\n{error}",
+          { ...logData, error },
+        );
+        throw error;
+      }
+
       const delay = this.outboxRetryPolicy({
         elapsedTime: Temporal.Instant.from(message.started).until(
           Temporal.Now.instant(),
@@ -797,6 +806,25 @@ export class FederationImpl<TContextData>
               },
             );
           }
+          // Skip retry logic if the message queue backend handles retries automatically
+          if (this.inboxQueue?.nativeRetrial) {
+            logger.error(
+              "Failed to process the incoming activity {activityId}; backend will handle retry:\n{error}",
+              {
+                error,
+                activityId: activity.id?.href,
+                activity: message.activity,
+                recipient: message.identifier,
+              },
+            );
+            span.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: String(error),
+            });
+            span.end();
+            throw error;
+          }
+
           const delay = this.inboxRetryPolicy({
             elapsedTime: Temporal.Instant.from(message.started).until(
               Temporal.Now.instant(),

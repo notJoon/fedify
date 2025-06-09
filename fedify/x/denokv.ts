@@ -71,6 +71,12 @@ export class DenoKvMessageQueue implements MessageQueue, Disposable {
   #kv: Deno.Kv;
 
   /**
+   * Deno KV queues provide automatic retry with exponential backoff.
+   * @since 1.7.0
+   */
+  readonly nativeRetrial = true;
+
+  /**
    * Constructs a new {@link DenoKvMessageQueue} adapter with the given Deno KV
    * store.
    * @param kv The Deno KV store to use.
