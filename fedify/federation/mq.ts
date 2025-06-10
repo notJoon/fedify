@@ -33,6 +33,17 @@ export interface MessageQueueListenOptions {
  */
 export interface MessageQueue {
   /**
+   * Whether the message queue backend provides native retry mechanisms.
+   * When `true`, Fedify will skip its own retry logic and rely on the backend
+   * to handle retries. When `false` or omitted, Fedify will handle retries
+   * using its own retry policies.
+   *
+   * @default `false`
+   * @since 1.7.0
+   */
+  readonly nativeRetrial?: boolean;
+
+  /**
    * Enqueues a message in the queue.
    * @param message The message to enqueue.
    * @param options Additional options for enqueuing the message.
@@ -89,6 +100,12 @@ export class InProcessMessageQueue implements MessageQueue {
   #messages: any[];
   #monitors: Record<ReturnType<typeof crypto.randomUUID>, () => void>;
   #pollIntervalMs: number;
+
+  /**
+   * In-process message queue does not provide native retry mechanisms.
+   * @since 1.7.0
+   */
+  readonly nativeRetrial = false;
 
   /**
    * Constructs a new {@link InProcessMessageQueue} with the given options.
@@ -198,6 +215,12 @@ export class ParallelMessageQueue implements MessageQueue {
   readonly workers: number;
 
   /**
+   * Inherits the native retry capability from the wrapped queue.
+   * @since 1.7.0
+   */
+  readonly nativeRetrial?: boolean;
+
+  /**
    * Constructs a new {@link ParallelMessageQueue} with the given queue and
    * number of workers.
    * @param queue The message queue to use under the hood.  Note that
@@ -212,6 +235,7 @@ export class ParallelMessageQueue implements MessageQueue {
     }
     this.queue = queue;
     this.workers = workers;
+    this.nativeRetrial = queue.nativeRetrial;
   }
 
   enqueue(message: any, options?: MessageQueueEnqueueOptions): Promise<void> {

@@ -56,7 +56,7 @@ import {
   InboxContextImpl,
 } from "./middleware.ts";
 import type { MessageQueue } from "./mq.ts";
-import type { Message } from "./queue.ts";
+import type { InboxMessage, Message, OutboxMessage } from "./queue.ts";
 import { RouterError } from "./router.ts";
 
 test("createFederation()", async (t) => {
@@ -1419,6 +1419,156 @@ test("FederationImpl.sendActivity()", async (t) => {
   });
 
   fetchMock.hardReset();
+});
+
+test("FederationImpl.processQueuedTask()", async (t) => {
+  await t.step("with MessageQueue having nativeRetrial", async () => {
+    const kv = new MemoryKvStore();
+    const queuedMessages: Message[] = [];
+    const queue: MessageQueue = {
+      nativeRetrial: true,
+      enqueue(message, _options) {
+        queuedMessages.push(message);
+        return Promise.resolve();
+      },
+      listen(_handler, _options) {
+        return Promise.resolve();
+      },
+    };
+    const federation = new FederationImpl<void>({
+      kv,
+      queue,
+    });
+    federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
+      .on(Create, () => {
+        throw new Error("Intended error for testing");
+      });
+
+    // outbox message
+    await assertRejects(
+      () =>
+        federation.processQueuedTask(
+          undefined,
+          {
+            type: "outbox",
+            id: crypto.randomUUID(),
+            baseUrl: "https://example.com",
+            keys: [],
+            activity: {
+              "@context": "https://www.w3.org/ns/activitystreams",
+              type: "Create",
+              actor: "https://example.com/users/alice",
+              object: { type: "Note", content: "test" },
+            },
+            activityType: "https://www.w3.org/ns/activitystreams#Create",
+            inbox: "https://invalid-domain-that-does-not-exist.example/inbox",
+            sharedInbox: false,
+            started: new Date().toISOString(),
+            attempt: 0,
+            headers: {},
+            traceContext: {},
+          } satisfies OutboxMessage,
+        ),
+      Error,
+    );
+    assertEquals(queuedMessages, []);
+
+    // inbox message
+    await assertRejects(
+      () =>
+        federation.processQueuedTask(
+          undefined,
+          {
+            type: "inbox",
+            id: crypto.randomUUID(),
+            baseUrl: "https://example.com",
+            activity: {
+              "@context": "https://www.w3.org/ns/activitystreams",
+              type: "Create",
+              actor: "https://remote.example/users/alice",
+              object: {
+                type: "Note",
+                content: "Hello world",
+              },
+            },
+            started: new Date().toISOString(),
+            attempt: 0,
+            identifier: null,
+            traceContext: {},
+          } satisfies InboxMessage,
+        ),
+      Error,
+    );
+    assertEquals(queuedMessages, []);
+  });
+
+  await t.step("with MessageQueue having no nativeRetrial", async () => {
+    const kv = new MemoryKvStore();
+    let queuedMessages: Message[] = [];
+    const queue: MessageQueue = {
+      enqueue(message, _options) {
+        queuedMessages.push(message);
+        return Promise.resolve();
+      },
+      listen(_handler, _options) {
+        return Promise.resolve();
+      },
+    };
+    const federation = new FederationImpl<void>({
+      kv,
+      queue,
+    });
+    federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
+      .on(Create, () => {
+        throw new Error("Intended error for testing");
+      });
+
+    // outbox message
+    const outboxMessage: OutboxMessage = {
+      type: "outbox",
+      id: crypto.randomUUID(),
+      baseUrl: "https://example.com",
+      keys: [],
+      activity: {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        type: "Create",
+        actor: "https://example.com/users/alice",
+        object: { type: "Note", content: "test" },
+      },
+      activityType: "https://www.w3.org/ns/activitystreams#Create",
+      inbox: "https://invalid-domain-that-does-not-exist.example/inbox",
+      sharedInbox: false,
+      started: new Date().toISOString(),
+      attempt: 0,
+      headers: {},
+      traceContext: {},
+    };
+    await federation.processQueuedTask(undefined, outboxMessage);
+    assertEquals(queuedMessages, [{ ...outboxMessage, attempt: 1 }]);
+    queuedMessages = [];
+
+    // inbox message
+    const inboxMessage: InboxMessage = {
+      type: "inbox",
+      id: crypto.randomUUID(),
+      baseUrl: "https://example.com",
+      activity: {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        type: "Create",
+        actor: "https://remote.example/users/alice",
+        object: {
+          type: "Note",
+          content: "Hello world",
+        },
+      },
+      started: new Date().toISOString(),
+      attempt: 0,
+      identifier: null,
+      traceContext: {},
+    };
+    await federation.processQueuedTask(undefined, inboxMessage);
+    assertEquals(queuedMessages, [{ ...inboxMessage, attempt: 1 }]);
+  });
 });
 
 test("ContextImpl.lookupObject()", async (t) => {

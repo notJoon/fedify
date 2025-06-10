@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0(web-streams-polyfill@3.3.3)
       '@fedify/fedify':
-        specifier: 1.6.1-pr.242.863
-        version: 1.6.1-pr.242.863(web-streams-polyfill@3.3.3)
+        specifier: 1.7.0-pr.251.885
+        version: 1.7.0-pr.251.885(web-streams-polyfill@3.3.3)
       '@fedify/postgres':
         specifier: ^0.3.0
         version: 0.3.0(web-streams-polyfill@3.3.3)
@@ -460,8 +460,8 @@ packages:
     resolution: {integrity: sha512-s4ev+HMu6TNH1/RMNvIGvyn17D2dahq8Fpn/aDuBBngi0rHuOodZsoOnQMvEl9MoU0isv9GhPq5BP8oPYSmGaw==}
     engines: {bun: '>=1.1.0', deno: '>=2.0.0', node: '>=20.0.0'}
 
-  '@fedify/fedify@1.6.1-pr.242.863':
-    resolution: {integrity: sha512-NyjF5dUSLPiCXqe6yHMf9cdrNRv/LiWkB7mYtophRWfkHNoawSi2TsPfbBruvxH03+CyApOO22S0l7bSAgZPDg==}
+  '@fedify/fedify@1.7.0-pr.251.885':
+    resolution: {integrity: sha512-GAUJfNmgsSuMO1d9HvgtwxcdEFBHtC9B7jqDavssqUjzvrlyWvIRUePjq2VLHtuDsjl5WIETIQo+gztdUT4YTg==}
     engines: {bun: '>=1.1.0', deno: '>=2.0.0', node: '>=22.0.0'}
 
   '@fedify/postgres@0.3.0':
@@ -534,6 +534,9 @@ packages:
 
   '@logtape/logtape@0.10.0':
     resolution: {integrity: sha512-zk8YILUU7TACEDPaI7sPO6Jyxj6+gwXeS82/ANAtIs3oyLqbUp1kzi5RWUjRj7yu8R7Hd0C4cX4fmfOo9S7COA==}
+
+  '@logtape/logtape@0.11.0':
+    resolution: {integrity: sha512-CV14Jf+gXCdgICvMZbkUOrVPJ2eBuLFaacEYJ3vI6ohv6n2mVepakxTfuZNhtWYVeIB1EblRRQNkFs/n5vFYqA==}
 
   '@logtape/logtape@0.8.2':
     resolution: {integrity: sha512-KikaMHi64p0BHYrYOE2Lom4dOE3R8PGT+21QJ5Ql/SWy0CNOp69dkAlG9RXzENQ6PAMWtiU+4kelJYNvfUvHOQ==}
@@ -3009,13 +3012,13 @@ snapshots:
     transitivePeerDependencies:
       - web-streams-polyfill
 
-  '@fedify/fedify@1.6.1-pr.242.863(web-streams-polyfill@3.3.3)':
+  '@fedify/fedify@1.7.0-pr.251.885(web-streams-polyfill@3.3.3)':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       '@es-toolkit/es-toolkit': es-toolkit@1.38.0
       '@hugoalh/http-header-link': 1.0.3
       '@js-temporal/polyfill': 0.5.1
-      '@logtape/logtape': 0.10.0
+      '@logtape/logtape': 0.11.0
       '@multiformats/base-x': 4.0.1
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/semantic-conventions': 1.34.0
@@ -3128,6 +3131,8 @@ snapshots:
       '@logtape/logtape': 0.10.0
 
   '@logtape/logtape@0.10.0': {}
+
+  '@logtape/logtape@0.11.0': {}
 
   '@logtape/logtape@0.8.2': {}
 

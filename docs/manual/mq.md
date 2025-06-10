@@ -41,7 +41,8 @@ Pros
 :   Simple, no external dependencies.
 
 Cons
-:   Not suitable for production, doesn't persist messages between restarts.
+:   Not suitable for production, doesn't persist messages between restarts,
+    no native retry mechanism.
 
 ~~~~ typescript twoslash
 import type { KvStore } from "@fedify/fedify";
@@ -68,7 +69,7 @@ Best for
 :   Production use in Deno environments.
 
 Pros
-:   Persistent, scalable, easy to set up.
+:   Persistent, scalable, easy to set up, native retry with exponential backoff.
 
 Cons
 :   Only available in Deno runtime.
@@ -227,7 +228,8 @@ Best for
 :   Production use in Cloudflare Workers environments.
 
 Pros
-:   Persistent, reliable, scalable, easy to set up.
+:   Persistent, reliable, scalable, easy to set up, native retry with exponential
+    backoff and dead-letter queues.
 
 Cons
 :   Only available in Cloudflare Workers runtime.
@@ -315,6 +317,9 @@ import type {
 } from "@fedify/fedify";
 
 class CustomMessageQueue implements MessageQueue {
+  // Set to true if your backend provides native retry mechanisms
+  readonly nativeRetrial = false;
+
   async enqueue(
     message: any,
     options?: MessageQueueEnqueueOptions,
@@ -374,7 +379,11 @@ custom `MessageQueue`:
     messages are processed only once.
 
 However, you don't need to implement retry logic yourself, as Fedify handles
-retrying failed messages automatically.
+retrying failed messages automatically.  If your message queue backend provides
+native retry mechanisms (like exponential backoff, dead-letter queues, etc.),
+you can set the `nativeRetrial` property to `true` to indicate this.
+When this property is `true`, Fedify will skip its own retry logic and rely
+on your backend to handle retries, avoiding duplicate retry mechanisms.
 
 
 Parallel message processing
@@ -387,7 +396,8 @@ concurrently.  To enable parallel processing, wrap your `MessageQueue` with
 `ParallelMessageQueue`, a special implementation of the `MessageQueue` interface
 designed to process messages in parallel.  It acts as a decorator for another
 `MessageQueue` implementation, allowing for concurrent processing of messages
-up to a specified number of workers:
+up to a specified number of workers.  The `ParallelMessageQueue` inherits
+the `nativeRetrial` property from the wrapped queue:
 
 ~~~~ typescript twoslash
 import type { KvStore } from "@fedify/fedify";
@@ -501,6 +511,68 @@ server process responsive by offloading message processing to worker nodes.
 > [!NOTE]
 > To ensure that messages are enqueued only from the `NODE_TYPE=web` nodes,
 > you should not place the `NODE_TYPE=worker` nodes behind a load balancer.
+
+
+Native retry mechanisms
+-----------------------
+
+*This API is available since Fedify 1.7.0.*
+
+Some message queue backends provide their own retry mechanisms with features
+like exponential backoff, dead-letter queues, and automatic failure handling.
+To avoid duplicate retry logic and improve efficiency, Fedify supports
+the `~MessageQueue.nativeRetrial` property on `MessageQueue` implementations.
+
+When `MessageQueue.nativeRetrial` is `true`, Fedify will skip its own retry
+logic and rely entirely on the backend's native retry mechanisms.
+When `false` or omitted, Fedify handles retries using its own retry policies.
+
+### Current implementations
+
+The following implementations currently support native retry:
+
+`DenoKvMessageQueue`
+:   Deno KV provides automatic retry with exponential backoff
+    (`~MessageQueue.nativeRetrial` is `true`).
+
+`WorkersMessageQueue`
+:   Cloudflare Queues provide automatic retry with exponential backoff and
+    dead-letter queues (`~MessageQueue.nativeRetrial` is `true`).
+
+The following implementations do not yet support native retry:
+
+`InProcessMessageQueue`
+:   No native retry support (`~MessageQueue.nativeRetrial` is `false`).
+
+[`RedisMessageQueue`]
+:   Native retry support planned for future release.
+
+[`PostgresMessageQueue`]
+:   Native retry support planned for future release.
+
+[`AmqpMessageQueue`]
+:   Native retry support planned for future release.
+
+`ParallelMessageQueue` inherits the `~MessageQueue.nativeRetrial` value from
+the wrapped queue.
+
+### Benefits of native retry
+
+Using native retry mechanisms provides several advantages:
+
+Reduced overhead
+:   Eliminates duplicate retry logic between Fedify and the message queue
+    backend.
+
+Better reliability
+:   Leverages proven retry mechanisms from established queue backends.
+
+Improved observability
+:   Backend-native retry mechanisms often provide better monitoring and
+    debugging capabilities.
+
+Optimized performance
+:   Backend-specific optimizations for retry logic.
 
 
 Using different message queues for different tasks
