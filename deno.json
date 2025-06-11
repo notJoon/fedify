@@ -7,22 +7,45 @@
     "./mq": "./src/mq.ts"
   },
   "imports": {
-    "@deno/dnt": "jsr:@deno/dnt@^0.41.2",
+    "@alinea/suite": "jsr:@alinea/suite@^0.6.2",
     "@fedify/fedify": "jsr:@fedify/fedify@^1.5.0",
-    "@std/assert": "jsr:@std/assert@^0.226.0",
-    "@std/async": "jsr:@std/async@^1.0.5",
-    "amqplib": "npm:amqplib@^0.10.4"
+    "@std/assert": "jsr:@std/assert@^1.0.13",
+    "@std/async": "jsr:@std/async@^1.0.13",
+    "amqplib": "npm:amqplib@^0.10.8",
+    "tsdown": "npm:tsdown@^0.12.7"
   },
+  "nodeModulesDir": "auto",
   "unstable": [
     "temporal"
   ],
   "exclude": [
     ".github",
-    "npm"
+    "node_modules",
+    "npm",
+    "pnpm-lock.yaml"
   ],
   "tasks": {
+    "build": "pnpm build",
     "check": "deno fmt --check && deno lint && deno check */*.ts",
     "test": "deno test --allow-net --allow-env",
-    "dnt": "deno run -A dnt.ts"
+    "test:node": {
+      "dependencies": [
+        "build"
+      ],
+      "command": "node --experimental-transform-types --test"
+    },
+    "test:bun": {
+      "dependencies": [
+        "build"
+      ],
+      "command": "bun test --timeout 15000"
+    },
+    "test-all": {
+      "dependencies": [
+        "test",
+        "test:node",
+        "test:bun"
+      ]
+    }
   }
 }

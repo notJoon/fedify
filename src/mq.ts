@@ -3,8 +3,8 @@ import type {
   MessageQueueEnqueueOptions,
   MessageQueueListenOptions,
 } from "@fedify/fedify";
-// @deno-types="npm:@types/amqplib@^0.10.5"
-import type { Channel, Connection } from "amqplib";
+// @deno-types="npm:@types/amqplib@^0.10.7"
+import type { Channel, ChannelModel } from "amqplib";
 import { Buffer } from "node:buffer";
 
 /**
@@ -47,7 +47,7 @@ export interface AmqpMessageQueueOptions {
  * ```
  */
 export class AmqpMessageQueue implements MessageQueue {
-  #connection: Connection;
+  #connection: ChannelModel;
   #queue: string;
   #delayedQueuePrefix: string;
   #durable: boolean;
@@ -59,7 +59,7 @@ export class AmqpMessageQueue implements MessageQueue {
    * @param options Options for the message queue.
    */
   constructor(
-    connection: Connection,
+    connection: ChannelModel,
     options: AmqpMessageQueueOptions = {},
   ) {
     this.#connection = connection;

@@ -72,6 +72,9 @@ Changelog
 
 To be released.
 
+ -  The type of the `AmqpMessageQueue()` constructor's first parameter has been
+    changed from `Connection` to `ChannelModel`.
+
 ### Version 0.2.0
 
 Released on March 28, 2025.

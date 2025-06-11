@@ -1,2 +1,4 @@
 .dnt-import-map.json
+dist/
+node_modules/
 npm/

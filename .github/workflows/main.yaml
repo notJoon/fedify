@@ -24,19 +24,22 @@ jobs:
         deno-version: v2.x
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: latest
     - uses: oven-sh/setup-bun@v1
       with:
         bun-version: latest
+    - uses: pnpm/action-setup@v4
+      with:
+        version: latest
     - run: deno task test --junit-path=.test-report.xml
     - uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
         files: .test-report.xml
     - run: deno task check
-    - run: deno task dnt
-    - run: bun run ./test_runner.js
-      working-directory: ${{ github.workspace }}/npm/
+    - run: pnpm install
+    - run: pnpm test
+    - run: pnpm test:bun
 
   publish:
     if: github.event_name == 'push'
@@ -52,7 +55,10 @@ jobs:
         deno-version: v2.x
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: latest
+    - uses: pnpm/action-setup@v4
+      with:
+        version: latest
     - if: github.ref_type == 'branch'
       run: |
         jq \
@@ -61,20 +67,27 @@ jobs:
           '.version = .version + "-dev." + $build + "+" + $commit' \
           deno.json > deno.json.tmp
         mv deno.json.tmp deno.json
+        jq \
+          --arg build "$GITHUB_RUN_NUMBER" \
+          --arg commit "${GITHUB_SHA::8}" \
+          '.version = .version + "-dev." + $build + "+" + $commit' \
+          package.json > package.json.tmp
+        mv package.json.tmp package.json
     - if: github.ref_type == 'tag'
-      run: '[[ "$(jq -r .version deno.json)" = "$GITHUB_REF_NAME" ]]'
-    - run: 'deno task dnt "$(jq -r .version deno.json)"'
-      env:
-        DNT_TEST: false
+      run: |
+        set -ex
+        [[ "$(jq -r .version deno.json)" = "$GITHUB_REF_NAME" ]]
+        [[ "$(jq -r .version package.json)" = "$GITHUB_REF_NAME" ]]
+    - run: pnpm install && pnpm build
     - run: |
         set -ex
-        npm config set //registry.npmjs.org/:_authToken "$NPM_AUTH_TOKEN"
+        pnpm config set //registry.npmjs.org/:_authToken "$NPM_AUTH_TOKEN"
         if [[ "$GITHUB_REF_TYPE" = "tag" ]]; then
-          npm publish --provenance --access public
+          pnpm publish --no-git-checks --access public
         else
-          npm publish --provenance --access public --tag dev
+          pnpm publish --no-git-checks --access public --tag dev
         fi
       env:
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      working-directory: ${{ github.workspace }}/npm/
+        NPM_CONFIG_PROVENANCE: "true"
     - run: deno publish --allow-dirty
