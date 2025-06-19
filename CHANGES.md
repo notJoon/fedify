@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.6.2
 -------------
 
-To be released.
+Released on June 19, 2025.
 
  -  Fixed compatibility issue with Mastodon servers running bleeding-edge
     versions with RFC 9421 implementation bugs. Extended double-knocking
