@@ -8,6 +8,12 @@ Version 1.6.2
 
 To be released.
 
+ -  Fixed compatibility issue with Mastodon servers running bleeding-edge
+    versions with RFC 9421 implementation bugs. Extended double-knocking
+    to retry with draft-cavage-http-signatures-12 on `5xx` errors as a temporary
+    workaround for Mastodon's RFC 9421 implementation that returns `500
+    Internal Server Error`.
+
 
 Version 1.6.1
 -------------
