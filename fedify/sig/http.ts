@@ -1263,7 +1263,15 @@ export async function doubleKnock(
       identity,
       options,
     );
-  } else if (response.status === 400 || response.status === 401) {
+  } else if (
+    // FIXME: Temporary hotfix for Mastodon RFC 9421 implementation bug (as of 2025-06-19).
+    // Some Mastodon servers (including mastodon.social) are running bleeding edge versions
+    // with RFC 9421 support that have a bug causing 500 Internal Server Error when receiving
+    // RFC 9421 signatures. This extends double-knocking to 5xx errors as a workaround,
+    // allowing fallback to draft-cavage signatures. This should be reverted once Mastodon
+    // fixes their RFC 9421 implementation and affected servers are updated.
+    response.status === 400 || response.status === 401 || response.status > 401
+  ) {
     // verification failed; retry with the other spec of HTTP Signatures
     // (double-knocking; see https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions)
     const spec = firstTrySpec === "draft-cavage-http-signatures-12"
