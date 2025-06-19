@@ -400,7 +400,8 @@ export class FederationImpl<TContextData>
     this.activityTransformers = options.activityTransformers ??
       getDefaultActivityTransformers<TContextData>();
     this.tracerProvider = options.tracerProvider ?? trace.getTracerProvider();
-    this.defaultHttpMessageSignaturesSpec = options.defaultHttpMessageSignaturesSpec;
+    this.defaultHttpMessageSignaturesSpec =
+      options.defaultHttpMessageSignaturesSpec;
   }
 
   _initializeRouter() {
