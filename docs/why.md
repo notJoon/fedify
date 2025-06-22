@@ -280,6 +280,31 @@ capabilities with Fedify:
 
 [Hackers' Pub]: https://hackers.pub/
 
+### Encyclia: Bridging academic research to the fediverse
+
+[Encyclia] is an innovative service that makes [ORCID] (Open Researcher and
+Contributor ID) records available on the fediverse:
+
+ -  Bridges academic research into federated social networks by making
+    researcher profiles and publications discoverable through ActivityPub
+ -  Allows users to follow researchers and see their new publications in
+    their federated social feeds
+ -  Built using Fedify for ActivityPub implementation with tested
+    interoperability across Mastodon and other fediverse platforms
+ -  Demonstrates Fedify's versatility in specialized domains beyond traditional
+    social networking applications
+
+> Encyclia is built using Fedify, an ActivityPub-based federated server
+> framework that helps developers easily integrate their applications with
+> the fediverse… It simplifies the complex implementation of the ActivityPub
+> protocol, significantly reducing development time.
+>
+> —From the [Encyclia roadmap]
+
+[Encyclia]: https://encyclia.pub/
+[ORCID]: https://orcid.org/
+[Encyclia roadmap]: https://encyclia.pub/roadmap
+
 
 Conclusion
 ----------
@@ -309,3 +334,5 @@ Stay flexible
 
 If you're looking to build a federated application on the ActivityPub protocol,
 Fedify offers a powerful and efficient path to success.
+
+<!-- cSpell: ignore Encyclia ORCID -->
