@@ -245,13 +245,13 @@ const federation = createFederation<void>({
 In the above code, we import the `createFederation()` function from the Fedify
 framework to create a new `Federation` object.  We pass an object to the
 `createFederation()` function, which is the configuration object.
-The `kv` property is a key-value store that is used to store several internal
+The `kv` property is a key–value store that is used to store several internal
 data of the `Federation` object.  We use the `MemoryKvStore` to open
-a key-value store.
+a key–value store.
 
 > [!IMPORTANT]
 > Since `MemoryKvStore` is for testing and development purposes, you should
-> use a persistent key-value store like `DenoKvStore` (in Deno) or
+> use a persistent key–value store like `DenoKvStore` (in Deno) or
 > [`RedisKvStore`] (from [@fedify/redis] package) or [`PostgresKvStore`]
 > (from [@fedify/postgres] package) for production use.
 >
@@ -828,7 +828,7 @@ import {
 By the way, when should we generate a key pair?  In general, you should generate
 a key pair when the actor is created.  In our case, we generate a key pair when
 the actor *me* is dispatched for the first time.  Then, we store the key pair
-in the key-value store so that the server can use the key pair later.
+in the key–value store so that the server can use the key pair later.
 
 The `~ActorCallbackSetters.setKeyPairsDispatcher()` method is used to set a key
 pairs dispatcher for the actor.  The key pairs dispatcher is a function that is
@@ -848,7 +848,7 @@ import {
 } from "@fedify/fedify";
 const federation = null as unknown as Federation<void>;
 // ---cut-before---
-const kv = await Deno.openKv();  // Open the key-value store
+const kv = await Deno.openKv();  // Open the key–value store
 
 federation
   .setActorDispatcher("/users/{identifier}", async (ctx, identifier) => {
@@ -907,7 +907,7 @@ const federation = null as unknown as Federation<void>;
 import { serialize as encodeV8, deserialize as decodeV8 } from "node:v8";
 import { openKv } from "@deno/kv";
 
-// Open the key-value store:
+// Open the key–value store:
 const kv = await openKv("kv.db", { encodeV8, decodeV8 });
 
 federation
@@ -965,7 +965,7 @@ const federation = null as unknown as Federation<void>;
 // ---cut-before---
 import { openKv } from "@deno/kv";
 
-const kv = await openKv("kv.db");  // Open the key-value store
+const kv = await openKv("kv.db");  // Open the key–value store
 
 federation
   .setActorDispatcher("/users/{identifier}", async (ctx, identifier) => {
@@ -1017,13 +1017,13 @@ method to set a key pairs dispatcher for the actor *me*.  The key pairs
 dispatcher is called when the key pairs of an actor is needed. The key pairs
 dispatcher should return an array of objects that contain the private key
 and the public key of the actor.  In this case, we generate a new key pair
-at the first time and store it in the key-value store.  When the actor *me* is
-dispatched again, the key pairs dispatcher loads the key pair from the key-value
+at the first time and store it in the key–value store.  When the actor *me* is
+dispatched again, the key pairs dispatcher loads the key pair from the key–value
 store.
 
 > [!NOTE]
 > Although we use the Deno KV database in this tutorial, you can use any
-> other your favorite database to store the key pair.  The key-value store
+> other your favorite database to store the key pair.  The key–value store
 > is just an example.
 
 Restart the server and make an HTTP request to the actor *me* using `curl`.
@@ -1130,7 +1130,7 @@ Listing followers
 -----------------
 
 The server should list the actor's followers on the home page.  To do this,
-we need to store the followers in the key-value store.  We will store each
+we need to store the followers in the key–value store.  We will store each
 `Follow` activity's ID as the key and the follower's actor ID as the value:
 
 ~~~~ typescript{16-17} twoslash [server.ts]
@@ -1153,7 +1153,7 @@ federation
       follower,
       new Accept({ actor: follow.objectId, object: follow }),
     );
-    // Store the follower in the key-value store:
+    // Store the follower in the key–value store:
     await kv.set(["followers", follow.id.href], follow.actorId.href);
   });
 ~~~~
@@ -1257,7 +1257,7 @@ serve({
 :::
 
 The above code lists the actor's followers on the home page.  The followers are
-stored in the key-value store, and we retrieve the followers from the key-value
+stored in the key–value store, and we retrieve the followers from the key–value
 store and display them on the home page.
 
 Restart the server and navigate to the home page in your web browser.  You
@@ -1315,7 +1315,7 @@ Exercises
 ---------
 
  -  Implement unfollowing feature: Listen to the `Undo` activity and remove
-    the follower from the key-value store when the server receives an `Undo`
+    the follower from the key–value store when the server receives an `Undo`
     activity.
 
  -  Integration with a web framework: In the above example, we hard-coded

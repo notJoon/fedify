@@ -396,7 +396,7 @@ export interface KvCacheParameters {
   loader: DocumentLoader;
 
   /**
-   * The key-value store to use for backing the cache.
+   * The key–value store to use for backing the cache.
    */
   kv: KvStore;
 

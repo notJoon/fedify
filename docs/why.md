@@ -187,7 +187,7 @@ Works with virtually any JavaScript/TypeScript web framework:
 
  -  Use any SQL or NoSQL database (PostgreSQL, MySQL, MongoDB, etc.)
  -  Use any ORM (Prisma, TypeORM, Drizzle ORM, etc.)
- -  Fedify only requires a [key-value interface](./manual/kv.md)
+ -  Fedify only requires a [key–value interface](./manual/kv.md)
     for its internal caching
 
 

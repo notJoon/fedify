@@ -44,7 +44,7 @@ properties.  Some of them are required:
 that the `Federation` object uses to store several kinds of cache data and
 to maintain the queue of outgoing activities.
 
-`KvStore` is an abstract interface that represents a key-value store.
+`KvStore` is an abstract interface that represents a key–value store.
 For now, Fedify provides two built-in implementations of `KvStore`, which are
 `MemoryKvStore` and `DenoKvStore` classes.  The `MemoryKvStore` class is for
 testing and development purposes, and the `DenoKvStore` class is Deno KV-backed
@@ -221,7 +221,7 @@ function.
 
 Usually, you don't need to set this property because the default document
 loader is sufficient for most cases.  The default document loader
-caches the loaded documents in the key-value store.
+caches the loaded documents in the key–value store.
 
 See the
 [*Getting a `DocumentLoader`* section](./context.md#getting-a-documentloader)
@@ -237,7 +237,7 @@ loader function that loads remote JSON-LD documents as the actor.
 
 Usually, you don't need to set this property because the default document
 loader factory is sufficient for most cases.  The default document loader
-factory intentionally doesn't cache the loaded documents in the key-value
+factory intentionally doesn't cache the loaded documents in the key–value
 store.
 
 See the [*Getting an authenticated `DocumentLoader`*

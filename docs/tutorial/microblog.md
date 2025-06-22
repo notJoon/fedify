@@ -172,7 +172,7 @@ Select *Node.js*, *npm*, *Hono*, *In-memory*, and *In-process* in order:
   Express
   Nitro
 
-? Choose the key-value store to use for caching
+? Choose the key–value store to use for caching
 ❯ In-memory
   Redis
   PostgreSQL

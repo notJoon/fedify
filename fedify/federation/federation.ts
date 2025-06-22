@@ -546,7 +546,7 @@ export interface FederationBuilder<TContextData>
  */
 export interface FederationOptions<TContextData> {
   /**
-   * The key-value store used for caching, outbox queues, and inbox idempotence.
+   * The key–value store used for caching, outbox queues, and inbox idempotence.
    */
   kv: KvStore;
 

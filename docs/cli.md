@@ -118,7 +118,7 @@ project.  It will ask you a few questions to set up the project:
  -  Package manager (if Node.js): [npm], [pnpm], or [Yarn]
  -  Web framework: Bare-bones, [Fresh] (if Deno), [Hono], [Express] (unless
     Deno), or [Nitro] (unless Deno)
- -  Key-value store: In-memory, [Redis], [PostgreSQL], or [Deno KV] (if Deno)
+ -  key–value store: In-memory, [Redis], [PostgreSQL], or [Deno KV] (if Deno)
  -  Message queue: In-memory, [Redis], [PostgreSQL], [AMQP] (e.g., [RabbitMQ]),
     or [Deno KV] (if Deno)
 
@@ -171,16 +171,16 @@ the `-w`/`--web-framework` option.  The available options are:
 
 If it's omitted, no web framework will be integrated.
 
-### `-k`/`--kv-store`: Key-value store
+### `-k`/`--kv-store`: key–value store
 
-You can specify the key-value store to use by using the `-k`/`--kv-store`
+You can specify the key–value store to use by using the `-k`/`--kv-store`
 option.  The available options are:
 
  -  `redis`: [Redis]
  -  `postgres`: [PostgreSQL]
  -  `denokv`: [Deno KV] (if Deno)
 
-If it's omitted, the in-memory key-value store (which is for development
+If it's omitted, the in-memory key–value store (which is for development
 purpose) will be used.
 
 ### `-q`/`--message-queue`: Message queue

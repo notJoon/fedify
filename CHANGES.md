@@ -3677,7 +3677,7 @@ Released on April 2, 2024.
 
  -  Fedify is now available on npm: [@fedify/fedify].  [[#24]]
 
- -  Abstract key-value store for caching.
+ -  Abstract key–value store for caching.
 
      -  Added `KvStore` interface.
      -  Added `KvStoreSetOptions` interface.

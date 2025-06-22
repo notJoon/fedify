@@ -18,7 +18,7 @@ import type {
 } from "../federation/mq.ts";
 
 /**
- * Represents a key-value store implementation using Deno's KV store.
+ * Represents a key–value store implementation using Deno's KV store.
  */
 export class DenoKvStore implements KvStore {
   #kv: Deno.Kv;

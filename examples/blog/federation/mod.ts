@@ -1,5 +1,5 @@
-import { dirname, join } from "@std/path";
 import { createFederation } from "@fedify/fedify/federation";
+import { parseSemVer } from "@fedify/fedify/nodeinfo";
 import {
   Accept,
   Activity,
@@ -14,8 +14,9 @@ import {
   Person,
   Undo,
 } from "@fedify/fedify/vocab";
-import { parseSemVer } from "@fedify/fedify/nodeinfo";
 import { DenoKvMessageQueue, DenoKvStore } from "@fedify/fedify/x/denokv";
+import { getLogger } from "@logtape/logtape";
+import { dirname, join } from "@std/path";
 import { getBlog } from "../models/blog.ts";
 import { addComment, Comment, getComments } from "../models/comment.ts";
 import {
@@ -25,16 +26,15 @@ import {
   removeFollower,
   toRecipient,
 } from "../models/follower.ts";
-import { countPosts, getPost, getPosts, toArticle } from "../models/post.ts";
 import { openKv } from "../models/kv.ts";
-import { getLogger } from "@logtape/logtape";
+import { countPosts, getPost, getPosts, toArticle } from "../models/post.ts";
 
 const logger = getLogger(["blog", "federation"]);
 
 // The `Federation<TContextData>` object is a registry that registers
 // federation-related callbacks:
 export const federation = createFederation<void>({
-  // The following key-value storage is used for internal cache:
+  // The following key–value storage is used for internal cache:
   kv: new DenoKvStore(await openKv()),
 
   // The following message queue is used for maintaining outgoing activities:

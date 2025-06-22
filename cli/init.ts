@@ -609,7 +609,7 @@ export const command = new Command()
   )
   .option(
     "-k, --kv-store <kv-store:kv-store>",
-    "Choose the key-value store to use for caching.",
+    "Choose the key–value store to use for caching.",
   )
   .option(
     "-q, --message-queue <message-queue:message-queue>",
@@ -687,7 +687,7 @@ export const command = new Command()
         dinosaurDrawn = true;
       }
       kvStore = await Select.prompt({
-        message: "Choose the key-value store to use for caching",
+        message: "Choose the key–value store to use for caching",
         options: [
           { name: "In-memory", value: null },
           ...Object.entries(kvStores).map(([value, { label, runtimes }]) => ({
@@ -744,7 +744,7 @@ export const command = new Command()
     }
     logger.debug(
       "Runtime: {runtime}; package manager: {packageManager}; " +
-        "web framework: {webFramework}; key-value store: {kvStore}; " +
+        "web framework: {webFramework}; key–value store: {kvStore}; " +
         "message queue: {messageQueue}",
       {
         runtime,
