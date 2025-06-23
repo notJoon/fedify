@@ -32,7 +32,7 @@
     "postgres": "^3.4.5",
     "stringify-entities": "^4.0.4",
     "typescript": "^5.8.3",
-    "vitepress": "^1.5.0",
+    "vitepress": "^1.6.3",
     "vitepress-plugin-group-icons": "^1.3.5",
     "vitepress-plugin-llms": "^1.1.0",
     "vitepress-plugin-mermaid": "^2.0.17",
