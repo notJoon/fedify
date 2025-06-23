@@ -42,5 +42,10 @@
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "vitepress@1.6.3": "patches/vitepress@1.6.3.patch"
+    }
   }
 }
