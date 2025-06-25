@@ -82,7 +82,7 @@ Changelog
 
 ### Version 0.3.0
 
-To be released.
+Released on June 25, 2025.
 
  -  Added `nativeRetrial` option to `AmqpMessageQueueOptions` to enable
     native retrial of messages.

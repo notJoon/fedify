@@ -36,7 +36,7 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@fedify/fedify": "^1.7.0-dev.887",
+    "@fedify/fedify": "^1.7.0",
     "amqplib": "^0.10.8"
   },
   "devDependencies": {
