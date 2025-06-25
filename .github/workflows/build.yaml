@@ -278,9 +278,17 @@ jobs:
           fedify/fedify-fedify-*.tgz
           cli/fedify-cli-*
         generate_release_notes: false
-    - run: deno task publish --allow-dirty
+    - if: github.event_name == 'pull_request_target'
+      run: deno task publish --allow-dirty --no-provenance
       working-directory: ${{ github.workspace }}/fedify/
-    - run: deno task publish --allow-dirty
+    - if: github.event_name != 'pull_request_target'
+      run: deno task publish --allow-dirty
+      working-directory: ${{ github.workspace }}/fedify/
+    - if: github.event_name == 'pull_request_target'
+      run: deno task publish --allow-dirty --no-provenance
+      working-directory: ${{ github.workspace }}/cli/
+    - if: github.event_name != 'pull_request_target'
+      run: deno task publish --allow-dirty
       working-directory: ${{ github.workspace }}/cli/
     - run: |
         set -ex
