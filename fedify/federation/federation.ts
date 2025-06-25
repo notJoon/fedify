@@ -6,6 +6,7 @@ import type {
   DocumentLoaderFactory,
   GetUserAgentOptions,
 } from "../runtime/docloader.ts";
+import type { HttpMessageSignaturesSpec } from "../sig/http.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import type { Activity, Hashtag, Object } from "../vocab/vocab.ts";
 import type {
@@ -677,6 +678,25 @@ export interface FederationOptions<TContextData> {
    * @since 0.13.0
    */
   skipSignatureVerification?: boolean;
+
+  /**
+   * The HTTP Signatures specification to use for the first signature
+   * attempt when communicating with unknown servers. This option affects
+   * the "double-knocking" mechanism as described in the ActivityPub HTTP
+   * Signature documentation.
+   *
+   * When making HTTP requests to servers that haven't been encountered before,
+   * Fedify will first attempt to sign the request using the specified
+   * signature specification. If the request fails, it will retry with the
+   * alternative specification.
+   *
+   * Defaults to `"rfc9421"` (HTTP Message Signatures).
+   *
+   * @see {@link https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions}
+   * @default `"rfc9421"`
+   * @since 1.7.0
+   */
+  firstKnock?: HttpMessageSignaturesSpec;
 
   /**
    * The retry policy for sending activities to recipients' inboxes.

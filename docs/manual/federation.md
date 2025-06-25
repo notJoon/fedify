@@ -310,6 +310,36 @@ an object for options.
 >
 > However, `Context.lookupObject()` method is affected by this settings.
 
+### `firstKnock`
+
+*This API is available since Fedify 1.7.0.*
+
+The HTTP Signatures specification to use for the first signature attempt
+when communicating with unknown servers. This option affects the
+[double-knocking] mechanism.
+
+When making HTTP requests to servers that haven't been encountered before,
+Fedify will first attempt to sign the request using the specified
+signature specification. If the request fails, it will retry with the
+alternative specification.
+
+Available options are:
+
+`"draft-cavage-http-signatures-12"`
+:   [HTTP Signatures], which is obsolete but still widely adopted in
+    the fediverse as of May 2025.
+
+`"rfc9421"` (default)
+:   [RFC 9421]: HTTP Message Signatures, which is the final revision of
+    the specification and is recommended, but not yet widely adopted
+    in the fediverse as of May 2025.
+
+Defaults to `"rfc9421"`.
+
+[double-knocking]: https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions
+[HTTP Signatures]: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12
+[RFC 9421]: https://www.rfc-editor.org/rfc/rfc9421
+
 ### `outboxRetryPolicy`
 
 *This API is available since Fedify 0.12.0.*

@@ -138,6 +138,35 @@ test("FederationBuilder", async (t) => {
     assertEquals(impl.origin?.webOrigin, "https://example.com");
   });
 
+  await t.step("should handle firstKnock option", async () => {
+    const builder = createFederationBuilder<void>();
+    const kv = new MemoryKvStore();
+
+    // Test with default firstKnock (should be "rfc9421")
+    const federationDefault = await builder.build({ kv });
+    assertExists(federationDefault);
+    const implDefault = federationDefault as FederationImpl<void>;
+    assertEquals(implDefault.firstKnock, undefined); // Uses default when not specified
+
+    // Test with custom firstKnock value
+    const federationCustom = await builder.build({
+      kv,
+      firstKnock: "draft-cavage-http-signatures-12",
+    });
+    assertExists(federationCustom);
+    const implCustom = federationCustom as FederationImpl<void>;
+    assertEquals(implCustom.firstKnock, "draft-cavage-http-signatures-12");
+
+    // Test with rfc9421 explicitly set
+    const federationRfc = await builder.build({
+      kv,
+      firstKnock: "rfc9421",
+    });
+    assertExists(federationRfc);
+    const implRfc = federationRfc as FederationImpl<void>;
+    assertEquals(implRfc.firstKnock, "rfc9421");
+  });
+
   await t.step(
     "should register multiple object dispatchers and verify them",
     async () => {

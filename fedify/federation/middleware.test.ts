@@ -54,6 +54,7 @@ import {
   createFederation,
   FederationImpl,
   InboxContextImpl,
+  KvSpecDeterminer,
 } from "./middleware.ts";
 import type { MessageQueue } from "./mq.ts";
 import type { InboxMessage, Message, OutboxMessage } from "./queue.ts";
@@ -2384,4 +2385,69 @@ test("InboxContextImpl.forwardActivity()", async (t) => {
   });
 
   fetchMock.hardReset();
+});
+
+test("KvSpecDeterminer", async (t) => {
+  await t.step("should use default spec when not found in KV", async () => {
+    const kv = new MemoryKvStore();
+    const prefix = ["test", "spec"] as const;
+
+    // Test with default rfc9421
+    const determiner = new KvSpecDeterminer(kv, prefix);
+    const spec = await determiner.determineSpec("example.com");
+    assertEquals(spec, "rfc9421");
+  });
+
+  await t.step("should use custom default spec", async () => {
+    const kv = new MemoryKvStore();
+    const prefix = ["test", "spec"] as const;
+
+    // Test with custom default spec
+    const determiner = new KvSpecDeterminer(
+      kv,
+      prefix,
+      "draft-cavage-http-signatures-12",
+    );
+    const spec = await determiner.determineSpec("example.com");
+    assertEquals(spec, "draft-cavage-http-signatures-12");
+  });
+
+  await t.step("should remember and retrieve spec from KV", async () => {
+    const kv = new MemoryKvStore();
+    const prefix = ["test", "spec"] as const;
+    const determiner = new KvSpecDeterminer(kv, prefix);
+
+    // Remember a spec for a specific origin
+    await determiner.rememberSpec(
+      "example.com",
+      "draft-cavage-http-signatures-12",
+    );
+
+    // Should retrieve the remembered spec
+    const spec = await determiner.determineSpec("example.com");
+    assertEquals(spec, "draft-cavage-http-signatures-12");
+
+    // Different origin should still use default
+    const defaultSpec = await determiner.determineSpec("other.com");
+    assertEquals(defaultSpec, "rfc9421");
+  });
+
+  await t.step("should override remembered spec", async () => {
+    const kv = new MemoryKvStore();
+    const prefix = ["test", "spec"] as const;
+    const determiner = new KvSpecDeterminer(kv, prefix);
+
+    // Remember initial spec
+    await determiner.rememberSpec(
+      "example.com",
+      "draft-cavage-http-signatures-12",
+    );
+    let spec = await determiner.determineSpec("example.com");
+    assertEquals(spec, "draft-cavage-http-signatures-12");
+
+    // Override with new spec
+    await determiner.rememberSpec("example.com", "rfc9421");
+    spec = await determiner.determineSpec("example.com");
+    assertEquals(spec, "rfc9421");
+  });
 });

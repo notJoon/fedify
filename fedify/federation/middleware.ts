@@ -231,6 +231,7 @@ export class FederationImpl<TContextData>
   inboxRetryPolicy: RetryPolicy;
   activityTransformers: readonly ActivityTransformer<TContextData>[];
   tracerProvider: TracerProvider;
+  firstKnock?: HttpMessageSignaturesSpec;
 
   constructor(options: FederationOptions<TContextData>) {
     super();
@@ -384,6 +385,7 @@ export class FederationImpl<TContextData>
             specDeterminer: new KvSpecDeterminer(
               this.kv,
               this.kvPrefixes.httpMessageSignaturesSpec,
+              options.firstKnock,
             ),
             tracerProvider: this.tracerProvider,
           }));
@@ -398,6 +400,7 @@ export class FederationImpl<TContextData>
     this.activityTransformers = options.activityTransformers ??
       getDefaultActivityTransformers<TContextData>();
     this.tracerProvider = options.tracerProvider ?? trace.getTracerProvider();
+    this.firstKnock = options.firstKnock;
   }
 
   _initializeRouter() {
@@ -643,6 +646,7 @@ export class FederationImpl<TContextData>
         specDeterminer: new KvSpecDeterminer(
           this.kv,
           this.kvPrefixes.httpMessageSignaturesSpec,
+          this.firstKnock,
         ),
         tracerProvider: this.tracerProvider,
       });
@@ -1097,6 +1101,7 @@ export class FederationImpl<TContextData>
             specDeterminer: new KvSpecDeterminer(
               this.kv,
               this.kvPrefixes.httpMessageSignaturesSpec,
+              this.firstKnock,
             ),
             tracerProvider: this.tracerProvider,
           }),
@@ -2839,6 +2844,7 @@ export class InboxContextImpl<TContextData> extends ContextImpl<TContextData>
             specDeterminer: new KvSpecDeterminer(
               this.federation.kv,
               this.federation.kvPrefixes.httpMessageSignaturesSpec,
+              this.federation.firstKnock,
             ),
           }),
         );
