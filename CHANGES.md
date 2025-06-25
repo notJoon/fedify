@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.7.0
 -------------
 
-To be released.
+Released on June 25, 2025.
 
  -  Added optional `MessageQueue.nativeRetrial` property to indicate whether
     the message queue backend provides native retry mechanisms.  When `true`,

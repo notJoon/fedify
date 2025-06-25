@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   vitepress@1.6.3:
-    hash: h3qgcktgvvyvgahwawzgugeubu
+    hash: 56bd737eca4c1ba581d00bedd4fe307f6e48f782af59933eac54bb7d43206b99
     path: patches/vitepress@1.6.3.patch
 
 importers:
@@ -111,7 +111,7 @@ importers:
         version: 5.8.3
       vitepress:
         specifier: ^1.6.3
-        version: 1.6.3(patch_hash=h3qgcktgvvyvgahwawzgugeubu)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3)
+        version: 1.6.3(patch_hash=56bd737eca4c1ba581d00bedd4fe307f6e48f782af59933eac54bb7d43206b99)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3)
       vitepress-plugin-group-icons:
         specifier: ^1.3.5
         version: 1.5.5(markdown-it@14.1.0)(vite@5.4.19(@types/node@22.15.21))
@@ -120,7 +120,7 @@ importers:
         version: 1.3.3
       vitepress-plugin-mermaid:
         specifier: ^2.0.17
-        version: 2.0.17(mermaid@11.6.0)(vitepress@1.6.3(patch_hash=h3qgcktgvvyvgahwawzgugeubu)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3))
+        version: 2.0.17(mermaid@11.6.0)(vitepress@1.6.3(patch_hash=56bd737eca4c1ba581d00bedd4fe307f6e48f782af59933eac54bb7d43206b99)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3))
       x-forwarded-fetch:
         specifier: ^0.2.0
         version: 0.2.0
@@ -5670,14 +5670,14 @@ snapshots:
       - '@75lb/nature'
       - supports-color
 
-  vitepress-plugin-mermaid@2.0.17(mermaid@11.6.0)(vitepress@1.6.3(patch_hash=h3qgcktgvvyvgahwawzgugeubu)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3)):
+  vitepress-plugin-mermaid@2.0.17(mermaid@11.6.0)(vitepress@1.6.3(patch_hash=56bd737eca4c1ba581d00bedd4fe307f6e48f782af59933eac54bb7d43206b99)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3)):
     dependencies:
       mermaid: 11.6.0
-      vitepress: 1.6.3(patch_hash=h3qgcktgvvyvgahwawzgugeubu)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3)
+      vitepress: 1.6.3(patch_hash=56bd737eca4c1ba581d00bedd4fe307f6e48f782af59933eac54bb7d43206b99)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3)
     optionalDependencies:
       '@mermaid-js/mermaid-mindmap': 9.3.0
 
-  vitepress@1.6.3(patch_hash=h3qgcktgvvyvgahwawzgugeubu)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3):
+  vitepress@1.6.3(patch_hash=56bd737eca4c1ba581d00bedd4fe307f6e48f782af59933eac54bb7d43206b99)(@algolia/client-search@5.25.0)(@types/node@22.15.21)(postcss@8.5.3)(search-insights@2.17.3)(typescript@5.8.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.25.0)(search-insights@2.17.3)
