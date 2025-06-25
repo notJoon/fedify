@@ -19,8 +19,17 @@ To be released.
      -  `InProcessMessageQueue.nativeRetrial` is `false`.
      -  `ParallelMessageQueue.nativeRetrial` inherits from the wrapped queue.
 
+ -  Added `FederationOptions.firstKnock` option to configure the HTTP
+    Signatures specification used for the first signature attempt when
+    communicating with unknown servers.  This implements the [double-knocking]
+    mechanism for better compatibility across different ActivityPub servers.
+    Defaults to `"rfc9421"` (RFC 9421: HTTP Message Signatures), with fallback
+    to `"draft-cavage-http-signatures-12"` if the first attempt fails.
+    [[#252] by Fabien O'Carroll]
+
 [#250]: https://github.com/fedify-dev/fedify/issues/250
 [#251]: https://github.com/fedify-dev/fedify/pull/251
+[#252]: https://github.com/fedify-dev/fedify/pull/252
 
 
 Version 1.6.1

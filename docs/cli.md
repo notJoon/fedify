@@ -746,7 +746,7 @@ Available options are:
 `rfc9421` (default)
 :   [RFC 9421]: HTTP Message Signatures, which is the final revision of
     the specification and is recommended, but not yet widely adopted
-    in the fediverse as of May 2025.
+    in the fediverse as of June 2025.
 
 If the first signature attempt fails, Fedify will automatically try the other
 specification format, implementing the [double-knocking] technique described in
