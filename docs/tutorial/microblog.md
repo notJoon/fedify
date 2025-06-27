@@ -21,7 +21,7 @@ use Fedify rather than understanding its underlying operating principles.
 If you have any questions, suggestions, or feedback, please feel free to join
 our [Matrix chat space] or [Discord server] or [GitHub Discussions].
 
-[한국어]: https://hackmd.io/@hongminhee/fedify-tutorial-ko
+[한국어]: https://hackers.pub/@hongminhee/2025/fedify-tutorial-ko
 [日本語]: https://zenn.dev/hongminhee/books/4a38b6358a027b
 [microblog]: https://en.wikipedia.org/wiki/Microblogging
 [Mastodon]: https://joinmastodon.org/
@@ -972,7 +972,7 @@ federation.setActorDispatcher("/users/{identifier}", async (ctx, identifier) => 
 export default federation;
 ~~~~
 
-The part we should focus on is the `~Federation.setActorDispatcher()` method.
+The part we should focus on is the `~Federatable.setActorDispatcher()` method.
 This method defines the URL and behavior that other ActivityPub software will
 use when querying an actor on our server. For example, if we query
 */users/johndoe* as we did earlier, the `identifier` parameter of the callback
@@ -1131,7 +1131,7 @@ import Database from "better-sqlite3";
 const db = new Database("");
 interface User {}
 import type { Federation } from "@fedify/fedify";
-const fedi = null as unknown as Federation<void>;
+const federation = null as unknown as Federation<void>;
 // ---cut-before---
 app.post("/setup", async (c) => {
   // Check if an account already exists
@@ -1157,7 +1157,7 @@ app.post("/setup", async (c) => {
   }
   const url = new URL(c.req.url);
   const handle = `@${username}@${url.host}`;
-  const ctx = fedi.createContext(c.req.raw, undefined);
+  const ctx = federation.createContext(c.req.raw, undefined);
   db.transaction(() => {
     db.prepare("INSERT OR REPLACE INTO users (id, username) VALUES (1, ?)").run(
       username,
@@ -1266,7 +1266,7 @@ const federation = null as unknown as Federation<void>;
 federation.setInboxListeners("/users/{identifier}/inbox", "/inbox");
 ~~~~
 
-Don't worry about the `~Federation.setInboxListeners()` method for now.
+Don't worry about the `~Federatable.setInboxListeners()` method for now.
 We'll cover this when we explain about the inbox. Just note that
 the `~Context.getInboxUri()` method used in the account creation code needs
 the above code to work properly.
@@ -1290,7 +1290,7 @@ import type { Actor, User } from "./schema.ts";
 ~~~~
 
 Now that we've `import`ed what we need, let's modify
-the `~Federation.setActorDispatcher()` method:
+the `~Federatable.setActorDispatcher()` method:
 
 ~~~~ typescript{2-11,16-21} twoslash [src/federation.ts]
 import { Endpoints, Person, type Federation } from "@fedify/fedify";
@@ -1602,7 +1602,7 @@ federation
 
 First of all, we should pay attention to
 the `~ActorCallbackSetters.setKeyPairsDispatcher()` method called in succession
-after the `~Federation.setActorDispatcher()` method. This method connects
+after the `~Federatable.setActorDispatcher()` method. This method connects
 the key pairs returned by the callback function to the account. By connecting
 the key pairs in this way, Fedify automatically adds digital signatures with
 the registered private keys when sending activities.
@@ -1622,7 +1622,7 @@ The `importJwk()` function converts a key represented in JWK format to
 a [`CryptoKey`] object. You can understand it as the opposite of
 the `exportJwk()` function.
 
-Now, let's turn our attention back to the `~Federation.setActorDispatcher()`
+Now, let's turn our attention back to the `~Federatable.setActorDispatcher()`
 method. We're using a method called `~Context.getActorKeyPairs()`, which,
 as the name suggests, returns the key pairs of the actor. The actor's key pairs
 are those very key pairs we just loaded with
@@ -1880,7 +1880,7 @@ import {
 } from "@fedify/fedify";
 ~~~~
 
-Now let's modify the code calling the `~Federation.setInboxListeners()` method
+Now let's modify the code calling the `~Federatable.setInboxListeners()` method
 as follows:
 
 ~~~~ typescript twoslash [src/federation.ts]
@@ -2531,7 +2531,7 @@ federation
   });
 ~~~~
 
-The `~Federation.setFollowersDispatcher()` method creates a followers
+The `~Federatable.setFollowersDispatcher()` method creates a followers
 collection object to respond to when a `GET /users/{identifier}/followers`
 request comes in. Although the SQL is a bit long, it essentially gets the list
 of actors following the actor with the `identifier` parameter. The `items`
@@ -2863,7 +2863,7 @@ And implement the `POST /users/{username}/posts` request handler:
 ~~~~ typescript twoslash [src/app.tsx]
 import { stringifyEntities } from "stringify-entities";
 import { type Federation, Note } from "@fedify/fedify";
-const fedi = null as unknown as Federation<void>;
+const federation = null as unknown as Federation<void>;
 import { Hono } from "hono";
 const app = new Hono();
 import Database from "better-sqlite3";
@@ -2889,7 +2889,7 @@ app.post("/users/:username/posts", async (c) => {
   if (content == null || content.trim() === "") {
     return c.text("Content is required", 400);
   }
-  const ctx = fedi.createContext(c.req.raw, undefined);
+  const ctx = federation.createContext(c.req.raw, undefined);
   const url: string | null = db.transaction(() => {
     const post = db
       .prepare<unknown[], Post>(
@@ -3256,7 +3256,7 @@ Then modify the `POST /users/{username}/posts` request handler as follows:
 ~~~~ typescript{4,24,26-40} twoslash [src/app.tsx]
 import { stringifyEntities } from "stringify-entities";
 import { Create, type Federation, Note } from "@fedify/fedify";
-const fedi = null as unknown as Federation<void>;
+const federation = null as unknown as Federation<void>;
 import { Hono } from "hono";
 const app = new Hono();
 import Database from "better-sqlite3";
@@ -3269,7 +3269,7 @@ const username = "" as string;
 // ---cut-before---
 app.post("/users/:username/posts", async (c) => {
   // ... omitted ...
-  const ctx = fedi.createContext(c.req.raw, undefined);
+  const ctx = federation.createContext(c.req.raw, undefined);
   const post: Post | null = db.transaction(() => {
     const post = db
       .prepare<unknown[], Post>(
@@ -3514,7 +3514,7 @@ Then add a `POST /users/{username}/following` request handler:
 
 ~~~~ typescript twoslash [src/app.tsx]
 import { type Federation, Follow, isActor } from "@fedify/fedify";
-const fedi = null as unknown as Federation<void>;
+const federation = null as unknown as Federation<void>;
 import { Hono } from "hono";
 const app = new Hono();
 // ---cut-before---
@@ -3525,7 +3525,7 @@ app.post("/users/:username/following", async (c) => {
   if (typeof handle !== "string") {
     return c.text("Invalid actor handle or URL", 400);
   }
-  const ctx = fedi.createContext(c.req.raw, undefined);
+  const ctx = federation.createContext(c.req.raw, undefined);
   const actor = await ctx.lookupObject(handle.trim());
   if (!isActor(actor)) {
     return c.text("Invalid actor handle or URL", 400);

@@ -456,7 +456,7 @@ serve({
 
 :::
 
-In the above code, we use the `Federation.setActorDispatcher()` method to set
+In the above code, we use the `~Federatable.setActorDispatcher()` method to set
 an actor dispatcher for the server.  The first argument is the path pattern
 for the actor, and the second argument is a callback function that takes
 a `Context` object and the actor's identifier.  The callback function should
@@ -834,7 +834,7 @@ The `~ActorCallbackSetters.setKeyPairsDispatcher()` method is used to set a key
 pairs dispatcher for the actor.  The key pairs dispatcher is a function that is
 called when the key pairs of an actor is needed.  Let's set a key pairs
 dispatcher for the actor *me*.  `~ActorCallbackSetters.setKeyPairsDispatcher()`
-method should be chained after the `Federation.setActorDispatcher()` method:
+method should be chained after the `~Federatable.setActorDispatcher()` method:
 
 ::: code-group
 
