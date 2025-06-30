@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.6.3
 -------------
 
-To be released.
+Released on June 30, 2025.
 
  -  Fixed JSON-LD serialization of the `Question.voters` property to correctly
     serialize as a plain number (e.g., `"votersCount": 123`) instead of as a
