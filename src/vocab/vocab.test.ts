@@ -2,6 +2,7 @@ import { isDeno } from "@david/which-runtime";
 import { toArray } from "@hongminhee/aitertools";
 import { parseLanguageTag } from "@phensley/language-tag";
 import {
+  assert,
   assertEquals,
   assertFalse,
   assertInstanceOf,
@@ -36,6 +37,7 @@ import {
   OrderedCollectionPage,
   Person,
   Place,
+  Question,
   Source,
 } from "./vocab.ts";
 
@@ -502,6 +504,16 @@ test("Activity.clone()", async () => {
     TypeError,
     "Cannot update both summary and summaries at the same time.",
   );
+});
+
+test("Question.voters", async () => {
+  const question = new Question({
+    voters: 123,
+  });
+  const json = await question.toJsonLd({ format: "compact" });
+  assert(typeof json === "object" && json != null);
+  assert("votersCount" in json);
+  assertEquals(json["votersCount"], 123);
 });
 
 test("Deno.inspect(Object)", () => {
