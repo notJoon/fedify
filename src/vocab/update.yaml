@@ -24,7 +24,9 @@ defaultContext:
   PropertyValue: "schema:PropertyValue"
   value: "schema:value"
   sensitive: "as:sensitive"
-  votersCount: "toot:votersCount"
+  votersCount:
+    "@id": "toot:votersCount"
+    "@type": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
   featured:
     "@id": "toot:featured"
     "@type": "@id"
