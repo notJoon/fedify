@@ -754,7 +754,10 @@ test("handleCollection()", async () => {
       Emoji: "toot:Emoji",
       Hashtag: "as:Hashtag",
       sensitive: "as:sensitive",
-      votersCount: "toot:votersCount",
+      votersCount: {
+        "@id": "toot:votersCount",
+        "@type": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+      },
       _misskey_quote: "misskey:_misskey_quote",
       quoteUri: "fedibird:quoteUri",
       quoteUrl: "as:quoteUrl",

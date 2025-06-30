@@ -8,6 +8,11 @@ Version 1.0.26
 
 To be released.
 
+ -  Fixed JSON-LD serialization of the `Question.voters` property to correctly
+    serialize as a plain number (e.g., `"votersCount": 123`) instead of as a
+    typed literal object (e.g., `"votersCount":{"type":"xsd:nonNegativeInteger",
+    "@value":123}`).
+
 
 Version 1.0.25
 --------------
