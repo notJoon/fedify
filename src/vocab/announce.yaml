@@ -16,7 +16,9 @@ defaultContext:
   misskey: "https://misskey-hub.net/ns#"
   fedibird: "http://fedibird.com/ns#"
   sensitive: "as:sensitive"
-  votersCount: "toot:votersCount"
+  votersCount:
+    "@id": "toot:votersCount"
+    "@type": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
   Emoji: "toot:Emoji"
   Hashtag: "as:Hashtag"
   quoteUrl: "as:quoteUrl"
