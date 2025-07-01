@@ -112,9 +112,9 @@
     "fast-check": "^3.22.0",
     "fetch-mock": "^12.5.2",
     "miniflare": "^4.20250523.0",
-    "tsdown": "^0.12.2",
+    "tsdown": "catalog:",
     "tsx": "^4.19.4",
-    "typescript": "^5.8.3",
+    "typescript": "catalog:",
     "wrangler": "^4.17.0"
   },
   "scripts": {

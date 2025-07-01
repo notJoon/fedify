@@ -1,0 +1,47 @@
+{
+  "name": "@fedify/amqp",
+  "version": "1.8.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./mod.ts",
+    "./mq": "./mq.ts"
+  },
+  "imports": {
+    "@hongminhee/suite": "jsr:@hongminhee/suite@^0.6.3",
+    "amqplib": "npm:amqplib@^0.10.8"
+  },
+  "nodeModulesDir": "auto",
+  "unstable": [
+    "temporal"
+  ],
+  "exclude": [
+    ".github",
+    "node_modules",
+    "npm",
+    "pnpm-lock.yaml"
+  ],
+  "tasks": {
+    "build": "pnpm build",
+    "check": "deno fmt --check && deno lint && deno check *.ts",
+    "test": "deno test --allow-net --allow-env",
+    "test:node": {
+      "dependencies": [
+        "build"
+      ],
+      "command": "node --experimental-transform-types --test"
+    },
+    "test:bun": {
+      "dependencies": [
+        "build"
+      ],
+      "command": "bun test --timeout 15000"
+    },
+    "test-all": {
+      "dependencies": [
+        "test",
+        "test:node",
+        "test:bun"
+      ]
+    }
+  }
+}
