@@ -1,6 +1,6 @@
-import { delay } from "@es-toolkit/es-toolkit";
 import { getLogger } from "@logtape/logtape";
 import { SpanStatusCode, trace, type TracerProvider } from "@opentelemetry/api";
+import { delay } from "es-toolkit";
 import metadata from "../deno.json" with { type: "json" };
 import {
   type DocumentLoader,

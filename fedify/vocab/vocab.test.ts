@@ -1,4 +1,3 @@
-import { pascalCase } from "@es-toolkit/es-toolkit";
 import { parseLanguageTag } from "@phensley/language-tag";
 import {
   assert,
@@ -9,6 +8,7 @@ import {
   assertRejects,
   assertThrows,
 } from "@std/assert";
+import { pascalCase } from "es-toolkit";
 import {
   loadSchemaFiles,
   type PropertySchema,

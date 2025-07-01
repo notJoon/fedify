@@ -208,7 +208,8 @@ If the provided implementations don't meet your needs, you can create a custom
 ### Implement the `KvStore` interface
 
 Create a class that implements the `KvStore` interface.  The interface defines
-three methods: `~KvStore.get()`, `~KvStore.set()`, and `~KvStore.delete()`:
+three methods: `~KvStore.get()`, `~KvStore.set()`, `~KvStore.delete()`, and
+optionally `~KvStore.cas()`.
 
 ~~~~ typescript twoslash
 import { KvStore, KvKey, KvStoreSetOptions } from "@fedify/fedify";
@@ -231,6 +232,17 @@ class MyCustomKvStore implements KvStore {
 
   async delete(key: KvKey): Promise<void> {
     // Implement delete logic
+  }
+
+  async cas(
+    key: KvKey,
+    expectedValue: unknown,
+    newValue: unknown
+  ): Promise<boolean> {
+    // Implement compare-and-swap logic if needed
+    // ---cut-start---
+    return false;
+    // ---cut-end---
   }
 }
 ~~~~
@@ -399,6 +411,70 @@ class MyCustomKvStore implements KvStore {
 async delete(key: KvKey): Promise<void> {
   const serializedKey = this.serializeKey(key);
   await this.storage.remove(serializedKey);
+}
+// ---cut-after---
+}
+~~~~
+
+### Implement `~KvStore.cas()` method (optional)
+
+If your storage backend supports compare-and-swap (CAS) operations, you can
+implement the `~KvStore.cas()` method. This method allows you to atomically
+update a value only if it matches the expected value. This is useful for
+implementing optimistic concurrency control.
+
+~~~~ typescript twoslash
+import type { KvStore, KvKey, KvStoreSetOptions } from "@fedify/fedify";
+/**
+ * A hypothetical storage interface.
+ */
+interface HypotheticalStorage {
+  /**
+   * A hypothetical method to compare and swap a value by key.
+   * @param key The key to compare and swap.
+   * @param expectedValue The expected value to match.
+   * @param newValue The new value to set if the expected value matches.
+   * @returns True if the operation was successful, false otherwise.
+   */
+  compareAndSwap(
+    key: string,
+    expectedValue: unknown,
+    newValue: unknown
+  ): Promise<boolean>;
+}
+class MyCustomKvStore implements KvStore {
+  /**
+   * A hypothetical storage backend.
+   */
+  storage: HypotheticalStorage = {
+   async compareAndSwap(
+     key: string,
+     expectedValue: unknown,
+     newValue: unknown
+   ): Promise<boolean> { return false; }
+  };
+  private serializeKey(key: KvKey): string { return ""; }
+  async get<T = unknown>(key: KvKey): Promise<T | undefined> {
+    return undefined;
+  }
+  async set(
+    key: KvKey,
+    value: unknown,
+    options?: KvStoreSetOptions
+  ): Promise<void> { }
+  async delete(key: KvKey): Promise<void> { }
+// ---cut-before---
+async cas(
+  key: KvKey,
+  expectedValue: unknown,
+  newValue: unknown
+): Promise<boolean> {
+  const serializedKey = this.serializeKey(key);
+  return await this.storage.compareAndSwap(
+    serializedKey,
+    expectedValue,
+    newValue
+  );
 }
 // ---cut-after---
 }

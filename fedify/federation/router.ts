@@ -1,5 +1,5 @@
 // @ts-ignore TS7016
-import { cloneDeep } from "@es-toolkit/es-toolkit";
+import { cloneDeep } from "es-toolkit";
 import { Router as InnerRouter } from "uri-template-router";
 import { parseTemplate, type Template } from "url-template";
 

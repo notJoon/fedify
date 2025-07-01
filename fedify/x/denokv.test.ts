@@ -1,5 +1,5 @@
-import { delay } from "@es-toolkit/es-toolkit";
 import { assertEquals, assertGreater } from "@std/assert";
+import { delay } from "es-toolkit";
 import { test } from "../testing/mod.ts";
 import { DenoKvMessageQueue, DenoKvStore } from "./denokv.ts";
 
@@ -20,6 +20,19 @@ test("DenoKvStore", async (t) => {
   await t.step("delete()", async () => {
     await store.delete(["foo", "baz"]);
     assertEquals((await kv.get<string>(["foo", "baz"])).value, null);
+  });
+
+  await t.step("cas()", async () => {
+    await store.set(["foo", "bar"], "foobar");
+    assertEquals(await store.cas(["foo", "bar"], "bar", "baz"), false);
+    assertEquals(await store.get(["foo", "bar"]), "foobar");
+    assertEquals(await store.cas(["foo", "bar"], "foobar", "baz"), true);
+    assertEquals(await store.get(["foo", "bar"]), "baz");
+    await store.delete(["foo", "bar"]);
+    assertEquals(await store.cas(["foo", "bar"], "foobar", "baz"), false);
+    assertEquals(await store.get(["foo", "bar"]), undefined);
+    assertEquals(await store.cas(["foo", "bar"], undefined, "baz"), true);
+    assertEquals(await store.get(["foo", "bar"]), "baz");
   });
 
   kv.close();

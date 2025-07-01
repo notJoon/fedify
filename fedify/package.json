@@ -83,7 +83,6 @@
   },
   "dependencies": {
     "@cfworker/json-schema": "^4.1.1",
-    "@es-toolkit/es-toolkit": "npm:es-toolkit@^1.38.0",
     "@hugoalh/http-header-link": "^1.0.2",
     "@js-temporal/polyfill": "^0.5.1",
     "@logtape/logtape": "catalog:",
@@ -93,6 +92,7 @@
     "@phensley/language-tag": "^1.9.0",
     "asn1js": "^3.0.5",
     "byte-encodings": "^1.0.11",
+    "es-toolkit": "^1.39.5",
     "json-canon": "^1.0.1",
     "jsonld": "^8.3.2",
     "multicodec": "^3.2.1",

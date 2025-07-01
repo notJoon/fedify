@@ -28,6 +28,11 @@ interface KvMetadata {
  * Implementation of the {@link KvStore} interface for Cloudflare Workers KV
  * binding.  This class provides a wrapper around Cloudflare's KV namespace to
  * store and retrieve JSON-serializable values using structured keys.
+ *
+ * Note that this implementation does not support the {@link KvStore.cas}
+ * operation, as Cloudflare Workers KV does not support atomic compare-and-swap
+ * operations.  If you need this functionality, consider using a different
+ * key–value store that supports atomic operations.
  * @since 1.6.0
  */
 export class WorkersKvStore implements KvStore {

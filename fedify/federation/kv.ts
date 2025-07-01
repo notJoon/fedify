@@ -1,3 +1,5 @@
+import { isEqual } from "es-toolkit";
+
 /**
  * A key for a key–value store.  An array of one or more strings.
  *
@@ -44,6 +46,22 @@ export interface KvStore {
    * @param key The key to delete.
    */
   delete(key: KvKey): Promise<void>;
+
+  /**
+   * Compare-and-swap (CAS) operation for the key–value store.
+   * @param key The key to perform the CAS operation on.
+   * @param expectedValue The expected value for the key.
+   * @param newValue The new value to set if the expected value matches.
+   * @param options Additional options for setting the value.
+   * @return `true` if the CAS operation was successful, `false` otherwise.
+   * @since 1.8.0
+   */
+  cas?: (
+    key: KvKey,
+    expectedValue: unknown,
+    newValue: unknown,
+    options?: KvStoreSetOptions,
+  ) => Promise<boolean>;
 }
 
 /**
@@ -95,5 +113,39 @@ export class MemoryKvStore implements KvStore {
     const encodedKey = this.#encodeKey(key);
     delete this.#values[encodedKey];
     return Promise.resolve();
+  }
+
+  /**
+   * {@inheritDoc KvStore.cas}
+   */
+  cas(
+    key: KvKey,
+    expectedValue: unknown,
+    newValue: unknown,
+    options?: KvStoreSetOptions,
+  ): Promise<boolean> {
+    const encodedKey = this.#encodeKey(key);
+    const entry = this.#values[encodedKey];
+    let currentValue: unknown;
+    if (entry == null) {
+      currentValue = undefined;
+    } else {
+      const [value, expiration] = entry;
+      if (
+        expiration != null &&
+        Temporal.Now.instant().until(expiration).sign < 0
+      ) {
+        delete this.#values[encodedKey];
+        currentValue = undefined;
+      } else {
+        currentValue = value;
+      }
+    }
+    if (!isEqual(currentValue, expectedValue)) return Promise.resolve(false);
+    const expiration = options?.ttl == null
+      ? null
+      : Temporal.Now.instant().add(options.ttl.round({ largestUnit: "hour" }));
+    this.#values[encodedKey] = [newValue, expiration];
+    return Promise.resolve(true);
   }
 }

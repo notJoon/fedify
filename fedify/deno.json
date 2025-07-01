@@ -20,7 +20,6 @@
   "imports": {
     "@cfworker/json-schema": "npm:@cfworker/json-schema@^4.1.1",
     "@cloudflare/workers-types": "npm:@cloudflare/workers-types@^4.20250529.0",
-    "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.38.0",
     "@hugoalh/http-header-link": "jsr:@hugoalh/http-header-link@^1.0.2",
     "@multiformats/base-x": "npm:@multiformats/base-x@^4.0.1",
     "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
@@ -32,6 +31,7 @@
     "@std/yaml": "jsr:@std/yaml@^0.224.3",
     "asn1js": "npm:asn1js@^3.0.5",
     "byte-encodings": "npm:byte-encodings@^1.0.11",
+    "es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.39.5",
     "fast-check": "npm:fast-check@^3.22.0",
     "fetch-mock": "npm:fetch-mock@^12.5.2",
     "json-canon": "npm:json-canon@^1.0.1",

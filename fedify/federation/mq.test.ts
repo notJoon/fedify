@@ -1,4 +1,3 @@
-import { delay } from "@es-toolkit/es-toolkit";
 import {
   assert,
   assertEquals,
@@ -6,6 +5,7 @@ import {
   assertGreater,
   assertGreaterOrEqual,
 } from "@std/assert";
+import { delay } from "es-toolkit";
 import { test } from "../testing/mod.ts";
 import {
   InProcessMessageQueue,

@@ -10,6 +10,7 @@
  * @module
  * @since 0.5.0
  */
+import { isEqual } from "es-toolkit";
 import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import type {
   MessageQueue,
@@ -61,6 +62,32 @@ export class DenoKvStore implements KvStore {
    */
   delete(key: KvKey): Promise<void> {
     return this.#kv.delete(key);
+  }
+
+  /**
+   * {@inheritDoc KvStore.cas}
+   */
+  async cas(
+    key: KvKey,
+    expectedValue: unknown,
+    newValue: unknown,
+    options?: KvStoreSetOptions,
+  ): Promise<boolean> {
+    while (true) {
+      const entry = await this.#kv.get(key);
+      if (!isEqual(entry.value ?? undefined, expectedValue)) return false;
+      const result = await this.#kv.atomic()
+        .check(entry)
+        .set(
+          key,
+          newValue,
+          options?.ttl == null ? undefined : {
+            expireIn: options.ttl.total("millisecond"),
+          },
+        )
+        .commit();
+      if (result.ok) return true;
+    }
   }
 }
 

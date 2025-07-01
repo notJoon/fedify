@@ -8,6 +8,14 @@ Version 1.8.0
 
 To be released.
 
+ -  Key–value stores now optionally support CAS (compare-and-swap) operation
+    for atomic updates.  This is useful for implementing optimistic locking
+    and preventing lost updates in concurrent environments.
+
+     -  Added optional `KvStore.cas()` method.
+     -  Added `MemoryKvStore.cas()` method.
+     -  Added `DenoKvStore.cas()` method.
+
 
 Version 1.7.1
 -------------

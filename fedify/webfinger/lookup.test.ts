@@ -1,5 +1,5 @@
-import { withTimeout } from "@es-toolkit/es-toolkit";
 import { assertEquals } from "@std/assert";
+import { withTimeout } from "es-toolkit";
 import fetchMock from "fetch-mock";
 import { test } from "../testing/mod.ts";
 import type { ResourceDescriptor } from "./jrd.ts";

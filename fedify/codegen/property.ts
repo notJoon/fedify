@@ -1,4 +1,4 @@
-import { pascalCase } from "@es-toolkit/es-toolkit";
+import { pascalCase } from "es-toolkit";
 import metadata from "../deno.json" with { type: "json" };
 import { getFieldName } from "./field.ts";
 import type { PropertySchema, TypeSchema } from "./schema.ts";

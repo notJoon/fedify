@@ -1,6 +1,6 @@
 import type { KVNamespace } from "@cloudflare/workers-types/experimental";
-import { delay } from "@es-toolkit/es-toolkit";
 import { assertEquals } from "@std/assert";
+import { delay } from "es-toolkit";
 import { test } from "../testing/mod.ts";
 import { WorkersKvStore, WorkersMessageQueue } from "./cfworkers.ts";
 
