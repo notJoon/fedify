@@ -4,7 +4,7 @@
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
-    "./mq": "./src/mq.ts"
+    "./mq": "./mq.ts"
   },
   "imports": {
     "@fedify/fedify": "jsr:@fedify/fedify@^1.7.0",
@@ -26,7 +26,7 @@
   ],
   "tasks": {
     "build": "pnpm build",
-    "check": "deno fmt --check && deno lint && deno check */*.ts",
+    "check": "deno fmt --check && deno lint && deno check *.ts",
     "test": "deno test --allow-net --allow-env",
     "test:node": {
       "dependencies": [
