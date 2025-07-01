@@ -1,8 +1,7 @@
-.claude/
+.claude/settings.local.json
 .DS_Store
 deno.lock
+node_modules/
 repomix-output.xml
 t.ts
 t2.ts
-
-**/.claude/settings.local.json

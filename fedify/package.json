@@ -86,7 +86,7 @@
     "@es-toolkit/es-toolkit": "npm:es-toolkit@^1.38.0",
     "@hugoalh/http-header-link": "^1.0.2",
     "@js-temporal/polyfill": "^0.5.1",
-    "@logtape/logtape": "^1.0.0",
+    "@logtape/logtape": "catalog:",
     "@multiformats/base-x": "^4.0.1",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/semantic-conventions": "^1.27.0",
@@ -105,7 +105,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250529.0",
     "@std/assert": "jsr:^0.226.0",
-    "@std/path": "jsr:^1.0.9",
+    "@std/path": "catalog:",
     "@std/url": "jsr:1.0.0-rc.3",
     "@std/yaml": "jsr:^1.0.6",
     "@types/node": "^22.15.21",

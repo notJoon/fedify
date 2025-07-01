@@ -1,0 +1,7 @@
+packages:
+- fedify
+- docs
+
+catalog:
+  "@logtape/logtape": ^1.0.0
+  "@std/path": "jsr:^1.0.6"
