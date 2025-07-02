@@ -374,102 +374,110 @@ test("Activity.fromJsonLd()", async () => {
   );
 });
 
-test("Activity.getObject()", async () => {
-  const activity = new Activity({
-    object: new URL("https://example.com/announce"),
-  });
-  const announce = await activity.getObject({
-    documentLoader: mockDocumentLoader,
-    contextLoader: mockDocumentLoader,
-  });
-  assertInstanceOf(announce, Announce);
-  assertEquals(announce.id, new URL("https://example.com/announce"));
+test({
+  name: "Activity.getObject()",
+  permissions: { env: true, read: true },
+  async fn() {
+    const activity = new Activity({
+      object: new URL("https://example.com/announce"),
+    });
+    const announce = await activity.getObject({
+      documentLoader: mockDocumentLoader,
+      contextLoader: mockDocumentLoader,
+    });
+    assertInstanceOf(announce, Announce);
+    assertEquals(announce.id, new URL("https://example.com/announce"));
 
-  const object = await announce.getObject();
-  assertInstanceOf(object, Object);
-  assertEquals(object.id, new URL("https://example.com/object"));
-  assertEquals(object.name, "Fetched object");
+    const object = await announce.getObject();
+    assertInstanceOf(object, Object);
+    assertEquals(object.id, new URL("https://example.com/object"));
+    assertEquals(object.name, "Fetched object");
 
-  // Is hydration applied to toJsonLd()?
-  const jsonLd = await activity.toJsonLd();
-  assertEquals(jsonLd, {
-    "@context": [
-      "https://w3id.org/identity/v1",
-      "https://www.w3.org/ns/activitystreams",
-      "https://w3id.org/security/v1",
-      "https://w3id.org/security/data-integrity/v1",
-    ],
-    type: "Activity",
-    object: {
-      id: "https://example.com/announce",
-      type: "Announce",
+    // Is hydration applied to toJsonLd()?
+    const jsonLd = await activity.toJsonLd();
+    assertEquals(jsonLd, {
+      "@context": [
+        "https://w3id.org/identity/v1",
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+        "https://w3id.org/security/data-integrity/v1",
+      ],
+      type: "Activity",
       object: {
-        type: "Object",
-        id: "https://example.com/object",
-        name: "Fetched object",
+        id: "https://example.com/announce",
+        type: "Announce",
+        object: {
+          type: "Object",
+          id: "https://example.com/object",
+          name: "Fetched object",
+        },
       },
-    },
-  });
+    });
 
-  const activity2 = new Activity({
-    object: new URL("https://example.com/not-found"),
-  });
-  assertEquals(await activity2.getObject({ suppressError: true }), null);
+    const activity2 = new Activity({
+      object: new URL("https://example.com/not-found"),
+    });
+    assertEquals(await activity2.getObject({ suppressError: true }), null);
 
-  const activity3 = await Activity.fromJsonLd({
-    "@context": "https://www.w3.org/ns/activitystreams",
-    type: "Create",
-    object: {
+    const activity3 = await Activity.fromJsonLd({
+      "@context": "https://www.w3.org/ns/activitystreams",
+      type: "Create",
+      object: {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        type: "Note",
+        content: "Hello world",
+      },
+    });
+    const object3 = await activity3.getObject();
+    assertInstanceOf(object3, Note);
+    assertEquals(await object3.toJsonLd(), {
       "@context": "https://www.w3.org/ns/activitystreams",
       type: "Note",
       content: "Hello world",
-    },
-  });
-  const object3 = await activity3.getObject();
-  assertInstanceOf(object3, Note);
-  assertEquals(await object3.toJsonLd(), {
-    "@context": "https://www.w3.org/ns/activitystreams",
-    type: "Note",
-    content: "Hello world",
-  });
+    });
+  },
 });
 
-test("Activity.getObjects()", async () => {
-  const activity = new Activity({
-    objects: [
-      new URL("https://example.com/object"),
-      new Object({
-        name: "Second object",
+test({
+  name: "Activity.getObjects()",
+  permissions: { env: true, read: true },
+  async fn() {
+    const activity = new Activity({
+      objects: [
+        new URL("https://example.com/object"),
+        new Object({
+          name: "Second object",
+        }),
+      ],
+    });
+    const objects = await Array.fromAsync(
+      activity.getObjects({
+        documentLoader: mockDocumentLoader,
+        contextLoader: mockDocumentLoader,
       }),
-    ],
-  });
-  const objects = await Array.fromAsync(
-    activity.getObjects({
-      documentLoader: mockDocumentLoader,
-      contextLoader: mockDocumentLoader,
-    }),
-  );
-  assertEquals(objects.length, 2);
-  assertInstanceOf(objects[0], Object);
-  assertEquals(objects[0].id, new URL("https://example.com/object"));
-  assertEquals(objects[0].name, "Fetched object");
-  assertInstanceOf(objects[1], Object);
-  assertEquals(objects[1].name, "Second object");
+    );
+    assertEquals(objects.length, 2);
+    assertInstanceOf(objects[0], Object);
+    assertEquals(objects[0].id, new URL("https://example.com/object"));
+    assertEquals(objects[0].name, "Fetched object");
+    assertInstanceOf(objects[1], Object);
+    assertEquals(objects[1].name, "Second object");
 
-  const activity2 = new Activity({
-    objects: [
-      new URL("https://example.com/not-found"),
-      new Object({
-        name: "Second object",
-      }),
-    ],
-  });
-  const objects2 = await Array.fromAsync(
-    activity2.getObjects({ suppressError: true }),
-  );
-  assertEquals(objects2.length, 1);
-  assertInstanceOf(objects2[0], Object);
-  assertEquals(objects2[0].name, "Second object");
+    const activity2 = new Activity({
+      objects: [
+        new URL("https://example.com/not-found"),
+        new Object({
+          name: "Second object",
+        }),
+      ],
+    });
+    const objects2 = await Array.fromAsync(
+      activity2.getObjects({ suppressError: true }),
+    );
+    assertEquals(objects2.length, 1);
+    assertInstanceOf(objects2[0], Object);
+    assertEquals(objects2[0].name, "Second object");
+  },
 });
 
 test("Activity.clone()", async () => {

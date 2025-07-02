@@ -7,8 +7,7 @@
     "./mq": "./mq.ts"
   },
   "imports": {
-    "@hongminhee/suite": "jsr:@hongminhee/suite@^0.6.3",
-    "amqplib": "npm:amqplib@^0.10.8"
+    "@hongminhee/suite": "jsr:@hongminhee/suite@^0.6.3"
   },
   "nodeModulesDir": "auto",
   "unstable": [

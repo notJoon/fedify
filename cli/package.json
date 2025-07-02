@@ -1,11 +1,11 @@
 {
   "name": "@fedify/cli",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.8.0",
   "type": "module",
   "files": [
     "README.md",
     "install.mjs",
+    "package.json",
     "run.mjs"
   ],
   "bin": {
@@ -44,10 +44,12 @@
     "url": "https://hongminhee.org/"
   },
   "funding": [
+    "https://opencollective.com/fedify",
     "https://github.com/sponsors/dahlia"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fedify-dev/fedify.git"
+    "url": "git+https://github.com/fedify-dev/fedify.git",
+    "directory": "cli"
   }
 }

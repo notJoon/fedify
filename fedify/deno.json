@@ -19,7 +19,6 @@
   },
   "imports": {
     "@cfworker/json-schema": "npm:@cfworker/json-schema@^4.1.1",
-    "@cloudflare/workers-types": "npm:@cloudflare/workers-types@^4.20250529.0",
     "@hugoalh/http-header-link": "jsr:@hugoalh/http-header-link@^1.0.2",
     "@multiformats/base-x": "npm:@multiformats/base-x@^4.0.1",
     "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
@@ -64,12 +63,9 @@
   ],
   "tasks": {
     "codegen": "deno run --allow-read --allow-write --check codegen/main.ts vocab/ ../runtime/ > vocab/vocab.ts && deno fmt vocab/vocab.ts && deno cache vocab/vocab.ts && deno check vocab/vocab.ts",
-    "check-version": "deno run --allow-read=package.json scripts/check_version.ts && deno run ../cli/scripts/check_version.ts",
-    "sync-version": "deno run --allow-read=package.json --allow-write=package.json scripts/sync_version.ts && deno run --allow-read=../cli/deno.json --allow-write=../cli/deno.json ../cli/scripts/sync_version.ts",
     "cache": {
       "command": "deno cache mod.ts",
       "dependencies": [
-        "check-version",
         "codegen"
       ]
     },
@@ -101,7 +97,6 @@
     "publish": {
       "command": "deno publish",
       "dependencies": [
-        "check-version",
         "codegen"
       ]
     },
@@ -110,13 +105,6 @@
       "command": "pnpm exec tsdown",
       "dependencies": [
         "codegen",
-        "pnpm:install"
-      ]
-    },
-    "npm": {
-      "command": "pnpm pack",
-      "dependencies": [
-        "sync-version",
         "pnpm:install"
       ]
     },

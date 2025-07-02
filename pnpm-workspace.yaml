@@ -1,12 +1,16 @@
 packages:
 - fedify
+- cli
 - amqp
 - docs
 
 catalog:
+  "@cloudflare/workers-types": ^4.20250529.0
   "@logtape/logtape": ^1.0.0
   "@std/assert": "jsr:^1.0.13"
   "@std/async": "jsr:^1.0.13"
   "@std/path": "jsr:^1.0.6"
+  "@types/amqplib": ^0.10.7
+  amqplib: ^0.10.8
   tsdown: ^0.12.9
   typescript: ^5.8.3

@@ -1391,7 +1391,8 @@ async function getLatestFedifyVersion(version: string): Promise<string> {
       Accept: "application/json",
     },
   });
-  const result = await response.json();
+  // deno-lint-ignore no-explicit-any
+  const result = await response.json() as any;
   let maxVersion = parse("0.0.0");
   for (const v in result.versions) {
     if (v === version) return version;

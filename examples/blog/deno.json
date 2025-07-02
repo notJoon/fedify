@@ -1,6 +1,4 @@
 {
-  "name": "@fedify/blog",
-  "exports": "./main.ts",
   "tasks": {
     "codegen": "deno task -f @fedify/fedify codegen",
     "check": {

@@ -17,7 +17,7 @@
     "@std/dotenv": "jsr:@std/dotenv@^0.225.2",
     "@std/semver": "jsr:@std/semver@^1.0.5",
     "cli-highlight": "npm:cli-highlight@^2.1.11",
-    "hono": "jsr:@hono/hono@^4.5.9",
+    "hono": "jsr:@hono/hono@^4.8.3",
     "icojs": "npm:icojs@^0.19.4",
     "jimp": "npm:jimp@^1.6.0",
     "ora": "npm:ora@^8.0.1",
@@ -28,16 +28,12 @@
     "fedify-cli-*.tar.xz",
     "fedify-cli-*.tgz",
     "fedify-cli-*.zip",
-    "npm"
+    "install.mjs",
+    "package.json",
+    "run.mjs"
   ],
   "tasks": {
-    "sync-version": "deno run --allow-read=deno.json --allow-write=deno.json scripts/sync_version.ts",
-    "codegen": {
-      "command": "deno task -f @fedify/fedify codegen",
-      "dependencies": [
-        "sync-version"
-      ]
-    },
+    "codegen": "deno task -f @fedify/fedify codegen",
     "check": {
       "command": "deno task codegen && deno fmt --check && deno lint && deno check **/*.ts",
       "dependencies": [
@@ -61,12 +57,6 @@
       "command": "deno run -A scripts/pack.ts",
       "dependencies": [
         "codegen"
-      ]
-    },
-    "npm": {
-      "command": "deno run --allow-read --allow-write --allow-run --allow-env scripts/npm.ts",
-      "dependencies": [
-        "sync-version"
       ]
     }
   }

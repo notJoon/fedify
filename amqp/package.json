@@ -13,15 +13,17 @@
     "email": "hong@minhee.org",
     "url": "https://hongminhee.org/"
   },
-  "homepage": "https://github.com/fedify-dev/amqp",
+  "homepage": "https://fedify.dev/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fedify-dev/amqp.git"
+    "url": "git+https://github.com/fedify-dev/fedify.git",
+    "directory": "amqp"
   },
   "bugs": {
-    "url": "https://github.com/fedify-dev/amqp/issues"
+    "url": "https://github.com/fedify-dev/fedify/issues"
   },
   "funding": [
+    "https://opencollective.com/fedify",
     "https://github.com/sponsors/dahlia"
   ],
   "type": "module",
@@ -37,14 +39,14 @@
   },
   "peerDependencies": {
     "@fedify/fedify": "workspace:",
-    "amqplib": "^0.10.8"
+    "amqplib": "catalog:"
   },
   "devDependencies": {
     "@hongminhee/suite": "^0.6.3",
     "@js-temporal/polyfill": "^0.5.1",
     "@std/assert": "catalog:",
     "@std/async": "catalog:",
-    "@types/amqplib": "^0.10.7",
+    "@types/amqplib": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
