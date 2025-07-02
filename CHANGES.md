@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.7.2
 -------------
 
-To be released.
+Released on July 2, 2025.
 
  -  Fixed HTTP signature verification to handle malformed RFC 9421 signatures
     gracefully instead of returning `500 Internal Server Error` responses.
@@ -17,7 +17,7 @@ To be released.
 Version 1.7.1
 -------------
 
-Released on July 30, 2025.
+Released on June 30, 2025.
 
  -  Fixed JSON-LD serialization of the `Question.voters` property to correctly
     serialize as a plain number (e.g., `"votersCount": 123`) instead of as a
