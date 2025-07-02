@@ -17,10 +17,21 @@ To be released.
      -  Added `DenoKvStore.cas()` method.
 
 
+Version 1.7.2
+-------------
+
+Released on July 2, 2025.
+
+ -  Fixed HTTP signature verification to handle malformed RFC 9421 signatures
+    gracefully instead of returning `500 Internal Server Error` responses.
+    Malformed signatures now properly fail verification and return appropriate
+    error responses.
+
+
 Version 1.7.1
 -------------
 
-Released on July 30, 2025.
+Released on June 30, 2025.
 
  -  Fixed JSON-LD serialization of the `Question.voters` property to correctly
     serialize as a plain number (e.g., `"votersCount": 123`) instead of as a
@@ -55,6 +66,17 @@ Released on June 25, 2025.
 [#250]: https://github.com/fedify-dev/fedify/issues/250
 [#251]: https://github.com/fedify-dev/fedify/pull/251
 [#252]: https://github.com/fedify-dev/fedify/pull/252
+
+
+Version 1.6.4
+-------------
+
+Released on July 2, 2025.
+
+ -  Fixed HTTP signature verification to handle malformed RFC 9421 signatures
+    gracefully instead of returning `500 Internal Server Error` responses.
+    Malformed signatures now properly fail verification and return appropriate
+    error responses.
 
 
 Version 1.6.3

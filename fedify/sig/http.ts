@@ -434,14 +434,22 @@ async function signRequestRfc9421(
     keyId,
     created,
   });
-  const signatureBase = createRfc9421SignatureBase(
-    new Request(request.url, {
-      method: request.method,
-      headers,
-    }),
-    components,
-    signatureParams,
-  );
+  let signatureBase: string;
+  try {
+    signatureBase = createRfc9421SignatureBase(
+      new Request(request.url, {
+        method: request.method,
+        headers,
+      }),
+      components,
+      signatureParams,
+    );
+  } catch (error) {
+    throw new TypeError(
+      `Failed to create signature base: ${String(error)}; it is probably ` +
+        `a bug in the implementation.  Please report it at Fedify's issue tracker.`,
+    );
+  }
 
   // Sign the signature base
   const signatureBytes = await crypto.subtle.sign(
@@ -1094,11 +1102,20 @@ async function verifyRequestRfc9421(
     }
 
     // Rebuild the signature base for verification
-    const signatureBase = createRfc9421SignatureBase(
-      request,
-      sigInput.components,
-      sigInput.parameters,
-    );
+    let signatureBase: string;
+    try {
+      signatureBase = createRfc9421SignatureBase(
+        request,
+        sigInput.components,
+        sigInput.parameters,
+      );
+    } catch (error) {
+      logger.debug(
+        "Failed to create signature base for verification: {error}",
+        { error, signatureInput: sigInput },
+      );
+      continue;
+    }
     const signatureBaseBytes = new TextEncoder().encode(signatureBase);
 
     // Verify the signature

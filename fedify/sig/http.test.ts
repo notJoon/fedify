@@ -4,6 +4,7 @@ import {
   assertExists,
   assertFalse,
   assertStringIncludes,
+  assertThrows,
 } from "@std/assert";
 import { encodeBase64 } from "byte-encodings/base64";
 import fetchMock from "fetch-mock";
@@ -1811,5 +1812,68 @@ test("timingSafeEqual()", async (t) => {
         assertFalse(timingSafeEqual(a2, b2));
       });
     },
+  );
+});
+
+test("signRequest() [rfc9421] error handling for invalid signature base creation", async () => {
+  // Test that createRfc9421SignatureBase errors are properly caught and wrapped
+  // We'll test this by directly calling createRfc9421SignatureBase with invalid input
+  const request = new Request("https://example.com/test", {
+    method: "POST",
+    body: "test body",
+  });
+
+  // First verify that createRfc9421SignatureBase throws for unsupported components
+  await assertThrows(
+    () => {
+      createRfc9421SignatureBase(
+        request,
+        ["@unsupported"], // This will trigger the "Unsupported derived component" error
+        'alg="rsa-pss-sha256";keyid="https://example.com/key2";created=1234567890',
+      );
+    },
+    Error,
+    "Unsupported derived component: @unsupported",
+  );
+
+  // The actual error handling in signRequest is tested indirectly by ensuring
+  // that normal signing operations work without throwing the wrapped error
+  const signedRequest = await signRequest(
+    request,
+    rsaPrivateKey2,
+    new URL("https://example.com/key2"),
+    { spec: "rfc9421" },
+  );
+
+  // Verify that the request was signed successfully
+  assertExists(signedRequest.headers.get("Signature-Input"));
+  assertExists(signedRequest.headers.get("Signature"));
+});
+
+test("verifyRequest() [rfc9421] error handling for invalid signature base creation", async () => {
+  // Create a request with a malformed signature input that will cause createRfc9421SignatureBase to fail
+  const request = new Request("https://example.com/test", {
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+      // Add a malformed signature input that references an unsupported component
+      "Signature-Input":
+        'sig1=("@unsupported");alg="rsa-pss-sha256";keyid="https://example.com/key2";created=1234567890',
+      "Signature": "sig1=:invalid_signature_data:",
+    },
+  });
+
+  // Attempt verification with the malformed signature input
+  // This should fail gracefully and return null instead of throwing
+  const result = await verifyRequest(request, {
+    spec: "rfc9421",
+    documentLoader: mockDocumentLoader,
+    contextLoader: mockDocumentLoader,
+  });
+
+  assertEquals(
+    result,
+    null,
+    "Verification should fail gracefully for malformed signature inputs",
   );
 });
