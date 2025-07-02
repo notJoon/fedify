@@ -1,4 +1,4 @@
-import { suite } from "@hongminhee/suite";
+import { suite } from "@alinea/suite";
 import * as temporal from "@js-temporal/polyfill";
 import { assert, assertEquals, assertFalse, assertGreater } from "@std/assert";
 import { delay } from "@std/async/delay";

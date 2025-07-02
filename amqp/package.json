@@ -42,7 +42,7 @@
     "amqplib": "catalog:"
   },
   "devDependencies": {
-    "@hongminhee/suite": "^0.6.3",
+    "@alinea/suite": "^0.6.3",
     "@js-temporal/polyfill": "^0.5.1",
     "@std/assert": "catalog:",
     "@std/async": "catalog:",

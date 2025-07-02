@@ -185,6 +185,7 @@ jobs:
       working-directory: ${{ github.workspace }}/fedify/
     - run: deno task -f @fedify/fedify codegen
     - run: deno publish --dry-run
+    - run: pnpm install
     - run: pnpm publish --recursive --dry-run
 
   publish:

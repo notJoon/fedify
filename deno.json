@@ -29,6 +29,7 @@
   "exclude": [
     "docs/"
   ],
+  "nodeModulesDir": "none",
   "tasks": {
     "codegen": "deno task -f @fedify/cli codegen",
     "check": {
