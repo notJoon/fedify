@@ -78,12 +78,13 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: v2.x
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
     - uses: pnpm/action-setup@v4
       with:
         version: 10
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: pnpm
     - run: pnpm install
     - run: pnpm run --recursive test
 
@@ -110,15 +111,16 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: v2.x
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - uses: oven-sh/setup-bun@v1
-      with:
-        bun-version: latest
     - uses: pnpm/action-setup@v4
       with:
         version: 10
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: pnpm
+    - uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
     - run: pnpm install
     - run: pnpm run --recursive test:bun
 
@@ -135,12 +137,13 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: v2.x
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
     - uses: pnpm/action-setup@v4
       with:
         version: 10
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: pnpm
     - run: deno task test:cfworkers
       working-directory: ${{ github.workspace }}/fedify/
 
@@ -175,12 +178,13 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: v2.x
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
     - uses: pnpm/action-setup@v4
       with:
         version: 10
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: pnpm
     - run: '[[ "$(jq -r .version deno.json)" = "$(jq -r .version package.json)" ]]'
       working-directory: ${{ github.workspace }}/fedify/
     - run: deno task -f @fedify/fedify codegen
@@ -209,12 +213,13 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: v2.x
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
     - uses: pnpm/action-setup@v4
       with:
         version: 10
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: pnpm
     - if: github.event_name == 'push' && github.ref_type == 'branch'
       run: |
         jq \
@@ -391,12 +396,13 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: v2.x
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
     - uses: pnpm/action-setup@v4
       with:
         version: 10
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: pnpm
     - run: |
         set -ex
         pnpm install
@@ -432,8 +438,10 @@ jobs:
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         gitHubToken: ${{ github.token }}
         command: >-
-          pages deploy docs/.vitepress/dist
+          pages deploy .vitepress/dist
           --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME }}
+        packageManager: pnpm
+        workingDirectory: ${{ github.workspace }}/docs/
     - if: github.event_name == 'pull_request_target'
       id: wrangler
       uses: cloudflare/wrangler-action@v3
@@ -442,9 +450,11 @@ jobs:
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         gitHubToken: ${{ github.token }}
         command: >-
-          pages deploy docs/.vitepress/dist
+          pages deploy .vitepress/dist
           --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME }}
           --branch=pr-${{ github.event.pull_request.number }}
+        packageManager: pnpm
+        workingDirectory: ${{ github.workspace }}/docs/
     - if: github.event_name == 'pull_request_target'
       uses: thollander/actions-comment-pull-request@v3
       with:
