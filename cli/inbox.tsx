@@ -421,6 +421,7 @@ async function fetch(request: Request): Promise<Response> {
   const inboxRequest = pathname === "/inbox" || pathname.startsWith("/i/inbox");
   if (inboxRequest) {
     recordingSink.startRecording();
+    // @ts-ignore: Work around `deno publish --dry-run` bug
     activities.push({ timestamp, request: request.clone(), logs: [] });
   }
   const response = await federation.fetch(request, {

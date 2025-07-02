@@ -15,7 +15,8 @@
   "homepage": "https://fedify.dev/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fedify-dev/fedify.git"
+    "url": "git+https://github.com/fedify-dev/fedify.git",
+    "directory": "fedify"
   },
   "bugs": {
     "url": "https://github.com/fedify-dev/fedify/issues"
@@ -103,7 +104,7 @@
     "urlpattern-polyfill": "^10.1.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250529.0",
+    "@cloudflare/workers-types": "catalog:",
     "@std/assert": "jsr:^0.226.0",
     "@std/path": "catalog:",
     "@std/url": "jsr:1.0.0-rc.3",
@@ -112,15 +113,15 @@
     "fast-check": "^3.22.0",
     "fetch-mock": "^12.5.2",
     "miniflare": "^4.20250523.0",
-    "tsdown": "^0.12.2",
+    "tsdown": "catalog:",
     "tsx": "^4.19.4",
-    "typescript": "^5.8.3",
+    "typescript": "catalog:",
     "wrangler": "^4.17.0"
   },
   "scripts": {
     "build": "deno task codegen && tsdown",
-    "prepack": "deno task codegen && tsdown && deno task check-version",
-    "prepublish": "deno task codegen && tsdown && deno task check-version",
+    "prepack": "deno task codegen && tsdown",
+    "prepublish": "deno task codegen && tsdown",
     "test": "deno task codegen && tsdown && cd dist/ && node --test",
     "test:bun": "deno task codegen && tsdown && cd dist/ && bun test --timeout 60000",
     "test:cfworkers": "deno task codegen && wrangler deploy --dry-run --outdir cfworkers && node --import=tsx cfworkers/client.ts"

@@ -3,6 +3,7 @@ import { getStatusText } from "@poppanator/http-constants";
 import { getContextLoader } from "../docloader.ts";
 
 export async function renderRequest(request: Request): Promise<string> {
+  // @ts-ignore: Work around `deno publish --dry-run` bug
   request = request.clone();
   const url = new URL(request.url);
   let code = `${request.method} ${url.pathname + url.search}\n`;
@@ -40,6 +41,7 @@ export async function renderResponse(response: Response): Promise<string> {
 }
 
 export async function renderRawActivity(request: Request): Promise<string> {
+  // @ts-ignore: Work around `deno publish --dry-run` bug
   request = request.clone();
   try {
     const activity = await request.json();

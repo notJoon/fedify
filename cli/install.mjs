@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { createWriteStream } from "node:fs";
+import { createWriteStream, existsSync } from "node:fs";
 import {
   access,
   chmod,
@@ -46,6 +46,9 @@ export async function main(version) {
 async function install(version, targetDir) {
   const downloadUrl = getDownloadUrl(version);
   const downloadPath = await download(downloadUrl);
+  if (downloadPath == null) {
+    throw new Error(`Failed to download from ${downloadUrl}`);
+  }
   let extractPath;
   if (downloadPath.endsWith(".zip")) {
     extractPath = await extractZip(downloadPath);
@@ -175,5 +178,12 @@ export async function isFile(path) {
 }
 
 if (fileURLToPath(import.meta.url) === process.argv[1]) {
-  await main(process.argv[2]);
+  if (existsSync(join(dirname(fileURLToPath(import.meta.url)), "deno.json"))) {
+    console.error(
+      "This post-install script is not intended to be run within a workspace; " +
+      "skipping installation.",
+    );
+  } else {
+    await main(process.argv[2]);
+  }
 }

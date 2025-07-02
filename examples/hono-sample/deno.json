@@ -1,6 +1,4 @@
 {
-  "name": "@fedify/hono-sample",
-  "exports": "./main.ts",
   "imports": {
     "hono": "jsr:@hono/hono@^4.7.1"
   },
@@ -8,11 +6,15 @@
     "codegen": "deno task -f @fedify/fedify codegen",
     "check": {
       "command": "deno fmt --check && deno lint && deno check **/*.ts",
-      "dependencies": ["codegen"]
+      "dependencies": [
+        "codegen"
+      ]
     },
     "start": {
       "command": "deno run -A main.ts",
-      "dependencies": ["codegen"]
+      "dependencies": [
+        "codegen"
+      ]
     }
   }
 }

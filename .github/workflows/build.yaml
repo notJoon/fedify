@@ -3,16 +3,22 @@ on: [push, pull_request_target]
 
 jobs:
   test:
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       issues: read
       checks: write
       pull-requests: write
+    services:
+      rabbitmq:
+        image: rabbitmq
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+        - 5672:5672
+    env:
+      AMQP_URL: amqp://guest:guest@localhost:5672
     steps:
     - if: github.event_name == 'push'
       uses: actions/checkout@v4
@@ -24,8 +30,6 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: v2.x
-    - run: deno task cache
-      working-directory: ${{ github.workspace }}/fedify/
     - run: deno task test --coverage=.cov --junit-path=.test-report.xml
       env:
         RUST_BACKTRACE: ${{ runner.debug }}
@@ -35,30 +39,34 @@ jobs:
       if: success() || failure()
       with:
         name: "Test Results (${{ matrix.os }})"
-        path: fedify/.test-report.xml
+        path: .test-report.xml
         reporter: jest-junit
       continue-on-error: true
     - if: '!cancelled()'
       uses: codecov/test-results-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: fedify/.test-report.xml
+        files: .test-report.xml
     - run: deno coverage --lcov .cov > .cov.lcov
-      working-directory: ${{ github.workspace }}/fedify/
       continue-on-error: true
     - uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: fedify/.cov.lcov
+        files: .cov.lcov
       continue-on-error: true
-    - run: "true"
 
   test-node:
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+        - 5672:5672
+    env:
+      AMQP_URL: amqp://guest:guest@localhost:5672
     steps:
     - if: github.event_name == 'push'
       uses: actions/checkout@v4
@@ -76,15 +84,21 @@ jobs:
     - uses: pnpm/action-setup@v4
       with:
         version: 10
-    - run: deno task test:node
-      working-directory: ${{ github.workspace }}/fedify/
+    - run: pnpm install
+    - run: pnpm run --recursive test
 
   test-bun:
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+        - 5672:5672
+    env:
+      AMQP_URL: amqp://guest:guest@localhost:5672
     steps:
     - if: github.event_name == 'push'
       uses: actions/checkout@v4
@@ -105,8 +119,8 @@ jobs:
     - uses: pnpm/action-setup@v4
       with:
         version: 10
-    - run: deno task test:bun
-      working-directory: ${{ github.workspace }}/fedify/
+    - run: pnpm install
+    - run: pnpm run --recursive test:bun
 
   test-cfworkers:
     runs-on: ubuntu-latest
@@ -169,16 +183,9 @@ jobs:
         version: 10
     - run: '[[ "$(jq -r .version deno.json)" = "$(jq -r .version package.json)" ]]'
       working-directory: ${{ github.workspace }}/fedify/
-    - run: deno task publish --dry-run
-      working-directory: ${{ github.workspace }}/fedify/
-    - run: deno task npm
-      working-directory: ${{ github.workspace }}/fedify/
-    - run: npm publish --dry-run fedify-fedify-*.tgz
-      working-directory: ${{ github.workspace }}/fedify/
-      env:
-        DNT_SKIP_TEST: "true"
-    - run: deno task publish-dry-run
-      working-directory: ${{ github.workspace }}/cli/
+    - run: deno task -f @fedify/fedify codegen
+    - run: deno publish --dry-run
+    - run: pnpm publish --recursive --dry-run
 
   publish:
     needs: [test, test-node, test-bun, test-cfworkers, lint, release-test]
@@ -235,7 +242,7 @@ jobs:
         echo version="$(jq -r .version deno.json)" >> $GITHUB_OUTPUT
         echo short_version="$(jq -r .version deno.json | sed 's/[+].*//')" >> $GITHUB_OUTPUT
       working-directory: ${{ github.workspace }}/fedify/
-    - run: deno task -r sync-version
+    - run: deno task check-versions --fix
     - if: github.ref_type == 'tag'
       run: |
         set -ex
@@ -246,11 +253,13 @@ jobs:
     # in deno.json:
     - run: rm vocab/.gitignore
       working-directory: ${{ github.workspace }}/fedify/
-    - run: deno task npm
-      working-directory: ${{ github.workspace }}/fedify/
+    - run: |
+        pnpm install
+        pnpm pack --recursive
+        if [[ "$GITHUB_REF_TYPE" != tag ]]; then
+          rm fedify-cli-*.tgz
+        fi
     - run: deno task pack
-      working-directory: ${{ github.workspace }}/cli/
-    - run: 'deno task npm "$(jq -r .version deno.json)"'
       working-directory: ${{ github.workspace }}/cli/
     - id: extract-changelog
       uses: dahlia/submark@5a5ff0a58382fb812616a5801402f5aef00f90ce
@@ -267,55 +276,45 @@ jobs:
       with:
         name: dist
         path: |
-          fedify/fedify-fedify-*.tgz
-          cli/fedify-cli-*
+          fedify-*.tgz
+          cli/fedify-cli-*.tar.xz
+          cli/fedify-cli-*.zip
     - if: github.event_name == 'push' && github.ref_type == 'tag'
       uses: softprops/action-gh-release@v1
       with:
         body_path: ${{ steps.extract-changelog.outputs.output-file }}
         name: Fedify ${{ github.ref_name }}
         files: |
-          fedify/fedify-fedify-*.tgz
-          cli/fedify-cli-*
+          fedify-*.tgz
+          cli/fedify-cli-*.tar.xz
+          cli/fedify-cli-*.zip
         generate_release_notes: false
-    - if: github.event_name == 'pull_request_target'
-      run: deno task publish --allow-dirty --no-provenance
-      working-directory: ${{ github.workspace }}/fedify/
-    - if: github.event_name != 'pull_request_target'
-      run: deno task publish --allow-dirty
-      working-directory: ${{ github.workspace }}/fedify/
-    - if: github.event_name == 'pull_request_target'
-      run: deno task publish --allow-dirty --no-provenance
-      working-directory: ${{ github.workspace }}/cli/
-    - if: github.event_name != 'pull_request_target'
-      run: deno task publish --allow-dirty
-      working-directory: ${{ github.workspace }}/cli/
+    - run: |
+        set -ex
+        deno task -f @fedify/fedify codegen
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
+          deno publish --allow-dirty --no-provenance
+        else
+          deno publish --allow-dirty
+        fi
     - run: |
         set -ex
         npm config set //registry.npmjs.org/:_authToken "$NPM_AUTH_TOKEN"
-        if [[ "$GITHUB_REF_TYPE" = "tag" ]]; then
-          npm publish --provenance --access public fedify-fedify-*.tgz
-        elif [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-          npm publish \
-            --provenance \
-            --access public \
-            --tag "pr-$PR_NUMBER" \
-            fedify-fedify-*.tgz
-        else
-          npm publish --provenance --access public --tag dev fedify-fedify-*.tgz
-        fi
+        for pkg in fedify-*.tgz; do
+          if [[ "$GITHUB_REF_TYPE" = "tag" ]]; then
+            npm publish --provenance --access public "$pkg"
+          elif [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
+            npm publish \
+              --access public \
+              --tag "pr-$PR_NUMBER" \
+              "$pkg"
+          else
+            npm publish --provenance --access public --tag dev "$pkg"
+          fi
+        done
       env:
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
-      working-directory: ${{ github.workspace }}/fedify/
-    - if: github.event_name == 'push' && github.ref_type == 'tag'
-      run: |
-        set -ex
-        npm config set //registry.npmjs.org/:_authToken "$NPM_AUTH_TOKEN"
-        npm publish --provenance --access public fedify-cli-*.tgz
-      env:
-        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      working-directory: ${{ github.workspace }}/cli/
     - if: github.event_name == 'pull_request_target'
       uses: thollander/actions-comment-pull-request@v3
       with:
@@ -329,12 +328,16 @@ jobs:
           The latest push to this pull request has been published to JSR and npm as a pre-release:
 
           - [`jsr:@fedify/fedify@${{ steps.versioning.outputs.version }}`][1]
-          - [`jsr:@fedify/cli@${{ steps.versioning.outputs.version }}`][2]
-          - [`npm:@fedify/fedify@${{ steps.versioning.outputs.short_version }}`][3]
+          - [`npm:@fedify/fedify@${{ steps.versioning.outputs.short_version }}`][2]
+          - [`jsr:@fedify/amqp@${{ steps.versioning.outputs.version }}`][3]
+          - [`npm:@fedify/amqp@${{ steps.versioning.outputs.short_version }}`][4]
+          - [`jsr:@fedify/cli@${{ steps.versioning.outputs.version }}`][5]
 
           [1]: https://jsr.io/@fedify/fedify@${{ steps.versioning.outputs.version }}
-          [2]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
-          [3]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
+          [2]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
+          [3]: https://jsr.io/@fedify/amqp@${{ steps.versioning.outputs.version }}
+          [4]: https://www.npmjs.com/package/@fedify/amqp/v/${{ steps.versioning.outputs.short_version }}
+          [5]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
         pr-number: ${{ github.event.pull_request.number }}
         comment-tag: publish
 

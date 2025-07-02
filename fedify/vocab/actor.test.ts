@@ -93,93 +93,97 @@ test("getActorClassByTypeName()", () => {
   );
 });
 
-test("getActorHandle()", async (t) => {
-  fetchMock.spyGlobal();
+test({
+  name: "getActorHandle()",
+  permissions: { env: true, read: true },
+  async fn(t) {
+    fetchMock.spyGlobal();
 
-  fetchMock.get(
-    "begin:https://foo.example.com/.well-known/webfinger?",
-    {
-      body: { subject: "acct:johndoe@foo.example.com" },
-      headers: { "Content-Type": "application/jrd+json" },
-    },
-  );
-
-  const actorId = new URL("https://foo.example.com/@john");
-  const actor = new Person({
-    id: actorId,
-    preferredUsername: "john",
-  });
-
-  await t.step("WebFinger subject", async () => {
-    assertEquals(await getActorHandle(actor), "@johndoe@foo.example.com");
-    assertEquals(
-      await getActorHandle(actor, { trimLeadingAt: true }),
-      "johndoe@foo.example.com",
-    );
-    assertEquals(await getActorHandle(actorId), "@johndoe@foo.example.com");
-    assertEquals(
-      await getActorHandle(actorId, { trimLeadingAt: true }),
-      "johndoe@foo.example.com",
-    );
-  });
-
-  fetchMock.removeRoutes();
-  fetchMock.get(
-    "begin:https://foo.example.com/.well-known/webfinger?",
-    {
-      body: {
-        subject: "https://foo.example.com/@john",
-        aliases: [
-          "acct:john@bar.example.com",
-          "acct:johndoe@foo.example.com",
-        ],
+    fetchMock.get(
+      "begin:https://foo.example.com/.well-known/webfinger?",
+      {
+        body: { subject: "acct:johndoe@foo.example.com" },
+        headers: { "Content-Type": "application/jrd+json" },
       },
-      headers: { "Content-Type": "application/jrd+json" },
-    },
-  );
-
-  await t.step("WebFinger aliases", async () => {
-    assertEquals(await getActorHandle(actor), "@johndoe@foo.example.com");
-    assertEquals(
-      await getActorHandle(actor, { trimLeadingAt: true }),
-      "johndoe@foo.example.com",
     );
-    assertEquals(await getActorHandle(actorId), "@johndoe@foo.example.com");
-    assertEquals(
-      await getActorHandle(actorId, { trimLeadingAt: true }),
-      "johndoe@foo.example.com",
-    );
-  });
 
-  fetchMock.get(
-    "begin:https://bar.example.com/.well-known/webfinger?",
-    {
-      body: {
-        subject: "acct:john@bar.example.com",
-        aliases: [
-          "https://foo.example.com/@john",
-        ],
+    const actorId = new URL("https://foo.example.com/@john");
+    const actor = new Person({
+      id: actorId,
+      preferredUsername: "john",
+    });
+
+    await t.step("WebFinger subject", async () => {
+      assertEquals(await getActorHandle(actor), "@johndoe@foo.example.com");
+      assertEquals(
+        await getActorHandle(actor, { trimLeadingAt: true }),
+        "johndoe@foo.example.com",
+      );
+      assertEquals(await getActorHandle(actorId), "@johndoe@foo.example.com");
+      assertEquals(
+        await getActorHandle(actorId, { trimLeadingAt: true }),
+        "johndoe@foo.example.com",
+      );
+    });
+
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "begin:https://foo.example.com/.well-known/webfinger?",
+      {
+        body: {
+          subject: "https://foo.example.com/@john",
+          aliases: [
+            "acct:john@bar.example.com",
+            "acct:johndoe@foo.example.com",
+          ],
+        },
+        headers: { "Content-Type": "application/jrd+json" },
       },
-      headers: { "Content-Type": "application/jrd+json" },
-    },
-  );
+    );
 
-  await t.step("cross-origin WebFinger resources", async () => {
-    assertEquals(await getActorHandle(actor), "@john@bar.example.com");
-  });
+    await t.step("WebFinger aliases", async () => {
+      assertEquals(await getActorHandle(actor), "@johndoe@foo.example.com");
+      assertEquals(
+        await getActorHandle(actor, { trimLeadingAt: true }),
+        "johndoe@foo.example.com",
+      );
+      assertEquals(await getActorHandle(actorId), "@johndoe@foo.example.com");
+      assertEquals(
+        await getActorHandle(actorId, { trimLeadingAt: true }),
+        "johndoe@foo.example.com",
+      );
+    });
 
-  fetchMock.removeRoutes();
-  fetchMock.get(
-    "begin:https://foo.example.com/.well-known/webfinger?",
-    { status: 404 },
-  );
+    fetchMock.get(
+      "begin:https://bar.example.com/.well-known/webfinger?",
+      {
+        body: {
+          subject: "acct:john@bar.example.com",
+          aliases: [
+            "https://foo.example.com/@john",
+          ],
+        },
+        headers: { "Content-Type": "application/jrd+json" },
+      },
+    );
 
-  await t.step("no WebFinger", async () => {
-    assertEquals(await getActorHandle(actor), "@john@foo.example.com");
-    assertRejects(() => getActorHandle(actorId), TypeError);
-  });
+    await t.step("cross-origin WebFinger resources", async () => {
+      assertEquals(await getActorHandle(actor), "@john@bar.example.com");
+    });
 
-  fetchMock.hardReset();
+    fetchMock.removeRoutes();
+    fetchMock.get(
+      "begin:https://foo.example.com/.well-known/webfinger?",
+      { status: 404 },
+    );
+
+    await t.step("no WebFinger", async () => {
+      assertEquals(await getActorHandle(actor), "@john@foo.example.com");
+      assertRejects(() => getActorHandle(actorId), TypeError);
+    });
+
+    fetchMock.hardReset();
+  },
 });
 
 test("normalizeActorHandle()", () => {
