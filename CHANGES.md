@@ -8,6 +8,11 @@ Version 1.6.4
 
 To be released.
 
+ -  Fixed HTTP signature verification to handle malformed RFC 9421 signatures
+    gracefully instead of returning `500 Internal Server Error` responses.
+    Malformed signatures now properly fail verification and return appropriate
+    error responses.
+
 
 Version 1.6.3
 -------------
