@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.6.4
 -------------
 
-To be released.
+Released on July 2, 2025.
 
  -  Fixed HTTP signature verification to handle malformed RFC 9421 signatures
     gracefully instead of returning `500 Internal Server Error` responses.
