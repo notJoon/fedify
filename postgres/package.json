@@ -1,11 +1,11 @@
 {
-  "name": "@fedify/amqp",
+  "name": "@fedify/postgres",
   "version": "1.8.0",
-  "description": "AMQP/RabbitMQ driver for Fedify",
+  "description": "PostgreSQL drivers for Fedify",
   "keywords": [
     "fedify",
-    "amqp",
-    "rabbitmq"
+    "postgresql",
+    "postgres"
   ],
   "license": "MIT",
   "author": {
@@ -17,7 +17,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fedify-dev/fedify.git",
-    "directory": "amqp"
+    "directory": "postgres"
   },
   "bugs": {
     "url": "https://github.com/fedify-dev/fedify/issues"
@@ -32,21 +32,29 @@
   "types": "./dist/mod.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/mod.js",
-      "types": "./dist/mod.d.ts"
+      "types": "./dist/mod.d.ts",
+      "import": "./dist/mod.js"
+    },
+    "./kv": {
+      "types": "./dist/kv.d.ts",
+      "import": "./dist/kv.js"
+    },
+    "./mq": {
+      "types": "./dist/mq.d.ts",
+      "import": "./dist/mq.js"
     },
     "./package.json": "./package.json"
   },
+  "dependencies": {
+    "@js-temporal/polyfill": "catalog:",
+    "@logtape/logtape": "catalog:"
+  },
   "peerDependencies": {
     "@fedify/fedify": "workspace:",
-    "amqplib": "catalog:"
+    "postgres": "catalog:"
   },
   "devDependencies": {
-    "@alinea/suite": "^0.6.3",
-    "@js-temporal/polyfill": "catalog:",
-    "@std/assert": "catalog:",
     "@std/async": "catalog:",
-    "@types/amqplib": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
@@ -55,8 +63,6 @@
     "prepack": "tsdown",
     "prepublish": "tsdown",
     "test": "tsdown && node --experimental-transform-types --test",
-    "test:bun": "tsdown && bun test --timeout 15000",
-    "test:deno": "deno task test",
-    "test-all": "tsdown && node --experimental-transform-types --test && bun test --timeout 15000 && deno task test"
+    "test:bun": "tsdown && bun test --timeout=10000"
   }
 }

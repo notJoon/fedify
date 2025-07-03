@@ -17,8 +17,22 @@ jobs:
           RABBITMQ_DEFAULT_PASS: guest
         ports:
         - 5672:5672
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+        - 5432:5432
     env:
       AMQP_URL: amqp://guest:guest@localhost:5672
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
     steps:
     - if: github.event_name == 'push'
       uses: actions/checkout@v4
@@ -65,8 +79,22 @@ jobs:
           RABBITMQ_DEFAULT_PASS: guest
         ports:
         - 5672:5672
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+        - 5432:5432
     env:
       AMQP_URL: amqp://guest:guest@localhost:5672
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
     steps:
     - if: github.event_name == 'push'
       uses: actions/checkout@v4
@@ -98,8 +126,22 @@ jobs:
           RABBITMQ_DEFAULT_PASS: guest
         ports:
         - 5672:5672
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+        - 5432:5432
     env:
       AMQP_URL: amqp://guest:guest@localhost:5672
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
     steps:
     - if: github.event_name == 'push'
       uses: actions/checkout@v4
@@ -337,13 +379,17 @@ jobs:
           - [`npm:@fedify/fedify@${{ steps.versioning.outputs.short_version }}`][2]
           - [`jsr:@fedify/amqp@${{ steps.versioning.outputs.version }}`][3]
           - [`npm:@fedify/amqp@${{ steps.versioning.outputs.short_version }}`][4]
-          - [`jsr:@fedify/cli@${{ steps.versioning.outputs.version }}`][5]
+          - [`jsr:@fedify/postgres@${{ steps.versioning.outputs.version }}`][5]
+          - [`npm:@fedify/postgres@${{ steps.versioning.outputs.short_version }}`][6]
+          - [`jsr:@fedify/cli@${{ steps.versioning.outputs.version }}`][7]
 
           [1]: https://jsr.io/@fedify/fedify@${{ steps.versioning.outputs.version }}
           [2]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
           [3]: https://jsr.io/@fedify/amqp@${{ steps.versioning.outputs.version }}
           [4]: https://www.npmjs.com/package/@fedify/amqp/v/${{ steps.versioning.outputs.short_version }}
-          [5]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
+          [5]: https://jsr.io/@fedify/postgres@${{ steps.versioning.outputs.version }}
+          [6]: https://www.npmjs.com/package/@fedify/postgres/v/${{ steps.versioning.outputs.short_version }}
+          [7]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
         pr-number: ${{ github.event.pull_request.number }}
         comment-tag: publish
 

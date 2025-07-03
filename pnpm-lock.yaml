@@ -9,6 +9,12 @@ catalogs:
     '@cloudflare/workers-types':
       specifier: ^4.20250529.0
       version: 4.20250529.0
+    '@js-temporal/polyfill':
+      specifier: ^0.5.1
+      version: 0.5.1
+    '@logtape/file':
+      specifier: ^1.0.0
+      version: 1.0.1
     '@logtape/logtape':
       specifier: ^1.0.0
       version: 1.0.0
@@ -27,6 +33,9 @@ catalogs:
     amqplib:
       specifier: ^0.10.8
       version: 0.10.8
+    postgres:
+      specifier: ^3.4.7
+      version: 3.4.7
     tsdown:
       specifier: ^0.12.9
       version: 0.12.9
@@ -49,7 +58,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       '@js-temporal/polyfill':
-        specifier: ^0.5.1
+        specifier: 'catalog:'
         version: 0.5.1
       '@std/assert':
         specifier: 'catalog:'
@@ -87,23 +96,23 @@ importers:
         specifier: 'workspace:'
         version: link:../fedify
       '@fedify/postgres':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: 'workspace:'
+        version: link:../postgres
       '@fedify/redis':
         specifier: ^0.4.0
-        version: 0.4.0
+        version: 0.4.0(web-streams-polyfill@3.3.3)
       '@hono/node-server':
         specifier: ^1.13.7
         version: 1.14.4(hono@4.8.3)
       '@js-temporal/polyfill':
-        specifier: ^0.5.1
+        specifier: 'catalog:'
         version: 0.5.1
       '@logtape/file':
-        specifier: ^0.10.0
-        version: 0.10.0
+        specifier: 'catalog:'
+        version: 1.0.1(@logtape/logtape@1.0.0)
       '@logtape/logtape':
-        specifier: ^0.10.0
-        version: 0.10.0
+        specifier: 'catalog:'
+        version: 1.0.0
       '@opentelemetry/exporter-trace-otlp-proto':
         specifier: ^0.57.0
         version: 0.57.2(@opentelemetry/api@1.9.0)
@@ -159,13 +168,13 @@ importers:
         specifier: ^11.4.1
         version: 11.7.0
       postgres:
-        specifier: ^3.4.5
+        specifier: 'catalog:'
         version: 3.4.7
       stringify-entities:
         specifier: ^4.0.4
         version: 4.0.4
       typescript:
-        specifier: ^5.8.3
+        specifier: 'catalog:'
         version: 5.8.3
       vitepress:
         specifier: ^1.6.3
@@ -282,6 +291,31 @@ importers:
       wrangler:
         specifier: ^4.17.0
         version: 4.22.0(@cloudflare/workers-types@4.20250529.0)
+
+  postgres:
+    dependencies:
+      '@fedify/fedify':
+        specifier: 'workspace:'
+        version: link:../fedify
+      '@js-temporal/polyfill':
+        specifier: 'catalog:'
+        version: 0.5.1
+      '@logtape/logtape':
+        specifier: 'catalog:'
+        version: 1.0.0
+      postgres:
+        specifier: 'catalog:'
+        version: 3.4.7
+    devDependencies:
+      '@std/async':
+        specifier: 'catalog:'
+        version: '@jsr/std__async@1.0.13'
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.12.9(typescript@5.8.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
 
 packages:
 
@@ -979,9 +1013,6 @@ packages:
     resolution: {integrity: sha512-gGD8+mwkLsavBoj/qyfhMD8Tnv9+hid59NrQ6ZrD5Zn5rWvq4LleU09GF78OqPWdSLY03ihxb6+EArcsb5VZCA==}
     engines: {bun: '>=1.1.0', deno: '>=2.0.0', node: '>=20.0.0'}
 
-  '@fedify/postgres@0.3.0':
-    resolution: {integrity: sha512-FQzEeJccmCGvwOLUVvz5iNoJ44O+co0X8zorP7YtlV5RD4wXTSXKV7Iac3zv/wNyqAOzSRoZ4wNNXMy4e08uiw==}
-
   '@fedify/redis@0.4.0':
     resolution: {integrity: sha512-dhP/x1jELEpgYTOKZomdqug3K52sCP6QcWihJdI2h+wSCFvYIAPfPnx7ojB/lRm9+jgfGHyDRh1Y2pE/rCCWoA==}
 
@@ -1191,11 +1222,10 @@ packages:
   '@jsr/std__yaml@1.0.8':
     resolution: {integrity: sha512-iLe84pvIEtG7EFKxP5fIQn7CFQle7gzkb6KSPqf9zkyR2NVViSJjK8xbXg82SUEFSmpdY18qCGpVEnTG3oRMVg==, tarball: https://npm.jsr.io/~/11/@jsr/std__yaml/1.0.8.tgz}
 
-  '@logtape/file@0.10.0':
-    resolution: {integrity: sha512-u+rniMrLHt4dAWACbWM/VQdT45oYhInankiSEFBbfh9eewAKWtihKebc4g0lvlE3BcsYL8iH3L7L+JRheO3cDg==}
-
-  '@logtape/logtape@0.10.0':
-    resolution: {integrity: sha512-zk8YILUU7TACEDPaI7sPO6Jyxj6+gwXeS82/ANAtIs3oyLqbUp1kzi5RWUjRj7yu8R7Hd0C4cX4fmfOo9S7COA==}
+  '@logtape/file@1.0.1':
+    resolution: {integrity: sha512-606pmJ895WLc52LveuDMZJb1NG3hnK6Xl8+Lr0FX3yVNt/n8+JGkpYnjyLXUYGR3UduB3thJUgbAaDQAatvEFg==}
+    peerDependencies:
+      '@logtape/logtape': 1.0.1
 
   '@logtape/logtape@0.8.2':
     resolution: {integrity: sha512-KikaMHi64p0BHYrYOE2Lom4dOE3R8PGT+21QJ5Ql/SWy0CNOp69dkAlG9RXzENQ6PAMWtiU+4kelJYNvfUvHOQ==}
@@ -4185,7 +4215,7 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@fedify/fedify@1.5.0':
+  '@fedify/fedify@1.5.0(web-streams-polyfill@3.3.3)':
     dependencies:
       '@deno/shim-crypto': 0.3.1
       '@deno/shim-deno': 0.18.2
@@ -4207,20 +4237,10 @@ snapshots:
     transitivePeerDependencies:
       - web-streams-polyfill
 
-  '@fedify/postgres@0.3.0':
+  '@fedify/redis@0.4.0(web-streams-polyfill@3.3.3)':
     dependencies:
       '@deno/shim-deno': 0.18.2
-      '@fedify/fedify': 1.5.0
-      '@js-temporal/polyfill': 0.5.1
-      '@logtape/logtape': 0.9.2
-      postgres: 3.4.7
-    transitivePeerDependencies:
-      - web-streams-polyfill
-
-  '@fedify/redis@0.4.0':
-    dependencies:
-      '@deno/shim-deno': 0.18.2
-      '@fedify/fedify': 1.5.0
+      '@fedify/fedify': 1.5.0(web-streams-polyfill@3.3.3)
       '@js-temporal/polyfill': 0.5.1
       '@logtape/logtape': 0.9.2
       ioredis: 5.6.1
@@ -4415,11 +4435,9 @@ snapshots:
 
   '@jsr/std__yaml@1.0.8': {}
 
-  '@logtape/file@0.10.0':
+  '@logtape/file@1.0.1(@logtape/logtape@1.0.0)':
     dependencies:
-      '@logtape/logtape': 0.10.0
-
-  '@logtape/logtape@0.10.0': {}
+      '@logtape/logtape': 1.0.0
 
   '@logtape/logtape@0.8.2': {}
 
