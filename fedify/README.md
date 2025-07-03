@@ -81,6 +81,30 @@ join our [Matrix chat space][Matrix] or [Discord server][Discord] or
 [PeerTube]: https://joinpeertube.org/
 
 
+Packages
+--------
+
+Fedify is a monorepo that contains several packages, each of which provides
+different features and functionalities.  The main package is *@fedify/fedify*,
+which provides the core functionality of the framework.  Other packages provide
+integrations with various web frameworks, database drivers, and other features.
+Here is the list of packages:
+
+| Package                        | JSR                         | npm                         | Description                             |
+| ------------------------------ | --------------------------- | --------------------------- | --------------------------------------- |
+| [@fedify/fedify](/fedify/)     | [JSR]                       | [npm]                       | The core framework of Fedify            |
+| [@fedify/cli](/cli/)           | [JSR][jsr:@fedify/cli]      | [npm][npm:@fedify/cli]      | CLI toolchain for testing and debugging |
+| [@fedify/amqp](/amqp/)         | [JSR][jsr:@fedify/amqp]     | [npm][npm:@fedify/amqp]     | AMQP/RabbitMQ driver                    |
+| [@fedify/postgres](/postgres/) | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] | PostgreSQL driver                       |
+
+[jsr:@fedify/cli]: https://jsr.io/@fedify/cli
+[npm:@fedify/cli]: https://www.npmjs.com/package/@fedify/cli
+[jsr:@fedify/amqp]: https://jsr.io/@fedify/amqp
+[npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp
+[jsr:@fedify/postgres]: https://jsr.io/@fedify/postgres
+[npm:@fedify/postgres]: https://www.npmjs.com/package/@fedify/postgres
+
+
 Sponsors
 --------
 

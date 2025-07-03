@@ -5,7 +5,6 @@
 
 [![JSR][JSR badge]][JSR]
 [![npm][npm badge]][npm]
-[![GitHub Actions][GitHub Actions badge]][GitHub Actions]
 
 > [!NOTE]
 >
@@ -45,8 +44,6 @@ For more details, please refer to the docs of [`AmqpMessageQueueOptions`].
 [JSR badge]: https://jsr.io/badges/@fedify/amqp
 [npm]: https://www.npmjs.com/package/@fedify/amqp
 [npm badge]: https://img.shields.io/npm/v/@fedify/amqp?logo=npm
-[GitHub Actions]: https://github.com/fedify-dev/amqp/actions/workflows/main.yaml
-[GitHub Actions badge]: https://github.com/fedify-dev/amqp/actions/workflows/main.yaml/badge.svg
 [RabbitMQ]: https://www.rabbitmq.com/
 [Fedify]: https://fedify.dev/
 [`KvStore`]: https://jsr.io/@fedify/fedify/doc/federation/~/KvStore
@@ -58,52 +55,10 @@ For more details, please refer to the docs of [`AmqpMessageQueueOptions`].
 Installation
 ------------
 
-### Deno
-
 ~~~~ sh
-deno add @fedify/amqp
+deno add jsr:@fedify/amqp  # Deno
+npm  add     @fedify/amqp  # npm
+pnpm add     @fedify/amqp  # pnpm
+yarn add     @fedify/amqp  # Yarn
+bun  add     @fedify/amqp  # Bun
 ~~~~
-
-### Node.js
-
-~~~~ sh
-npm install @fedify/amqp
-~~~~
-
-### Bun
-
-~~~~ sh
-bun add @fedify/amqp
-~~~~
-
-
-Changelog
----------
-
-### Version 0.4.0
-
-To be released.
-
-### Version 0.3.0
-
-Released on June 25, 2025.
-
- -  Added `nativeRetrial` option to `AmqpMessageQueueOptions` to enable
-    native retrial of messages.
-
- -  The type of the `AmqpMessageQueue()` constructor's first parameter has been
-    changed from `Connection` to `ChannelModel`.
-
-### Version 0.2.0
-
-Released on March 28, 2025.
-
- -  Added `AmqpMessageQueue.enqueueMany()` method for efficiently enqueuing
-    multiple messages at once.
-
- -  Updated *@js-temporal/polyfill* to 0.5.0 for Node.js and Bun. On Deno,
-    there is no change because the polyfill is not used.
-
-### Version 0.1.0
-
-Initial release.  Released on October 14, 2024.
