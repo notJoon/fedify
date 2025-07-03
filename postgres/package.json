@@ -32,12 +32,12 @@
       "import": "./dist/mod.js"
     },
     "./kv": {
-      "types": "./dist/src/kv.d.ts",
-      "import": "./dist/src/kv.js"
+      "types": "./dist/kv.d.ts",
+      "import": "./dist/kv.js"
     },
     "./mq": {
-      "types": "./dist/src/mq.d.ts",
-      "import": "./dist/src/mq.js"
+      "types": "./dist/mq.d.ts",
+      "import": "./dist/mq.js"
     },
     "./package.json": "./package.json"
   },

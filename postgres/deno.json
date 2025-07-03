@@ -4,8 +4,8 @@
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
-    "./kv": "./src/kv.ts",
-    "./mq": "./src/mq.ts"
+    "./kv": "./kv.ts",
+    "./mq": "./mq.ts"
   },
   "imports": {
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
@@ -21,14 +21,11 @@
     "temporal"
   ],
   "exclude": [
-    ".github",
-    ".test-report.xml",
-    "npm",
-    "pnpm-lock.yaml"
+    "dist",
+    "node_modules"
   ],
   "tasks": {
-    "check": "deno fmt --check && deno lint && deno check */*.ts",
-    "test": "deno test --allow-net --allow-env",
-    "dnt": "deno run -A dnt.ts"
+    "check": "deno fmt --check && deno lint && deno check *.ts",
+    "test": "deno test --allow-net --allow-env"
   }
 }
