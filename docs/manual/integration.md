@@ -76,7 +76,8 @@ Express
 The [@fedify/express] package provides a middleware to integrate Fedify with
 Express:
 
-~~~~ typescript
+~~~~ typescript twoslash
+// @noErrors: 2345
 import express from "express";
 import { integrateFederation } from "@fedify/express";
 import { createFederation } from "@fedify/fedify";

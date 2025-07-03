@@ -379,17 +379,21 @@ jobs:
           - [`npm:@fedify/fedify@${{ steps.versioning.outputs.short_version }}`][2]
           - [`jsr:@fedify/amqp@${{ steps.versioning.outputs.version }}`][3]
           - [`npm:@fedify/amqp@${{ steps.versioning.outputs.short_version }}`][4]
-          - [`jsr:@fedify/postgres@${{ steps.versioning.outputs.version }}`][5]
-          - [`npm:@fedify/postgres@${{ steps.versioning.outputs.short_version }}`][6]
-          - [`jsr:@fedify/cli@${{ steps.versioning.outputs.version }}`][7]
+          - [`jsr:@fedify/express@${{ steps.versioning.outputs.version }}`][5]
+          - [`npm:@fedify/express@${{ steps.versioning.outputs.short_version }}`][6]
+          - [`jsr:@fedify/postgres@${{ steps.versioning.outputs.version }}`][7]
+          - [`npm:@fedify/postgres@${{ steps.versioning.outputs.short_version }}`][8]
+          - [`jsr:@fedify/cli@${{ steps.versioning.outputs.version }}`][9]
 
           [1]: https://jsr.io/@fedify/fedify@${{ steps.versioning.outputs.version }}
           [2]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
           [3]: https://jsr.io/@fedify/amqp@${{ steps.versioning.outputs.version }}
           [4]: https://www.npmjs.com/package/@fedify/amqp/v/${{ steps.versioning.outputs.short_version }}
-          [5]: https://jsr.io/@fedify/postgres@${{ steps.versioning.outputs.version }}
-          [6]: https://www.npmjs.com/package/@fedify/postgres/v/${{ steps.versioning.outputs.short_version }}
-          [7]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
+          [5]: https://jsr.io/@fedify/express@${{ steps.versioning.outputs.version }}
+          [6]: https://www.npmjs.com/package/@fedify/express/v/${{ steps.versioning.outputs.short_version }}
+          [7]: https://jsr.io/@fedify/postgres@${{ steps.versioning.outputs.version }}
+          [8]: https://www.npmjs.com/package/@fedify/postgres/v/${{ steps.versioning.outputs.short_version }}
+          [9]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
         pr-number: ${{ github.event.pull_request.number }}
         comment-tag: publish
 

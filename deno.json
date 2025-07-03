@@ -3,6 +3,7 @@
     "./fedify",
     "./cli",
     "./amqp",
+    "./express",
     "./postgres",
     "./examples/blog",
     "./examples/cloudflare-workers",
@@ -35,19 +36,35 @@
   "nodeModulesDir": "none",
   "tasks": {
     "codegen": "deno task -f @fedify/cli codegen",
-    "check": {
-      "command": "deno task -f @fedify/fedify check && deno task -f @fedify/cli check && deno task -f @fedify/blog check && deno task -f @fedify/hono-sample check",
+    "check-versions": "deno run --allow-read --allow-write scripts/check_versions.ts",
+    "check-all": {
+      "command": "deno task --recursive check",
       "dependencies": [
-        "check-versions"
+        "check-versions",
+        "codegen"
       ]
     },
-    "check-versions": "deno run --allow-read --allow-write scripts/check_versions.ts",
-    "test": "deno test --check --doc --allow-all --unstable-kv --trace-leaks --parallel",
-    "test:node": "pnpm run --recursive --filter '!{docs}' test",
-    "test:bun": "pnpm run --recursive --filter '!{docs}' test:bun",
+    "test": {
+      "command": "deno test --check --doc --allow-all --unstable-kv --trace-leaks --parallel",
+      "dependencies": [
+        "codegen"
+      ]
+    },
+    "test:node": {
+      "command": "pnpm run --recursive --filter '!{docs}' test",
+      "dependencies": [
+        "codegen"
+      ]
+    },
+    "test:bun": {
+      "command": "pnpm run --recursive --filter '!{docs}' test:bun",
+      "dependencies": [
+        "codegen"
+      ]
+    },
     "test-all": {
       "dependencies": [
-        "check",
+        "check-all",
         "test",
         "test:node",
         "test:bun"
@@ -58,7 +75,7 @@
     "hooks:install": "deno run --allow-read=deno.json,.git/hooks/ --allow-write=.git/hooks/ jsr:@hongminhee/deno-task-hooks",
     "hooks:pre-commit": {
       "dependencies": [
-        "check"
+        "check-all"
       ]
     }
   }
