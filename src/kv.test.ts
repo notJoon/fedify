@@ -1,91 +1,137 @@
-import { assert } from "@std/assert/assert";
-import { assertEquals } from "@std/assert/assert-equals";
-import { assertFalse } from "@std/assert/assert-false";
+import { PostgresKvStore } from "@fedify/postgres/kv";
+import * as temporal from "@js-temporal/polyfill";
 import { delay } from "@std/async/delay";
+import assert from "node:assert/strict";
+import process from "node:process";
+import { test } from "node:test";
 import postgres from "postgres";
-import { PostgresKvStore } from "./kv.ts";
 
-Deno.test("PostgresKvStore", async (t) => {
-  const dbUrl = Deno.env.get("DATABASE_URL");
-  const sql = dbUrl == null ? postgres() : postgres(dbUrl);
+let Temporal: typeof temporal.Temporal;
+if ("Temporal" in globalThis) {
+  Temporal = globalThis.Temporal;
+} else {
+  Temporal = temporal.Temporal;
+}
+
+const dbUrl = process.env.DATABASE_URL;
+
+function getStore(): {
+  // deno-lint-ignore no-explicit-any
+  sql: postgres.Sql<any>;
+  tableName: string;
+  store: PostgresKvStore;
+} {
+  const sql = postgres(dbUrl!);
   const tableName = `fedify_kv_test_${Math.random().toString(36).slice(5)}`;
-  const store = new PostgresKvStore(sql, { tableName });
+  return {
+    sql,
+    tableName,
+    store: new PostgresKvStore(sql, { tableName }),
+  };
+}
 
-  await t.step("initialize()", async () => {
+test("PostgresKvStore.initialize()", { skip: dbUrl == null }, async () => {
+  const { sql, tableName, store } = getStore();
+  try {
     await store.initialize();
     const result = await sql`
       SELECT to_regclass(${tableName}) IS NOT NULL AS exists;
     `;
     assert(result[0].exists);
-  });
+  } finally {
+    await store.drop();
+    await sql.end();
+  }
+});
 
-  await t.step("get()", async () => {
+test("PostgresKvStore.get()", { skip: dbUrl == null }, async () => {
+  const { sql, tableName, store } = getStore();
+  try {
+    await store.initialize();
     await sql`
       INSERT INTO ${sql(tableName)} (key, value)
       VALUES (${["foo", "bar"]}, ${["foobar"]})
     `;
-    assertEquals(await store.get(["foo", "bar"]), ["foobar"]);
+    assert.deepStrictEqual(await store.get(["foo", "bar"]), ["foobar"]);
 
     await sql`
       INSERT INTO ${sql(tableName)} (key, value, ttl)
       VALUES (${["foo", "bar", "ttl"]}, ${["foobar"]}, ${"0 seconds"})
     `;
     await delay(500);
-    assertEquals(await store.get(["foo", "bar", "ttl"]), undefined);
-  });
+    assert.strictEqual(await store.get(["foo", "bar", "ttl"]), undefined);
+  } finally {
+    await store.drop();
+    await sql.end();
+  }
+});
 
-  await t.step("set()", async () => {
+test("PostgresKvStore.set()", { skip: dbUrl == null }, async () => {
+  const { sql, tableName, store } = getStore();
+  try {
     await store.set(["foo", "baz"], "baz");
     const result = await sql`
       SELECT * FROM ${sql(tableName)}
       WHERE key = ${["foo", "baz"]}
     `;
-    assertEquals(result.length, 1);
-    assertEquals(result[0].key, ["foo", "baz"]);
-    assertEquals(result[0].value, "baz");
-    assertEquals(result[0].ttl, null);
+    assert.strictEqual(result.length, 1);
+    assert.deepStrictEqual(result[0].key, ["foo", "baz"]);
+    assert.strictEqual(result[0].value, "baz");
+    assert.strictEqual(result[0].ttl, null);
 
     await store.set(["foo", "qux"], "qux", {
       ttl: Temporal.Duration.from({ days: 1 }),
     });
     const result2 = await sql`
-        SELECT * FROM ${sql(tableName)}
-        WHERE key = ${["foo", "qux"]}
+      SELECT * FROM ${sql(tableName)}
+      WHERE key = ${["foo", "qux"]}
     `;
-    assertEquals(result2.length, 1);
-    assertEquals(result2[0].key, ["foo", "qux"]);
-    assertEquals(result2[0].value, "qux");
-    assertEquals(result2[0].ttl, "1 day");
+    assert.strictEqual(result2.length, 1);
+    assert.deepStrictEqual(result2[0].key, ["foo", "qux"]);
+    assert.strictEqual(result2[0].value, "qux");
+    assert.strictEqual(result2[0].ttl, "1 day");
 
     await store.set(["foo", "quux"], true);
     const result3 = await sql`
       SELECT * FROM ${sql(tableName)}
       WHERE key = ${["foo", "quux"]}
     `;
-    assertEquals(result3.length, 1);
-    assertEquals(result3[0].key, ["foo", "quux"]);
-    assertEquals(result3[0].value, true);
-    assertEquals(result3[0].ttl, null);
-  });
+    assert.strictEqual(result3.length, 1);
+    assert.deepStrictEqual(result3[0].key, ["foo", "quux"]);
+    assert.strictEqual(result3[0].value, true);
+    assert.strictEqual(result3[0].ttl, null);
+  } finally {
+    await store.drop();
+    await sql.end();
+  }
+});
 
-  await t.step("delete()", async () => {
+test("PostgresKvStore.delete()", { skip: dbUrl == null }, async () => {
+  const { sql, tableName, store } = getStore();
+  try {
     await store.delete(["foo", "bar"]);
     const result = await sql`
-        SELECT * FROM ${sql(tableName)}
-        WHERE key = ${["foo", "bar"]}
+      SELECT * FROM ${sql(tableName)}
+      WHERE key = ${["foo", "bar"]}
     `;
-    assertEquals(result.length, 0);
-  });
-
-  await t.step("drop()", async () => {
+    assert.strictEqual(result.length, 0);
+  } finally {
     await store.drop();
-    const result = await sql`
+    await sql.end();
+  }
+});
+
+test("PostgresKvStore.drop()", { skip: dbUrl == null }, async () => {
+  const { sql, tableName, store } = getStore();
+  try {
+    await store.drop();
+    const result2 = await sql`
       SELECT to_regclass(${tableName}) IS NOT NULL AS exists;
     `;
-    assertFalse(result[0].exists);
-  });
-
-  await sql.end();
+    assert.ok(!result2[0].exists);
+  } finally {
+    await sql.end();
+  }
 });
 
 // cSpell: ignore regclass

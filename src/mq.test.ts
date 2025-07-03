@@ -1,17 +1,23 @@
-import { assertEquals, assertGreater } from "@std/assert";
+import { PostgresMessageQueue } from "@fedify/postgres/mq";
+import * as temporal from "@js-temporal/polyfill";
 import { delay } from "@std/async/delay";
+import process from "node:process";
+import assert from "node:assert/strict";
+import { test } from "node:test";
 import postgres from "postgres";
-import { PostgresMessageQueue } from "./mq.ts";
 
-// deno-lint-ignore ban-types
-function getPostgres(): postgres.Sql<{}> {
-  const dbUrl = Deno.env.get("DATABASE_URL");
-  return dbUrl == null ? postgres() : postgres(dbUrl);
+let Temporal: typeof temporal.Temporal;
+if ("Temporal" in globalThis) {
+  Temporal = globalThis.Temporal;
+} else {
+  Temporal = temporal.Temporal;
 }
 
-Deno.test("PostgresMessageQueue", async (t) => {
-  const sql = getPostgres();
-  const sql2 = getPostgres();
+const dbUrl = process.env.DATABASE_URL;
+
+test("PostgresMessageQueue", { skip: dbUrl == null }, async () => {
+  const sql = postgres(dbUrl!);
+  const sql2 = postgres(dbUrl!);
   const tableName = `fedify_message_test_${
     Math.random().toString(36).slice(5)
   }`;
@@ -21,42 +27,41 @@ Deno.test("PostgresMessageQueue", async (t) => {
   const mq = new PostgresMessageQueue(sql, { tableName, channelName });
   const mq2 = new PostgresMessageQueue(sql2, { tableName, channelName });
 
-  const messages: string[] = [];
-  const controller = new AbortController();
-  const listening = mq.listen((message: string) => {
-    messages.push(message);
-  }, { signal: controller.signal });
-  const listening2 = mq2.listen((message: string) => {
-    messages.push(message);
-  }, { signal: controller.signal });
+  try {
+    const messages: string[] = [];
+    const controller = new AbortController();
+    const listening = mq.listen((message: string) => {
+      messages.push(message);
+    }, { signal: controller.signal });
+    const listening2 = mq2.listen((message: string) => {
+      messages.push(message);
+    }, { signal: controller.signal });
 
-  await t.step("enqueue()", async () => {
+    // enqueue()
     await mq.enqueue("Hello, world!");
-  });
 
-  await waitFor(() => messages.length > 0, 15_000);
+    await waitFor(() => messages.length > 0, 15_000);
 
-  await t.step("listen()", () => {
-    assertEquals(messages, ["Hello, world!"]);
-  });
+    // listen()
+    assert.deepStrictEqual(messages, ["Hello, world!"]);
 
-  let started = 0;
-  await t.step("enqueue() with delay", async () => {
+    // enqueue() with delay
+    let started = 0;
     started = Date.now();
     await mq.enqueue(
       { msg: "Delayed message" },
       { delay: Temporal.Duration.from({ seconds: 3 }) },
     );
-  });
 
-  await waitFor(() => messages.length > 1, 15_000);
+    await waitFor(() => messages.length > 1, 15_000);
 
-  await t.step("listen() with delay", () => {
-    assertEquals(messages, ["Hello, world!", { msg: "Delayed message" }]);
-    assertGreater(Date.now() - started, 3_000);
-  });
+    // listen() with delay
+    assert.deepStrictEqual(messages, ["Hello, world!", {
+      msg: "Delayed message",
+    }]);
+    assert.ok(Date.now() - started > 3_000);
 
-  await t.step("enqueueMany()", async () => {
+    // enqueueMany()
     while (messages.length > 0) messages.pop();
     const batchMessages = [
       "First batch message",
@@ -65,10 +70,9 @@ Deno.test("PostgresMessageQueue", async (t) => {
     ];
     await mq.enqueueMany(batchMessages);
     await waitFor(() => messages.length === batchMessages.length, 15_000);
-    assertEquals(messages, batchMessages);
-  });
+    assert.deepStrictEqual(messages, batchMessages);
 
-  await t.step("enqueueMany() with delay", async () => {
+    // enqueueMany() with delay
     while (messages.length > 0) messages.pop();
     started = Date.now();
     const delayedBatchMessages = [
@@ -83,17 +87,17 @@ Deno.test("PostgresMessageQueue", async (t) => {
       () => messages.length === delayedBatchMessages.length,
       15_000,
     );
-    assertEquals(messages, delayedBatchMessages);
-    assertGreater(Date.now() - started, 2_000);
-  });
+    assert.deepStrictEqual(messages, delayedBatchMessages);
+    assert.ok(Date.now() - started > 2_000);
 
-  controller.abort();
-  await listening;
-  await listening2;
-
-  await mq.drop();
-  await sql.end();
-  await sql2.end();
+    controller.abort();
+    await listening;
+    await listening2;
+  } finally {
+    await mq.drop();
+    await sql.end();
+    await sql2.end();
+  }
 });
 
 async function waitFor(

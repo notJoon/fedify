@@ -1,0 +1,64 @@
+{
+  "name": "@fedify/postgres",
+  "version": "0.4.0",
+  "description": "PostgreSQL drivers for Fedify",
+  "keywords": [
+    "fedify",
+    "postgresql",
+    "postgres"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Hong Minhee",
+    "email": "hong@minhee.org",
+    "url": "https://hongminhee.org/"
+  },
+  "homepage": "https://github.com/fedify-dev/postgres",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fedify-dev/postgres.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fedify-dev/postgres/issues"
+  },
+  "funding": [
+    "https://opencollective.com/fedify",
+    "https://github.com/sponsors/dahlia"
+  ],
+  "type": "module",
+  "exports": {
+    "./mod": {
+      "types": "./dist/mod.d.ts",
+      "import": "./dist/mod.js"
+    },
+    "./kv": {
+      "types": "./dist/src/kv.d.ts",
+      "import": "./dist/src/kv.js"
+    },
+    "./mq": {
+      "types": "./dist/src/mq.d.ts",
+      "import": "./dist/src/mq.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
+    "@logtape/logtape": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@fedify/fedify": "^1.7.2",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "@std/async": "jsr:^1.0.5",
+    "tsdown": "^0.12.9",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "tsdown",
+    "prepublish": "tsdown",
+    "test": "tsdown && node --experimental-transform-types --test",
+    "test:bun": "tsdown && bun test --timeout=10000"
+  }
+}
