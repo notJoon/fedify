@@ -1,6 +1,6 @@
+import { integrateFederation } from "@fedify/express";
 import express from "express";
-import { integrateFederation } from "../src";
-import { federation } from "./federation";
+import { federation } from "./federation.ts";
 
 export const app = express();
 

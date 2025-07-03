@@ -1,10 +1,10 @@
-import { Readable } from "node:stream";
 import type { Federation } from "@fedify/fedify";
 import type {
+  NextFunction,
   Request as ERequest,
   Response as EResponse,
-  NextFunction,
 } from "express";
+import { Readable } from "node:stream";
 
 type Middleware = (req: ERequest, res: EResponse, next: NextFunction) => void;
 
@@ -19,10 +19,9 @@ export function integrateFederation<TContextData>(
   return (req, res, next) => {
     const request = fromERequest(req);
     const contextData = contextDataFactory(req);
-    const contextDataPromise =
-      contextData instanceof Promise
-        ? contextData
-        : Promise.resolve(contextData);
+    const contextDataPromise = contextData instanceof Promise
+      ? contextData
+      : Promise.resolve(contextData);
     contextDataPromise.then(async (contextData) => {
       let notFound = false;
       let notAcceptable = false;
@@ -70,7 +69,9 @@ export function integrateFederation<TContextData>(
 }
 
 function fromERequest(req: ERequest): Request {
-  const url = `${req.protocol}://${req.header("Host") ?? req.hostname}${req.url}`;
+  const url = `${req.protocol}://${
+    req.header("Host") ?? req.hostname
+  }${req.url}`;
   const headers = new Headers();
   for (const [key, value] of Object.entries(req.headers)) {
     if (Array.isArray(value)) {
@@ -83,10 +84,9 @@ function fromERequest(req: ERequest): Request {
     method: req.method,
     headers,
     duplex: "half",
-    body:
-      req.method === "GET" || req.method === "HEAD"
-        ? undefined
-        : (Readable.toWeb(req)),
+    body: req.method === "GET" || req.method === "HEAD"
+      ? undefined
+      : (Readable.toWeb(req)),
   });
 }
 
