@@ -48,6 +48,7 @@
         "codegen"
       ]
     },
+    "install": "pnpm install",
     "test": {
       "command": "deno test --check --doc --allow-all --unstable-kv --trace-leaks --parallel",
       "dependencies": [
@@ -57,13 +58,15 @@
     "test:node": {
       "command": "pnpm run --recursive --filter '!{docs}' test",
       "dependencies": [
-        "codegen"
+        "codegen",
+        "install"
       ]
     },
     "test:bun": {
       "command": "pnpm run --recursive --filter '!{docs}' test:bun",
       "dependencies": [
-        "codegen"
+        "codegen",
+        "install"
       ]
     },
     "test-all": {
