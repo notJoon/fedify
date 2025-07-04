@@ -370,11 +370,7 @@ jobs:
     - run: |
         set -ex
         deno task -f @fedify/fedify codegen
-        if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-          deno publish --allow-dirty --no-provenance
-        else
-          deno publish --allow-dirty
-        fi
+        deno publish --allow-dirty
     - run: |
         set -ex
         npm config set //registry.npmjs.org/:_authToken "$NPM_AUTH_TOKEN"
