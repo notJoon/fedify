@@ -1,27 +1,46 @@
-import { assertEquals } from "@std/assert/assert-equals";
+import { RedisKvStore } from "@fedify/redis/kv";
 import { Redis } from "ioredis";
-import { RedisKvStore } from "./kv.ts";
+import assert from "node:assert/strict";
+import process from "node:process";
+import { test } from "node:test";
 
-Deno.test("DenoKvStore", async (t) => {
-  const redis = new Redis();
+const redisUrl = process.env.REDIS_URL;
+const skip = redisUrl == null;
+
+function getRedis(): { redis: Redis; keyPrefix: string; store: RedisKvStore } {
+  const redis = new Redis(redisUrl!);
   const keyPrefix = `fedify_test_${crypto.randomUUID()}::`;
   const store = new RedisKvStore(redis, { keyPrefix });
+  return { redis, keyPrefix, store };
+}
 
-  await t.step("get()", async () => {
+test("DenoKvStore.get()", { skip }, async () => {
+  const { redis, keyPrefix, store } = getRedis();
+  try {
     await redis.set(`${keyPrefix}foo::bar`, '"foobar"');
-    assertEquals(await store.get(["foo", "bar"]), "foobar");
-  });
+    assert.strictEqual(await store.get(["foo", "bar"]), "foobar");
+  } finally {
+    redis.disconnect();
+  }
+});
 
-  await t.step("set()", async () => {
+test("DenoKvStore.set()", { skip }, async () => {
+  const { redis, keyPrefix, store } = getRedis();
+  try {
     await store.set(["foo", "baz"], "baz");
-    assertEquals(await redis.get(`${keyPrefix}foo::baz`), '"baz"');
-  });
+    assert.strictEqual(await redis.get(`${keyPrefix}foo::baz`), '"baz"');
+  } finally {
+    redis.disconnect();
+  }
+});
 
-  await t.step("delete()", async () => {
-    assertEquals(await redis.exists(`${keyPrefix}foo::baz`), 1);
+test("DenoKvStore.delete()", { skip }, async () => {
+  const { redis, keyPrefix, store } = getRedis();
+  try {
+    await redis.set(`${keyPrefix}foo::baz`, '"baz"');
     await store.delete(["foo", "baz"]);
-    assertEquals(await redis.exists(`${keyPrefix}foo::baz`), 0);
-  });
-
-  redis.disconnect();
+    assert.equal(await redis.exists(`${keyPrefix}foo::baz`), 0);
+  } finally {
+    redis.disconnect();
+  }
 });

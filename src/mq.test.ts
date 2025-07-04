@@ -1,20 +1,31 @@
-import { assertEquals } from "@std/assert/assert-equals";
-import { assertGreater } from "@std/assert/assert-greater";
+import { RedisMessageQueue } from "@fedify/redis/mq";
+import * as temporal from "@js-temporal/polyfill";
 import { delay } from "@std/async/delay";
 import { Redis } from "ioredis";
-import { RedisMessageQueue } from "./mq.ts";
+import assert from "node:assert/strict";
+import process from "node:process";
+import { test } from "node:test";
 
-Deno.test("RedisMessageQueue", async (t) => {
+let Temporal: typeof temporal.Temporal;
+if ("Temporal" in globalThis) {
+  Temporal = globalThis.Temporal;
+} else {
+  Temporal = temporal.Temporal;
+}
+
+const redisUrl = process.env.REDIS_URL;
+
+test("RedisMessageQueue", { skip: redisUrl == null }, async () => {
   const channelKey = `fedify_test_channel_${crypto.randomUUID()}`;
   const queueKey = `fedify_test_queue_${crypto.randomUUID()}`;
   const lockKey = `fedify_test_lock_${crypto.randomUUID()}`;
-  const mq = new RedisMessageQueue(() => new Redis(), {
+  using mq = new RedisMessageQueue(() => new Redis(redisUrl!), {
     pollInterval: { seconds: 1 },
     channelKey,
     queueKey,
     lockKey,
   });
-  const mq2 = new RedisMessageQueue(() => new Redis(), {
+  using mq2 = new RedisMessageQueue(() => new Redis(redisUrl!), {
     pollInterval: { seconds: 1 },
     channelKey,
     queueKey,
@@ -30,67 +41,58 @@ Deno.test("RedisMessageQueue", async (t) => {
     messages.push(message);
   }, controller);
 
-  await t.step("enqueue()", async () => {
+  try {
+    // enqueue()
     await mq.enqueue("Hello, world!");
-  });
 
-  await waitFor(() => messages.length > 0, 15_000);
+    await waitFor(() => messages.length > 0, 15_000);
 
-  await t.step("listen()", () => {
-    assertEquals(messages, ["Hello, world!"]);
-  });
+    // listen()
+    assert.deepStrictEqual(messages, ["Hello, world!"]);
 
-  let started = 0;
-  await t.step("enqueue() with delay", async () => {
+    // enqueue() with delay
+    let started = 0;
     started = Date.now();
     await mq.enqueue(
       "Delayed message",
       { delay: Temporal.Duration.from({ seconds: 3 }) },
     );
-  });
 
-  await waitFor(() => messages.length > 1, 15_000);
+    await waitFor(() => messages.length > 1, 15_000);
 
-  await t.step("listen() with delay", () => {
-    assertEquals(messages, ["Hello, world!", "Delayed message"]);
-    assertGreater(Date.now() - started, 3_000);
-  });
+    // listen() with delay
+    assert.deepStrictEqual(messages, ["Hello, world!", "Delayed message"]);
+    assert.ok(Date.now() - started > 3_000);
 
-  await t.step("enqueue() [bulk]", async () => {
+    // enqueue() [bulk]
     for (let i = 0; i < 1_000; i++) await mq.enqueue(i);
-  });
 
-  await waitFor(() => messages.length > 1_001, 30_000);
+    await waitFor(() => messages.length > 1_001, 30_000);
 
-  await t.step("listen() [bulk]", () => {
+    // listen() [bulk]
     const numbers: Set<number> = new Set();
     for (let i = 0; i < 1_000; i++) numbers.add(i);
-    assertEquals(new Set(messages.slice(2)), numbers);
-  });
+    assert.deepStrictEqual(new Set(messages.slice(2)), numbers);
 
-  // Reset messages array for the next test:
-  while (messages.length > 0) messages.pop();
+    // Reset messages array for the next test:
+    while (messages.length > 0) messages.pop();
 
-  await t.step("enqueueMany()", async () => {
+    // enqueueMany()
     const bulkMessages = Array.from({ length: 500 }, (_, i) => `bulk-${i}`);
     await mq.enqueueMany(bulkMessages);
-  });
 
-  await waitFor(() => messages.length >= 500, 30_000);
+    await waitFor(() => messages.length >= 500, 30_000);
 
-  await t.step("listen() after enqueueMany()", () => {
+    // listen() after enqueueMany()
     const expectedMessages = new Set(
       Array.from({ length: 500 }, (_, i) => `bulk-${i}`),
     );
-    assertEquals(new Set(messages), expectedMessages);
-  });
-
-  controller.abort();
-  await listening;
-  await listening2;
-
-  mq[Symbol.dispose]();
-  mq2[Symbol.dispose]();
+    assert.deepStrictEqual(new Set(messages), expectedMessages);
+  } finally {
+    controller.abort();
+    await listening;
+    await listening2;
+  }
 });
 
 async function waitFor(

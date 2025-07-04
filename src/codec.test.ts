@@ -1,30 +1,28 @@
-import { assertEquals } from "@std/assert/assert-equals";
-import { assertThrows } from "@std/assert/assert-throws";
+import { DecodingError, EncodingError, JsonCodec } from "@fedify/redis/codec";
+import assert from "node:assert/strict";
 import { Buffer } from "node:buffer";
-import { DecodingError, EncodingError, JsonCodec } from "./codec.ts";
+import { test } from "node:test";
 
-Deno.test("JsonCodec", async (t) => {
+test("JsonCodec.encode()", () => {
   const codec = new JsonCodec();
+  assert.deepStrictEqual(
+    codec.encode({ foo: "bar" }),
+    Buffer.from(new TextEncoder().encode('{"foo":"bar"}')),
+  );
+  assert.throws(
+    () => codec.encode(1n),
+    EncodingError,
+  );
+});
 
-  await t.step("encode()", () => {
-    assertEquals(
-      codec.encode({ foo: "bar" }),
-      Buffer.from(new TextEncoder().encode('{"foo":"bar"}')),
-    );
-    assertThrows(
-      () => codec.encode(1n),
-      EncodingError,
-    );
-  });
-
-  await t.step("decode()", () => {
-    assertEquals(
-      codec.decode(Buffer.from(new TextEncoder().encode('{"foo":"bar"}'))),
-      { foo: "bar" },
-    );
-    assertThrows(
-      () => codec.decode(Buffer.from(new TextEncoder().encode("invalid"))),
-      DecodingError,
-    );
-  });
+test("JsonCodec.decode()", () => {
+  const codec = new JsonCodec();
+  assert.deepStrictEqual(
+    codec.decode(Buffer.from(new TextEncoder().encode('{"foo":"bar"}'))),
+    { foo: "bar" },
+  );
+  assert.throws(
+    () => codec.decode(Buffer.from(new TextEncoder().encode("invalid"))),
+    DecodingError,
+  );
 });
