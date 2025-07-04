@@ -47,10 +47,5 @@
     "dev": "cd ../ && pnpm run --filter '!{docs}' -r build && cd docs/ && vitepress dev",
     "build": "cd ../ && pnpm run --filter '!{docs}' -r build && cd docs/ && vitepress build",
     "preview": "cd ../ && pnpm run --filter '!{docs}' -r build && cd docs/ && vitepress preview"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "vitepress@1.6.3": "patches/vitepress@1.6.3.patch"
-    }
   }
 }
