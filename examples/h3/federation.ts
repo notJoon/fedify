@@ -1,4 +1,4 @@
-import { MemoryKvStore, Note, Person, createFederation } from "@fedify/fedify";
+import { createFederation, MemoryKvStore, Note, Person } from "@fedify/fedify";
 
 export const federation = createFederation<void>({
   kv: new MemoryKvStore(),

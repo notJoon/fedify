@@ -3,7 +3,9 @@ import { getXForwardedRequest } from "x-forwarded-fetch";
 
 export function integrateFederation<TContextData>(
   federation: Federation<TContextData>,
-  contextDataFactory: (request: Request) => TContextData | Promise<TContextData>
+  contextDataFactory: (
+    request: Request,
+  ) => TContextData | Promise<TContextData>,
 ) {
   return async (request: Request) => {
     const forwardedRequest = await getXForwardedRequest(request);

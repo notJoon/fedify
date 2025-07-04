@@ -41,7 +41,7 @@ federation
         publicKey: keyPairs[0].cryptographicKey,
         assertionMethods: keyPairs.map((keyPair) => keyPair.multikey),
       });
-    }
+    },
   )
   .setKeyPairsDispatcher(async (_, identifier) => {
     if (identifier != "demo") {
@@ -80,11 +80,11 @@ federation
       new Accept({
         id: new URL(
           `#accepts/${follower.id.href}`,
-          context.getActorUri("demo")
+          context.getActorUri("demo"),
         ),
         actor: follow.objectId,
         object: follow,
-      })
+      }),
     );
     relationStore.set(follower.id.href, follow.objectId.href);
     revalidatePath("/");
@@ -106,7 +106,9 @@ federation
   });
 
 function integrateFederation<TContextData>(
-  contextDataFactory: (request: Request) => TContextData | Promise<TContextData>
+  contextDataFactory: (
+    request: Request,
+  ) => TContextData | Promise<TContextData>,
 ) {
   return async (request: Request) => {
     const forwardedRequest = await getXForwardedRequest(request);
