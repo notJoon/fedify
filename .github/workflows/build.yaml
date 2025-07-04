@@ -262,7 +262,7 @@ jobs:
     - run: deno task -f @fedify/fedify codegen
     - run: deno publish --dry-run
     - run: pnpm install
-    - run: pnpm publish --recursive --dry-run
+    - run: pnpm publish --recursive --dry-run --no-git-checks
 
   publish:
     needs: [test, test-node, test-bun, test-cfworkers, lint, release-test]
