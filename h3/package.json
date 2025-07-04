@@ -2,7 +2,10 @@
   "name": "@fedify/h3",
   "version": "0.1.3",
   "description": "Integrate Fedify with h3",
-  "keywords": ["Fedify", "h3"],
+  "keywords": [
+    "Fedify",
+    "h3"
+  ],
   "author": {
     "name": "Hong Minhee",
     "email": "hong@minhee.org",
@@ -30,21 +33,24 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
-    }
+    },
+    "package.json": "./package.json"
   },
-  "files": ["src/", "dist/"],
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "@types/node": "^20.14.10",
-    "tsup": "^8.1.0",
+    "tsdown": "^0.12.9",
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@fedify/fedify": ">=0.10.0, <2",
+    "@fedify/fedify": "^1.7.2",
     "h3": "^1.8.0"
   },
   "scripts": {
-    "build": "tsup",
-    "prepack": "tsup"
+    "build": "tsdown",
+    "prepack": "tsdown",
+    "prepublish": "tsdown"
   }
 }
