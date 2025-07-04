@@ -1299,7 +1299,7 @@ You can extend the server by adding more features, such as sending other
 activities, handling other types of activities, and implementing other callback
 functions.  The Fedify framework provides a wide range of features to build
 a federated server, and you can explore them by reading
-the [manual](./manual.md) and the [API reference].
+the [manual](../manual/federation.md) and the [API reference].
 
 If you have any questions or feedback, feel free to ask in
 the [Fedify community] on Matrix or the [Discord server] or
@@ -1326,7 +1326,7 @@ Exercises
     Instead, you can use a web framework like [Hono] or [Fresh] to utilize
     the proper routing system and [JSX] templates to produce HTML.
 
-    See also the [*Integration* section](./manual/integration.md) in
+    See also the [*Integration* section](../manual/integration.md) in
     the manual for more details.
 
 [Hono]: https://hono.dev/

@@ -410,7 +410,7 @@ to use the default tracer provider (i.e., [`trace.getTracerProvider()`]).
 
 For more information, see the [*OpenTelemetry* section](./opentelemetry.md).
 
-[`trace.getTracerProvider()`]: https://open-telemetry.github.io/opentelemetry-js/classes/_opentelemetry_api.TraceAPI.html#getTracerProvider
+[`trace.getTracerProvider()`]: https://open-telemetry.github.io/opentelemetry-js/classes/_opentelemetry_api._opentelemetry_api.TraceAPI.html#gettracerprovider
 
 
 Builder pattern for structuring

@@ -105,7 +105,7 @@ Here is the list of packages:
 [jsr:@fedify/amqp]: https://jsr.io/@fedify/amqp
 [npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp
 [jsr:@fedify/express]: https://jsr.io/@fedify/express
-[npm:@fedify/express]: https://www.npmjs.com/package/@fedify
+[npm:@fedify/express]: https://www.npmjs.com/package/@fedify/express
 [jsr:@fedify/h3]: https://jsr.io/@fedify/h3
 [npm:@fedify/h3]: https://www.npmjs.com/package/@fedify/h3
 [jsr:@fedify/postgres]: https://jsr.io/@fedify/postgres

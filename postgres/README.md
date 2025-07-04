@@ -32,8 +32,8 @@ const federation = createFederation({
 [Fedify]: https://fedify.dev/
 [`KvStore`]: https://jsr.io/@fedify/fedify/doc/federation/~/KvStore
 [`MessageQueue`]: https://jsr.io/@fedify/fedify/doc/federation/~/MessageQueue
-[`PostgresKvStore`]: https://jsr.io/@fedify/postgres/doc/federation/~/PostgresKvStore
-[`PostgresMessageQueue`]: https://jsr.io/@fedify/postgres/doc/federation/~/PostgresMessageQueue
+[`PostgresKvStore`]: https://jsr.io/@fedify/postgres/doc/~/PostgresKvStore
+[`PostgresMessageQueue`]: https://jsr.io/@fedify/postgres/doc/~/PostgresMessageQueue
 
 
 Installation
