@@ -59,7 +59,7 @@ To build the project, see the [*Build* section](#build).
 Please run the following commands before opening a pull request:
 
 ~~~~ bash
-deno task check
+deno task check-all
 ~~~~
 
 ### Docs
@@ -147,16 +147,21 @@ Build
 
 ### Directories
 
-The repository consists of the following directories:
+The repository is organized as a monorepo with the following packages:
 
- -  *cli/*: The Fedify CLI.  The CLI is built with [Deno].
+ -  *fedify/*: The main Fedify library (@fedify/fedify).  The library is built
+    with Deno, and tested with Deno, Node.js, and [Bun].
+     -  *codegen/*: The code generation scripts.
+ -  *cli/*: The Fedify CLI (@fedify/cli).  The CLI is built with [Deno].
+ -  *amqp/*: AMQP/RabbitMQ driver (@fedify/amqp) for Fedify.
+ -  *express/*: Express.js integration (@fedify/express) for Fedify.
+ -  *h3/*: h3 framework integration (@fedify/h3) for Fedify.
+ -  *postgres/*: PostgreSQL drivers (@fedify/postgres) for Fedify.
+ -  *redis/*: Redis drivers (@fedify/redis) for Fedify.
  -  *docs/*: The Fedify docs.  The docs are built with [Node.js] and
     [VitePress].
  -  *examples/*: The example projects.  Some examples are built with Deno, and
     some are built with Node.js.
- -  *fedify/*: The Fedify library.  The library is built with Deno, and tested
-    with Deno, Node.js, and [Bun].
-     -  *codegen/*: The code generation scripts.
 
 [Deno]: https://deno.com/
 [VitePress]: https://vitepress.dev/
@@ -203,6 +208,9 @@ you can skip the command and just run:
 code .
 ~~~~
 
+Since this is a monorepo, you can also work on individual packages by
+navigating to their directories and using package-specific tasks.
+
 Immediately after running the `code .` command, Visual Studio Code will open
 the repository, and you can start hacking on Fedify.  If you encounter the
 following message:
@@ -220,8 +228,15 @@ Please click the *Install* button to install the Deno extension.
 ### Running the Fedify CLI
 
 If you want to test your changes in the Fedify CLI, you can run
-`deno task -f @fedify/cli run` command.  For example, if you want to test
-the `fedify lookup` subcommand, you can run the following command:
+`deno task cli` command from the root, or `deno task -f @fedify/cli run`
+command.  For example, if you want to test the `fedify lookup` subcommand,
+you can run the following command:
+
+~~~~ bash
+deno task cli lookup @fedify@hollo.social
+~~~~
+
+Or directly:
 
 ~~~~ bash
 deno task -f @fedify/cli run lookup @fedify@hollo.social
@@ -235,13 +250,19 @@ deno task -f @fedify/cli run lookup @fedify@hollo.social
 #### Running the tests
 
 If you want to test your changes in the Fedify library, you can run
-the following command:
+the following command from the root:
+
+~~~~ bash
+deno task test
+~~~~
+
+Or you can test a specific package:
 
 ~~~~ bash
 deno task -f @fedify/fedify test
 ~~~~
 
-Or you can use `--filter` option to run a specific test.  For example, if you
+You can use `--filter` option to run a specific test.  For example, if you
 want to run the `verifyRequest` test:
 
 ~~~~ bash
@@ -249,10 +270,20 @@ deno task -f @fedify/fedify test --filter verifyRequest
 ~~~~
 
 If the tests pass, you should run `deno task test-all` command to test
-the library with Deno, Node.js, and [Bun]:
+all packages with Deno, Node.js, and [Bun]:
 
 ~~~~ bash
 deno task test-all
+~~~~
+
+To test individual packages with specific runtimes:
+
+~~~~ bash
+# Test with Node.js
+deno task test:node
+
+# Test with Bun
+deno task test:bun
 ~~~~
 
 Of course, Node.js and Bun should be installed on your system to run the tests

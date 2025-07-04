@@ -8,6 +8,21 @@ Version 1.8.0
 
 To be released.
 
+ -  The repository has been restructured as a monorepo, consolidating all
+    Fedify packages into a single repository with unified versioning.  This
+    change affects the following packages:
+
+     -  `@fedify/fedify` (main library)
+     -  `@fedify/cli` (CLI toolchain)
+     -  `@fedify/amqp` (AMQP/RabbitMQ driver)
+     -  `@fedify/express` (Express integration)
+     -  `@fedify/h3` (h3 framework integration)
+     -  `@fedify/postgres` (PostgreSQL drivers)
+     -  `@fedify/redis` (Redis drivers)
+
+    All packages now follow the same version number and are released together.
+    Previously, each package had independent versioning.
+
  -  Key–value stores now optionally support CAS (compare-and-swap) operation
     for atomic updates.  This is useful for implementing optimistic locking
     and preventing lost updates in concurrent environments.

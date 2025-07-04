@@ -24,7 +24,8 @@ Main features:
  -  Federation middleware for handling webhooks
  -  NodeInfo protocol support
  -  Interoperability with Mastodon and other fediverse software
- -  Integration with various web frameworks
+ -  Integration with various web frameworks (Express, h3, Hono, SvelteKit)
+ -  Database adapters (PostgreSQL, Redis, AMQP/RabbitMQ)
  -  CLI toolchain for testing and debugging
 
 
@@ -47,10 +48,9 @@ Development Environment
 Repository Structure
 --------------------
 
- -  *cli/*: Fedify CLI implementation (built with Deno)
- -  *docs/*: Documentation built with Node.js and VitePress
- -  *examples/*: Example projects demonstrating Fedify usage
- -  *src/*: Main library code
+The repository is organized as a monorepo with the following packages:
+
+ -  *fedify/*: Main Fedify library (@fedify/fedify)
     -  *codegen/*: Code generation scripts
     -  *compat/*: Compatibility layer
     -  *federation/*: Core federation functionality
@@ -62,6 +62,14 @@ Repository Structure
     -  *vocab/*: ActivityPub vocabulary implementation
     -  *webfinger/*: WebFinger protocol implementation
     -  *x/*: Framework integrations
+ -  *cli/*: Fedify CLI implementation (@fedify/cli, built with Deno)
+ -  *amqp/*: AMQP/RabbitMQ driver (@fedify/amqp)
+ -  *express/*: Express.js integration (@fedify/express)
+ -  *h3/*: h3 framework integration (@fedify/h3)
+ -  *postgres/*: PostgreSQL drivers (@fedify/postgres)
+ -  *redis/*: Redis drivers (@fedify/redis)
+ -  *docs/*: Documentation built with Node.js and VitePress
+ -  *examples/*: Example projects demonstrating Fedify usage
 
 
 Code Patterns and Principles
@@ -92,11 +100,11 @@ Development Workflow
 1. **Code Generation**: Run `deno task codegen` whenever vocabulary YAML files
    or code generation scripts change.
 
-2. **Checking Code**: Before committing, run `deno task check` in the *src/*
-   directory.
+2. **Checking Code**: Before committing, run `deno task check-all` from the
+   root directory to check all packages.
 
 3. **Running Tests**: Use `deno task test` for basic tests or
-   `deno task test-all` to test across all environments.
+   `deno task test-all` to test across all environments and packages.
 
 4. **Documentation**: Follow the Markdown conventions in CONTRIBUTING.md:
     -  80 characters per line (except for code blocks and URLs)
@@ -124,21 +132,23 @@ Common Tasks
 
 ### Adding ActivityPub Vocabulary Types
 
-1. Create a new YAML file in *src/vocab/* following existing patterns
+1. Create a new YAML file in *fedify/vocab/* following existing patterns
 2. Run `deno task codegen` to generate TypeScript classes
 3. Export the new types from appropriate module files
 
 ### Implementing Framework Integrations
 
-1. Add new integrations in the *src/x/* directory
+1. Add new integrations in the *fedify/x/* directory
 2. Follow pattern from existing integrations (hono.ts, sveltekit.ts)
 3. Use standard request/response interfaces for compatibility
+4. Consider creating a dedicated package for substantial integrations
 
 ### Creating Database Adapters
 
-1. Implement the KV store interface in *src/federation/kv.ts*
-2. Implement the message queue interface in *src/federation/mq.ts*
-3. Add new file in *src/x/* for specific database adaptations
+1. For core KV/MQ interfaces: implement in *fedify/federation/kv.ts* and *fedify/federation/mq.ts*
+2. For specific database adapters: create dedicated packages (*postgres/*, *redis/*, *amqp/*)
+3. Follow the pattern from existing database adapter packages
+4. Implement both KV store and message queue interfaces as needed
 
 
 Important Security Considerations
@@ -157,8 +167,9 @@ Testing Requirements
 
 1. Write unit tests for all new functionality
 2. Follow the pattern of existing tests
-3. Use the testing utilities in *src/testing/*
+3. Use the testing utilities in *fedify/testing/*
 4. Consider interoperability with other fediverse software
+5. For package-specific tests, follow the testing patterns in each package
 
 
 Documentation Standards
@@ -197,9 +208,17 @@ When adding features:
 Build and Distribution
 ----------------------
 
-The project uses a custom build process to support multiple environments:
-1. Deno-native modules
-2. npm package via dnt (Deno to Node Transform)
-3. JSR package distribution
+The monorepo uses different build processes for different packages:
 
-Ensure changes work across all distribution formats.
+1. **@fedify/fedify**: Uses a custom build process to support multiple environments:
+   - Deno-native modules
+   - npm package via dnt (Deno to Node Transform)
+   - JSR package distribution
+
+2. **@fedify/cli**: Built with Deno, distributed via JSR and npm
+
+3. **Database adapters and integrations**: Use tsdown for TypeScript compilation:
+   - *amqp/*, *express/*, *h3/*, *postgres/*, *redis/*
+   - Built to support Node.js and Bun environments
+
+Ensure changes work across all distribution formats and target environments.
