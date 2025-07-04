@@ -98,6 +98,7 @@ Here is the list of packages:
 | [@fedify/express](/express/)   | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  | Express integration                     |
 | [@fedify/h3](/h3/)             | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       | H3 integration                          |
 | [@fedify/postgres](/postgres/) | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] | PostgreSQL driver                       |
+| [@fedify/redis](/redis/)       | [JSR][jsr:@fedify/redis]    | [npm][npm:@fedify/redis]    | Redis driver                            |
 
 [jsr:@fedify/cli]: https://jsr.io/@fedify/cli
 [npm:@fedify/cli]: https://www.npmjs.com/package/@fedify/cli
@@ -109,6 +110,8 @@ Here is the list of packages:
 [npm:@fedify/h3]: https://www.npmjs.com/package/@fedify/h3
 [jsr:@fedify/postgres]: https://jsr.io/@fedify/postgres
 [npm:@fedify/postgres]: https://www.npmjs.com/package/@fedify/postgres
+[jsr:@fedify/redis]: https://jsr.io/@fedify/redis
+[npm:@fedify/redis]: https://www.npmjs.com/package/@fedify/redis
 
 
 Sponsors
