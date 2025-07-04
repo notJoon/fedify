@@ -96,6 +96,7 @@ Here is the list of packages:
 | [@fedify/cli](/cli/)           | [JSR][jsr:@fedify/cli]      | [npm][npm:@fedify/cli]      | CLI toolchain for testing and debugging |
 | [@fedify/amqp](/amqp/)         | [JSR][jsr:@fedify/amqp]     | [npm][npm:@fedify/amqp]     | AMQP/RabbitMQ driver                    |
 | [@fedify/express](/express/)   | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  | Express integration                     |
+| [@fedify/h3](/h3/)             | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       | H3 integration                          |
 | [@fedify/postgres](/postgres/) | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] | PostgreSQL driver                       |
 
 [jsr:@fedify/cli]: https://jsr.io/@fedify/cli
@@ -104,6 +105,8 @@ Here is the list of packages:
 [npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp
 [jsr:@fedify/express]: https://jsr.io/@fedify/express
 [npm:@fedify/express]: https://www.npmjs.com/package/@fedify
+[jsr:@fedify/h3]: https://jsr.io/@fedify/h3
+[npm:@fedify/h3]: https://www.npmjs.com/package/@fedify/h3
 [jsr:@fedify/postgres]: https://jsr.io/@fedify/postgres
 [npm:@fedify/postgres]: https://www.npmjs.com/package/@fedify/postgres
 

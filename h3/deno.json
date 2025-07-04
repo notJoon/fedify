@@ -1,0 +1,19 @@
+{
+  "name": "@fedify/h3",
+  "version": "1.8.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "nodeModulesDir": "none",
+  "unstable": [
+    "temporal"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+  "tasks": {
+    "check": "deno fmt --check && deno lint && deno check *.ts"
+  }
+}

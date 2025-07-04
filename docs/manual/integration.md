@@ -129,7 +129,8 @@ h3
 [SolidStart], [TanStack Start], and other many web frameworks.
 The [@fedify/h3] package provides a middleware to integrate Fedify with h3:
 
-~~~~ typescript {9-15}
+~~~~ typescript {9-15} twoslash
+// @noErrors: 2345
 import { createApp, createRouter } from "h3";
 import { createFederation } from "@fedify/fedify";
 import { integrateFederation, onError } from "@fedify/h3";

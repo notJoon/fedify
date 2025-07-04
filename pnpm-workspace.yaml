@@ -3,6 +3,7 @@ packages:
 - cli
 - amqp
 - express
+- h3
 - postgres
 - docs
 
@@ -19,6 +20,7 @@ catalog:
   "@types/node": ^22.16.0
   amqplib: ^0.10.8
   express: ^4.0.0
+  h3: ^1.15.0
   postgres: ^3.4.7
   tsdown: ^0.12.9
   typescript: ^5.8.3

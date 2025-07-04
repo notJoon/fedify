@@ -375,25 +375,26 @@ jobs:
         message: |
           The latest push to this pull request has been published to JSR and npm as a pre-release:
 
-          - [`jsr:@fedify/fedify@${{ steps.versioning.outputs.version }}`][1]
-          - [`npm:@fedify/fedify@${{ steps.versioning.outputs.short_version }}`][2]
-          - [`jsr:@fedify/amqp@${{ steps.versioning.outputs.version }}`][3]
-          - [`npm:@fedify/amqp@${{ steps.versioning.outputs.short_version }}`][4]
-          - [`jsr:@fedify/express@${{ steps.versioning.outputs.version }}`][5]
-          - [`npm:@fedify/express@${{ steps.versioning.outputs.short_version }}`][6]
-          - [`jsr:@fedify/postgres@${{ steps.versioning.outputs.version }}`][7]
-          - [`npm:@fedify/postgres@${{ steps.versioning.outputs.short_version }}`][8]
-          - [`jsr:@fedify/cli@${{ steps.versioning.outputs.version }}`][9]
+          | Package          | Version                                 | JSR                         | npm                         |
+          | ---------------- | --------------------------------------- | --------------------------- | --------------------------- |
+          | @fedify/fedify   | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/fedify]   | [npm][npm:@fedify/fedify]   |
+          | @fedify/cli      | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/cli]      |                             |
+          | @fedify/amqp     | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/amqp]     | [npm][npm:@fedify/amqp]     |
+          | @fedify/express  | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  |
+          | @fedify/h3       | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       |
+          | @fedify/postgres | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] |
 
-          [1]: https://jsr.io/@fedify/fedify@${{ steps.versioning.outputs.version }}
-          [2]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
-          [3]: https://jsr.io/@fedify/amqp@${{ steps.versioning.outputs.version }}
-          [4]: https://www.npmjs.com/package/@fedify/amqp/v/${{ steps.versioning.outputs.short_version }}
-          [5]: https://jsr.io/@fedify/express@${{ steps.versioning.outputs.version }}
-          [6]: https://www.npmjs.com/package/@fedify/express/v/${{ steps.versioning.outputs.short_version }}
-          [7]: https://jsr.io/@fedify/postgres@${{ steps.versioning.outputs.version }}
-          [8]: https://www.npmjs.com/package/@fedify/postgres/v/${{ steps.versioning.outputs.short_version }}
-          [9]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
+          [jsr:@fedify/fedify]: https://jsr.io/@fedify/fedify@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/fedify]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/cli]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
+          [jsr:@fedify/amqp]: https://jsr.io/@fedify/amqp@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/express]: https://jsr.io/@fedify/express@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/express]: https://www.npmjs.com/package/@fedify/express/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/h3]: https://jsr.io/@fedify/h3@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/h3]: https://www.npmjs.com/package/@fedify/h3/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/postgres]: https://jsr.io/@fedify/postgres@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/postgres]: https://www.npmjs.com/package/@fedify/postgres/v/${{ steps.versioning.outputs.short_version }}
         pr-number: ${{ github.event.pull_request.number }}
         comment-tag: publish
 
