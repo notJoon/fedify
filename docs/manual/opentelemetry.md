@@ -138,7 +138,7 @@ const federation = createFederation<void>({
 > For more information about the Sentry SDK's OpenTelemetry integration, please
 > refer to the [*OpenTelemetry Support* section] in the Sentry SDK docs.
 
-[`TracerProvider`]: https://open-telemetry.github.io/opentelemetry-js/interfaces/_opentelemetry_api.TracerProvider.html
+[`TracerProvider`]: https://open-telemetry.github.io/opentelemetry-js/interfaces/_opentelemetry_api._opentelemetry_api.TracerProvider.html
 [Sentry]: https://sentry.io/
 [@sentry/node]: https://npmjs.com/package/@sentry/node
 [@sentry/deno]: https://npmjs.com/package/@sentry/deno
