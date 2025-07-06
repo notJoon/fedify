@@ -1131,7 +1131,7 @@ import Database from "better-sqlite3";
 const db = new Database("");
 interface User {}
 import type { Federation } from "@fedify/fedify";
-const federation = null as unknown as Federation<void>;
+const fedi = null as unknown as Federation<void>;
 // ---cut-before---
 app.post("/setup", async (c) => {
   // Check if an account already exists
@@ -1157,7 +1157,7 @@ app.post("/setup", async (c) => {
   }
   const url = new URL(c.req.url);
   const handle = `@${username}@${url.host}`;
-  const ctx = federation.createContext(c.req.raw, undefined);
+  const ctx = fedi.createContext(c.req.raw, undefined);
   db.transaction(() => {
     db.prepare("INSERT OR REPLACE INTO users (id, username) VALUES (1, ?)").run(
       username,
@@ -2863,7 +2863,7 @@ And implement the `POST /users/{username}/posts` request handler:
 ~~~~ typescript twoslash [src/app.tsx]
 import { stringifyEntities } from "stringify-entities";
 import { type Federation, Note } from "@fedify/fedify";
-const federation = null as unknown as Federation<void>;
+const fedi = null as unknown as Federation<void>;
 import { Hono } from "hono";
 const app = new Hono();
 import Database from "better-sqlite3";
@@ -2889,7 +2889,7 @@ app.post("/users/:username/posts", async (c) => {
   if (content == null || content.trim() === "") {
     return c.text("Content is required", 400);
   }
-  const ctx = federation.createContext(c.req.raw, undefined);
+  const ctx = fedi.createContext(c.req.raw, undefined);
   const url: string | null = db.transaction(() => {
     const post = db
       .prepare<unknown[], Post>(
@@ -3256,7 +3256,7 @@ Then modify the `POST /users/{username}/posts` request handler as follows:
 ~~~~ typescript{4,24,26-40} twoslash [src/app.tsx]
 import { stringifyEntities } from "stringify-entities";
 import { Create, type Federation, Note } from "@fedify/fedify";
-const federation = null as unknown as Federation<void>;
+const fedi = null as unknown as Federation<void>;
 import { Hono } from "hono";
 const app = new Hono();
 import Database from "better-sqlite3";
@@ -3269,7 +3269,7 @@ const username = "" as string;
 // ---cut-before---
 app.post("/users/:username/posts", async (c) => {
   // ... omitted ...
-  const ctx = federation.createContext(c.req.raw, undefined);
+  const ctx = fedi.createContext(c.req.raw, undefined);
   const post: Post | null = db.transaction(() => {
     const post = db
       .prepare<unknown[], Post>(
@@ -3514,7 +3514,7 @@ Then add a `POST /users/{username}/following` request handler:
 
 ~~~~ typescript twoslash [src/app.tsx]
 import { type Federation, Follow, isActor } from "@fedify/fedify";
-const federation = null as unknown as Federation<void>;
+const fedi = null as unknown as Federation<void>;
 import { Hono } from "hono";
 const app = new Hono();
 // ---cut-before---
@@ -3525,7 +3525,7 @@ app.post("/users/:username/following", async (c) => {
   if (typeof handle !== "string") {
     return c.text("Invalid actor handle or URL", 400);
   }
-  const ctx = federation.createContext(c.req.raw, undefined);
+  const ctx = fedi.createContext(c.req.raw, undefined);
   const actor = await ctx.lookupObject(handle.trim());
   if (!isActor(actor)) {
     return c.text("Invalid actor handle or URL", 400);
