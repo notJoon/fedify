@@ -47,7 +47,12 @@ export interface LookupObjectOptions {
   tracerProvider?: TracerProvider;
 }
 
-const handleRegexp =
+/**
+ * Regular expression to match a fediverse handle in the format `@user@server` or `user@server`.
+ * The `user` part can contain alphanumeric characters and some special characters except `@`.
+ * The `server` part is all characters after the `@` symbol in the middle.
+ */
+export const handleRegexp =
   /^@?((?:[-A-Za-z0-9._~!$&'()*+,;=]|%[A-Fa-f0-9]{2})+)@([^@]+)$/;
 
 /**

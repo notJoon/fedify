@@ -1,4 +1,5 @@
 import { Command } from "@cliffy/command";
+import { handleRegexp } from "@fedify/fedify/vocab";
 import { lookupWebFinger } from "@fedify/fedify/webfinger";
 import ora from "ora";
 import { printJson } from "./utils.ts";
@@ -57,14 +58,6 @@ function convertUrlIfHandle(handleOrUrl: string): URL {
 }
 
 /**
- * Regular expression to match a handle in the format `@username@domain`.
- * The username can contain any characters except `@`.
- * The domain must be match with `[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}`.
- */
-const HANDLE_REGEX =
-  /^@?([^@]+)@([-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6})$/;
-
-/**
  * Custom error class for invalid handle formats.
  * @param handle The invalid handle that caused the error.
  * @extends {Error}
@@ -89,7 +82,7 @@ class InvalidHandleError extends Error {
  * ```
  */
 function convertHandleToUrl(handle: string): URL {
-  const match = handle.match(HANDLE_REGEX);
+  const match = handle.match(handleRegexp);
   if (!match) {
     throw new InvalidHandleError(handle);
   }
