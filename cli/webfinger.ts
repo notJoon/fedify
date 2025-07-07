@@ -4,9 +4,9 @@ import ora from "ora";
 import { printJson } from "./utils.ts";
 
 export const command = new Command()
-  .arguments("<handle:string>")
+  .arguments("<resource:string>")
   .description(
-    "Look up a WebFinger resource by handle. The argument can be multiple.",
+    "Look up a WebFinger resource by resource. The argument can be multiple.",
   )
   .option(
     "-a, --user-agent <userAgent:string>",
@@ -16,30 +16,45 @@ export const command = new Command()
     "-p, --allow-private-address",
     "Allow private IP addresses in the URL.",
   )
-  .action(async (options, handle: string) => {
+  .action(async (options, resource: string) => {
     const spinner = ora({ // Create a spinner for the lookup process
-      text: `Looking up WebFinger for ${handle}`,
+      text: `Looking up WebFinger for ${resource}`,
       discardStdin: false,
     }).start();
     try {
-      const url = convertHandleToUrl(handle); // Convert handle to URL
+      const url = convertUrlIfHandle(resource); // Convert resource to URL
       const webFinger = await lookupWebFinger(url, options); // Look up WebFinger
       if (webFinger == null) { // If no WebFinger found,
-        throw new Error(`No WebFinger found for ${handle}`); // throw an error
+        throw new Error(`No WebFinger found for ${resource}`); // throw an error
       }
 
-      spinner.succeed(`WebFinger found for ${handle}:`); // Succeed the spinner
+      spinner.succeed(`WebFinger found for ${resource}:`); // Succeed the spinner
       printJson(webFinger); // Print the WebFinger
     } catch (error) {
       if (error instanceof InvalidHandleError) { // If the handle format is invalid,
         spinner.fail(`Invalid handle format: ${error.handle}`); // log error message with handle
       } else {
         spinner.fail( // For other errors, log the error message
-          `Error looking up WebFinger for ${handle}: ${error}`,
+          `Error looking up WebFinger for ${resource}: ${error}`,
         );
       }
     }
   });
+
+/**
+ * Converts a handle or URL to a URL object.
+ * If the input is a valid URL, it returns the URL object.
+ * If the input is a handle in the format `@username@domain`, it converts it to a URL.
+ * @param handleOrUrl The handle or URL to convert.
+ * @returns A URL object representing the handle or URL.
+ */
+function convertUrlIfHandle(handleOrUrl: string): URL {
+  try {
+    return new URL(handleOrUrl); // Try to convert the input to a URL
+  } catch {
+    return convertHandleToUrl(handleOrUrl); // If it fails, treat it as a handle
+  }
+}
 
 /**
  * Regular expression to match a handle in the format `@username@domain`.
