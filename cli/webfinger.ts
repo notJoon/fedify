@@ -73,16 +73,12 @@ class InvalidHandleError extends Error {
  * console.log(url.toString()); // "https://domain.com/@username"
  * ```
  */
-function convertHandleToUrl(handle: string): URL {
+function convertHandleToUrl(handle: string): string {
   const match = handle.match(HANDLE_REGEX); // Match the handle format
   if (!match) { // If the handle does not match,
     throw new InvalidHandleError(handle); // throw `Invalid handle format` error
   }
 
   const [, username, domain] = match; // Extract username and domain from the match
-  if (!username || !domain) { // If username or domain is empty,
-    throw new InvalidHandleError(handle); // throw `Invalid handle format` error
-  }
-
-  return new URL(`https://${domain}/@${username}`); // Create a URL object with the domain and username
+  return `acct:${username}@${domain}`;
 }
