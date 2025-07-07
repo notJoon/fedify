@@ -66,8 +66,8 @@ const command = new Command()
   .command("node", node)
   .command("tunnel", tunnel)
   .command("completions", new CompletionsCommand())
-  .command("help", new HelpCommand().global())
-  .command("webfinger", webfinger);
+  .command("webfinger", webfinger)
+  .command("help", new HelpCommand().global());
 
 if (import.meta.main) {
   await command.parse(Deno.args);
