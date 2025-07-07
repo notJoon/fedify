@@ -6,7 +6,7 @@ import { printJson } from "./utils.ts";
 export const command = new Command()
   .arguments("<handle:string>")
   .description(
-    "Lookup a WebFinger resource by handle. The argument can be multiple.",
+    "Look up a WebFinger resource by handle. The argument can be multiple.",
   )
   .option(
     "-a, --user-agent <userAgent:string>",
@@ -73,12 +73,13 @@ class InvalidHandleError extends Error {
  * console.log(url.toString()); // "https://domain.com/@username"
  * ```
  */
-function convertHandleToUrl(handle: string): string {
-  const match = handle.match(HANDLE_REGEX); // Match the handle format
-  if (!match) { // If the handle does not match,
-    throw new InvalidHandleError(handle); // throw `Invalid handle format` error
+function convertHandleToUrl(handle: string): URL {
+  const match = handle.match(HANDLE_REGEX);
+  if (!match) {
+    throw new InvalidHandleError(handle);
   }
 
-  const [, username, domain] = match; // Extract username and domain from the match
-  return `acct:${username}@${domain}`;
+  const [, username, domain] = match;
+  // Builds a URL like "https://domain.com/@username"
+  return new URL(`https://${domain}/@${username}`);
 }
