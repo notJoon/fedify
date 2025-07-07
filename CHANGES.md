@@ -31,6 +31,15 @@ To be released.
      -  Added `MemoryKvStore.cas()` method.
      -  Added `DenoKvStore.cas()` method.
 
+ -  Added `fedify webfinger` command. This command allows users to look up
+    WebFinger information for a given resource.
+
+    -  The input can be a handle (e.g., `@user@server`, `user@server`) or
+       a URL (e.g., `https://server/users/path`).
+    -  The `--user-agent` or `-a` option used as `User-Agent` header value
+       in the WebFinger request.
+    -  The `--allow-private-address` or `-p` option allows looking up
+       WebFinger information for private addresses (e.g., `localhost`).
 
 Version 1.7.2
 -------------
