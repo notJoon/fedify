@@ -17,26 +17,25 @@ export const command = new Command()
     "Allow private IP addresses in the URL.",
   )
   .action(async (options, handle: string) => {
+    const spinner = ora({ // Create a spinner for the lookup process
+      text: `Looking up WebFinger for ${handle}`,
+      discardStdin: false,
+    }).start();
     try {
       const url = convertHandleToUrl(handle); // Convert handle to URL
-      const spinner = ora({ // Create a spinner for the lookup process
-        text: `Looking up WebFinger for ${handle}`,
-        discardStdin: false,
-      }).start();
       const webFinger = await lookupWebFinger(url, options); // Look up WebFinger
       if (webFinger == null) { // If no WebFinger found,
-        spinner.fail(`No WebFinger found for ${handle}`); // fail the spinner
+        throw new Error(`No WebFinger found for ${handle}`); // throw an error
       }
 
       spinner.succeed(`WebFinger found for ${handle}:`); // Succeed the spinner
       printJson(webFinger); // Print the WebFinger
     } catch (error) {
       if (error instanceof InvalidHandleError) { // If the handle format is invalid,
-        console.error(`Invalid handle format: ${error.handle}`); // log error message with handle
+        spinner.fail(`Invalid handle format: ${error.handle}`); // log error message with handle
       } else {
-        console.error( // For other errors, log the error message
-          `Error looking up WebFinger for ${handle}:`,
-          error,
+        spinner.fail( // For other errors, log the error message
+          `Error looking up WebFinger for ${handle}: ${error}`,
         );
       }
     }
