@@ -27,7 +27,7 @@ export const command = new Command()
         const url = convertUrlIfHandle(resource); // Convert resource to URL
         const webFinger = await lookupWebFinger(url, options); // Look up WebFinger
         if (webFinger == null) { // If no WebFinger found,
-          throw new Error(`No WebFinger found for ${resource}`); // throw an error
+          throw new NotFoundError(resource); // throw NotFoundError
         }
 
         spinner.succeed(`WebFinger found for ${resource}:`); // Succeed the spinner
@@ -35,7 +35,9 @@ export const command = new Command()
       } catch (error) {
         if (error instanceof InvalidHandleError) { // If the handle format is invalid,
           spinner.fail(`Invalid handle format: ${error.handle}`); // log error message with handle
-        } else {
+        } else if (error instanceof NotFoundError) { // If the resource is not found,
+          spinner.fail(`Resource not found: ${error.resource}`); // log not found message
+        } else if (error instanceof Error) {
           spinner.fail( // For other errors, log the error message
             `Error looking up WebFinger for ${resource}: ${error}`,
           );
@@ -68,6 +70,18 @@ class InvalidHandleError extends Error {
   constructor(public handle: string) {
     super(`Invalid handle format: ${handle}`);
     this.name = "InvalidHandleError";
+  }
+}
+
+/**
+ * Custom error class for not found resources.
+ * @param resource The resource that was not found.
+ * @extends {Error}
+ */
+class NotFoundError extends Error {
+  constructor(public resource: string) {
+    super(`Resource not found: ${resource}`);
+    this.name = "NotFoundError";
   }
 }
 
