@@ -1,5 +1,5 @@
 import { Command } from "@cliffy/command";
-import { handleRegexp } from "@fedify/fedify/vocab";
+import { convertFediverseHandle } from "@fedify/fedify/vocab";
 import { lookupWebFinger } from "@fedify/fedify/webfinger";
 import ora from "ora";
 import { printJson } from "./utils.ts";
@@ -82,12 +82,9 @@ class InvalidHandleError extends Error {
  * ```
  */
 function convertHandleToUrl(handle: string): URL {
-  const match = handle.match(handleRegexp);
-  if (!match) {
+  const url = convertFediverseHandle(handle); // Convert the handle to a URL
+  if (!url) {
     throw new InvalidHandleError(handle);
   }
-
-  const [, username, domain] = match;
-  // Builds a URL like "https://domain.com/@username"
-  return new URL(`https://${domain}/@${username}`);
+  return url;
 }
