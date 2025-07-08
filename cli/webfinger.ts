@@ -5,7 +5,7 @@ import ora from "ora";
 import { printJson } from "./utils.ts";
 
 export const command = new Command()
-  .arguments("<resource:string>")
+  .arguments("<...resources:string>")
   .description(
     "Look up a WebFinger resource by resource. The argument can be multiple.",
   )
@@ -17,27 +17,29 @@ export const command = new Command()
     "-p, --allow-private-address",
     "Allow private IP addresses in the URL.",
   )
-  .action(async (options, resource: string) => {
-    const spinner = ora({ // Create a spinner for the lookup process
-      text: `Looking up WebFinger for ${resource}`,
-      discardStdin: false,
-    }).start();
-    try {
-      const url = convertUrlIfHandle(resource); // Convert resource to URL
-      const webFinger = await lookupWebFinger(url, options); // Look up WebFinger
-      if (webFinger == null) { // If no WebFinger found,
-        throw new Error(`No WebFinger found for ${resource}`); // throw an error
-      }
+  .action(async (options, ...resources: string[]) => {
+    for (const resource of resources) {
+      const spinner = ora({ // Create a spinner for the lookup process
+        text: `Looking up WebFinger for ${resource}`,
+        discardStdin: false,
+      }).start();
+      try {
+        const url = convertUrlIfHandle(resource); // Convert resource to URL
+        const webFinger = await lookupWebFinger(url, options); // Look up WebFinger
+        if (webFinger == null) { // If no WebFinger found,
+          throw new Error(`No WebFinger found for ${resource}`); // throw an error
+        }
 
-      spinner.succeed(`WebFinger found for ${resource}:`); // Succeed the spinner
-      printJson(webFinger); // Print the WebFinger
-    } catch (error) {
-      if (error instanceof InvalidHandleError) { // If the handle format is invalid,
-        spinner.fail(`Invalid handle format: ${error.handle}`); // log error message with handle
-      } else {
-        spinner.fail( // For other errors, log the error message
-          `Error looking up WebFinger for ${resource}: ${error}`,
-        );
+        spinner.succeed(`WebFinger found for ${resource}:`); // Succeed the spinner
+        printJson(webFinger); // Print the WebFinger
+      } catch (error) {
+        if (error instanceof InvalidHandleError) { // If the handle format is invalid,
+          spinner.fail(`Invalid handle format: ${error.handle}`); // log error message with handle
+        } else {
+          spinner.fail( // For other errors, log the error message
+            `Error looking up WebFinger for ${resource}: ${error}`,
+          );
+        }
       }
     }
   });
