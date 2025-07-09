@@ -32,8 +32,9 @@
   "types": "./dist/mod.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/mod.d.ts",
       "import": "./dist/mod.js",
-      "types": "./dist/mod.d.ts"
+      "default": "./dist/mod.js"
     },
     "./package.json": "./package.json"
   },

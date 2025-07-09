@@ -32,19 +32,23 @@
   "exports": {
     ".": {
       "types": "./dist/mod.d.ts",
-      "import": "./dist/mod.js"
+      "import": "./dist/mod.js",
+      "default": "./dist/mod.js"
     },
     "./codec": {
       "types": "./dist/codec.d.ts",
-      "import": "./dist/codec.js"
+      "import": "./dist/codec.js",
+      "default": "./dist/codec.js"
     },
     "./kv": {
       "types": "./dist/kv.d.ts",
-      "import": "./dist/kv.js"
+      "import": "./dist/kv.js",
+      "default": "./dist/kv.js"
     },
     "./mq": {
       "types": "./dist/mq.d.ts",
-      "import": "./dist/mq.js"
+      "import": "./dist/mq.js",
+      "default": "./dist/mq.js"
     },
     "./package.json": "./package.json"
   },

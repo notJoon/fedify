@@ -45,6 +45,7 @@
     "vocab/vocab.ts"
   ],
   "exclude": [
+    ".test-report.xml",
     "apidoc/",
     "cfworkers/dist/",
     "cfworkers/fixtures/",
