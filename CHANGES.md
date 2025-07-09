@@ -34,12 +34,25 @@ To be released.
  -  Added `fedify webfinger` command. This command allows users to look up
     WebFinger information for a given resource.
 
-    -  The input can be a handle (e.g., `@user@server`, `user@server`) or
-       a URL (e.g., `https://server/users/path`).
-    -  The `--user-agent` or `-a` option used as `User-Agent` header value
-       in the WebFinger request.
-    -  The `--allow-private-address` or `-p` option allows looking up
-       WebFinger information for private addresses (e.g., `localhost`).
+     -  The input can be a handle (e.g., `@user@server`, `user@server`) or
+        a URL (e.g., `https://server/users/path`).
+     -  The `--user-agent` or `-a` option used as `User-Agent` header value
+        in the WebFinger request.
+     -  The `--allow-private-address` or `-p` option allows looking up
+        WebFinger information for private addresses (e.g., `localhost`).
+
+ -  Added useful functions for Fediverse handles at `@fedify/fedify/vocab`.
+    This functions simplify working with Fediverse handles and URLs.
+    - `FediverseHandle`: An interface representing a Fediverse handle.
+         - `username`: The username part of the handle.
+         - `host`: The host part of the handle.
+    - `parseFediverseHandle`: A function to parse a Fediverse handle into its components.
+         - If the input is a valid Fediverse handle, it returns a `FediverseHandle` object.
+         - Else, it returns `null`.
+     - `isFediverseHandle`: A function to check if a string is a valid Fediverse handle.
+     - `convertFediverseHandle`: A function to convert a Fediverse handle to a URL.
+         - If the input is a valid Fediverse handle, it returns a `URL` object.
+         - Else, it returns `null`.
 
 Version 1.7.2
 -------------

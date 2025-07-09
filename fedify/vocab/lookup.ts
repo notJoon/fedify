@@ -8,6 +8,7 @@ import {
   type GetUserAgentOptions,
 } from "../runtime/docloader.ts";
 import { lookupWebFinger } from "../webfinger/lookup.ts";
+import { convertFediverseHandle } from "./handle.ts";
 import { getTypeId } from "./type.ts";
 import { type Collection, type Link, Object } from "./vocab.ts";
 
@@ -45,92 +46,6 @@ export interface LookupObjectOptions {
    * @since 1.3.0
    */
   tracerProvider?: TracerProvider;
-}
-
-/**
- * Regular expression to match a fediverse handle in the format `@user@server` or `user@server`.
- * The `user` part can contain alphanumeric characters and some special characters except `@`.
- * The `server` part is all characters after the `@` symbol in the middle.
- */
-const handleRegexp =
-  /^@?((?:[-A-Za-z0-9._~!$&'()*+,;=]|%[A-Fa-f0-9]{2})+)@([^@]+)$/;
-
-/**
- * Represents a fediverse handle, which consists of a username and a host.
- * The username can be alphanumeric and may include special characters,
- * while the host is typically a domain name.
- */
-export interface FediverseHandle {
-  /**
-   * The username part of the fediverse handle.
-   * It can include alphanumeric characters and some special characters.
-   */
-  readonly username: string;
-  /**
-   * The host part of the fediverse handle, typically a domain name.
-   * It is the part after the `@` symbol in the handle.
-   */
-  readonly host: string;
-}
-
-/**
- * Parses a fediverse handle in the format `@user@server` or `user@server`.
- * The `user` part can contain alphanumeric characters and some special characters except `@`.
- * The `server` part is all characters after the `@` symbol in the middle.
- *
- * @example
- * ```typescript
- * const handle = parseFediverseHandle("@username@example.com");
- * console.log(handle?.username); // "username"
- * console.log(handle?.host);     // "example.com"
- * ```
- */
-export function parseFediverseHandle(
-  handle: string,
-): FediverseHandle | undefined {
-  const match = handleRegexp.exec(handle);
-  if (match) {
-    return {
-      username: match[1],
-      host: match[2],
-    };
-  }
-  return undefined;
-}
-
-/**
- * Checks if a string is a valid fediverse handle in the format `@user@server` or `user@server`.
- * The `user` part can contain alphanumeric characters and some special characters except `@`.
- * The `server` part is all characters after the `@` symbol in the middle.
- *
- * @example
- * ```typescript
- * console.log(isFediverseHandle("@username@example.com")); // true
- * console.log(isFediverseHandle("username@example.com"));  // true
- * console.log(isFediverseHandle("@username@"));             // false
- * ```
- */
-export function isFediverseHandle(
-  handle: string,
-): handle is `${string}@${string}` {
-  return handleRegexp.test(handle);
-}
-
-/**
- * Converts a fediverse handle in the format `@user@server` or `user@server`
- * to an `acct:` URI, which is a URL-like identifier for ActivityPub actors.
- *
- * @example
- * ```typescript
- * const identifier = convertFediverseHandle("@username@example.com");
- * console.log(identifier?.href); // "acct:username@example.com"
- * ```
- */
-export function convertFediverseHandle(handle: string): URL | undefined {
-  const parsed = parseFediverseHandle(handle);
-  if (!parsed) return undefined;
-  const identifier = new URL(`acct:${parsed.username}@${parsed.host}`);
-  return identifier;
 }
 
 /**
@@ -213,9 +128,7 @@ async function lookupObjectInternal(
   const documentLoader = options.documentLoader ??
     getDocumentLoader({ userAgent: options.userAgent });
   if (typeof identifier === "string") {
-    const match = handleRegexp.exec(identifier);
-    if (match) identifier = `acct:${match[1]}@${match[2]}`;
-    identifier = new URL(identifier);
+    identifier = convertFediverseHandle(identifier) ?? new URL(identifier);
   }
   let document: unknown | null = null;
   if (identifier.protocol === "http:" || identifier.protocol === "https:") {
