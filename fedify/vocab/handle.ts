@@ -10,6 +10,7 @@ const handleRegexp =
  * Represents a fediverse handle, which consists of a username and a host.
  * The username can be alphanumeric and may include special characters,
  * while the host is typically a domain name.
+ * @since 1.8.0
  */
 export interface FediverseHandle {
   /**

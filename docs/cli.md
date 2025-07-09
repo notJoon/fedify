@@ -1011,7 +1011,7 @@ fedify tunnel --service serveo.net 3000
 ~~~~
 
 `fedify webfinger`: Looking up a WebFinger resource
------------------------------------------------------
+---------------------------------------------------
 
 *This command is available since Fedify 1.8.0.*
 

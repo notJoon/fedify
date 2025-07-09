@@ -41,18 +41,13 @@ To be released.
      -  The `--allow-private-address` or `-p` option allows looking up
         WebFinger information for private addresses (e.g., `localhost`).
 
- -  Added useful functions for Fediverse handles at `@fedify/fedify/vocab`.
-    This functions simplify working with Fediverse handles and URLs.
-    - `FediverseHandle`: An interface representing a Fediverse handle.
-         - `username`: The username part of the handle.
-         - `host`: The host part of the handle.
-    - `parseFediverseHandle`: A function to parse a Fediverse handle into its components.
-         - If the input is a valid Fediverse handle, it returns a `FediverseHandle` object.
-         - Else, it returns `null`.
-     - `isFediverseHandle`: A function to check if a string is a valid Fediverse handle.
-     - `convertFediverseHandle`: A function to convert a Fediverse handle to a URL.
-         - If the input is a valid Fediverse handle, it returns a `URL` object.
-         - Else, it returns `null`.
+ -  Added useful functions for fediverse handles at `@fedify/fedify/vocab`.  
+    This functions simplify working with fediverse handles and URLs.  
+
+     -  `FediverseHandle`: An interface representing a fediverse handle.  
+     -  `parseFediverseHandle()`: A function to parse a fediverse handle into its components.  
+     - `isFediverseHandle()`: A function to check if a string is a valid fediverse handle.  
+     - `toAcctUrl()`: A function to convert a fediverse handle to a `URL`.  
 
 Version 1.7.2
 -------------
