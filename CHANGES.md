@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.6.5
 -------------
 
-To be released.
+Released on July 9, 2025.
 
  -  Added `"default"` export conditions to all package exports in
     *package.json* for improved Node.js compatibility.
