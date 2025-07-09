@@ -61,7 +61,7 @@ function convertUrlIfHandle(handleOrUrl: string): URL {
 
 /**
  * Custom error class for invalid handle formats.
- * @param handle The invalid handle that caused the error.
+ * @param {string} handle The invalid handle that caused the error.
  * @extends {Error}
  */
 class InvalidHandleError extends Error {
@@ -76,7 +76,7 @@ class InvalidHandleError extends Error {
 
 /**
  * Custom error class for not found resources.
- * @param resource The resource that was not found.
+ * @param {string} resource The resource that was not found.
  * @extends {Error}
  */
 class NotFoundError extends Error {
@@ -102,6 +102,6 @@ class NotFoundError extends Error {
  * ```
  */
 function convertHandleToUrl(handle: string): URL {
-  return convertFediverseHandle(handle) ??
-    new InvalidHandleError(handle).throw(); // Convert the handle to a URL or throw an error if invalid
+  return convertFediverseHandle(handle) ?? // Convert the handle to a URL
+    new InvalidHandleError(handle).throw(); // or throw an error if invalid
 }
