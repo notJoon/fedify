@@ -83,7 +83,7 @@ export function isFediverseHandle(
  * @since 1.8.0
  * @example
  * ```typescript
- * const identifier = convertFediverseHandle("@username@example.com");
+ * const identifier = toAcctUrl("@username@example.com");
  * console.log(identifier?.href); // "acct:username@example.com"
  * ```
  */
