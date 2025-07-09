@@ -8,6 +8,7 @@ import {
   type GetUserAgentOptions,
 } from "../runtime/docloader.ts";
 import { lookupWebFinger } from "../webfinger/lookup.ts";
+import { toAcctUrl } from "./handle.ts";
 import { getTypeId } from "./type.ts";
 import { type Collection, type Link, Object } from "./vocab.ts";
 
@@ -46,9 +47,6 @@ export interface LookupObjectOptions {
    */
   tracerProvider?: TracerProvider;
 }
-
-const handleRegexp =
-  /^@?((?:[-A-Za-z0-9._~!$&'()*+,;=]|%[A-Fa-f0-9]{2})+)@([^@]+)$/;
 
 /**
  * Looks up an ActivityStreams object by its URI (including `acct:` URIs)
@@ -130,9 +128,7 @@ async function lookupObjectInternal(
   const documentLoader = options.documentLoader ??
     getDocumentLoader({ userAgent: options.userAgent });
   if (typeof identifier === "string") {
-    const match = handleRegexp.exec(identifier);
-    if (match) identifier = `acct:${match[1]}@${match[2]}`;
-    identifier = new URL(identifier);
+    identifier = toAcctUrl(identifier) ?? new URL(identifier);
   }
   let document: unknown | null = null;
   if (identifier.protocol === "http:" || identifier.protocol === "https:") {

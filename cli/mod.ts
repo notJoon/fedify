@@ -10,6 +10,7 @@ import { logFile, recordingSink } from "./log.ts";
 import { command as lookup } from "./lookup.ts";
 import { command as node } from "./node.ts";
 import { command as tunnel } from "./tunnel.ts";
+import { command as webfinger } from "./webfinger.ts";
 
 const command = new Command()
   .name("fedify")
@@ -65,6 +66,7 @@ const command = new Command()
   .command("node", node)
   .command("tunnel", tunnel)
   .command("completions", new CompletionsCommand())
+  .command("webfinger", webfinger)
   .command("help", new HelpCommand().global());
 
 if (import.meta.main) {

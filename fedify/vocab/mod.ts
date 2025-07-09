@@ -51,6 +51,7 @@
  */
 export * from "./actor.ts";
 export * from "./constants.ts";
+export * from "./handle.ts";
 export * from "./lookup.ts";
 export * from "./type.ts";
 export * from "./vocab.ts";

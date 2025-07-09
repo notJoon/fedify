@@ -31,6 +31,26 @@ To be released.
      -  Added `MemoryKvStore.cas()` method.
      -  Added `DenoKvStore.cas()` method.
 
+ -  Added useful functions for fediverse handles at `@fedify/fedify/vocab`.
+    This functions simplify working with fediverse handles and URLs.
+
+     -  `FediverseHandle`: An interface representing a fediverse handle.
+     -  `parseFediverseHandle()`: A function to parse a fediverse handle into
+        its components.
+     -  `isFediverseHandle()`: A function to check if a string is a valid
+        fediverse handle.
+     -  `toAcctUrl()`: A function to convert a fediverse handle to a `URL`.
+
+ -  Added `fedify webfinger` command. This command allows users to look up
+    WebFinger information for a given resource.
+
+     -  The input can be a handle (e.g., `@user@server`, `user@server`) or
+        a URL (e.g., `https://server/users/path`).
+     -  The `--user-agent` or `-a` option used as `User-Agent` header value
+        in the WebFinger request.
+     -  The `--allow-private-address` or `-p` option allows looking up
+        WebFinger information for private addresses (e.g., `localhost`).
+
 
 Version 1.7.3
 -------------

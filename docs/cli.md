@@ -1010,6 +1010,91 @@ command.  For example, to use the serveo.net, run the below command:
 fedify tunnel --service serveo.net 3000
 ~~~~
 
+`fedify webfinger`: Looking up a WebFinger resource
+---------------------------------------------------
+
+*This command is available since Fedify 1.8.0.*
+
+The `fedify webfinger` command is used to look up a WebFinger resource by
+resource URI or handle.  [WebFinger] is a protocol that allows discovery of
+information about people and other entities on the Internet using simple web
+requests.  This command is useful for debugging and testing WebFinger
+implementations.
+
+To look up a WebFinger resource, for example, for a user handle, run the
+below command:
+
+~~~~ sh
+fedify webfinger @username@domain.com
+~~~~
+
+The output will be like the below:
+
+~~~~ json
+{
+  "subject": "acct:username@domain.com",
+  "aliases": [
+    "https://domain.com/@username",
+    "https://domain.com/users/username"
+  ],
+  "links": [
+    {
+      "rel": "http://webfinger.net/rel/profile-page",
+      "type": "text/html",
+      "href": "https://domain.com/@username"
+    },
+    {
+      "rel": "self",
+      "type": "application/activity+json",
+      "href": "https://domain.com/users/username"
+    }
+  ]
+}
+~~~~
+
+You can also look up a WebFinger resource by its URL.  For example, the below
+command looks up a WebFinger resource by http or acct URL:
+
+~~~~ sh
+fedify webfinger https://domain.com/@username
+fedify webfinger acct:username@domain.com
+~~~~
+
+Or, you can also look up multiple WebFinger resources at once.  For example,
+the below command looks up multiple WebFinger resources:
+
+~~~~ sh
+fedify webfinger @user1@domain.com https://domain.com/@username acct:username@domain.com
+~~~~
+
+The outputs will be displayed sequentially, each preceded by a success message
+indicating which resource was found.
+
+[WebFinger]: https://tools.ietf.org/html/rfc7033
+
+### `-a`/`--user-agent`: Custom `User-Agent` header
+
+By default, the `fedify webfinger` command sends the `User-Agent` header with
+the value `Fedify/1.8.0 (Deno/2.4.0)` (version numbers may vary).  You can
+specify a custom `User-Agent` header by using the `-a`/`--user-agent` option.
+For example, to send the `User-Agent` header with the value `MyApp/1.0`, run
+the below command:
+
+~~~~ sh
+fedify webfinger --user-agent MyApp/1.0 @username@domain.com
+~~~~
+
+### `-p`/`--allow-private-address`: Allow private IP addresses
+
+The `-p`/`--allow-private-address` option is used to allow private IP addresses.
+If you want to allow private IP addresses, run the below command:
+
+~~~~ sh
+fedify webfinger --allow-private-address @username@localhost
+~~~~
+
+Mostly useful for testing purposes.  *Do not use this in production.*
+
 
 Shell completions
 -----------------
