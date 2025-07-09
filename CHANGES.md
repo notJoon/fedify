@@ -8,6 +8,9 @@ Version 1.7.3
 
 To be released.
 
+ -  Added `"default"` export conditions to all package exports in
+    *package.json* for improved Node.js compatibility.
+
 
 Version 1.7.2
 -------------
@@ -58,6 +61,15 @@ Released on June 25, 2025.
 [#250]: https://github.com/fedify-dev/fedify/issues/250
 [#251]: https://github.com/fedify-dev/fedify/pull/251
 [#252]: https://github.com/fedify-dev/fedify/pull/252
+
+
+Version 1.6.5
+-------------
+
+Released on July 9, 2025.
+
+ -  Added `"default"` export conditions to all package exports in
+    *package.json* for improved Node.js compatibility.
 
 
 Version 1.6.4

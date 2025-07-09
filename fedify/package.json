@@ -38,47 +38,58 @@
   "exports": {
     ".": {
       "types": "./dist/mod.d.ts",
-      "import": "./dist/mod.js"
+      "import": "./dist/mod.js",
+      "default": "./dist/mod.js"
     },
     "./compat": {
       "types": "./dist/compat/mod.d.ts",
-      "import": "./dist/compat/mod.js"
+      "import": "./dist/compat/mod.js",
+      "default": "./dist/compat/mod.js"
     },
     "./federation": {
       "types": "./dist/federation/mod.d.ts",
-      "import": "./dist/federation/mod.js"
+      "import": "./dist/federation/mod.js",
+      "default": "./dist/federation/mod.js"
     },
     "./nodeinfo": {
       "types": "./dist/nodeinfo/mod.d.ts",
-      "import": "./dist/nodeinfo/mod.js"
+      "import": "./dist/nodeinfo/mod.js",
+      "default": "./dist/nodeinfo/mod.js"
     },
     "./runtime": {
       "types": "./dist/runtime/mod.d.ts",
-      "import": "./dist/runtime/mod.js"
+      "import": "./dist/runtime/mod.js",
+      "default": "./dist/runtime/mod.js"
     },
     "./sig": {
       "types": "./dist/sig/mod.d.ts",
-      "import": "./dist/sig/mod.js"
+      "import": "./dist/sig/mod.js",
+      "default": "./dist/sig/mod.js"
     },
     "./vocab": {
       "types": "./dist/vocab/mod.d.ts",
-      "import": "./dist/vocab/mod.js"
+      "import": "./dist/vocab/mod.js",
+      "default": "./dist/vocab/mod.js"
     },
     "./webfinger": {
       "types": "./dist/webfinger/mod.d.ts",
-      "import": "./dist/webfinger/mod.js"
+      "import": "./dist/webfinger/mod.js",
+      "default": "./dist/webfinger/mod.js"
     },
     "./x/cfworkers": {
       "types": "./dist/x/cfworkers.d.ts",
-      "import": "./dist/x/cfworkers.js"
+      "import": "./dist/x/cfworkers.js",
+      "default": "./dist/x/cfworkers.js"
     },
     "./x/hono": {
       "types": "./dist/x/hono.d.ts",
-      "import": "./dist/x/hono.js"
+      "import": "./dist/x/hono.js",
+      "default": "./dist/x/hono.js"
     },
     "./x/sveltekit": {
       "types": "./dist/x/sveltekit.d.ts",
-      "import": "./dist/x/sveltekit.js"
+      "import": "./dist/x/sveltekit.js",
+      "default": "./dist/x/sveltekit.js"
     }
   },
   "dependencies": {
