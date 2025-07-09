@@ -1,5 +1,5 @@
 import { Command } from "@cliffy/command";
-import { convertFediverseHandle } from "@fedify/fedify/vocab";
+import { toAcctUrl } from "@fedify/fedify/vocab";
 import { lookupWebFinger } from "@fedify/fedify/webfinger";
 import ora from "ora";
 import { printJson } from "./utils.ts";
@@ -102,6 +102,6 @@ class NotFoundError extends Error {
  * ```
  */
 function convertHandleToUrl(handle: string): URL {
-  return convertFediverseHandle(handle) ?? // Convert the handle to a URL
+  return toAcctUrl(handle) ?? // Convert the handle to a URL
     new InvalidHandleError(handle).throw(); // or throw an error if invalid
 }

@@ -86,7 +86,7 @@ export function isFediverseHandle(
  * console.log(identifier?.href); // "acct:username@example.com"
  * ```
  */
-export function convertFediverseHandle(handle: string): URL | null {
+export function toAcctUrl(handle: string): URL | null {
   const parsed = parseFediverseHandle(handle);
   if (!parsed) return null;
   const identifier = new URL(`acct:${parsed.username}@${parsed.host}`);
