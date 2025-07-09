@@ -8,6 +8,9 @@ Version 1.6.5
 
 To be released.
 
+ -  Added `"default"` export conditions to all package exports in
+    *package.json* for improved Node.js compatibility.
+
 
 Version 1.6.4
 -------------
