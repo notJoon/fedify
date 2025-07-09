@@ -25,10 +25,8 @@ export const command = new Command()
       }).start();
       try {
         const url = convertUrlIfHandle(resource); // Convert resource to URL
-        const webFinger = await lookupWebFinger(url, options); // Look up WebFinger
-        if (webFinger == null) { // If no WebFinger found,
-          throw new NotFoundError(resource); // throw NotFoundError
-        }
+        const webFinger = await lookupWebFinger(url, options) ?? // Look up WebFinger
+          new NotFoundError(resource).throw(); // throw NotFoundError if not found
 
         spinner.succeed(`WebFinger found for ${resource}:`); // Succeed the spinner
         printJson(webFinger); // Print the WebFinger
@@ -71,6 +69,9 @@ class InvalidHandleError extends Error {
     super(`Invalid handle format: ${handle}`);
     this.name = "InvalidHandleError";
   }
+  throw(): never {
+    throw this;
+  }
 }
 
 /**
@@ -82,6 +83,9 @@ class NotFoundError extends Error {
   constructor(public resource: string) {
     super(`Resource not found: ${resource}`);
     this.name = "NotFoundError";
+  }
+  throw(): never {
+    throw this;
   }
 }
 
@@ -98,9 +102,6 @@ class NotFoundError extends Error {
  * ```
  */
 function convertHandleToUrl(handle: string): URL {
-  const url = convertFediverseHandle(handle); // Convert the handle to a URL
-  if (!url) {
-    throw new InvalidHandleError(handle);
-  }
-  return url;
+  return convertFediverseHandle(handle) ??
+    new InvalidHandleError(handle).throw(); // Convert the handle to a URL or throw an error if invalid
 }
