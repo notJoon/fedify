@@ -56,6 +56,10 @@ To be released.
      -  The `--allow-private-address` or `-p` option allows looking up
         WebFinger information for private addresses (e.g., `localhost`).
 
+ - Fixed favicon corruption bug that occurred in terminals that don't support 24-bit color when using `fedify node`.
+    [[#168] by Kim, Hyeonseo]
+
+[#168]: https://github.com/fedify-dev/fedify/issues/168
 [#248]: https://github.com/fedify-dev/fedify/issues/248
 [#260]: https://github.com/fedify-dev/fedify/issues/260
 [#278]: https://github.com/fedify-dev/fedify/pull/278
