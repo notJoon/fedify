@@ -42,8 +42,8 @@ export interface LookupWebFingerOptions {
 
   /**
    * The maximum number of redirections to follow.
-   *
-   * Defaults to 5.
+   * @default `5`
+   * @since 1.8.0
    */
   maxRedirection?: number;
 
