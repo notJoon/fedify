@@ -171,6 +171,45 @@ test({
       assertEquals(await lookupWebFinger("acct:johndoe@example.com"), null);
     });
 
+    fetchMock.removeRoutes();
+    let redirectCount = 0;
+    fetchMock.get(
+      "begin:https://example.com/.well-known/webfinger",
+      () => {
+        redirectCount++;
+        if (redirectCount < 3) {
+          return {
+            status: 302,
+            headers: { Location: `/.well-known/webfinger?redirect=${redirectCount}` },
+          };
+        }
+        return { body: expected };
+      },
+    );
+
+    await t.step("custom maxRedirection", async () => {
+      // Test with maxRedirection: 2 (should fail)
+      redirectCount = 0;
+      assertEquals(
+        await lookupWebFinger("acct:johndoe@example.com", { maxRedirection: 2 }),
+        null,
+      );
+
+      // Test with maxRedirection: 3 (should succeed)
+      redirectCount = 0;
+      assertEquals(
+        await lookupWebFinger("acct:johndoe@example.com", { maxRedirection: 3 }),
+        expected,
+      );
+
+      // Test with default maxRedirection: 5 (should succeed)
+      redirectCount = 0;
+      assertEquals(
+        await lookupWebFinger("acct:johndoe@example.com"),
+        expected,
+      );
+    });
+
     fetchMock.hardReset();
   },
 });
