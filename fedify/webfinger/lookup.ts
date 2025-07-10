@@ -15,7 +15,7 @@ import type { ResourceDescriptor } from "./jrd.ts";
 
 const logger = getLogger(["fedify", "webfinger", "lookup"]);
 
-const MAX_REDIRECTION = 5; // TODO: Make this configurable.
+const DEFAULT_MAX_REDIRECTION = 5;
 
 /**
  * Options for {@link lookupWebFinger}.
@@ -39,6 +39,13 @@ export interface LookupWebFingerOptions {
    * @since 1.4.0
    */
   allowPrivateAddress?: boolean;
+
+  /**
+   * The maximum number of redirections to follow.
+   * @default `5`
+   * @since 1.8.0
+   */
+  maxRedirection?: number;
 
   /**
    * The OpenTelemetry tracer provider.  If omitted, the global tracer provider
@@ -155,7 +162,8 @@ async function lookupWebFingerInternal(
       response.headers.has("Location")
     ) {
       redirected++;
-      if (redirected >= MAX_REDIRECTION) {
+      const maxRedirection = options.maxRedirection ?? DEFAULT_MAX_REDIRECTION;
+      if (redirected >= maxRedirection) {
         logger.error(
           "Too many redirections ({redirections}) while fetching WebFinger " +
             "resource descriptor.",
