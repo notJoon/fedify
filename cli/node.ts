@@ -300,7 +300,7 @@ function rgbTo256Color(r: number, g: number, b: number): number {
 function getAsciiArt(
   image: Awaited<ReturnType<typeof Jimp.read>>,
   width = DEFAULT_IMAGE_WIDTH,
-  trueColorSupport,
+  trueColorSupport: boolean,
 ): string {
   const ratio = image.width / image.height;
   const height = Math.round(
