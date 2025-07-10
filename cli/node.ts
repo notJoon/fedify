@@ -98,7 +98,9 @@ export const command = new Command()
             buffer = images[0].buffer;
           }
           const image = await Jimp.read(buffer);
-          layout = getAsciiArt(image).split("\n").map((line) => ` ${line}  `);
+          const trueColorSupport = checkTerminalTrueColorSupport();
+          layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, trueColorSupport)
+            .split("\n").map((line) => ` ${line}  `);
           defaultWidth = 41;
         } else {
           logger.error(
@@ -256,14 +258,50 @@ const Jimp = createJimp({
   plugins: defaultPlugins,
 });
 
+function checkTerminalTrueColorSupport() {
+  const colorTerm = Deno.env.get("COLORTERM");
+
+  if (
+    colorTerm == null ||
+    !(colorTerm.includes("24bit") || colorTerm.includes("truecolor"))
+  ) {
+    return false;
+  }
+  return true;
+}
+
+const DEFAULT_IMAGE_WIDTH = 38;
+
 const ASCII_CHARS =
   // cSpell: disable
   "█▓▒░@#B8&WM%*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 // cSpell: enable
 
+function rgbTo256Color(r: number, g: number, b: number): number {
+  // Handle grayscale colors (colors 232-255)
+  const gray = Math.round((r + g + b) / 3);
+  if (
+    Math.abs(r - gray) < 10 && Math.abs(g - gray) < 10 &&
+    Math.abs(b - gray) < 10
+  ) {
+    if (gray < 8) return 16; // Black
+    if (gray > 248) return 231; // White
+    return Math.round(((gray - 8) / 240) * 23) + 232;
+  }
+
+  // Handle RGB colors (colors 16-231)
+  // Convert to 6x6x6 cube
+  const r6 = Math.round((r / 255) * 5);
+  const g6 = Math.round((g / 255) * 5);
+  const b6 = Math.round((b / 255) * 5);
+
+  return 16 + (36 * r6) + (6 * g6) + b6;
+}
+
 function getAsciiArt(
   image: Awaited<ReturnType<typeof Jimp.read>>,
-  width = 38,
+  width = DEFAULT_IMAGE_WIDTH,
+  trueColorSupport: boolean,
 ): string {
   const ratio = image.width / image.height;
   const height = Math.round(
@@ -284,7 +322,13 @@ function getAsciiArt(
         (brightness / 255) * (ASCII_CHARS.length - 1),
       );
       const char = ASCII_CHARS[charIndex];
-      art += colors.rgb24(char, color);
+
+      if (trueColorSupport) {
+        art += colors.rgb24(char, color);
+      } else {
+        const colorIndex = rgbTo256Color(color.r, color.g, color.b);
+        art += colors.rgb8(char, colorIndex);
+      }
     }
     if (y < height - 1) art += "\n";
   }
