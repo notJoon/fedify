@@ -57,7 +57,7 @@ To be released.
         WebFinger information for private addresses (e.g., `localhost`).
 
  - Fixed favicon corruption bug that occurred in terminals that don't support 24-bit color when using `fedify node`.
-    [[#168] by Kim, Hyeonseo]
+    [[#168] by Hyeonseo Kim]
 
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#248]: https://github.com/fedify-dev/fedify/issues/248
