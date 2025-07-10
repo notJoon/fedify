@@ -33,6 +33,7 @@ To be released.
 
  -  Added useful functions for fediverse handles at `@fedify/fedify/vocab`.
     This functions simplify working with fediverse handles and URLs.
+    [[#278] by ChanHaeng Lee]
 
      -  `FediverseHandle`: An interface representing a fediverse handle.
      -  `parseFediverseHandle()`: A function to parse a fediverse handle into
@@ -41,8 +42,12 @@ To be released.
         fediverse handle.
      -  `toAcctUrl()`: A function to convert a fediverse handle to a `URL`.
 
+ -  Added `LookupWebFingerOptions.maxRedirection` option.
+    [[#248], [#281] by Lee ByeongJun]
+
  -  Added `fedify webfinger` command. This command allows users to look up
     WebFinger information for a given resource.
+    [[#260], [#278] by ChanHaeng Lee]
 
      -  The input can be a handle (e.g., `@user@server`, `user@server`) or
         a URL (e.g., `https://server/users/path`).
@@ -51,10 +56,9 @@ To be released.
      -  The `--allow-private-address` or `-p` option allows looking up
         WebFinger information for private addresses (e.g., `localhost`).
 
- -  Added `LookupWebFingerOptions.maxRedirection` option.
-    [[#248], [#281] by Lee ByeongJun]
-
 [#248]: https://github.com/fedify-dev/fedify/issues/248
+[#260]: https://github.com/fedify-dev/fedify/issues/260
+[#278]: https://github.com/fedify-dev/fedify/pull/278
 [#281]: https://github.com/fedify-dev/fedify/pull/281
 
 
