@@ -180,7 +180,9 @@ test({
         if (redirectCount < 3) {
           return {
             status: 302,
-            headers: { Location: `/.well-known/webfinger?redirect=${redirectCount}` },
+            headers: {
+              Location: `/.well-known/webfinger?redirect=${redirectCount}`,
+            },
           };
         }
         return { body: expected };
@@ -191,14 +193,18 @@ test({
       // Test with maxRedirection: 2 (should fail)
       redirectCount = 0;
       assertEquals(
-        await lookupWebFinger("acct:johndoe@example.com", { maxRedirection: 2 }),
+        await lookupWebFinger("acct:johndoe@example.com", {
+          maxRedirection: 2,
+        }),
         null,
       );
 
       // Test with maxRedirection: 3 (should succeed)
       redirectCount = 0;
       assertEquals(
-        await lookupWebFinger("acct:johndoe@example.com", { maxRedirection: 3 }),
+        await lookupWebFinger("acct:johndoe@example.com", {
+          maxRedirection: 3,
+        }),
         expected,
       );
 

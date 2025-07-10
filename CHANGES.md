@@ -51,6 +51,12 @@ To be released.
      -  The `--allow-private-address` or `-p` option allows looking up
         WebFinger information for private addresses (e.g., `localhost`).
 
+ -  Added `LookupWebFingerOptions.maxRedirection` option.
+    [[#248], [#281] by Lee ByeongJun]
+
+[#248]: https://github.com/fedify-dev/fedify/issues/248
+[#281]: https://github.com/fedify-dev/fedify/pull/281
+
 
 Version 1.7.3
 -------------

@@ -3,7 +3,6 @@
 dist/
 deno.lock
 node_modules/
-package-lock.json
 repomix-output.xml
 t.ts
 t2.ts
