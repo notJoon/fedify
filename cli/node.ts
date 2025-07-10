@@ -99,7 +99,8 @@ export const command = new Command()
           }
           const image = await Jimp.read(buffer);
           const trueColorSupport = checkTerminalTrueColorSupport();
-          layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH,trueColorSupport).split("\n").map((line) => ` ${line}  `);
+          layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, trueColorSupport)
+            .split("\n").map((line) => ` ${line}  `);
           defaultWidth = 41;
         } else {
           logger.error(
