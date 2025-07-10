@@ -285,7 +285,7 @@ function rgbTo256Color(r: number, g: number, b: number): number {
   ) {
     if (gray < 8) return 16; // Black
     if (gray > 248) return 231; // White
-    return Math.round(((gray - 8) / 247) * 23) + 232;
+    return Math.round(((gray - 8) / 240) * 23) + 232;
   }
 
   // Handle RGB colors (colors 16-231)
