@@ -8,6 +8,13 @@ Version 1.7.4
 
 To be released.
 
+  - Fixed a bug the `--no-tunnel` option in the `fedify inbox` command
+    was being ignored, causing the server to always create a public tunnel
+    regardless of the flag. [[#243], [#284] by Lee ByeongJun]
+
+[#243]: https://github.com/fedify-dev/fedify/issues/243
+[#284]: https://github.com/fedify-dev/fedify/pull/284
+
 
 Version 1.7.3
 -------------
