@@ -68,6 +68,19 @@ To be released.
 [#282]: https://github.com/fedify-dev/fedify/pull/282
 
 
+Version 1.7.4
+-------------
+
+Released on July 13, 2025.
+
+  - Fixed a bug the `-T`/`--no-tunnel` option in the `fedify inbox` command
+    was being ignored, causing the server to always create a public tunnel
+    regardless of the flag. [[#243], [#284] by Lee ByeongJun]
+
+[#243]: https://github.com/fedify-dev/fedify/issues/243
+[#284]: https://github.com/fedify-dev/fedify/pull/284
+
+
 Version 1.7.3
 -------------
 
