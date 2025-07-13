@@ -35,7 +35,11 @@ import { recordingSink } from "./log.ts";
 import { tableStyle } from "./table.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 
-const logger = getLogger(["fedify", "cli", "inbox"]);
+interface ContextData {
+  activityIndex: number;
+  actorName: string;
+  actorSummary: string;
+}
 
 /**
  * Options for the inbox command.
@@ -57,6 +61,7 @@ const actorOptions = {
   name: "Fedify Ephemeral Inbox",
   summary: "An ephemeral ActivityPub inbox for testing purposes.",
 };
+const logger = getLogger(["fedify", "cli", "inbox"]);
 
 export const command = new Command()
   .description(
@@ -93,8 +98,8 @@ export const command = new Command()
     { default: "An ephemeral ActivityPub inbox for testing purposes." },
   )
   .action(async (options) => {
-    actorOptions.name = options.actorName;
-    actorOptions.summary = options.actorSummary;
+    const fetch = createFetchHandler(options);
+    const sendDeleteToPeers = createSendDeleteToPeers(options);
 
     const spinner = ora({
       text: "Spinning up an ephemeral ActivityPub server...",
@@ -127,7 +132,13 @@ export const command = new Command()
       });
     });
     spinner.start();
-    const fedCtx = federation.createContext(server.url, -1);
+
+    const fedCtx = federation.createContext(server.url, {
+      activityIndex: -1,
+      actorName: options.actorName,
+      actorSummary: options.actorSummary,
+    });
+
     if (options.acceptFollow != null && options.acceptFollow.length > 0) {
       acceptFollows.push(...(options.acceptFollow ?? []));
     }
@@ -162,7 +173,7 @@ export const command = new Command()
     printServerInfo(fedCtx);
   });
 
-const federation = createFederation<number>({
+const federation = createFederation<ContextData>({
   kv: new MemoryKvStore(),
   documentLoader: await getDocumentLoader(),
 });
@@ -176,8 +187,8 @@ federation
     return new Application({
       id: ctx.getActorUri(identifier),
       preferredUsername: identifier,
-      name: actorOptions.name,
-      summary: actorOptions.summary,
+      name: ctx.data.actorName,
+      summary: ctx.data.actorSummary,
       inbox: ctx.getInboxUri(identifier),
       endpoints: new Endpoints({
         sharedInbox: ctx.getInboxUri(),
@@ -230,26 +241,38 @@ async function acceptsFollowFrom(actor: Actor): Promise<boolean> {
 
 const peers: Record<string, Actor> = {};
 
-async function sendDeleteToPeers(server: TemporaryServer): Promise<void> {
-  const ctx = federation.createContext(new Request(server.url), -1);
-  const actor = (await ctx.getActor("i"))!;
-  try {
-    await ctx.sendActivity(
-      { identifier: "i" },
-      Object.values(peers),
-      new Delete({
-        id: new URL(`#delete`, actor.id!),
-        actor: actor.id!,
-        to: PUBLIC_COLLECTION,
-        object: actor,
-      }),
-    );
-  } catch (error) {
-    logger.error(
-      "Failed to send Delete(Application) activities to peers:\n{error}",
-      { error },
-    );
-  }
+function createSendDeleteToPeers(actorOptions: {
+  actorName: string;
+  actorSummary: string;
+}): (server: TemporaryServer) => Promise<void> {
+  return async function sendDeleteToPeers(
+    server: TemporaryServer,
+  ): Promise<void> {
+    const ctx = federation.createContext(new Request(server.url), {
+      activityIndex: -1,
+      actorName: actorOptions.actorName,
+      actorSummary: actorOptions.actorSummary,
+    });
+
+    const actor = (await ctx.getActor("i"))!;
+    try {
+      await ctx.sendActivity(
+        { identifier: "i" },
+        Object.values(peers),
+        new Delete({
+          id: new URL(`#delete`, actor.id!),
+          actor: actor.id!,
+          to: PUBLIC_COLLECTION,
+          object: actor,
+        }),
+      );
+    } catch (error) {
+      logger.error(
+        "Failed to send Delete(Application) activities to peers:\n{error}",
+        { error },
+      );
+    }
+  };
 }
 
 const followers: Record<string, Actor> = {};
@@ -258,7 +281,7 @@ federation
   .setInboxListeners("/{identifier}/inbox", "/inbox")
   .setSharedKeyDispatcher((_) => ({ identifier: "i" }))
   .on(Activity, async (ctx, activity) => {
-    activities[ctx.data].activity = activity;
+    activities[ctx.data.activityIndex].activity = activity;
     for await (const actor of activity.getActors()) {
       if (actor.id != null) peers[actor.id.href] = actor;
     }
@@ -343,7 +366,7 @@ federation.setNodeInfoDispatcher("/nodeinfo/2.1", (_ctx) => {
   };
 });
 
-function printServerInfo(fedCtx: Context<number>): void {
+function printServerInfo(fedCtx: Context<ContextData>): void {
   new Table(
     [
       new Cell("Actor handle:").align("right"),
@@ -445,30 +468,40 @@ app.get("/r/:idx{[0-9]+}", (c) => {
   );
 });
 
-async function fetch(request: Request): Promise<Response> {
-  const timestamp = Temporal.Now.instant();
-  const idx = activities.length;
-  const pathname = new URL(request.url).pathname;
-  if (pathname === "/r" || pathname.startsWith("/r/")) {
-    return app.fetch(request);
-  }
-  const inboxRequest = pathname === "/inbox" || pathname.startsWith("/i/inbox");
-  if (inboxRequest) {
-    recordingSink.startRecording();
-    // @ts-ignore: Work around `deno publish --dry-run` bug
-    activities.push({ timestamp, request: request.clone(), logs: [] });
-  }
-  const response = await federation.fetch(request, {
-    contextData: inboxRequest ? idx : -1,
-    onNotAcceptable: app.fetch.bind(app),
-    onNotFound: app.fetch.bind(app),
-    onUnauthorized: app.fetch.bind(app),
-  });
-  if (inboxRequest) {
-    recordingSink.stopRecording();
-    activities[idx].response = response.clone();
-    activities[idx].logs = recordingSink.getRecords();
-    printActivityEntry(idx, activities[idx]);
-  }
-  return response;
+function createFetchHandler(actorOptions: {
+  actorName: string;
+  actorSummary: string;
+}): (request: Request) => Promise<Response> {
+  return async function fetch(request: Request): Promise<Response> {
+    const timestamp = Temporal.Now.instant();
+    const idx = activities.length;
+    const pathname = new URL(request.url).pathname;
+    if (pathname === "/r" || pathname.startsWith("/r/")) {
+      return app.fetch(request);
+    }
+    const inboxRequest = pathname === "/inbox" ||
+      pathname.startsWith("/i/inbox");
+    if (inboxRequest) {
+      recordingSink.startRecording();
+      // @ts-ignore: Work around `deno publish --dry-run` bug
+      activities.push({ timestamp, request: request.clone(), logs: [] });
+    }
+    const response = await federation.fetch(request, {
+      contextData: {
+        activityIndex: inboxRequest ? idx : -1,
+        actorName: actorOptions.actorName,
+        actorSummary: actorOptions.actorSummary,
+      },
+      onNotAcceptable: app.fetch.bind(app),
+      onNotFound: app.fetch.bind(app),
+      onUnauthorized: app.fetch.bind(app),
+    });
+    if (inboxRequest) {
+      recordingSink.stopRecording();
+      activities[idx].response = response.clone();
+      activities[idx].logs = recordingSink.getRecords();
+      printActivityEntry(idx, activities[idx]);
+    }
+    return response;
+  };
 }
