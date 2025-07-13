@@ -35,8 +35,22 @@ import { recordingSink } from "./log.ts";
 import { tableStyle } from "./table.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 
+/**
+ * Context data for the ephemeral ActivityPub inbox server.
+ *
+ * This interface defines the shape of context data passed to federation
+ * handlers during inbox command execution.
+ */
 interface ContextData {
   activityIndex: number;
+  actorName: string;
+  actorSummary: string;
+}
+
+/**
+ * Options for actor customization.
+ */
+interface ActorOptions {
   actorName: string;
   actorSummary: string;
 }
@@ -57,10 +71,6 @@ export const TunnelConfig = {
   },
 } as const;
 
-const actorOptions = {
-  name: "Fedify Ephemeral Inbox",
-  summary: "An ephemeral ActivityPub inbox for testing purposes.",
-};
 const logger = getLogger(["fedify", "cli", "inbox"]);
 
 export const command = new Command()
@@ -97,7 +107,7 @@ export const command = new Command()
     "Customize the actor description.",
     { default: "An ephemeral ActivityPub inbox for testing purposes." },
   )
-  .action(async (options) => {
+  .action(async (options: InboxOptions & ActorOptions) => {
     const fetch = createFetchHandler(options);
     const sendDeleteToPeers = createSendDeleteToPeers(options);
 
@@ -241,10 +251,9 @@ async function acceptsFollowFrom(actor: Actor): Promise<boolean> {
 
 const peers: Record<string, Actor> = {};
 
-function createSendDeleteToPeers(actorOptions: {
-  actorName: string;
-  actorSummary: string;
-}): (server: TemporaryServer) => Promise<void> {
+function createSendDeleteToPeers(
+  actorOptions: ActorOptions,
+): (server: TemporaryServer) => Promise<void> {
   return async function sendDeleteToPeers(
     server: TemporaryServer,
   ): Promise<void> {
@@ -468,10 +477,9 @@ app.get("/r/:idx{[0-9]+}", (c) => {
   );
 });
 
-function createFetchHandler(actorOptions: {
-  actorName: string;
-  actorSummary: string;
-}): (request: Request) => Promise<Response> {
+function createFetchHandler(
+  actorOptions: ActorOptions,
+): (request: Request) => Promise<Response> {
   return async function fetch(request: Request): Promise<Response> {
     const timestamp = Temporal.Now.instant();
     const idx = activities.length;
