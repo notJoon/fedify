@@ -32,7 +32,7 @@ To be released.
      -  Added `DenoKvStore.cas()` method.
   
  -  Added options to customize the temporary actor information when running
-    `fedify inbox` command.  [[#262] by Hasang Cho]
+    `fedify inbox` command.  [[#262], [#285] by Hasang Cho]
 
      -  Added `--actor-name` option to customize the actor display name.
      -  Added `--actor-summary` option to customize the actor description.
@@ -74,6 +74,7 @@ To be released.
 [#278]: https://github.com/fedify-dev/fedify/pull/278
 [#281]: https://github.com/fedify-dev/fedify/pull/281
 [#282]: https://github.com/fedify-dev/fedify/pull/282
+[#285]: https://github.com/fedify-dev/fedify/pull/285
 
 
 Version 1.7.4
