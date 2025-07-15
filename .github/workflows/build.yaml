@@ -63,7 +63,7 @@ jobs:
       if: success() || failure()
       with:
         name: "Test Results (${{ matrix.os }})"
-        path: .test-report.xml
+        path: fedify/.test-report.xml
         reporter: jest-junit
       continue-on-error: true
     - if: '!cancelled()'
@@ -72,11 +72,12 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: .test-report.xml
     - run: deno coverage --lcov .cov > .cov.lcov
+      working-directory: ${{ github.workspace }}/fedify/
       continue-on-error: true
     - uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: .cov.lcov
+        files: fedify/.cov.lcov
       continue-on-error: true
 
   test-node:
