@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import fetchMock from "fetch-mock";
-import { getFaviconUrl, rgbTo256Color } from "./node.ts";
+import { getAsciiArt, getFaviconUrl, Jimp, rgbTo256Color } from "./node.ts";
 
 const HTML_WITH_SMALL_ICON = `
 <!DOCTYPE html>
@@ -152,4 +152,17 @@ Deno.test("rgbTo256Color - check grayscale", () => {
     rgbTo256Color(GRAY.r, GRAY.g, GRAY.b)
   );
   assertEquals(results, EXPECTED_GRAY_IDX);
+});
+
+Deno.test("getAsciiArt - Darkest Letter", () => {
+  // Create black and white 1x1 images using Jimp constructor
+  const blackImage = new Jimp({ width: 1, height: 1, color: 0x000000ff });
+
+  const blackResult = getAsciiArt(
+    blackImage as unknown as Parameters<typeof getAsciiArt>[0],
+    1,
+    true,
+  );
+
+  assertEquals(blackResult.includes("█"), true);
 });

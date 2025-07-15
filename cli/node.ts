@@ -253,7 +253,7 @@ export async function getFaviconUrl(
   return new URL("/favicon.ico", response.url);
 }
 
-const Jimp = createJimp({
+export const Jimp = createJimp({
   formats: [...defaultFormats, webp],
   plugins: defaultPlugins,
 });
@@ -323,7 +323,7 @@ export function rgbTo256Color(r: number, g: number, b: number): number {
   return 16 + (36 * r6) + (6 * g6) + b6;
 }
 
-function getAsciiArt(
+export function getAsciiArt(
   image: Awaited<ReturnType<typeof Jimp.read>>,
   width = DEFAULT_IMAGE_WIDTH,
   trueColorSupport: boolean,
