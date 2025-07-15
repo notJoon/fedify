@@ -221,7 +221,7 @@ const LINK_REGEXP =
   /<link((?:\s+(?:[-a-z]+)=(?:"[^"]*"|'[^']*'|[^\s]+))*)\s*\/?>/ig;
 const LINK_ATTRS_REGEXP = /(?:\s+([-a-z]+)=("[^"]*"|'[^']*'|[^\s]+))/ig;
 
-async function getFaviconUrl(
+export async function getFaviconUrl(
   url: string | URL,
   userAgent?: string,
 ): Promise<URL> {
