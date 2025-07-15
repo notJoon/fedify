@@ -1222,6 +1222,34 @@ export interface DoubleKnockOptions {
 }
 
 /**
+ * Helper function to create a new Request for redirect handling.
+ * @param request The original request.
+ * @param location The redirect location.
+ * @param body The request body as ArrayBuffer or undefined.
+ * @returns A new Request object for the redirect.
+ */
+function createRedirectRequest(
+  request: Request,
+  location: string,
+  body: ArrayBuffer | undefined,
+): Request {
+  return new Request(location, {
+    method: request.method,
+    headers: request.headers,
+    body,
+    redirect: "manual",
+    signal: request.signal,
+    mode: request.mode,
+    credentials: request.credentials,
+    referrer: request.referrer,
+    referrerPolicy: request.referrerPolicy,
+    integrity: request.integrity,
+    keepalive: request.keepalive,
+    cache: request.cache,
+  });
+}
+
+/**
  * Performs a double-knock request to the given URL.  For the details of
  * double-knocking, see
  * <https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions>.
@@ -1264,19 +1292,7 @@ export async function doubleKnock(
       ? await request.clone().arrayBuffer()
       : undefined;
     return doubleKnock(
-      new Request(location, {
-        method: request.method,
-        headers: request.headers,
-        body,
-        redirect: "manual",
-        signal: request.signal,
-        mode: request.mode,
-        credentials: request.credentials,
-        referrer: request.referrer,
-        referrerPolicy: request.referrerPolicy,
-        integrity: request.integrity,
-        keepalive: request.keepalive,
-      }),
+      createRedirectRequest(request, location, body),
       identity,
       options,
     );
@@ -1322,11 +1338,15 @@ export async function doubleKnock(
       response.headers.has("Location")
     ) {
       const location = response.headers.get("Location")!;
+      // IMPORTANT: Use arrayBuffer() instead of .body to prevent "TypeError: unusable"
+      // When using .body (ReadableStream), subsequent clone() calls in signRequest functions
+      // will fail because the stream has already been consumed. Using arrayBuffer() ensures
+      // the body can be safely cloned for HTTP signature generation.
       const body = request.method !== "GET" && request.method !== "HEAD"
-        ? request.clone().body
-        : null;
+        ? await request.clone().arrayBuffer()
+        : undefined;
       return doubleKnock(
-        new Request(location, { ...request, body }),
+        createRedirectRequest(request, location, body),
         identity,
         options,
       );
