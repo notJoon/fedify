@@ -8,6 +8,10 @@ Version 1.7.5
 
 To be released.
 
+ -  Fixed `TypeError: unusable` error that occurred when `doubleKnock()`
+    encountered redirects during HTTP signature retry attempts.
+    [[#294], [#295]]
+
 
 Version 1.7.4
 -------------
@@ -80,6 +84,19 @@ Released on June 25, 2025.
 [#250]: https://github.com/fedify-dev/fedify/issues/250
 [#251]: https://github.com/fedify-dev/fedify/pull/251
 [#252]: https://github.com/fedify-dev/fedify/pull/252
+
+
+Version 1.6.6
+-------------
+
+Released on July 15, 2025.
+
+ -  Fixed `TypeError: unusable` error that occurred when `doubleKnock()`
+    encountered redirects during HTTP signature retry attempts.
+    [[#294], [#295]]
+
+[#294]: https://github.com/fedify-dev/fedify/issues/294
+[#295]: https://github.com/fedify-dev/fedify/pull/295
 
 
 Version 1.6.5
