@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import fetchMock from "fetch-mock";
-import { getFaviconUrl } from "./node.ts";
+import { getFaviconUrl, rgbTo256Color } from "./node.ts";
 
 const HTML_WITH_SMALL_ICON = `
 <!DOCTYPE html>
@@ -23,7 +23,6 @@ Deno.test("getFaviconUrl - small favicon.ico and apple-touch-icon.png", async ()
   });
 
   const result = await getFaviconUrl("https://example.com/");
-  console.log(result);
   assertEquals(result.href, "https://example.com/apple-touch-icon.png");
 
   fetchMock.hardReset();
@@ -104,4 +103,53 @@ Deno.test("getFaviconUrl - falls back to /favicon.ico", async () => {
   assertEquals(result.href, "https://example.com/favicon.ico");
 
   fetchMock.hardReset();
+});
+
+Deno.test("rgbTo256Color - check RGB cube", () => {
+  const CUBE_VALUES = [0, 95, 135, 175, 215, 255];
+  const COLORS: Array<{ r: number; g: number; b: number }> = [];
+
+  for (let r = 0; r < 6; r++) {
+    for (let g = 0; g < 6; g++) {
+      for (let b = 0; b < 6; b++) {
+        COLORS.push({
+          r: CUBE_VALUES[r],
+          g: CUBE_VALUES[g],
+          b: CUBE_VALUES[b],
+        });
+      }
+    }
+  }
+
+  // Expected color indices for the above colors (16-231)
+  // RGB cube: 6x6x6 = 216 colors, indices 16-231
+  const EXPECTED_CUBE_IDX = Array.from(
+    { length: COLORS.length },
+    (_, i) => 16 + i,
+  );
+
+  const results = COLORS.map((COLOR) =>
+    rgbTo256Color(COLOR.r, COLOR.g, COLOR.b)
+  );
+  assertEquals(results, EXPECTED_CUBE_IDX);
+});
+
+Deno.test("rgbTo256Color - check grayscale", () => {
+  const GRAYSCALE = Array.from({ length: 24 }).map(
+    (_, idx) => ({
+      r: 8 + idx * 10,
+      g: 8 + idx * 10,
+      b: 8 + idx * 10,
+    }),
+  );
+
+  const EXPECTED_GRAY_IDX = Array.from(
+    { length: GRAYSCALE.length },
+    (_, i) => 232 + i,
+  );
+
+  const results = GRAYSCALE.map((GRAY) =>
+    rgbTo256Color(GRAY.r, GRAY.g, GRAY.b)
+  );
+  assertEquals(results, EXPECTED_GRAY_IDX);
 });
