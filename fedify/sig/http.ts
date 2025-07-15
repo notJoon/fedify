@@ -1245,6 +1245,7 @@ function createRedirectRequest(
     referrerPolicy: request.referrerPolicy,
     integrity: request.integrity,
     keepalive: request.keepalive,
+    cache: request.cache,
   });
 }
 
