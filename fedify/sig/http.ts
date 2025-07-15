@@ -1222,6 +1222,33 @@ export interface DoubleKnockOptions {
 }
 
 /**
+ * Helper function to create a new Request for redirect handling.
+ * @param request The original request.
+ * @param location The redirect location.
+ * @param body The request body as ArrayBuffer or undefined.
+ * @returns A new Request object for the redirect.
+ */
+function createRedirectRequest(
+  request: Request,
+  location: string,
+  body: ArrayBuffer | undefined,
+): Request {
+  return new Request(location, {
+    method: request.method,
+    headers: request.headers,
+    body,
+    redirect: "manual",
+    signal: request.signal,
+    mode: request.mode,
+    credentials: request.credentials,
+    referrer: request.referrer,
+    referrerPolicy: request.referrerPolicy,
+    integrity: request.integrity,
+    keepalive: request.keepalive,
+  });
+}
+
+/**
  * Performs a double-knock request to the given URL.  For the details of
  * double-knocking, see
  * <https://swicg.github.io/activitypub-http-signature/#how-to-upgrade-supported-versions>.
@@ -1264,19 +1291,7 @@ export async function doubleKnock(
       ? await request.clone().arrayBuffer()
       : undefined;
     return doubleKnock(
-      new Request(location, {
-        method: request.method,
-        headers: request.headers,
-        body,
-        redirect: "manual",
-        signal: request.signal,
-        mode: request.mode,
-        credentials: request.credentials,
-        referrer: request.referrer,
-        referrerPolicy: request.referrerPolicy,
-        integrity: request.integrity,
-        keepalive: request.keepalive,
-      }),
+      createRedirectRequest(request, location, body),
       identity,
       options,
     );
@@ -1330,21 +1345,7 @@ export async function doubleKnock(
         ? await request.clone().arrayBuffer()
         : undefined;
       return doubleKnock(
-        new Request(location, {
-          // Explicitly copy all Request properties instead of using destructuring
-          // to ensure proper Request constructor behavior and preserve all properties
-          method: request.method,
-          headers: request.headers,
-          body,
-          redirect: "manual",
-          signal: request.signal,
-          mode: request.mode,
-          credentials: request.credentials,
-          referrer: request.referrer,
-          referrerPolicy: request.referrerPolicy,
-          integrity: request.integrity,
-          keepalive: request.keepalive,
-        }),
+        createRedirectRequest(request, location, body),
         identity,
         options,
       );
