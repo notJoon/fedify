@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.6.6
 -------------
 
-To be released.
+Released on July 15, 2025.
 
  -  Fixed `TypeError: unusable` error that occurred when `doubleKnock()`
     encountered redirects during HTTP signature retry attempts.
