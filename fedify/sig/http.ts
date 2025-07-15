@@ -1322,11 +1322,29 @@ export async function doubleKnock(
       response.headers.has("Location")
     ) {
       const location = response.headers.get("Location")!;
+      // IMPORTANT: Use arrayBuffer() instead of .body to prevent "TypeError: unusable"
+      // When using .body (ReadableStream), subsequent clone() calls in signRequest functions
+      // will fail because the stream has already been consumed. Using arrayBuffer() ensures
+      // the body can be safely cloned for HTTP signature generation.
       const body = request.method !== "GET" && request.method !== "HEAD"
-        ? request.clone().body
-        : null;
+        ? await request.clone().arrayBuffer()
+        : undefined;
       return doubleKnock(
-        new Request(location, { ...request, body }),
+        new Request(location, {
+          // Explicitly copy all Request properties instead of using destructuring
+          // to ensure proper Request constructor behavior and preserve all properties
+          method: request.method,
+          headers: request.headers,
+          body,
+          redirect: "manual",
+          signal: request.signal,
+          mode: request.mode,
+          credentials: request.credentials,
+          referrer: request.referrer,
+          referrerPolicy: request.referrerPolicy,
+          integrity: request.integrity,
+          keepalive: request.keepalive,
+        }),
         identity,
         options,
       );
