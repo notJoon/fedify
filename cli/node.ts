@@ -221,7 +221,7 @@ const LINK_REGEXP =
   /<link((?:\s+(?:[-a-z]+)=(?:"[^"]*"|'[^']*'|[^\s]+))*)\s*\/?>/ig;
 const LINK_ATTRS_REGEXP = /(?:\s+([-a-z]+)=("[^"]*"|'[^']*'|[^\s]+))/ig;
 
-async function getFaviconUrl(
+export async function getFaviconUrl(
   url: string | URL,
   userAgent?: string,
 ): Promise<URL> {
@@ -253,7 +253,7 @@ async function getFaviconUrl(
   return new URL("/favicon.ico", response.url);
 }
 
-const Jimp = createJimp({
+export const Jimp = createJimp({
   formats: [...defaultFormats, webp],
   plugins: defaultPlugins,
 });
@@ -277,28 +277,53 @@ const ASCII_CHARS =
   "█▓▒░@#B8&WM%*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 // cSpell: enable
 
-function rgbTo256Color(r: number, g: number, b: number): number {
-  // Handle grayscale colors (colors 232-255)
+const CUBE_VALUES = [0, 95, 135, 175, 215, 255];
+
+const findClosestIndex = (value: number): number => {
+  let minDiff = Infinity;
+  let closestIndex = 0;
+  for (let idx = 0; idx < CUBE_VALUES.length; idx++) {
+    const diff = Math.abs(value - CUBE_VALUES[idx]);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIndex = idx;
+    }
+  }
+  return closestIndex;
+};
+
+export function rgbTo256Color(r: number, g: number, b: number): number {
+  // Check if it's a grayscale color first (when all RGB values are very close)
   const gray = Math.round((r + g + b) / 3);
-  if (
-    Math.abs(r - gray) < 10 && Math.abs(g - gray) < 10 &&
-    Math.abs(b - gray) < 10
-  ) {
-    if (gray < 8) return 16; // Black
-    if (gray > 248) return 231; // White
-    return Math.round(((gray - 8) / 240) * 23) + 232;
+  const isGrayscale = Math.abs(r - gray) <= 5 && Math.abs(g - gray) <= 5 &&
+    Math.abs(b - gray) <= 5;
+
+  // Handle grayscale colors (colors 232-255) - but exclude exact cube values
+  if (isGrayscale) {
+    const isExactCubeValue = CUBE_VALUES.includes(r) && r === g && g === b;
+
+    if (!isExactCubeValue) {
+      if (gray < 8) return 232; // Darkest grayscale
+      if (gray > 238) return 255; // Brightest grayscale
+
+      // Map to grayscale range 232-255 (24 levels)
+      // XTerm grayscale: 8, 18, 28, ..., 238 maps to 232, 233, 234, ..., 255
+      const grayIndex = Math.round((gray - 8) / 10);
+      return Math.max(232, Math.min(255, 232 + grayIndex));
+    }
   }
 
   // Handle RGB colors (colors 16-231)
-  // Convert to 6x6x6 cube
-  const r6 = Math.round((r / 255) * 5);
-  const g6 = Math.round((g / 255) * 5);
-  const b6 = Math.round((b / 255) * 5);
+  // XTerm 256 color cube values: [0, 95, 135, 175, 215, 255]
+
+  const r6 = findClosestIndex(r);
+  const g6 = findClosestIndex(g);
+  const b6 = findClosestIndex(b);
 
   return 16 + (36 * r6) + (6 * g6) + b6;
 }
 
-function getAsciiArt(
+export function getAsciiArt(
   image: Awaited<ReturnType<typeof Jimp.read>>,
   width = DEFAULT_IMAGE_WIDTH,
   trueColorSupport: boolean,
