@@ -1,0 +1,43 @@
+name: "Refactor / Performance / Test Issue"
+description: "Suggest internal code improvements, optimizations, or test updates"
+labels: [ "type/refactor", "type/performance", "type/test" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide the following details to help evaluate and prioritize this internal change.
+
+  - type: input
+    attributes:
+      label: Summary
+      description: Briefly describe the change you're proposing.
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Target Area
+      description: Which part of the codebase is affected?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Motivation
+      description: Why does this change matter? What are you trying to improve?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Risk Assessment
+      description: Is there any risk of regressions or unintended side effects?
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Benefits
+      description: What should be improved, simplified, or resolved as a result?
+    validations:
+      required: false

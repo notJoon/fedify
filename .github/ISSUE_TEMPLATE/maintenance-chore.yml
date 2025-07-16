@@ -1,0 +1,37 @@
+name: "Maintenance / Chore Issue"
+description: "Track maintenance tasks, build updates, or CI/CD improvements"
+labels: [ "type/maintenance", "type/chore" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please use this template to describe maintenance or non-functional tasks.
+
+  - type: input
+    attributes:
+      label: Summary
+      description: Briefly describe the task or change you're proposing.
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Affected Area
+      description: What part of the system or tooling is involved?
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Reason / Context
+      description: Why is this task necessary? Include any relevant background.
+    validations:
+      required: false
+
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      description: Steps to complete this task.
+      options:
+        - label: Step 1
+        - label: Step 2

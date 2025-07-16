@@ -1,0 +1,43 @@
+name: "Feature / Enhancement Issue"
+description: "Suggest a new feature or improvement"
+labels: [ "type/feature", "type/enhancement" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out the following sections to help us understand your feature request.
+
+  - type: input
+    attributes:
+      label: Summary
+      description: Briefly describe the feature or enhancement you're suggesting.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Problem
+      description: Why is this needed? What problem does it solve?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Proposed Solution
+      description: Describe your suggested solution or behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Alternatives Considered
+      description: Have you thought of other approaches or solutions?
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Scope / Dependencies
+      description: What parts of the system would be affected or require changes?
+    validations:
+      required: false
