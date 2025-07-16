@@ -1228,7 +1228,7 @@ export interface DoubleKnockOptions {
 
   /**
    * The request body as ArrayBuffer. If provided, avoids cloning the request body.
-   * @since 1.7.6
+   * @since 1.8.0
    */
   body?: ArrayBuffer | null;
 
