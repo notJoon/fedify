@@ -22,7 +22,7 @@ body:
       label: Affected Area
       description: What part of the system or tooling is involved?
     validations:
-      required: false
+      required: true
 
   - type: textarea
     attributes:

@@ -57,3 +57,5 @@ body:
         1.
         2.
         3.
+    validations:
+      required: true
