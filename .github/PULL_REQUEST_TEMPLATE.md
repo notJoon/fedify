@@ -1,22 +1,29 @@
 # Summary
+
 Briefly describe the main purpose and scope of this PR.
 
 # Related Issue
+
 Reference the related issue(s) by number.
 
-- 
+[//]: # (- closes #123)
+
+[//]: # (- fixes #456)
 
 # Changes
+
 List the specific modifications made in this PR.
 Focus on *what* was changed without going into detail about impact.
 
-- 
+-
 
 # Benefits
+
 Describe the advantages or improvements brought by these changes.
 Explain how these changes affect the project, users, or performance.
 
 # Checklist
+
 - [ ] Did you add a changelog entry to the *CHANGES.md*?
 - [ ] Did you write some relevant docs about this change (if it's a new feature)?
 - [ ] Did you write a regression test to reproduce the bug (if it's a bug fix)?
@@ -24,4 +31,5 @@ Explain how these changes affect the project, users, or performance.
 - [ ] Did you run `deno task test-all` on your machine?
 
 # Additional Notes
+
 Include any other information, context, or considerations.
