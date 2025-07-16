@@ -72,6 +72,10 @@ To be released.
      -  The `--allow-private-address` or `-p` option allows looking up
         WebFinger information for private addresses (e.g., `localhost`).
 
+  -  Added `--dry-run` option to `fedify init` command.  This option allows users
+    to preview what files and configurations would be created without actually
+    creating them.  [[#263], [#298] by Lee ByeongJun]
+
   -  Fixed a bug where the `fedify node` command had failed to correctly
      render the favicon in terminal emulators that do not support 24-bit
      colors.  [[#168], [#282] by Hyeonseo Kim]
@@ -80,10 +84,12 @@ To be released.
 [#248]: https://github.com/fedify-dev/fedify/issues/248
 [#260]: https://github.com/fedify-dev/fedify/issues/260
 [#262]: https://github.com/fedify-dev/fedify/issues/262
+[#263]: https://github.com/fedify-dev/fedify/issues/263
 [#278]: https://github.com/fedify-dev/fedify/pull/278
 [#281]: https://github.com/fedify-dev/fedify/pull/281
 [#282]: https://github.com/fedify-dev/fedify/pull/282
 [#285]: https://github.com/fedify-dev/fedify/pull/285
+[#298]: https://github.com/fedify-dev/fedify/pull/298
 [#300]: https://github.com/fedify-dev/fedify/pull/300
 
 
