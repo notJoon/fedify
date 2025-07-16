@@ -5,16 +5,19 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please use this template to report issues or suggestions related to the documentation.
+        Focuses on correcting, updating, or creating documentation.
+        
+        - Includes: Affected files, what’s missing or incorrect, suggested content.
+        - Goal: Improve clarity, completeness, and usefulness of docs.
 
-  - type: input
+  - type: textarea
     attributes:
       label: Summary
       description: Briefly describe the documentation issue.
     validations:
       required: true
 
-  - type: input
+  - type: textarea
     attributes:
       label: Affected Docs
       description: Specify which documentation needs changes (file, section, etc.).

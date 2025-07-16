@@ -1,13 +1,27 @@
-name: "Feature / Enhancement Issue"
+name: "Feature or Enhancement Issue"
 description: "Suggest a new feature or improvement"
 labels: [ "type/feature", "type/enhancement" ]
 body:
   - type: markdown
     attributes:
       value: |
-        Please fill out the following sections to help us understand your feature request.
+        ### Feature
+        A request to add entirely new functionality.
+        
+        - Includes: Motivation, proposed solution, and use cases.
+        - Goal: Expand capabilities of the system.
+        
+        ### Enhancement
+        An improvement to an existing feature.
+        
+        - Includes: Pain points in current behavior and better alternatives.
+        - Goal: Improve usability, performance, or completeness.
+        
+        ---
+        
+        Please keep only one appropriate type/* label and remove the others if present.
 
-  - type: input
+  - type: textarea
     attributes:
       label: Summary
       description: Briefly describe the feature or enhancement you're suggesting.

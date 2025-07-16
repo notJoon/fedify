@@ -1,20 +1,34 @@
-name: "Maintenance / Chore Issue"
+name: "Maintenance or Chore Issue"
 description: "Track maintenance tasks, build updates, or CI/CD improvements"
 labels: [ "type/maintenance", "type/chore" ]
 body:
   - type: markdown
     attributes:
       value: |
-        Please use this template to describe maintenance or non-functional tasks.
+        ### Maintenance  
+        Tasks that keep the codebase stable and healthy.
+        
+        - Includes: Dependency updates, cleanup of deprecated code, resolving warnings.
+        - Goal: Prevent technical debt and ensure long-term maintainability.
+        
+        ### Chore  
+        Non-functional tasks related to configuration, tooling, or infrastructure.
+        
+        - Includes: CI/CD changes, build system tweaks, formatting configs.
+        - Goal: Improve the development workflow and internal operations.
+        
+        ---
+        
+        Please keep only one appropriate type/* label and remove the others if present.
 
-  - type: input
+  - type: textarea
     attributes:
       label: Summary
       description: Briefly describe the task or change you're proposing.
     validations:
       required: true
 
-  - type: input
+  - type: textarea
     attributes:
       label: Affected Area
       description: What part of the system or tooling is involved?
@@ -28,10 +42,11 @@ body:
     validations:
       required: false
 
-  - type: checkboxes
+  - type: textarea
     attributes:
       label: Checklist
       description: Steps to complete this task.
-      options:
-        - label: Step 1
-        - label: Step 2
+      placeholder: |
+        1. 
+        2. 
+        3. 
