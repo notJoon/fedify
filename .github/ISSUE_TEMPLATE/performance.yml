@@ -40,7 +40,5 @@ body:
 
   - type: textarea
     attributes:
-      label: Benefits
-      description: What should be improved, simplified, or resolved as a result?
-    validations:
-      required: false
+      label: Benchmarks
+      description: Provide before/after benchmarks or other metrics to demonstrate the performance improvement.
