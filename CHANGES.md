@@ -49,16 +49,16 @@ To be released.
     WebFinger information for a given resource.
     [[#260], [#278] by ChanHaeng Lee]
 
- -  Added `--dry-run` option to `fedify init` command.  This option allows users
-    to preview what files and configurations would be created without actually
-    creating them.  [[#263], [#298] by Lee ByeongJun]
-
      -  The input can be a handle (e.g., `@user@server`, `user@server`) or
         a URL (e.g., `https://server/users/path`).
      -  The `--user-agent` or `-a` option used as `User-Agent` header value
         in the WebFinger request.
      -  The `--allow-private-address` or `-p` option allows looking up
         WebFinger information for private addresses (e.g., `localhost`).
+
+  -  Added `--dry-run` option to `fedify init` command.  This option allows users
+    to preview what files and configurations would be created without actually
+    creating them.  [[#263], [#298] by Lee ByeongJun]
 
   -  Fixed a bug where the `fedify node` command had failed to correctly
      render the favicon in terminal emulators that do not support 24-bit
