@@ -49,6 +49,10 @@ To be released.
     WebFinger information for a given resource.
     [[#260], [#278] by ChanHaeng Lee]
 
+ -  Added `--dry-run` option to `fedify init` command.  This option allows users
+    to preview what files and configurations would be created without actually
+    creating them.  [[#263], [#298] by Lee ByeongJun]
+
      -  The input can be a handle (e.g., `@user@server`, `user@server`) or
         a URL (e.g., `https://server/users/path`).
      -  The `--user-agent` or `-a` option used as `User-Agent` header value
@@ -63,9 +67,11 @@ To be released.
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#248]: https://github.com/fedify-dev/fedify/issues/248
 [#260]: https://github.com/fedify-dev/fedify/issues/260
+[#263]: https://github.com/fedify-dev/fedify/issues/263
 [#278]: https://github.com/fedify-dev/fedify/pull/278
 [#281]: https://github.com/fedify-dev/fedify/pull/281
 [#282]: https://github.com/fedify-dev/fedify/pull/282
+[#298]: https://github.com/fedify-dev/fedify/pull/298
 
 
 Version 1.7.4
