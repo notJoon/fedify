@@ -1,4 +1,4 @@
-name: "Chore Issue"
+name: "Chore issue"
 description: "Build, configuration, and maintenance tasks"
 labels: [ "type/chore" ]
 body:

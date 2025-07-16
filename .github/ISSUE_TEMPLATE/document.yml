@@ -1,4 +1,4 @@
-name: "Documentation Issue"
+name: "Documentation issue"
 description: "Documentation related"
 labels: [ "type/documentation" ]
 body:

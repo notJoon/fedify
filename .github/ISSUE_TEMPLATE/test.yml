@@ -1,4 +1,4 @@
-name: "Test Issue"
+name: "Test issue"
 description: "Testing related"
 labels: [ "type/test" ]
 body:

@@ -1,4 +1,4 @@
-name: "Enhancement Issue"
+name: "Enhancement issue"
 description: "Improvements to existing features"
 labels: [ "type/enhancement" ]
 body:

@@ -1,4 +1,4 @@
-name: "Feature Issue"
+name: "Feature issue"
 description: "New feature requests"
 labels: [ "type/feature" ]
 body:
