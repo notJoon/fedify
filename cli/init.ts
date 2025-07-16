@@ -615,7 +615,12 @@ export const command = new Command()
     "-q, --message-queue <message-queue:message-queue>",
     "Choose the message queue to use for background jobs.",
   )
+  .option(
+    "--dry-run",
+    "Show what would be created without actually creating files.",
+  )
   .action(async (options, dir: string) => {
+    const dryRun = options.dryRun ?? false;
     const projectName = basename(
       await exists(dir) ? await Deno.realPath(dir) : normalize(dir),
     );
@@ -1001,48 +1006,105 @@ await configure({
       ...initializer.files,
     };
     const { prependFiles } = initializer;
-    await Deno.mkdir(dir, { recursive: true });
-    for await (const _ of Deno.readDir(dir)) {
-      console.error("The directory is not empty.  Aborting.");
-      Deno.exit(1);
+
+    if (dryRun) {
+      console.log(
+        colors.bold.yellow("🔍 DRY RUN MODE - No files will be created\n"),
+      );
+
+      // check if directory exists and empty
+      try {
+        const entries = [];
+        for await (const entry of Deno.readDir(dir)) {
+          entries.push(entry);
+        }
+        if (entries.length > 0) {
+          console.error("The directory is not empty.  Aborting.");
+          Deno.exit(1);
+        }
+      } catch (e) {
+        if (!(e instanceof Deno.errors.NotFound)) {
+          throw e;
+        }
+        // directory doesn't exist. no problem here.
+      }
+    } else {
+      await Deno.mkdir(dir, { recursive: true });
+      for await (const _ of Deno.readDir(dir)) {
+        console.error("The directory is not empty.  Aborting.");
+        Deno.exit(1);
+      }
     }
     if (initializer.command != null) {
-      const cmd = new Deno.Command(initializer.command[0], {
-        args: initializer.command.slice(1),
-        cwd: dir,
-        stdin: "inherit",
-        stdout: "inherit",
-        stderr: "inherit",
-      });
-      const result = await cmd.output();
-      if (!result.success) {
-        console.error("Failed to initialize the project.");
-        Deno.exit(1);
+      if (dryRun) {
+        console.log(colors.bold.cyan("📦 Would run command:"));
+        console.log(
+          `  ${
+            [initializer.command[0], ...initializer.command.slice(1)].join(" ")
+          }\n`,
+        );
+      } else {
+        const cmd = new Deno.Command(initializer.command[0], {
+          args: initializer.command.slice(1),
+          cwd: dir,
+          stdin: "inherit",
+          stdout: "inherit",
+          stderr: "inherit",
+        });
+        const result = await cmd.output();
+        if (!result.success) {
+          console.error("Failed to initialize the project.");
+          Deno.exit(1);
+        }
       }
     }
     if (runtime !== "deno") {
       const packageJsonPath = join(dir, "package.json");
-      try {
-        await Deno.stat(packageJsonPath);
-      } catch (e) {
-        if (e instanceof Deno.errors.NotFound) {
-          await Deno.writeTextFile(packageJsonPath, "{}");
-        } else throw e;
+      if (dryRun) {
+        // create package.json if it doesn't exist
+        try {
+          await Deno.stat(packageJsonPath);
+        } catch (e) {
+          if (e instanceof Deno.errors.NotFound) {
+            // show files list
+          } else throw e;
+        }
+      } else {
+        try {
+          await Deno.stat(packageJsonPath);
+        } catch (e) {
+          if (e instanceof Deno.errors.NotFound) {
+            await Deno.writeTextFile(packageJsonPath, "{}");
+          } else throw e;
+        }
       }
     }
     const dependencies: Record<string, string> = {
       "@fedify/fedify": `^${await getLatestFedifyVersion(metadata.version)}`,
-      "@logtape/logtape": "^0.8.2",
+      "@logtape/logtape": "^0.8.2", // TODO: use latest version?
       ...initializer.dependencies,
       ...kvStoreDesc?.dependencies,
       ...mqDesc?.dependencies,
     };
-    await addDependencies(
-      runtime,
-      packageManager,
-      dir,
-      dependencies,
-    );
+    if (dryRun) {
+      // print out dependencies that would be installed
+      const deps = Object.entries(dependencies)
+        .map(([name, version]) => `${name}@${version}`)
+        .join("\n");
+      if (deps) {
+        console.log(colors.bold.cyan("📦 Would install dependencies:"));
+        console.log(colors.gray("─".repeat(60)));
+        console.log(`${deps}\n`);
+        console.log(colors.gray("─".repeat(60)));
+      }
+    } else {
+      await addDependencies(
+        runtime,
+        packageManager,
+        dir,
+        dependencies,
+      );
+    }
     if (runtime !== "deno") {
       const devDependencies: Record<string, string> = {
         "@biomejs/biome": "^1.8.3",
@@ -1050,32 +1112,69 @@ await configure({
         ...kvStoreDesc?.devDependencies,
         ...mqDesc?.devDependencies,
       };
-      await addDependencies(
-        runtime,
-        packageManager,
-        dir,
-        devDependencies,
-        true,
-      );
-    }
-    for (const [filename, content] of Object.entries(files)) {
-      const path = join(dir, filename);
-      const dirName = dirname(path);
-      await Deno.mkdir(dirName, { recursive: true });
-      await Deno.writeTextFile(path, content);
-    }
-    if (prependFiles != null) {
-      for (const [filename, prefix] of Object.entries(prependFiles)) {
-        const path = join(dir, filename);
-        const dirName = dirname(path);
-        await Deno.mkdir(dirName, { recursive: true });
-        await Deno.writeTextFile(
-          path,
-          `${prefix}${await Deno.readTextFile(path)}`,
+      if (dryRun) {
+        // show dev dependencies that would be installed
+        const devDeps = Object.entries(devDependencies)
+          .map(([name, version]) => `${name}@${version}`)
+          .join(" ");
+        if (devDeps) {
+          console.log(colors.bold.cyan("📦 Would install dev dependencies:"));
+          console.log(`  ${devDeps}\n`);
+        }
+      } else {
+        await addDependencies(
+          runtime,
+          packageManager,
+          dir,
+          devDependencies,
+          true,
         );
       }
     }
+    if (dryRun) {
+      console.log(colors.bold.green("Would create files:\n"));
+      for (const [filename, content] of Object.entries(files)) {
+        const path = join(dir, filename);
+        console.log(colors.green(`📄 ${path}`));
+        console.log(colors.gray("─".repeat(60)));
+        console.log(content);
+        console.log(colors.gray("─".repeat(60)) + "\n");
+      }
+    } else {
+      for (const [filename, content] of Object.entries(files)) {
+        const path = join(dir, filename);
+        const dirName = dirname(path);
+        await Deno.mkdir(dirName, { recursive: true });
+        await Deno.writeTextFile(path, content);
+      }
+    }
+    if (prependFiles != null) {
+      if (dryRun) {
+        console.log(colors.bold.blue("Would prepend to files:\n"));
+        for (const [filename, prefix] of Object.entries(prependFiles)) {
+          const path = join(dir, filename);
+          console.log(colors.blue(`${path}`));
+          console.log(colors.gray("─".repeat(60)));
+          console.log(colors.gray("Prepending:"));
+          console.log(prefix);
+          console.log(colors.gray("─".repeat(60)) + "\n");
+        }
+      } else {
+        for (const [filename, prefix] of Object.entries(prependFiles)) {
+          const path = join(dir, filename);
+          const dirName = dirname(path);
+          await Deno.mkdir(dirName, { recursive: true });
+          await Deno.writeTextFile(
+            path,
+            `${prefix}${await Deno.readTextFile(path)}`,
+          );
+        }
+      }
+    }
     if (runtime === "deno") {
+      if (dryRun) {
+        console.log(colors.bold.green("Would create/update JSON files:\n"));
+      }
       await rewriteJsonFile(
         join(dir, "deno.json"),
         {},
@@ -1094,6 +1193,7 @@ await configure({
           ],
           tasks: { ...cfg.tasks, ...initializer.tasks },
         }),
+        dryRun,
       );
       await rewriteJsonFile(
         join(dir, ".vscode", "settings.json"),
@@ -1142,6 +1242,7 @@ await configure({
           },
           ...vsCodeSettings,
         }),
+        dryRun,
       );
       await rewriteJsonFile(
         join(dir, ".vscode", "extensions.json"),
@@ -1153,8 +1254,12 @@ await configure({
           ]),
           ...vsCodeExtensions,
         }),
+        dryRun,
       );
     } else {
+      if (dryRun) {
+        console.log(colors.bold.green("📄 Would create/update JSON files:\n"));
+      }
       await rewriteJsonFile(
         join(dir, "package.json"),
         {},
@@ -1163,6 +1268,7 @@ await configure({
           ...cfg,
           scripts: { ...cfg.scripts, ...initializer.tasks },
         }),
+        dryRun,
       );
       if (initializer.compilerOptions != null) {
         await rewriteJsonFile(
@@ -1175,6 +1281,7 @@ await configure({
               ...initializer.compilerOptions,
             },
           }),
+          dryRun,
         );
       }
       await rewriteJsonFile(
@@ -1222,6 +1329,7 @@ await configure({
           },
           ...vsCodeSettings,
         }),
+        dryRun,
       );
       await rewriteJsonFile(
         join(dir, ".vscode", "extensions.json"),
@@ -1233,6 +1341,7 @@ await configure({
           ]),
           ...vsCodeExtensions,
         }),
+        dryRun,
       );
       await rewriteJsonFile(
         join(dir, "biome.json"),
@@ -1256,6 +1365,7 @@ await configure({
             rules: { recommended: true },
           },
         }),
+        dryRun,
       );
     }
     console.error(initializer.instruction);
@@ -1410,6 +1520,7 @@ async function rewriteJsonFile(
   empty: any,
   // deno-lint-ignore no-explicit-any
   rewriter: (json: any) => any,
+  dryRun: boolean = false,
 ): Promise<void> {
   let jsonText: string | null = null;
   try {
@@ -1419,8 +1530,16 @@ async function rewriteJsonFile(
   }
   let json = jsonText == null ? empty : JSON.parse(jsonText);
   json = rewriter(json);
-  await Deno.mkdir(dirname(path), { recursive: true });
-  await Deno.writeTextFile(path, JSON.stringify(json, null, 2) + "\n");
+
+  if (dryRun) {
+    console.log(colors.green(`📄 ${path}`));
+    console.log(colors.gray("─".repeat(60)));
+    console.log(JSON.stringify(json, null, 2));
+    console.log(colors.gray("─".repeat(60)) + "\n");
+  } else {
+    await Deno.mkdir(dirname(path), { recursive: true });
+    await Deno.writeTextFile(path, JSON.stringify(json, null, 2) + "\n");
+  }
 }
 
 function uniqueArray<T extends boolean | number | string>(a: T[]): T[] {
