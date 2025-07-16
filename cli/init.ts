@@ -1101,10 +1101,10 @@ await configure({
       if (dryRun) {
         const devDeps = Object.entries(devDependencies)
           .map(([name, version]) => `${name}@${version}`)
-          .join(" ");
+          .join("\n");
         if (devDeps) {
           console.log(colors.bold.cyan("📦 Would install dev dependencies:"));
-          console.log(`  ${devDeps}\n`);
+          console.log(`${devDeps}\n`);
         }
       } else {
         await addDependencies(
