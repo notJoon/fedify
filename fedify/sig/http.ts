@@ -59,6 +59,12 @@ export interface SignRequestOptions {
   currentTime?: Temporal.Instant;
 
   /**
+   * The request body as ArrayBuffer. If provided, avoids cloning the request body.
+   * @since 1.8.0
+   */
+  body?: ArrayBuffer | null;
+
+  /**
    * The OpenTelemetry tracer provider.  If omitted, the global tracer provider
    * is used.
    */
@@ -102,6 +108,7 @@ export async function signRequest(
             keyId,
             span,
             options.currentTime,
+            options.body,
           );
         } else {
           // Default to draft-cavage
@@ -111,6 +118,7 @@ export async function signRequest(
             keyId,
             span,
             options.currentTime,
+            options.body,
           );
         }
 
@@ -142,15 +150,17 @@ async function signRequestDraft(
   keyId: URL,
   span: Span,
   currentTime?: Temporal.Instant,
+  bodyBuffer?: ArrayBuffer | null,
 ): Promise<Request> {
   if (privateKey.algorithm.name !== "RSASSA-PKCS1-v1_5") {
     throw new TypeError("Unsupported algorithm: " + privateKey.algorithm.name);
   }
   const url = new URL(request.url);
-  const body: ArrayBuffer | null =
-    request.method !== "GET" && request.method !== "HEAD"
-      ? await request.clone().arrayBuffer()
-      : null;
+  const body: ArrayBuffer | null = bodyBuffer !== undefined
+    ? bodyBuffer
+    : request.method !== "GET" && request.method !== "HEAD"
+    ? await request.clone().arrayBuffer()
+    : null;
   const headers = new Headers(request.headers);
   if (!headers.has("Host")) {
     headers.set("Host", url.host);
@@ -382,16 +392,18 @@ async function signRequestRfc9421(
   keyId: URL,
   span: Span,
   currentTime?: Temporal.Instant,
+  bodyBuffer?: ArrayBuffer | null,
 ): Promise<Request> {
   if (privateKey.algorithm.name !== "RSASSA-PKCS1-v1_5") {
     throw new TypeError("Unsupported algorithm: " + privateKey.algorithm.name);
   }
 
   const url = new URL(request.url);
-  const body: ArrayBuffer | null =
-    request.method !== "GET" && request.method !== "HEAD"
-      ? await request.clone().arrayBuffer()
-      : null;
+  const body: ArrayBuffer | null = bodyBuffer !== undefined
+    ? bodyBuffer
+    : request.method !== "GET" && request.method !== "HEAD"
+    ? await request.clone().arrayBuffer()
+    : null;
 
   const headers = new Headers(request.headers);
   if (!headers.has("Host")) {
@@ -1215,6 +1227,12 @@ export interface DoubleKnockOptions {
   log?: (request: Request) => void;
 
   /**
+   * The request body as ArrayBuffer. If provided, avoids cloning the request body.
+   * @since 1.8.0
+   */
+  body?: ArrayBuffer | null;
+
+  /**
    * The OpenTelemetry tracer provider.  If omitted, the global tracer provider
    * is used.
    */
@@ -1225,13 +1243,13 @@ export interface DoubleKnockOptions {
  * Helper function to create a new Request for redirect handling.
  * @param request The original request.
  * @param location The redirect location.
- * @param body The request body as ArrayBuffer or undefined.
+ * @param body The request body as ArrayBuffer or null.
  * @returns A new Request object for the redirect.
  */
 function createRedirectRequest(
   request: Request,
   location: string,
-  body: ArrayBuffer | undefined,
+  body: ArrayBuffer | null,
 ): Request {
   return new Request(location, {
     method: request.method,
@@ -1269,11 +1287,19 @@ export async function doubleKnock(
   const firstTrySpec: HttpMessageSignaturesSpec = specDeterminer == null
     ? "rfc9421"
     : await specDeterminer.determineSpec(origin);
+
+  // Get the request body once at the top level to avoid multiple clones
+  const body = options.body !== undefined
+    ? options.body
+    : request.method !== "GET" && request.method !== "HEAD"
+    ? await request.clone().arrayBuffer()
+    : null;
+
   let signedRequest = await signRequest(
     request,
     identity.privateKey,
     identity.keyId,
-    { spec: firstTrySpec, tracerProvider },
+    { spec: firstTrySpec, tracerProvider, body },
   );
   log?.(signedRequest);
   let response = await fetch(signedRequest, {
@@ -1288,13 +1314,10 @@ export async function doubleKnock(
     response.headers.has("Location")
   ) {
     const location = response.headers.get("Location")!;
-    const body = request.method !== "GET" && request.method !== "HEAD"
-      ? await request.clone().arrayBuffer()
-      : undefined;
     return doubleKnock(
       createRedirectRequest(request, location, body),
       identity,
-      options,
+      { ...options, body },
     );
   } else if (
     // FIXME: Temporary hotfix for Mastodon RFC 9421 implementation bug (as of 2025-06-19).
@@ -1323,7 +1346,7 @@ export async function doubleKnock(
       request,
       identity.privateKey,
       identity.keyId,
-      { spec, tracerProvider },
+      { spec, tracerProvider, body },
     );
     log?.(signedRequest);
     response = await fetch(signedRequest, {
@@ -1338,17 +1361,10 @@ export async function doubleKnock(
       response.headers.has("Location")
     ) {
       const location = response.headers.get("Location")!;
-      // IMPORTANT: Use arrayBuffer() instead of .body to prevent "TypeError: unusable"
-      // When using .body (ReadableStream), subsequent clone() calls in signRequest functions
-      // will fail because the stream has already been consumed. Using arrayBuffer() ensures
-      // the body can be safely cloned for HTTP signature generation.
-      const body = request.method !== "GET" && request.method !== "HEAD"
-        ? await request.clone().arrayBuffer()
-        : undefined;
       return doubleKnock(
         createRedirectRequest(request, location, body),
         identity,
-        options,
+        { ...options, body },
       );
     } else if (response.status !== 400 && response.status !== 401) {
       await specDeterminer?.rememberSpec(origin, spec);

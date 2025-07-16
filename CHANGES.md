@@ -52,6 +52,15 @@ To be released.
  -  Added `LookupWebFingerOptions.maxRedirection` option.
     [[#248], [#281] by Lee ByeongJun]
 
+ -  Optimized `doubleKnock()` function to avoid multiple request body clones
+    during redirects.  The request body is now read once and reused throughout
+    the entire operation, preventing potential `TypeError: unusable` errors
+    and improving performance.  [[#300] by Fabien O'Carroll]
+
+     -  Added `SignRequestOptions.body` option.
+     -  Added `DoubleKnockOptions.body` option.
+     -  Updated internal signing functions to accept pre-read body buffers.
+
  -  Added `fedify webfinger` command. This command allows users to look up
     WebFinger information for a given resource.
     [[#260], [#278] by ChanHaeng Lee]
@@ -75,6 +84,7 @@ To be released.
 [#281]: https://github.com/fedify-dev/fedify/pull/281
 [#282]: https://github.com/fedify-dev/fedify/pull/282
 [#285]: https://github.com/fedify-dev/fedify/pull/285
+[#300]: https://github.com/fedify-dev/fedify/pull/300
 
 
 Version 1.7.5
