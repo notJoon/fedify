@@ -154,15 +154,30 @@ Deno.test("rgbTo256Color - check grayscale", () => {
   assertEquals(results, EXPECTED_GRAY_IDX);
 });
 
-Deno.test("getAsciiArt - Darkest Letter", () => {
+Deno.test("getAsciiArt - Darkest Letter", async () => {
   // Create black and white 1x1 images using Jimp constructor
   const blackImage = new Jimp({ width: 1, height: 1, color: 0x000000ff });
+  const blackImageBuffer = await blackImage.getBuffer("image/webp");
 
   const blackResult = getAsciiArt(
-    blackImage as unknown as Parameters<typeof getAsciiArt>[0],
+    await Jimp.read(blackImageBuffer),
     1,
     true,
   );
 
-  assertEquals(blackResult.includes("█"), true);
+  assertEquals(blackResult, "█");
+});
+
+Deno.test("getAsciiArt - Brightest Letter", async () => {
+  // Create black and white 1x1 images using Jimp constructor
+  const whiteImage = new Jimp({ width: 1, height: 1, color: 0xffffffff });
+  const whiteImageBuffer = await whiteImage.getBuffer("image/webp");
+
+  const whiteResult = getAsciiArt(
+    await Jimp.read(whiteImageBuffer),
+    1,
+    true,
+  );
+
+  assertEquals(whiteResult, " ");
 });
