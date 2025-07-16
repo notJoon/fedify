@@ -1011,14 +1011,12 @@ await configure({
       console.log(
         colors.bold.yellow("🔍 DRY RUN MODE - No files will be created\n"),
       );
+    }
 
-      // check if directory exists and empty
+    // Check if directory is empty
+    const checkDirectoryEmpty = async (path: string) => {
       try {
-        const entries = [];
-        for await (const entry of Deno.readDir(dir)) {
-          entries.push(entry);
-        }
-        if (entries.length > 0) {
+        for await (const _ of Deno.readDir(path)) {
           console.error("The directory is not empty.  Aborting.");
           Deno.exit(1);
         }
@@ -1026,14 +1024,14 @@ await configure({
         if (!(e instanceof Deno.errors.NotFound)) {
           throw e;
         }
-        // directory doesn't exist. no problem here.
       }
+    };
+
+    if (dryRun) {
+      await checkDirectoryEmpty(dir);
     } else {
       await Deno.mkdir(dir, { recursive: true });
-      for await (const _ of Deno.readDir(dir)) {
-        console.error("The directory is not empty.  Aborting.");
-        Deno.exit(1);
-      }
+      await checkDirectoryEmpty(dir);
     }
     if (initializer.command != null) {
       if (dryRun) {
@@ -1060,16 +1058,7 @@ await configure({
     }
     if (runtime !== "deno") {
       const packageJsonPath = join(dir, "package.json");
-      if (dryRun) {
-        // create package.json if it doesn't exist
-        try {
-          await Deno.stat(packageJsonPath);
-        } catch (e) {
-          if (e instanceof Deno.errors.NotFound) {
-            // show files list
-          } else throw e;
-        }
-      } else {
+      if (!dryRun) {
         try {
           await Deno.stat(packageJsonPath);
         } catch (e) {
@@ -1081,21 +1070,18 @@ await configure({
     }
     const dependencies: Record<string, string> = {
       "@fedify/fedify": `^${await getLatestFedifyVersion(metadata.version)}`,
-      "@logtape/logtape": "^0.8.2", // TODO: use latest version?
+      "@logtape/logtape": "^0.8.2",
       ...initializer.dependencies,
       ...kvStoreDesc?.dependencies,
       ...mqDesc?.dependencies,
     };
     if (dryRun) {
-      // print out dependencies that would be installed
       const deps = Object.entries(dependencies)
         .map(([name, version]) => `${name}@${version}`)
         .join("\n");
       if (deps) {
         console.log(colors.bold.cyan("📦 Would install dependencies:"));
-        console.log(colors.gray("─".repeat(60)));
         console.log(`${deps}\n`);
-        console.log(colors.gray("─".repeat(60)));
       }
     } else {
       await addDependencies(
@@ -1113,7 +1099,6 @@ await configure({
         ...mqDesc?.devDependencies,
       };
       if (dryRun) {
-        // show dev dependencies that would be installed
         const devDeps = Object.entries(devDependencies)
           .map(([name, version]) => `${name}@${version}`)
           .join(" ");
@@ -1132,13 +1117,10 @@ await configure({
       }
     }
     if (dryRun) {
-      console.log(colors.bold.green("Would create files:\n"));
+      console.log(colors.bold.green("📄 Would create files:\n"));
       for (const [filename, content] of Object.entries(files)) {
         const path = join(dir, filename);
-        console.log(colors.green(`📄 ${path}`));
-        console.log(colors.gray("─".repeat(60)));
-        console.log(content);
-        console.log(colors.gray("─".repeat(60)) + "\n");
+        displayFileContent(path, content);
       }
     } else {
       for (const [filename, content] of Object.entries(files)) {
@@ -1258,7 +1240,7 @@ await configure({
       );
     } else {
       if (dryRun) {
-        console.log(colors.bold.green("📄 Would create/update JSON files:\n"));
+        console.log(colors.bold.green("Would create/update JSON files:\n"));
       }
       await rewriteJsonFile(
         join(dir, "package.json"),
@@ -1400,6 +1382,18 @@ ${d("                   ")}  ${f("                      |___/")}
 `);
 }
 
+function displayFileContent(
+  path: string,
+  content: string,
+  emoji: string = "📄",
+  pathColor: (text: string) => string = colors.green,
+) {
+  console.log(pathColor(`${emoji} ${path}`));
+  console.log(colors.gray("─".repeat(60)));
+  console.log(content);
+  console.log(colors.gray("─".repeat(60)) + "\n");
+}
+
 async function isCommandAvailable(
   { checkCommand, outputPattern }: {
     checkCommand: [string, ...string[]];
@@ -1532,10 +1526,7 @@ async function rewriteJsonFile(
   json = rewriter(json);
 
   if (dryRun) {
-    console.log(colors.green(`📄 ${path}`));
-    console.log(colors.gray("─".repeat(60)));
-    console.log(JSON.stringify(json, null, 2));
-    console.log(colors.gray("─".repeat(60)) + "\n");
+    displayFileContent(path, JSON.stringify(json, null, 2));
   } else {
     await Deno.mkdir(dirname(path), { recursive: true });
     await Deno.writeTextFile(path, JSON.stringify(json, null, 2) + "\n");
