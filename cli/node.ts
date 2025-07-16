@@ -277,6 +277,21 @@ const ASCII_CHARS =
   "█▓▒░@#B8&WM%*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 // cSpell: enable
 
+const CUBE_VALUES = [0, 95, 135, 175, 215, 255];
+
+const findClosestIndex = (value: number): number => {
+  let minDiff = Infinity;
+  let closestIndex = 0;
+  for (let idx = 0; idx < CUBE_VALUES.length; idx++) {
+    const diff = Math.abs(value - CUBE_VALUES[idx]);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIndex = idx;
+    }
+  }
+  return closestIndex;
+};
+
 export function rgbTo256Color(r: number, g: number, b: number): number {
   // Check if it's a grayscale color first (when all RGB values are very close)
   const gray = Math.round((r + g + b) / 3);
@@ -285,8 +300,7 @@ export function rgbTo256Color(r: number, g: number, b: number): number {
 
   // Handle grayscale colors (colors 232-255) - but exclude exact cube values
   if (isGrayscale) {
-    const cubeValues = [0, 95, 135, 175, 215, 255];
-    const isExactCubeValue = cubeValues.includes(r) && r === g && g === b;
+    const isExactCubeValue = CUBE_VALUES.includes(r) && r === g && g === b;
 
     if (!isExactCubeValue) {
       if (gray < 8) return 232; // Darkest grayscale
@@ -301,20 +315,6 @@ export function rgbTo256Color(r: number, g: number, b: number): number {
 
   // Handle RGB colors (colors 16-231)
   // XTerm 256 color cube values: [0, 95, 135, 175, 215, 255]
-  const cubeValues = [0, 95, 135, 175, 215, 255];
-
-  const findClosestIndex = (value: number): number => {
-    let minDiff = Infinity;
-    let closestIndex = 0;
-    for (let i = 0; i < cubeValues.length; i++) {
-      const diff = Math.abs(value - cubeValues[i]);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestIndex = i;
-      }
-    }
-    return closestIndex;
-  };
 
   const r6 = findClosestIndex(r);
   const g6 = findClosestIndex(g);
