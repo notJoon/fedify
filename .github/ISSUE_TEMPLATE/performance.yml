@@ -7,7 +7,7 @@ body:
       value: |
         Optimizations aimed at improving speed or resource usage.
         
-        - Includes: Before/after benchmarks, affected areas.
+        - Includes: benchmarks, affected areas.
         - Goal: Make the system faster or more efficient.
 
   - type: textarea
@@ -41,4 +41,4 @@ body:
   - type: textarea
     attributes:
       label: Benchmarks
-      description: Provide before/after benchmarks or other metrics to demonstrate the performance improvement.
+      description: Share any profiling data, timing comparisons, or relevant test results.
