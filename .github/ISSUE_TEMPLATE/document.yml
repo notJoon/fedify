@@ -1,5 +1,5 @@
 name: "Documentation Issue"
-description: "Report missing, incorrect, or outdated documentation"
+description: "Documentation related"
 labels: [ "type/documentation" ]
 body:
   - type: markdown

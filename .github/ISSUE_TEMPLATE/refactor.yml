@@ -1,31 +1,14 @@
-name: "Refactor or Performance or Test Issue"
-description: "Suggest internal code improvements, optimizations, or test updates"
-labels: [ "type/refactor", "type/performance", "type/test" ]
+name: "Refactor Issue"
+description: "Code refactoring"
+labels: [ "type/refactor" ]
 body:
   - type: markdown
     attributes:
       value: |
-        ### Refactor
         Internal code restructuring without changing behavior.
         
         - Includes: Target area, motivation, and risk.
         - Goal: Improve maintainability or readability.
-        
-        ### Performance
-        Optimizations aimed at improving speed or resource usage.
-        
-        - Includes: Before/after benchmarks, affected areas.
-        - Goal: Make the system faster or more efficient.
-        
-        ### Test
-        Improving or adding test coverage.
-        
-        - Includes: Scope, test strategy, and rationale.
-        - Goal: Ensure stability and prevent regressions.
-        
-        ---
-        
-        Please keep only one appropriate type/* label and remove the others if present.
 
   - type: textarea
     attributes:

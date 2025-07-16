@@ -1,25 +1,14 @@
-name: "Maintenance or Chore Issue"
-description: "Track maintenance tasks, build updates, or CI/CD improvements"
-labels: [ "type/maintenance", "type/chore" ]
+name: "Chore Issue"
+description: "Build, configuration, and maintenance tasks"
+labels: [ "type/chore" ]
 body:
   - type: markdown
     attributes:
       value: |
-        ### Maintenance  
-        Tasks that keep the codebase stable and healthy.
-        
-        - Includes: Dependency updates, cleanup of deprecated code, resolving warnings.
-        - Goal: Prevent technical debt and ensure long-term maintainability.
-        
-        ### Chore  
         Non-functional tasks related to configuration, tooling, or infrastructure.
         
         - Includes: CI/CD changes, build system tweaks, formatting configs.
         - Goal: Improve the development workflow and internal operations.
-        
-        ---
-        
-        Please keep only one appropriate type/* label and remove the others if present.
 
   - type: textarea
     attributes:
