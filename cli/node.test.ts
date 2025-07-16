@@ -49,7 +49,6 @@ Deno.test("getFaviconUrl - favicon.ico and apple-touch-icon.png", async () => {
   });
 
   const result = await getFaviconUrl("https://example.com/");
-  console.log(result);
   assertEquals(result.href, "https://example.com/favicon.ico");
 
   fetchMock.hardReset();
@@ -75,7 +74,6 @@ Deno.test("getFaviconUrl - svg icons only falls back to /favicon.ico", async () 
   });
 
   const result = await getFaviconUrl("https://example.com/");
-  console.log(result);
   assertEquals(result.href, "https://example.com/favicon.ico");
 
   fetchMock.hardReset();
@@ -107,12 +105,12 @@ Deno.test("getFaviconUrl - falls back to /favicon.ico", async () => {
 
 Deno.test("rgbTo256Color - check RGB cube", () => {
   const CUBE_VALUES = [0, 95, 135, 175, 215, 255];
-  const COLORS: Array<{ r: number; g: number; b: number }> = [];
+  const colors: Array<{ r: number; g: number; b: number }> = [];
 
   for (let r = 0; r < 6; r++) {
     for (let g = 0; g < 6; g++) {
       for (let b = 0; b < 6; b++) {
-        COLORS.push({
+        colors.push({
           r: CUBE_VALUES[r],
           g: CUBE_VALUES[g],
           b: CUBE_VALUES[b],
@@ -123,19 +121,19 @@ Deno.test("rgbTo256Color - check RGB cube", () => {
 
   // Expected color indices for the above colors (16-231)
   // RGB cube: 6x6x6 = 216 colors, indices 16-231
-  const EXPECTED_CUBE_IDX = Array.from(
-    { length: COLORS.length },
+  const expected_color_idx = Array.from(
+    { length: colors.length },
     (_, i) => 16 + i,
   );
 
-  const results = COLORS.map((COLOR) =>
-    rgbTo256Color(COLOR.r, COLOR.g, COLOR.b)
+  const results = colors.map((color) =>
+    rgbTo256Color(color.r, color.g, color.b)
   );
-  assertEquals(results, EXPECTED_CUBE_IDX);
+  assertEquals(results, expected_color_idx);
 });
 
 Deno.test("rgbTo256Color - check grayscale", () => {
-  const GRAYSCALE = Array.from({ length: 24 }).map(
+  const grayscale = Array.from({ length: 24 }).map(
     (_, idx) => ({
       r: 8 + idx * 10,
       g: 8 + idx * 10,
@@ -143,15 +141,15 @@ Deno.test("rgbTo256Color - check grayscale", () => {
     }),
   );
 
-  const EXPECTED_GRAY_IDX = Array.from(
-    { length: GRAYSCALE.length },
+  const expected_gray_idx = Array.from(
+    { length: grayscale.length },
     (_, i) => 232 + i,
   );
 
-  const results = GRAYSCALE.map((GRAY) =>
+  const results = grayscale.map((GRAY) =>
     rgbTo256Color(GRAY.r, GRAY.g, GRAY.b)
   );
-  assertEquals(results, EXPECTED_GRAY_IDX);
+  assertEquals(results, expected_gray_idx);
 });
 
 Deno.test("getAsciiArt - Darkest Letter", async () => {
