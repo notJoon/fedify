@@ -1389,9 +1389,9 @@ function displayFileContent(
   pathColor: (text: string) => string = colors.green,
 ) {
   console.log(pathColor(`${emoji} ${path}`));
-  console.log(colors.gray("─".repeat(60)));
+  console.error(colors.gray("─".repeat(60)));
   console.log(content);
-  console.log(colors.gray("─".repeat(60)) + "\n");
+  console.error(colors.gray("─".repeat(60)) + "\n");
 }
 
 async function isCommandAvailable(
