@@ -259,10 +259,14 @@ export const Jimp = createJimp({
 });
 
 function checkTerminalColorSupport(): "truecolor" | "256color" | "none" {
-  const colorTerm = Deno.env.get("COLORTERM");
-  const term = Deno.env.get("TERM");
+  // Check if colors are explicitly disabled
+  const noColor = Deno.env.get("NO_COLOR");
+  if (noColor != null && noColor !== "") {
+    return "none";
+  }
 
   // Check for true color (24-bit) support
+  const colorTerm = Deno.env.get("COLORTERM");
   if (
     colorTerm != null &&
     (colorTerm.includes("24bit") || colorTerm.includes("truecolor"))
@@ -271,6 +275,7 @@ function checkTerminalColorSupport(): "truecolor" | "256color" | "none" {
   }
 
   // Check for xterm 256-color support
+  const term = Deno.env.get("TERM");
   if (
     term != null &&
     (term.includes("256color") ||
@@ -279,12 +284,6 @@ function checkTerminalColorSupport(): "truecolor" | "256color" | "none" {
       term === "tmux")
   ) {
     return "256color";
-  }
-
-  // Check if colors are explicitly disabled
-  const noColor = Deno.env.get("NO_COLOR");
-  if (noColor != null && noColor !== "") {
-    return "none";
   }
 
   // Fallback: assume basic color support if TERM is set
