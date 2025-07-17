@@ -184,7 +184,7 @@ Deno.test("getAsciiArt - Darkest Letter with 256 color support", async () => {
   const blackResult = getAsciiArt(
     await createTestImage(0x000000ff),
     1,
-    "none",
+    "256color",
   );
 
   assertEquals(blackResult, "\u001b[38;5;16m█\u001b[39m");
@@ -194,7 +194,7 @@ Deno.test("getAsciiArt - Brightest Letter with 256 color support", async () => {
   const whiteResult = getAsciiArt(
     await createTestImage(0xffffffff),
     1,
-    "none",
+    "256color",
   );
 
   assertEquals(whiteResult, "\u001b[38;5;231m \u001b[39m");
@@ -204,7 +204,7 @@ Deno.test("getAsciiArt - Darkest Letter with true color support", async () => {
   const blackResult = getAsciiArt(
     await createTestImage(0x000000ff),
     1,
-    "none",
+    "truecolor",
   );
 
   assertEquals(blackResult, "\u001b[38;2;0;0;0m█\u001b[39m");
@@ -214,7 +214,7 @@ Deno.test("getAsciiArt - Brightest Letter with true color support", async () => 
   const whiteResult = getAsciiArt(
     await createTestImage(0xffffffff),
     1,
-    "none",
+    "truecolor",
   );
 
   assertEquals(whiteResult, "\u001b[38;2;255;255;255m \u001b[39m");
