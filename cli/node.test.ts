@@ -152,7 +152,9 @@ Deno.test("rgbTo256Color - check grayscale", () => {
   assertEquals(results, expected_gray_idx);
 });
 
-async function createTestImage(color: number): Promise<Awaited<ReturnType<typeof Jimp.read>>> {
+async function createTestImage(
+  color: number,
+): Promise<Awaited<ReturnType<typeof Jimp.read>>> {
   const image = new Jimp({ width: 1, height: 1, color });
   const imageBuffer = await image.getBuffer("image/webp");
   return Jimp.read(imageBuffer);
