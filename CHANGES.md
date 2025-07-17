@@ -82,7 +82,7 @@ To be released.
 
   - Fixed a bug where the getAsciiArt tests failed on terminal emulators with 
     different color support capabilities. Enhanced color detection to support true 
-    color, 256-color, and non-color environments with appropriate test coverage. [[#304] by contributor]
+    color, 256-color, and non-color environments with appropriate test coverage. [[#304] by Hyeonseo Kim]
 
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#248]: https://github.com/fedify-dev/fedify/issues/248
