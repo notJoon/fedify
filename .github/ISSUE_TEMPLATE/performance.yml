@@ -37,10 +37,10 @@ body:
     attributes:
       label: Risk Assessment
       description: Is there any risk of regressions or unintended side effects?
-    validations:
-      required: false
 
   - type: textarea
     attributes:
       label: Benchmarks
       description: Share any profiling data, timing comparisons, or relevant test results.
+    validations:
+      required: true
