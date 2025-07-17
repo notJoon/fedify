@@ -155,7 +155,7 @@ export async function* generateConstructor(
         if ("${property.pluralName}" in values && \
             values.${property.pluralName} != null) {
       `;
-      if (isNonFunctionalProperty(property) && property.singularAccessor) {
+      if (property && property.singularAccessor) {
         yield `
           if ("${property.singularName}" in values &&
               values.${property.singularName} != null) {
