@@ -80,11 +80,6 @@ To be released.
      render the favicon in terminal emulators that do not support 24-bit
      colors.  [[#168], [#282] by Hyeonseo Kim]
 
- -  Fixed TypeScript discriminated union type narrowing issues in codegen
-    that occurred with Deno 2.4.2's stricter type checking.  Added type
-    guard functions `isNonFunctionalProperty()` and `hasSingularAccessor()`
-    to properly narrow `PropertySchema` types.  [[#303], [#305] by Lee ByeongJun]
-
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#248]: https://github.com/fedify-dev/fedify/issues/248
 [#260]: https://github.com/fedify-dev/fedify/issues/260
@@ -96,8 +91,6 @@ To be released.
 [#285]: https://github.com/fedify-dev/fedify/pull/285
 [#298]: https://github.com/fedify-dev/fedify/pull/298
 [#300]: https://github.com/fedify-dev/fedify/pull/300
-[#303]: https://github.com/fedify-dev/fedify/issues/303
-[#305]: https://github.com/fedify-dev/fedify/pull/305
 
 
 Version 1.7.5
