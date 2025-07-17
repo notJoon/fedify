@@ -7,8 +7,8 @@ Briefly describe the main purpose and scope of this PR.
 Reference the related issue(s) by number.
 e.g.
 
-- closes #123
-- fixes #456
+- closes #XXX
+- fixes #XXX
 
 ## Changes
 
