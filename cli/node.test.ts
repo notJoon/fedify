@@ -152,13 +152,15 @@ Deno.test("rgbTo256Color - check grayscale", () => {
   assertEquals(results, expected_gray_idx);
 });
 
-Deno.test("getAsciiArt - Darkest Letter without color support", async () => {
-  // Create black and white 1x1 images using Jimp constructor
-  const blackImage = new Jimp({ width: 1, height: 1, color: 0x000000ff });
-  const blackImageBuffer = await blackImage.getBuffer("image/webp");
+async function createTestImage(color: number): Promise<Awaited<ReturnType<typeof Jimp.read>>> {
+  const image = new Jimp({ width: 1, height: 1, color });
+  const imageBuffer = await image.getBuffer("image/webp");
+  return Jimp.read(imageBuffer);
+}
 
+Deno.test("getAsciiArt - Darkest Letter without color support", async () => {
   const blackResult = getAsciiArt(
-    await Jimp.read(blackImageBuffer),
+    await createTestImage(0x000000ff),
     1,
     "none",
   );
@@ -167,12 +169,8 @@ Deno.test("getAsciiArt - Darkest Letter without color support", async () => {
 });
 
 Deno.test("getAsciiArt - Brightest Letter without color support", async () => {
-  // Create black and white 1x1 images using Jimp constructor
-  const whiteImage = new Jimp({ width: 1, height: 1, color: 0xffffffff });
-  const whiteImageBuffer = await whiteImage.getBuffer("image/webp");
-
   const whiteResult = getAsciiArt(
-    await Jimp.read(whiteImageBuffer),
+    await createTestImage(0xffffffff),
     1,
     "none",
   );
@@ -181,56 +179,40 @@ Deno.test("getAsciiArt - Brightest Letter without color support", async () => {
 });
 
 Deno.test("getAsciiArt - Darkest Letter with 256 color support", async () => {
-  // Create black and white 1x1 images using Jimp constructor
-  const blackImage = new Jimp({ width: 1, height: 1, color: 0x000000ff });
-  const blackImageBuffer = await blackImage.getBuffer("image/webp");
-
   const blackResult = getAsciiArt(
-    await Jimp.read(blackImageBuffer),
+    await createTestImage(0x000000ff),
     1,
-    "256color",
+    "none",
   );
 
   assertEquals(blackResult, "\u001b[38;5;16m█\u001b[39m");
 });
 
 Deno.test("getAsciiArt - Brightest Letter with 256 color support", async () => {
-  // Create black and white 1x1 images using Jimp constructor
-  const whiteImage = new Jimp({ width: 1, height: 1, color: 0xffffffff });
-  const whiteImageBuffer = await whiteImage.getBuffer("image/webp");
-
   const whiteResult = getAsciiArt(
-    await Jimp.read(whiteImageBuffer),
+    await createTestImage(0xffffffff),
     1,
-    "256color",
+    "none",
   );
 
   assertEquals(whiteResult, "\u001b[38;5;231m \u001b[39m");
 });
 
 Deno.test("getAsciiArt - Darkest Letter with true color support", async () => {
-  // Create black and white 1x1 images using Jimp constructor
-  const blackImage = new Jimp({ width: 1, height: 1, color: 0x000000ff });
-  const blackImageBuffer = await blackImage.getBuffer("image/webp");
-
   const blackResult = getAsciiArt(
-    await Jimp.read(blackImageBuffer),
+    await createTestImage(0x000000ff),
     1,
-    "truecolor",
+    "none",
   );
 
   assertEquals(blackResult, "\u001b[38;2;0;0;0m█\u001b[39m");
 });
 
 Deno.test("getAsciiArt - Brightest Letter with true color support", async () => {
-  // Create black and white 1x1 images using Jimp constructor
-  const whiteImage = new Jimp({ width: 1, height: 1, color: 0xffffffff });
-  const whiteImageBuffer = await whiteImage.getBuffer("image/webp");
-
   const whiteResult = getAsciiArt(
-    await Jimp.read(whiteImageBuffer),
+    await createTestImage(0xffffffff),
     1,
-    "truecolor",
+    "none",
   );
 
   assertEquals(whiteResult, "\u001b[38;2;255;255;255m \u001b[39m");
