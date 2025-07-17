@@ -89,7 +89,7 @@ export function getTypeId(
 export function getTypeId(
   object: Object | Link | undefined | null,
 ): URL | undefined | null {
-  if (object == null) return object;
+  if (object == null) return object as undefined | null;
   const cls = object.constructor as
     & (new (...args: unknown[]) => Object | Link)
     & {
