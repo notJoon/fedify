@@ -4,8 +4,7 @@ Briefly describe the main purpose and scope of this PR.
 
 ## Related Issue
 
-Reference the related issue(s) by number.
-e.g.
+Reference the related issue(s) by number, e.g.:
 
 - closes #XXX
 - fixes #XXX
