@@ -78,7 +78,7 @@ To be released.
 
   -  Fixed a bug where the `fedify node` command had failed to correctly
      render the favicon in terminal emulators that do not support 24-bit
-     colors.  [[#168], [#282] by Hyeonseo Kim]
+     colors.  [[#168], [#282], [#304] by Hyeonseo Kim]
 
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#248]: https://github.com/fedify-dev/fedify/issues/248
@@ -91,6 +91,7 @@ To be released.
 [#285]: https://github.com/fedify-dev/fedify/pull/285
 [#298]: https://github.com/fedify-dev/fedify/pull/298
 [#300]: https://github.com/fedify-dev/fedify/pull/300
+[#304]: https://github.com/fedify-dev/fedify/issues/304
 
 
 Version 1.7.5

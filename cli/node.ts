@@ -98,8 +98,8 @@ export const command = new Command()
             buffer = images[0].buffer;
           }
           const image = await Jimp.read(buffer);
-          const trueColorSupport = checkTerminalTrueColorSupport();
-          layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, trueColorSupport)
+          const colorSupport = checkTerminalColorSupport();
+          layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, colorSupport)
             .split("\n").map((line) => ` ${line}  `);
           defaultWidth = 41;
         } else {
@@ -258,16 +258,40 @@ export const Jimp = createJimp({
   plugins: defaultPlugins,
 });
 
-function checkTerminalTrueColorSupport() {
-  const colorTerm = Deno.env.get("COLORTERM");
-
-  if (
-    colorTerm == null ||
-    !(colorTerm.includes("24bit") || colorTerm.includes("truecolor"))
-  ) {
-    return false;
+function checkTerminalColorSupport(): "truecolor" | "256color" | "none" {
+  // Check if colors are explicitly disabled
+  const noColor = Deno.env.get("NO_COLOR");
+  if (noColor != null && noColor !== "") {
+    return "none";
   }
-  return true;
+
+  // Check for true color (24-bit) support
+  const colorTerm = Deno.env.get("COLORTERM");
+  if (
+    colorTerm != null &&
+    (colorTerm.includes("24bit") || colorTerm.includes("truecolor"))
+  ) {
+    return "truecolor";
+  }
+
+  // Check for xterm 256-color support
+  const term = Deno.env.get("TERM");
+  if (
+    term != null &&
+    (term.includes("256color") ||
+      term.includes("xterm") ||
+      term === "screen" ||
+      term === "tmux")
+  ) {
+    return "256color";
+  }
+
+  // Fallback: assume basic color support if TERM is set
+  if (term != null && term !== "dumb") {
+    return "256color";
+  }
+
+  return "none";
 }
 
 const DEFAULT_IMAGE_WIDTH = 38;
@@ -326,7 +350,7 @@ export function rgbTo256Color(r: number, g: number, b: number): number {
 export function getAsciiArt(
   image: Awaited<ReturnType<typeof Jimp.read>>,
   width = DEFAULT_IMAGE_WIDTH,
-  trueColorSupport: boolean,
+  colorSupport: "truecolor" | "256color" | "none",
 ): string {
   const ratio = image.width / image.height;
   const height = Math.round(
@@ -348,11 +372,13 @@ export function getAsciiArt(
       );
       const char = ASCII_CHARS[charIndex];
 
-      if (trueColorSupport) {
+      if (colorSupport === "truecolor") {
         art += colors.rgb24(char, color);
-      } else {
+      } else if (colorSupport === "256color") {
         const colorIndex = rgbTo256Color(color.r, color.g, color.b);
         art += colors.rgb8(char, colorIndex);
+      } else {
+        art += char;
       }
     }
     if (y < height - 1) art += "\n";
