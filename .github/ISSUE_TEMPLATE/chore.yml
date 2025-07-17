@@ -1,7 +1,8 @@
 name: Maintenance task
 description: >-
   Routine maintenance, build configuration, tooling updates,
-  and other non-functional improvementslabels: [ "type/chore" ]
+  and other non-functional improvements
+labels: [ "type/chore" ]
 body:
   - type: markdown
     attributes:
