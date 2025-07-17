@@ -1,5 +1,7 @@
-name: "Documentation issue"
-description: "Documentation related"
+name: Documentation
+description: >-
+  Report missing, outdated, or incorrect documentation that needs
+  improvement
 labels: [ "type/documentation" ]
 body:
   - type: markdown

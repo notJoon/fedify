@@ -1,5 +1,5 @@
-name: "Bug report"
-description: "Report a bug or unexpected behavior"
+name: Bug report
+description: Report a bug or unexpected behavior
 labels: [ "type/bug" ]
 body:
   - type: markdown

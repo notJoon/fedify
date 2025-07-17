@@ -1,6 +1,7 @@
-name: "Chore issue"
-description: "Build, configuration, and maintenance tasks"
-labels: [ "type/chore" ]
+name: Maintenance task
+description: >-
+  Routine maintenance, build configuration, tooling updates,
+  and other non-functional improvementslabels: [ "type/chore" ]
 body:
   - type: markdown
     attributes:

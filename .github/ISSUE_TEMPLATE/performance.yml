@@ -1,5 +1,7 @@
-name: "Performance issue"
-description: "Performance improvements"
+name: Performance optimization
+description: >-
+  Report performance bottlenecks or suggest optimizations for speed and
+  efficiency
 labels: [ "type/performance" ]
 body:
   - type: markdown

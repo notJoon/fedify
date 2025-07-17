@@ -5,10 +5,10 @@ Briefly describe the main purpose and scope of this PR.
 ## Related Issue
 
 Reference the related issue(s) by number.
+e.g.
 
-[//]: # (- closes #123)
-
-[//]: # (- fixes #456)
+- closes #123
+- fixes #456
 
 ## Changes
 

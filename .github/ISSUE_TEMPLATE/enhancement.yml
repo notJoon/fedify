@@ -1,5 +1,5 @@
-name: "Enhancement issue"
-description: "Improvements to existing features"
+name: Enhancement
+description: Improvements to existing features
 labels: [ "type/enhancement" ]
 body:
   - type: markdown

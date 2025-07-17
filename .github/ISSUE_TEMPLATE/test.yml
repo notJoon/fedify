@@ -1,5 +1,6 @@
-name: "Test issue"
-description: "Testing related"
+name: Test coverage
+description: >-
+  Add or improve test coverage, fix broken tests, or enhance testing infrastructure
 labels: [ "type/test" ]
 body:
   - type: markdown

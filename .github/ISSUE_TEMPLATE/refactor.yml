@@ -1,5 +1,6 @@
-name: "Refactor issue"
-description: "Code refactoring"
+name: Code refactoring
+description: >-
+  Propose code structure improvements without changing external behavior
 labels: [ "type/refactor" ]
 body:
   - type: markdown

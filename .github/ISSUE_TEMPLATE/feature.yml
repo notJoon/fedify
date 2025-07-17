@@ -1,5 +1,6 @@
-name: "Feature issue"
-description: "New feature requests"
+name: Feature request
+description: >-
+  Propose new functionality or capabilities to be added to the Fedify project
 labels: [ "type/feature" ]
 body:
   - type: markdown
