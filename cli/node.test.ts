@@ -184,7 +184,7 @@ Deno.test("getAsciiArt - Darkest Letter with 256 color support", async () => {
   // Create black and white 1x1 images using Jimp constructor
   const blackImage = new Jimp({ width: 1, height: 1, color: 0x000000ff });
   const blackImageBuffer = await blackImage.getBuffer("image/webp");
-  
+
   const blackResult = getAsciiArt(
     await Jimp.read(blackImageBuffer),
     1,
@@ -212,7 +212,7 @@ Deno.test("getAsciiArt - Darkest Letter with true color support", async () => {
   // Create black and white 1x1 images using Jimp constructor
   const blackImage = new Jimp({ width: 1, height: 1, color: 0x000000ff });
   const blackImageBuffer = await blackImage.getBuffer("image/webp");
-  
+
   const blackResult = getAsciiArt(
     await Jimp.read(blackImageBuffer),
     1,
