@@ -1,0 +1,267 @@
+import type { KvKey, KvStore, KvStoreSetOptions } from "@fedify/fedify";
+import { Temporal } from "@js-temporal/polyfill";
+import { getLogger } from "@logtape/logtape";
+import { isEqual } from "es-toolkit";
+import type { DatabaseSync } from "node:sqlite";
+
+const logger = getLogger(["fedify", "sqlite", "kv"]);
+
+/**
+ * Options for the SQLite key-value store.
+ */
+export interface SqliteKvStoreOptions {
+  /**
+   * The table name to use for the key-value store.
+   * Only letters, digits, and underscores are allowed.
+   * `"fedify_kv_v2"` by default.
+   * @default `"fedify_kv_v2"`
+   */
+  tableName?: string;
+
+  /**
+   * Whether the table has been initialized.  `false` by default.
+   * @default `false`
+   */
+  initialized?: boolean;
+}
+
+/**
+ * A key-value store that uses SQLite as the underlying storage.
+ *
+ * @example
+ * ```ts
+ * import { createFederation } from "@fedify/fedify";
+ * import { SqliteKvStore } from "@fedify/sqlite";
+ * import { DatabaseSync } from "node:sqlite";
+ *
+ * const db = new DatabaseSync(":memory:");
+ * const federation = createFederation({
+ *   // ...
+ *   kv: new SqliteKvStore(db),
+ * });
+ * ```
+ */
+export class SqliteKvStore implements KvStore {
+  #initialized: boolean;
+  #db: DatabaseSync;
+  readonly #tableName: string;
+
+  constructor(
+    readonly db: DatabaseSync,
+    readonly options: SqliteKvStoreOptions = {},
+  ) {
+    this.#db = db;
+    this.#initialized = options.initialized ?? false;
+    this.#tableName = options.tableName ?? "fedify_kv_v2";
+  }
+
+  /**
+   * {@inheritDoc KvStore.get}
+   */
+  async get<T = unknown>(key: KvKey): Promise<T | undefined> {
+    await this.initialize();
+
+    const encodedKey = this.#encodeKey(key);
+    const now = Temporal.Now.instant().epochMilliseconds;
+
+    const result = this.#db
+      .prepare(`
+      SELECT value 
+      FROM "${this.#tableName}" 
+      WHERE key = ? AND (expires_at IS NULL OR expires_at > ?)
+    `)
+      .get(encodedKey, now);
+
+    if (!result) {
+      return undefined;
+    }
+    return this.#decodeValue((result as { value: string }).value) as T;
+  }
+
+  /**
+   * {@inheritDoc KvStore.set}
+   */
+  async set(
+    key: KvKey,
+    value: unknown,
+    options?: KvStoreSetOptions,
+  ): Promise<void> {
+    await this.initialize();
+
+    if (value === undefined) {
+      return;
+    }
+
+    const encodedKey = this.#encodeKey(key);
+    const encodedValue = this.#encodeValue(value);
+    const now = Temporal.Now.instant().epochMilliseconds;
+    const expiresAt = options?.ttl !== undefined
+      ? now + options.ttl.total({ unit: "milliseconds" })
+      : null;
+
+    this.#db
+      .prepare(`
+        INSERT OR REPLACE INTO "${this.#tableName}" (key, value, created, expires_at)
+        VALUES (?, ?, ?, ?)
+      `)
+      .run(encodedKey, encodedValue, now, expiresAt);
+
+    await this.#expire();
+  }
+
+  /**
+   * {@inheritDoc KvStore.delete}
+   */
+  async delete(key: KvKey): Promise<void> {
+    await this.initialize();
+
+    const encodedKey = this.#encodeKey(key);
+
+    this.#db
+      .prepare(`
+      DELETE FROM "${this.#tableName}" WHERE key = ?
+    `)
+      .run(encodedKey);
+    await this.#expire();
+  }
+
+  /**
+   * {@inheritDoc KvStore.cas}
+   */
+  async cas(
+    key: KvKey,
+    expectedValue: unknown,
+    newValue: unknown,
+    options?: KvStoreSetOptions,
+  ): Promise<boolean> {
+    await this.initialize();
+
+    const encodedKey = this.#encodeKey(key);
+    const newValueJson = this.#encodeValue(newValue);
+    const now = Temporal.Now.instant().epochMilliseconds;
+    const expiresAt = options?.ttl !== undefined
+      ? now + options.ttl.total({ unit: "milliseconds" })
+      : null;
+
+    try {
+      this.#db.exec("BEGIN IMMEDIATE");
+
+      const currentResult = this.#db
+        .prepare(`
+          SELECT value 
+          FROM "${this.#tableName}" 
+          WHERE key = ? AND (expires_at IS NULL OR expires_at > ?)
+        `)
+        .get(encodedKey, now) as { value: string } | undefined;
+      const currentValue = currentResult === undefined
+        ? undefined
+        : this.#decodeValue(currentResult.value);
+
+      if (!isEqual(currentValue, expectedValue)) {
+        this.#db.exec("ROLLBACK");
+        return false;
+      }
+
+      if (currentResult) {
+        this.#db
+          .prepare(`
+            UPDATE "${this.#tableName}"
+            SET value = ?, expires_at = ?
+            WHERE key = ?
+          `)
+          .run(newValueJson, expiresAt, encodedKey);
+      } else if (newValue !== undefined) {
+        this.#db
+          .prepare(`
+            INSERT INTO "${this.#tableName}" (key, value, created, expires_at)
+            VALUES (?, ?, ?, ?)
+          `)
+          .run(encodedKey, newValueJson, now, expiresAt);
+      }
+
+      this.#db.exec("COMMIT");
+      await this.#expire();
+      return true;
+    } catch (error) {
+      this.#db.exec("ROLLBACK");
+      throw error;
+    }
+  }
+
+  /**
+   * Creates the table used by the key-value store if it does not already exist.
+   * Does nothing if the table already exists.
+   */
+  async initialize(): Promise<void> {
+    if (this.#initialized) {
+      return;
+    }
+
+    if (!/^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(this.#tableName)) {
+      throw new Error(
+        `Invalid table name for the key-value store: ${this.#tableName}`,
+      );
+    }
+
+    logger.debug("Initializing the key-value store table {tableName}...", {
+      tableName: this.#tableName,
+    });
+
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS "${this.#tableName}" (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        expires_at INTEGER
+      )
+    `);
+
+    this.db.exec(`
+      CREATE INDEX IF NOT EXISTS "idx_${this.#tableName}_expires" 
+      ON "${this.#tableName}" (expires_at)
+    `);
+
+    this.#initialized = true;
+    logger.debug("Initialized the key-value store table {tableName}.", {
+      tableName: this.#tableName,
+    });
+  }
+
+  async #expire(): Promise<void> {
+    const now = Temporal.Now.instant().epochMilliseconds;
+    this.#db
+      .prepare(`
+      DELETE FROM "${this.#tableName}"
+      WHERE expires_at IS NOT NULL AND expires_at <= ?
+    `)
+      .run(now);
+  }
+
+  /**
+   * Drops the table used by the key-value store.  Does nothing if the table
+   * does not exist.
+   */
+  async drop(): Promise<void> {
+    this.db.exec(`DROP TABLE IF EXISTS "${this.#tableName}"`);
+    this.#initialized = false;
+  }
+
+  #encodeKey(key: KvKey): string {
+    return JSON.stringify(key);
+  }
+
+  #decodeKey(key: string): KvKey {
+    return JSON.parse(key);
+  }
+
+  #encodeValue(value: unknown): string {
+    if (value === undefined) {
+      throw new RangeError("Cannot encode undefined value");
+    }
+    return JSON.stringify(value);
+  }
+
+  #decodeValue(value: string): unknown {
+    return JSON.parse(value);
+  }
+}
