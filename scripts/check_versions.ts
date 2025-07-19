@@ -1,4 +1,5 @@
-import { dirname, join } from "@std/path";
+import { dirname, fromFileUrl, join, normalize, resolve } from "@std/path";
+import { parse } from "@std/yaml";
 import workspaceMetadata from "../deno.json" with { type: "json" };
 import fedifyMetadata from "../fedify/deno.json" with { type: "json" };
 
@@ -11,8 +12,21 @@ if (Deno.args.includes("--help") || Deno.args.includes("-h")) {
   Deno.exit(0);
 }
 
-const workspaceMembers = workspaceMetadata.workspace;
 const fix = Deno.args.includes("--fix") || Deno.args.includes("-f");
+
+const workspaceMembers = workspaceMetadata.workspace;
+const pnpmWorkspace = await Deno.readTextFile(
+  fromFileUrl(import.meta.resolve("../pnpm-workspace.yaml")),
+);
+const projectRoot = dirname(import.meta.dirname!);
+const normalizedWorkspaceMembers = workspaceMembers.map((member) =>
+  normalize(resolve(projectRoot, member))
+);
+for (const pkg of (parse(pnpmWorkspace) as { packages: string[] }).packages) {
+  const normalizedPkg = normalize(resolve(projectRoot, pkg));
+  if (normalizedWorkspaceMembers.includes(normalizedPkg)) continue;
+  workspaceMembers.push(pkg);
+}
 
 let version = fedifyMetadata.version;
 let mismatched = 0;
