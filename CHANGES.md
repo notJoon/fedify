@@ -90,6 +90,10 @@ the versioning.
 
      -  Added `@fedify/nestjs` package.
      -  Added `FedifyModule` for integrating Fedify into NestJS applications.
+     
+  -  `lookupWebFinger()` now supports request cancellation via `AbortSignal`.
+     [[#51] by Hyunchae Kim]
+
 
  -  Added `SqliteKvStore`, implementing `KvStore` using SQLite with the
     `@fedify/sqlite` package. Compatible with Bun, Deno, and Node.js.
@@ -165,6 +169,7 @@ the versioning.
 [#341]: https://github.com/fedify-dev/fedify/pull/341
 [#342]: https://github.com/fedify-dev/fedify/pull/342
 [#348]: https://github.com/fedify-dev/fedify/pull/348
+[#51]: https://github.com/fedify-dev/fedify/issues/51
 [Kitty]: https://sw.kovidgoyal.net/kitty/
 [WezTerm]: https://wezterm.org/
 [Konsole]: https://konsole.kde.org/
@@ -172,7 +177,6 @@ the versioning.
 [Wayst]: https://github.com/91861/wayst
 [st]: https://st.suckless.org/
 [iTerm]: https://iterm2.com/
-
 
 Version 1.7.7
 -------------
