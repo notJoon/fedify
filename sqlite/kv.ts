@@ -173,24 +173,24 @@ export class SqliteKvStore implements KvStore {
           `)
           .run(encodedKey);
       } else {
-      const newValueJson = this.#encodeValue(newValue);
-      
-      if (currentResult) {
-        this.#db
-          .prepare(`
+        const newValueJson = this.#encodeValue(newValue);
+
+        if (currentResult) {
+          this.#db
+            .prepare(`
             UPDATE "${this.#tableName}"
             SET value = ?, expires = ?
             WHERE key = ?
           `)
-          .run(newValueJson, expiresAt, encodedKey);
-      } else {
-        this.#db
-          .prepare(`
+            .run(newValueJson, expiresAt, encodedKey);
+        } else {
+          this.#db
+            .prepare(`
             INSERT INTO "${this.#tableName}" (key, value, created, expires)
             VALUES (?, ?, ?, ?)
           `)
-          .run(encodedKey, newValueJson, now, expiresAt);
-      }
+            .run(encodedKey, newValueJson, now, expiresAt);
+        }
       }
 
       this.#db.exec("COMMIT");
@@ -225,7 +225,7 @@ export class SqliteKvStore implements KvStore {
       CREATE TABLE IF NOT EXISTS "${this.#tableName}" (
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL,
-        created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created INTEGER NOT NULL,
         expires INTEGER
       )
     `);
