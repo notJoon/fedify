@@ -142,7 +142,6 @@ export class SqliteKvStore implements KvStore {
     await this.initialize();
 
     const encodedKey = this.#encodeKey(key);
-    const newValueJson = this.#encodeValue(newValue);
     const now = Temporal.Now.instant().epochMilliseconds;
     const expiresAt = options?.ttl !== undefined
       ? now + options.ttl.total({ unit: "milliseconds" })
@@ -167,6 +166,15 @@ export class SqliteKvStore implements KvStore {
         return false;
       }
 
+      if (newValue === undefined) {
+        this.#db
+          .prepare(`
+            DELETE FROM "${this.#tableName}" WHERE key = ?
+          `)
+          .run(encodedKey);
+      } else {
+      const newValueJson = this.#encodeValue(newValue);
+      
       if (currentResult) {
         this.#db
           .prepare(`
@@ -175,13 +183,14 @@ export class SqliteKvStore implements KvStore {
             WHERE key = ?
           `)
           .run(newValueJson, expiresAt, encodedKey);
-      } else if (newValue !== undefined) {
+      } else {
         this.#db
           .prepare(`
             INSERT INTO "${this.#tableName}" (key, value, created, expires)
             VALUES (?, ?, ?, ?)
           `)
           .run(encodedKey, newValueJson, now, expiresAt);
+      }
       }
 
       this.#db.exec("COMMIT");
@@ -260,9 +269,6 @@ export class SqliteKvStore implements KvStore {
   }
 
   #encodeValue(value: unknown): string {
-    if (value === undefined) {
-      throw new RangeError("Cannot encode undefined value");
-    }
     return JSON.stringify(value);
   }
 

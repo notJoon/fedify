@@ -180,6 +180,8 @@ test("SqliteKvStore.cas()", async () => {
     assert.strictEqual(await store.get(["foo", "bar"]), undefined);
     assert.strictEqual(await store.cas(["foo", "bar"], undefined, "baz"), true);
     assert.strictEqual(await store.get(["foo", "bar"]), "baz");
+    assert.strictEqual(await store.cas(["foo", "bar"], "baz", undefined), true);
+    assert.strictEqual(await store.get(["foo", "bar"]), undefined);
   } finally {
     await store.drop();
     await db.close();
