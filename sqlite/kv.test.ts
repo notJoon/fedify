@@ -53,7 +53,7 @@ test("SqliteKvStore.get()", async () => {
 
     const now = Temporal.Now.instant().epochMilliseconds;
     db.prepare(`
-      INSERT INTO ${tableName} (key, value, expires_at)
+      INSERT INTO ${tableName} (key, value, expires)
       VALUES (?, ?, ?)
     `).run(
       JSON.stringify(["foo", "bar", "ttl"]),
@@ -81,7 +81,7 @@ test("SqliteKvStore.set()", async () => {
     assert.strictEqual(result.length, 1);
     assert.deepStrictEqual(JSON.parse(result[0].key), ["foo", "baz"]);
     assert.strictEqual(JSON.parse(result[0].value), "baz");
-    assert.strictEqual(result[0].expires_at, null);
+    assert.strictEqual(result[0].expires, null);
 
     await store.set(["foo", "qux"], "qux", {
       ttl: Temporal.Duration.from({ days: 1 }),
@@ -93,7 +93,7 @@ test("SqliteKvStore.set()", async () => {
     assert.strictEqual(result2.length, 1);
     assert.deepStrictEqual(JSON.parse(result2[0].key), ["foo", "qux"]);
     assert.strictEqual(JSON.parse(result2[0].value), "qux");
-    assert(result2[0].expires_at >= result2[0].created + 86400000);
+    assert(result2[0].expires >= result2[0].created + 86400000);
 
     await store.set(["foo", "quux"], true);
     const result3 = db.prepare(`
@@ -103,7 +103,7 @@ test("SqliteKvStore.set()", async () => {
     assert.strictEqual(result3.length, 1);
     assert.deepStrictEqual(JSON.parse(result3[0].key), ["foo", "quux"]);
     assert.strictEqual(JSON.parse(result3[0].value), true);
-    assert.strictEqual(result3[0].expires_at, null);
+    assert.strictEqual(result3[0].expires, null);
   } finally {
     await store.drop();
     await db.close();
@@ -251,14 +251,14 @@ test("SqliteKvStore.set() - preserves created timestamp on update", async () => 
   try {
     await store.set(["timestamp-test"], "initial");
     const initialResult = db.prepare(`
-      SELECT created, expires_at FROM ${tableName}
+      SELECT created, expires FROM ${tableName}
       WHERE key = ?
     `).get(JSON.stringify(["timestamp-test"]));
 
     const initialCreated = (initialResult as { created: number }).created;
     assert(initialCreated > 0, "Initial created timestamp should be set");
     assert.strictEqual(
-      (initialResult as { expires_at: number | null }).expires_at,
+      (initialResult as { expires: number | null }).expires,
       null,
     );
 
@@ -268,7 +268,7 @@ test("SqliteKvStore.set() - preserves created timestamp on update", async () => 
     await store.set(["timestamp-test"], "updated", { ttl });
 
     const updatedResult = db.prepare(`
-      SELECT created, expires_at FROM ${tableName}
+      SELECT created, expires FROM ${tableName}
       WHERE key = ?
     `).get(JSON.stringify(["timestamp-test"]));
 

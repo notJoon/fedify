@@ -70,7 +70,7 @@ export class SqliteKvStore implements KvStore {
       .prepare(`
       SELECT value 
       FROM "${this.#tableName}" 
-      WHERE key = ? AND (expires_at IS NULL OR expires_at > ?)
+      WHERE key = ? AND (expires IS NULL OR expires > ?)
     `)
       .get(encodedKey, now);
 
@@ -103,11 +103,11 @@ export class SqliteKvStore implements KvStore {
 
     this.#db
       .prepare(
-        `INSERT INTO "${this.#tableName}" (key, value, created, expires_at)
+        `INSERT INTO "${this.#tableName}" (key, value, created, expires)
         VALUES (?, ?, ?, ?)
         ON CONFLICT(key) DO UPDATE SET
           value = excluded.value,
-          expires_at = excluded.expires_at`,
+          expires = excluded.expires`,
       )
       .run(encodedKey, encodedValue, now, expiresAt);
 
@@ -155,7 +155,7 @@ export class SqliteKvStore implements KvStore {
         .prepare(`
           SELECT value 
           FROM "${this.#tableName}" 
-          WHERE key = ? AND (expires_at IS NULL OR expires_at > ?)
+          WHERE key = ? AND (expires IS NULL OR expires > ?)
         `)
         .get(encodedKey, now) as { value: string } | undefined;
       const currentValue = currentResult === undefined
@@ -171,14 +171,14 @@ export class SqliteKvStore implements KvStore {
         this.#db
           .prepare(`
             UPDATE "${this.#tableName}"
-            SET value = ?, expires_at = ?
+            SET value = ?, expires = ?
             WHERE key = ?
           `)
           .run(newValueJson, expiresAt, encodedKey);
       } else if (newValue !== undefined) {
         this.#db
           .prepare(`
-            INSERT INTO "${this.#tableName}" (key, value, created, expires_at)
+            INSERT INTO "${this.#tableName}" (key, value, created, expires)
             VALUES (?, ?, ?, ?)
           `)
           .run(encodedKey, newValueJson, now, expiresAt);
@@ -217,13 +217,13 @@ export class SqliteKvStore implements KvStore {
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL,
         created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        expires_at INTEGER
+        expires INTEGER
       )
     `);
 
     this.db.exec(`
       CREATE INDEX IF NOT EXISTS "idx_${this.#tableName}_expires" 
-      ON "${this.#tableName}" (expires_at)
+      ON "${this.#tableName}" (expires)
     `);
 
     this.#initialized = true;
@@ -237,7 +237,7 @@ export class SqliteKvStore implements KvStore {
     this.#db
       .prepare(`
       DELETE FROM "${this.#tableName}"
-      WHERE expires_at IS NOT NULL AND expires_at <= ?
+      WHERE expires IS NOT NULL AND expires <= ?
     `)
       .run(now);
   }
