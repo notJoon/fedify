@@ -9,14 +9,14 @@ import {
   getAuthenticatedDocumentLoader,
   type Link,
   lookupObject,
-  type Object,
+  Object,
   type ResourceDescriptor,
   respondWithObject,
   traverseCollection,
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
-import { string } from "jsr:@cliffy/flags@1.0.0-rc.4";
 import path from "node:path/win32";
+import util from "node:util";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
@@ -88,23 +88,9 @@ export const command = new Command()
 
         const file = await Deno.create(options.output);
         file.close();
-
-        // const fileInfo = await Deno.stat(options.output);
-        // console.log("File info:", fileInfo);
-
-        // if (fileInfo.isDirectory) {
-        //   console.error(
-        //     `Output path ${colors.red(options.output)} is a directory. ` +
-        //       "Please specify a file path, not a directory.",
-        //   );
-        //   Deno.exit(1);
-        // }
-
-        // console.error(
-        //   `Output file ${colors.red(options.output)} already exists. ` +
-        //     "Please specify a different file path to avoid overwriting.",
-        // );
-        // Deno.exit(1);
+        console.log(
+          `Output will be written to ${colors.green(options.output)}.`,
+        );
       } catch (err) {
         console.error("Unexpected error while checking output:", err);
         Deno.exit(1);
@@ -204,11 +190,12 @@ export const command = new Command()
 
     async function writeObject(object: Object | Link): Promise<void> {
       if (options.raw) {
-        fileContents.push(object.toJsonLd({ contextLoader }));
+        fileContents.push(await object.toJsonLd({ contextLoader }));
       } else if (options.compact) {
         fileContents.push(
           await object.toJsonLd({ format: "compact", contextLoader }),
         );
+      } else if (options.expand) {
         fileContents.push(
           await object.toJsonLd({ format: "expand", contextLoader }),
         );
@@ -330,15 +317,16 @@ export const command = new Command()
     }
 
     if (options.output && fileContents.length > 0) {
-      const resolvedContents = await Promise.all(
-        fileContents.map((item) =>
-          item instanceof Promise ? item : Promise.resolve(item)
-        ),
-      );
-      Deno.writeTextFile(
-        options.output,
-        JSON.stringify(resolvedContents, null, 2),
-      );
+      const output = fileContents.map((item) =>
+        item instanceof Object
+          ? util.inspect(item, {
+            depth: null,
+            colors: false,
+          })
+          : JSON.stringify(item, null, 2)
+      ).join(options.separator);
+
+      await Deno.writeTextFile(options.output, output);
       console.log(`Output written to ${colors.green(options.output)}.`);
     }
     await server?.close();
