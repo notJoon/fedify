@@ -15,7 +15,7 @@ import {
   traverseCollection,
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
-import path from "node:path/win32";
+import { dirname, isAbsolute, resolve } from "@std/path";
 import util from "node:util";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
@@ -80,21 +80,6 @@ export const command = new Command()
         "The -t/--traverse option cannot be used with multiple arguments.",
       );
       Deno.exit(1);
-    }
-    if (options.output) {
-      try {
-        const parentDir = path.dirname(options.output);
-        await Deno.mkdir(parentDir, { recursive: true });
-
-        const file = await Deno.create(options.output);
-        file.close();
-        console.log(
-          `Output will be written to ${colors.green(options.output)}.`,
-        );
-      } catch (err) {
-        console.error("Unexpected error while checking output:", err);
-        Deno.exit(1);
-      }
     }
 
     const spinner = ora({
@@ -315,19 +300,34 @@ export const command = new Command()
           : "Successfully fetched the object.",
       );
     }
+    // If output is specified and fetching objects are successful, write or overwrite the contents to the file.
+    if (options.output && success) {
+      try {
+        spinner.start(`Writing output to ${colors.green(options.output)}...`);
 
-    if (options.output && fileContents.length > 0) {
-      const output = fileContents.map((item) =>
-        item instanceof Object
-          ? util.inspect(item, {
-            depth: null,
-            colors: false,
-          })
-          : JSON.stringify(item, null, 2)
-      ).join(options.separator);
+        const outputPath = isAbsolute(options.output)
+          ? options.output
+          : resolve(Deno.env.get("PWD") || Deno.cwd(), options.output);
+        const parentDir = dirname(outputPath);
+        await Deno.mkdir(parentDir, { recursive: true });
+        const file = await Deno.create(options.output);
+        file.close();
 
-      await Deno.writeTextFile(options.output, output);
-      console.log(`Output written to ${colors.green(options.output)}.`);
+        const output = fileContents.map((item) =>
+          item instanceof Object
+            ? util.inspect(item, {
+              depth: null,
+              colors: false,
+            })
+            : JSON.stringify(item, null, 2)
+        ).join(options.separator);
+
+        await Deno.writeTextFile(options.output, output);
+        spinner.succeed(`Output written to ${colors.green(options.output)}.`);
+      } catch (err) {
+        console.error("Unexpected error occurred while writing output:", err);
+        Deno.exit(1);
+      }
     }
     await server?.close();
     if (!success) {
