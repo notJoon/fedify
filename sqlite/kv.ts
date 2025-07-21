@@ -42,9 +42,11 @@ export interface SqliteKvStoreOptions {
  * ```
  */
 export class SqliteKvStore implements KvStore {
-  #initialized: boolean;
-  #db: DatabaseSync;
+  static readonly #defaultTableName = "fedify_kv_v2";
+  static readonly #tableNameRegex = /^[A-Za-z_][A-Za-z0-9_]{0,63}$/;
+  readonly #db: DatabaseSync;
   readonly #tableName: string;
+  #initialized: boolean;
 
   constructor(
     readonly db: DatabaseSync,
@@ -52,7 +54,7 @@ export class SqliteKvStore implements KvStore {
   ) {
     this.#db = db;
     this.#initialized = options.initialized ?? false;
-    this.#tableName = options.tableName ?? "fedify_kv_v2";
+    this.#tableName = options.tableName ?? SqliteKvStore.#defaultTableName;
   }
 
   /**
@@ -197,7 +199,7 @@ export class SqliteKvStore implements KvStore {
       return;
     }
 
-    if (!/^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(this.#tableName)) {
+    if (!SqliteKvStore.#tableNameRegex.test(this.#tableName)) {
       throw new Error(
         `Invalid table name for the key-value store: ${this.#tableName}`,
       );
