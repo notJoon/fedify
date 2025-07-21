@@ -100,7 +100,6 @@ test("SqliteKvStore.set()", async () => {
       SELECT * FROM ${tableName}
       WHERE key = ?
     `).all(JSON.stringify(["foo", "quux"]));
-    console.log(result3);
     assert.strictEqual(result3.length, 1);
     assert.deepStrictEqual(JSON.parse(result3[0].key), ["foo", "quux"]);
     assert.strictEqual(JSON.parse(result3[0].value), true);
@@ -241,6 +240,43 @@ test("SqliteKvStore - complex values", async () => {
     assert.strictEqual(await store.get(["falsy", "0"]), 0);
     assert.strictEqual(await store.cas(["falsy", "0"], 0, 1), true);
     assert.strictEqual(await store.get(["falsy", "0"]), 1);
+  } finally {
+    await store.drop();
+    await db.close();
+  }
+});
+
+test("SqliteKvStore.set() - preserves created timestamp on update", async () => {
+  const { db, tableName, store } = getStore();
+  try {
+    await store.set(["timestamp-test"], "initial");
+    const initialResult = db.prepare(`
+      SELECT created, expires_at FROM ${tableName}
+      WHERE key = ?
+    `).get(JSON.stringify(["timestamp-test"]));
+
+    const initialCreated = (initialResult as { created: number }).created;
+    assert(initialCreated > 0, "Initial created timestamp should be set");
+    assert.strictEqual(
+      (initialResult as { expires_at: number | null }).expires_at,
+      null,
+    );
+
+    await delay(100);
+
+    const ttl = Temporal.Duration.from({ seconds: 30 });
+    await store.set(["timestamp-test"], "updated", { ttl });
+
+    const updatedResult = db.prepare(`
+      SELECT created, expires_at FROM ${tableName}
+      WHERE key = ?
+    `).get(JSON.stringify(["timestamp-test"]));
+
+    assert.strictEqual(
+      (updatedResult as { created: number }).created,
+      initialCreated,
+      "Created timestamp should remain unchanged after update",
+    );
   } finally {
     await store.drop();
     await db.close();

@@ -102,10 +102,13 @@ export class SqliteKvStore implements KvStore {
       : null;
 
     this.#db
-      .prepare(`
-        INSERT OR REPLACE INTO "${this.#tableName}" (key, value, created, expires_at)
+      .prepare(
+        `INSERT INTO "${this.#tableName}" (key, value, created, expires_at)
         VALUES (?, ?, ?, ?)
-      `)
+        ON CONFLICT(key) DO UPDATE SET
+          value = excluded.value,
+          expires_at = excluded.expires_at`,
+      )
       .run(encodedKey, encodedValue, now, expiresAt);
 
     await this.#expire();
