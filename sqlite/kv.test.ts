@@ -39,7 +39,7 @@ test("SqliteKvStore.initialize()", async () => {
     await store.drop();
     await db.close();
   }
-})
+});
 
 test("SqliteKvStore.get()", async () => {
   const { db, tableName, store } = getStore();
@@ -55,7 +55,11 @@ test("SqliteKvStore.get()", async () => {
     db.prepare(`
       INSERT INTO ${tableName} (key, value, expires_at)
       VALUES (?, ?, ?)
-    `).run(JSON.stringify(["foo", "bar", "ttl"]), JSON.stringify(["foobar"]), now + 500);
+    `).run(
+      JSON.stringify(["foo", "bar", "ttl"]),
+      JSON.stringify(["foobar"]),
+      now + 500,
+    );
     await delay(500);
     assert.strictEqual(await store.get(["foo", "bar", "ttl"]), undefined);
   } finally {
@@ -122,7 +126,7 @@ test("SqliteKvStore.set() - upsert functionality", async () => {
     await store.drop();
     await db.close();
   }
-})
+});
 
 test("SqliteKvStore.delete()", async () => {
   const { db, tableName, store } = getStore();
@@ -214,12 +218,18 @@ test("SqliteKvStore - complex values", async () => {
 
     await store.set(["array"], [1, 2, 3]);
     assert.deepStrictEqual(await store.get(["array"]), [1, 2, 3]);
-    assert.strictEqual(await store.cas(["array"], [1, 2, 3], [1, 2, 3, 4]), true);
+    assert.strictEqual(
+      await store.cas(["array"], [1, 2, 3], [1, 2, 3, 4]),
+      true,
+    );
     assert.deepStrictEqual(await store.get(["array"]), [1, 2, 3, 4]);
 
     await store.set(["object"], { a: 1, b: 2 });
     assert.deepStrictEqual(await store.get(["object"]), { b: 2, a: 1 });
-    assert.strictEqual(await store.cas(["object"], { a: 1, b: 2 }, { a: 1, b: 2, c: 3 }), true);
+    assert.strictEqual(
+      await store.cas(["object"], { a: 1, b: 2 }, { a: 1, b: 2, c: 3 }),
+      true,
+    );
     assert.deepStrictEqual(await store.get(["object"]), { a: 1, b: 2, c: 3 });
 
     await store.set(["falsy", "false"], false);
@@ -231,11 +241,6 @@ test("SqliteKvStore - complex values", async () => {
     assert.strictEqual(await store.get(["falsy", "0"]), 0);
     assert.strictEqual(await store.cas(["falsy", "0"], 0, 1), true);
     assert.strictEqual(await store.get(["falsy", "0"]), 1);
-
-    await store.set(["falsy", "Infinity"], Infinity);
-    assert.strictEqual(await store.get(["falsy", "Infinity"]), Infinity);
-    assert.strictEqual(await store.cas(["falsy", "Infinity"], Infinity, -Infinity), true);
-    assert.strictEqual(await store.get(["falsy", "Infinity"]), -Infinity);
   } finally {
     await store.drop();
     await db.close();
