@@ -15,6 +15,8 @@ import {
   traverseCollection,
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
+import { string } from "jsr:@cliffy/flags@1.0.0-rc.4";
+import path from "node:path/win32";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
@@ -65,6 +67,10 @@ export const command = new Command()
       "collection items.",
     { default: "----" },
   )
+  .option(
+    "-o, --output <file>",
+    "Specify the output file path.",
+  )
   .action(async (options, ...urls: string[]) => {
     if (urls.length < 1) {
       console.error("At least one URL or actor handle must be provided.");
@@ -75,6 +81,36 @@ export const command = new Command()
       );
       Deno.exit(1);
     }
+    if (options.output) {
+      try {
+        const parentDir = path.dirname(options.output);
+        await Deno.mkdir(parentDir, { recursive: true });
+
+        const file = await Deno.create(options.output);
+        file.close();
+
+        // const fileInfo = await Deno.stat(options.output);
+        // console.log("File info:", fileInfo);
+
+        // if (fileInfo.isDirectory) {
+        //   console.error(
+        //     `Output path ${colors.red(options.output)} is a directory. ` +
+        //       "Please specify a file path, not a directory.",
+        //   );
+        //   Deno.exit(1);
+        // }
+
+        // console.error(
+        //   `Output file ${colors.red(options.output)} already exists. ` +
+        //     "Please specify a different file path to avoid overwriting.",
+        // );
+        // Deno.exit(1);
+      } catch (err) {
+        console.error("Unexpected error while checking output:", err);
+        Deno.exit(1);
+      }
+    }
+
     const spinner = ora({
       text: `Looking up the ${
         options.traverse ? "collection" : urls.length > 1 ? "objects" : "object"
@@ -143,9 +179,12 @@ export const command = new Command()
         },
       );
     }
+
     spinner.text = `Looking up the ${
       options.traverse ? "collection" : urls.length > 1 ? "objects" : "object"
     }...`;
+
+    const fileContents: unknown[] = [];
 
     async function printObject(object: Object | Link): Promise<void> {
       if (options.raw) {
@@ -160,6 +199,21 @@ export const command = new Command()
         );
       } else {
         console.log(object);
+      }
+    }
+
+    async function writeObject(object: Object | Link): Promise<void> {
+      if (options.raw) {
+        fileContents.push(object.toJsonLd({ contextLoader }));
+      } else if (options.compact) {
+        fileContents.push(
+          await object.toJsonLd({ format: "compact", contextLoader }),
+        );
+        fileContents.push(
+          await object.toJsonLd({ format: "expand", contextLoader }),
+        );
+      } else {
+        fileContents.push(object);
       }
     }
 
@@ -254,9 +308,13 @@ export const command = new Command()
           success = false;
         } else {
           spinner.succeed(`Fetched object: ${colors.green(url)}.`);
-          printObject(object);
-          if (i < urls.length - 1) {
-            console.log(options.separator);
+          if (options.output) {
+            await writeObject(object);
+          } else {
+            printObject(object);
+            if (i < urls.length - 1) {
+              console.log(options.separator);
+            }
           }
         }
       } catch (_) {
@@ -269,6 +327,19 @@ export const command = new Command()
           ? "Successfully fetched all objects."
           : "Successfully fetched the object.",
       );
+    }
+
+    if (options.output && fileContents.length > 0) {
+      const resolvedContents = await Promise.all(
+        fileContents.map((item) =>
+          item instanceof Promise ? item : Promise.resolve(item)
+        ),
+      );
+      Deno.writeTextFile(
+        options.output,
+        JSON.stringify(resolvedContents, null, 2),
+      );
+      console.log(`Output written to ${colors.green(options.output)}.`);
     }
     await server?.close();
     if (!success) {
