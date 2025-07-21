@@ -7,11 +7,7 @@
     "sqlite"
   ],
   "license": "MIT",
-  "author": {
-    "name": "Hong Minhee",
-    "email": "hong@minhee.org",
-    "url": "https://hongminhee.org/"
-  },
+  "author": "An Nyeong <me@annyeong.me>",
   "homepage": "https://fedify.dev/",
   "repository": {
     "type": "git",
