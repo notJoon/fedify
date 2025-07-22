@@ -310,8 +310,6 @@ export const command = new Command()
           : resolve(Deno.env.get("PWD") || Deno.cwd(), options.output);
         const parentDir = dirname(outputPath);
         await Deno.mkdir(parentDir, { recursive: true });
-        const file = await Deno.create(options.output);
-        file.close();
 
         const output = fileContents.map((item) =>
           item instanceof Object
@@ -323,9 +321,19 @@ export const command = new Command()
         ).join(options.separator);
 
         await Deno.writeTextFile(options.output, output);
+
         spinner.succeed(`Output written to ${colors.green(options.output)}.`);
       } catch (err) {
-        console.error("Unexpected error occurred while writing output:", err);
+        spinner.fail(`Failed to write output.`);
+        console.error(`Error: ${String(err)}`);
+
+        if (err instanceof Deno.errors.PermissionDenied) {
+          console.error(
+            "Permission denied. Try running with proper permissions.",
+          );
+        } else if (err instanceof Deno.errors.NotFound) {
+          console.error("Path does not exist or is invalid.");
+        }
         Deno.exit(1);
       }
     }
