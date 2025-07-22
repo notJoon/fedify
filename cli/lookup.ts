@@ -16,6 +16,7 @@ import {
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
 import { dirname, isAbsolute, resolve } from "@std/path";
+import { write } from "node:fs";
 import util from "node:util";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
@@ -189,6 +190,49 @@ export const command = new Command()
       }
     }
 
+    async function writeOutput(): Promise<void> {
+      if (!options.output) {
+        console.error("Output path is not defined.");
+        Deno.exit(1);
+      }
+      try {
+        spinner.start(`Writing output to ${colors.green(options.output)}...`);
+
+        const outputPath = isAbsolute(options.output)
+          ? options.output
+          : resolve(Deno.env.get("PWD") || Deno.cwd(), options.output);
+        const parentDir = dirname(outputPath);
+        await Deno.mkdir(parentDir, { recursive: true });
+
+        const output = fileContents.map((item) =>
+          item instanceof Object
+            ? util.inspect(item, {
+              depth: null,
+              colors: false,
+            })
+            : JSON.stringify(item, null, 2)
+        ).join("\n" + options.separator + "\n");
+
+        await Deno.writeTextFile(options.output, output);
+
+        spinner.succeed(`Output written to ${colors.green(options.output)}.`);
+      } catch (err) {
+        spinner.fail(`Failed to write output.`);
+        console.error(`Error: ${String(err)}`);
+
+        if (err instanceof Deno.errors.PermissionDenied) {
+          console.error(
+            "Permission denied. Try running with proper permissions.",
+          );
+        } else if (err instanceof Deno.errors.NotFound) {
+          console.error("Path does not exist or is invalid.");
+        } else if (err instanceof Deno.errors.IsADirectory) {
+          console.error("The specified path is a directory, not a file.");
+        }
+        Deno.exit(1);
+      }
+    }
+
     if (options.traverse) {
       const url = urls[0];
       const collection = await lookupObject(url, {
@@ -224,8 +268,8 @@ export const command = new Command()
             suppressError: options.suppressErrors,
           })
         ) {
-          if (i > 0) console.log(options.separator);
-          printObject(item);
+          if (!options.output && i > 0) console.log(options.separator);
+          (options.output ? writeObject : printObject)(item);
           i++;
         }
       } catch (error) {
@@ -244,6 +288,7 @@ export const command = new Command()
         Deno.exit(1);
       }
       spinner.succeed("Successfully fetched all items in the collection.");
+      if (options.output) await writeOutput();
       await server?.close();
       Deno.exit(0);
     }
@@ -299,43 +344,7 @@ export const command = new Command()
           ? "Successfully fetched all objects."
           : "Successfully fetched the object.",
       );
-    }
-    // If output is specified and fetching objects are successful, write or overwrite the contents to the file.
-    if (options.output && success) {
-      try {
-        spinner.start(`Writing output to ${colors.green(options.output)}...`);
-
-        const outputPath = isAbsolute(options.output)
-          ? options.output
-          : resolve(Deno.env.get("PWD") || Deno.cwd(), options.output);
-        const parentDir = dirname(outputPath);
-        await Deno.mkdir(parentDir, { recursive: true });
-
-        const output = fileContents.map((item) =>
-          item instanceof Object
-            ? util.inspect(item, {
-              depth: null,
-              colors: false,
-            })
-            : JSON.stringify(item, null, 2)
-        ).join(options.separator);
-
-        await Deno.writeTextFile(options.output, output);
-
-        spinner.succeed(`Output written to ${colors.green(options.output)}.`);
-      } catch (err) {
-        spinner.fail(`Failed to write output.`);
-        console.error(`Error: ${String(err)}`);
-
-        if (err instanceof Deno.errors.PermissionDenied) {
-          console.error(
-            "Permission denied. Try running with proper permissions.",
-          );
-        } else if (err instanceof Deno.errors.NotFound) {
-          console.error("Path does not exist or is invalid.");
-        }
-        Deno.exit(1);
-      }
+      await writeOutput();
     }
     await server?.close();
     if (!success) {
