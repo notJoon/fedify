@@ -13,8 +13,8 @@ export interface SqliteKvStoreOptions {
   /**
    * The table name to use for the key-value store.
    * Only letters, digits, and underscores are allowed.
-   * `"fedify_kv_v2"` by default.
-   * @default `"fedify_kv_v2"`
+   * `"fedify_kv"` by default.
+   * @default `"fedify_kv"`
    */
   tableName?: string;
 
@@ -42,7 +42,7 @@ export interface SqliteKvStoreOptions {
  * ```
  */
 export class SqliteKvStore implements KvStore {
-  static readonly #defaultTableName = "fedify_kv_v2";
+  static readonly #defaultTableName = "fedify_kv";
   static readonly #tableNameRegex = /^[A-Za-z_][A-Za-z0-9_]{0,63}$/;
   readonly #db: DatabaseSync;
   readonly #tableName: string;
@@ -55,6 +55,12 @@ export class SqliteKvStore implements KvStore {
     this.#db = db;
     this.#initialized = options.initialized ?? false;
     this.#tableName = options.tableName ?? SqliteKvStore.#defaultTableName;
+
+    if (!SqliteKvStore.#tableNameRegex.test(this.#tableName)) {
+      throw new Error(
+        `Invalid table name for the key-value store: ${this.#tableName}`,
+      );
+    }
   }
 
   /**
@@ -175,22 +181,15 @@ export class SqliteKvStore implements KvStore {
       } else {
         const newValueJson = this.#encodeValue(newValue);
 
-        if (currentResult) {
-          this.#db
-            .prepare(`
-            UPDATE "${this.#tableName}"
-            SET value = ?, expires = ?
-            WHERE key = ?
+        this.#db
+          .prepare(`
+          INSERT INTO "${this.#tableName}" (key, value, created, expires)
+          VALUES (?, ?, ?, ?)
+          ON CONFLICT(key) DO UPDATE SET
+            value = excluded.value,
+            expires = excluded.expires
           `)
-            .run(newValueJson, expiresAt, encodedKey);
-        } else {
-          this.#db
-            .prepare(`
-            INSERT INTO "${this.#tableName}" (key, value, created, expires)
-            VALUES (?, ?, ?, ?)
-          `)
-            .run(encodedKey, newValueJson, now, expiresAt);
-        }
+          .run(encodedKey, newValueJson, now, expiresAt);
       }
 
       this.#db.exec("COMMIT");
@@ -209,12 +208,6 @@ export class SqliteKvStore implements KvStore {
   async initialize(): Promise<void> {
     if (this.#initialized) {
       return;
-    }
-
-    if (!SqliteKvStore.#tableNameRegex.test(this.#tableName)) {
-      throw new Error(
-        `Invalid table name for the key-value store: ${this.#tableName}`,
-      );
     }
 
     logger.debug("Initializing the key-value store table {tableName}...", {
