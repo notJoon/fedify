@@ -2,7 +2,7 @@ import type { KvKey, KvStore, KvStoreSetOptions } from "@fedify/fedify";
 import { Temporal } from "@js-temporal/polyfill";
 import { getLogger } from "@logtape/logtape";
 import { isEqual } from "es-toolkit";
-import type { DatabaseSync } from "node:sqlite";
+import type { SQLiteDatabase } from "./adapter.ts";
 
 const logger = getLogger(["fedify", "sqlite", "kv"]);
 
@@ -44,12 +44,12 @@ export interface SqliteKvStoreOptions {
 export class SqliteKvStore implements KvStore {
   static readonly #defaultTableName = "fedify_kv";
   static readonly #tableNameRegex = /^[A-Za-z_][A-Za-z0-9_]{0,63}$/;
-  readonly #db: DatabaseSync;
+  readonly #db: SQLiteDatabase;
   readonly #tableName: string;
   #initialized: boolean;
 
   constructor(
-    readonly db: DatabaseSync,
+    readonly db: SQLiteDatabase,
     readonly options: SqliteKvStoreOptions = {},
   ) {
     this.#db = db;

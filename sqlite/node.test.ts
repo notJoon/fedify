@@ -3,7 +3,7 @@ import { delay } from "@std/async/delay";
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "node:test";
-import { SqliteKvStore } from "./kv.ts";
+import { SqliteKvStore } from "./node.ts";
 
 let Temporal: typeof temporal.Temporal;
 if ("Temporal" in globalThis) {
