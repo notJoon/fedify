@@ -1233,7 +1233,8 @@ function createRedirectRequest(
   location: string,
   body: ArrayBuffer | undefined,
 ): Request {
-  return new Request(location, {
+  const url = new URL(location, request.url);
+  return new Request(url, {
     method: request.method,
     headers: request.headers,
     body,
