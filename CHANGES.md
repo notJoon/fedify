@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.7.6
 -------------
 
-To be released.
+Released on July 24, 2025.
 
  -  Fixed `doubleKnock()` to properly handle redirects with path-only `Location`
     headers by resolving them relative to the original request URL.
