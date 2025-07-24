@@ -18,6 +18,9 @@ import type {
   CollectionCounter,
   CollectionCursor,
   CollectionDispatcher,
+  CustomCollectionCounter,
+  CustomCollectionCursor,
+  CustomCollectionDispatcher,
   InboxErrorHandler,
   InboxListener,
   NodeInfoDispatcher,
@@ -445,6 +448,71 @@ export interface Federatable<TContextData> {
     inboxPath: `${string}{identifier}${string}` | `${string}{handle}${string}`,
     sharedInboxPath?: string,
   ): InboxListenerSetters<TContextData>;
+  /**
+   * Registers a collection of objects dispatcher.
+   *
+   * @typeParam TContextData The context data to pass to the {@link Context}.
+   * @typeParam TObject The type of objects to dispatch.
+   * @typeParam TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setCollectionDispatcher<
+    TObject extends Object,
+    TParam extends Record<string, string>,
+  >(
+    name: string | symbol,
+    itemType: ConstructorWithTypeId<TObject>,
+    path: ParamsKeyPath<TParam>,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      RequestContext<TContextData>,
+      TContextData,
+      void
+    >,
+  ): CustomCollectionCallbackSetters<
+    RequestContext<TContextData>,
+    TContextData,
+    void
+  >;
+
+  /**
+   * Registers an ordered collection of objects dispatcher.
+   *
+   * @typeParam TContextData The context data to pass to the {@link Context}.
+   * @typeParam TObject The type of objects to dispatch.
+   * @typeParam TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends Record<string, string>,
+  >(
+    name: string | symbol,
+    itemType: ConstructorWithTypeId<TObject>,
+    path: ParamsKeyPath<TParam>,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      RequestContext<TContextData>,
+      TContextData,
+      void
+    >,
+  ): CustomCollectionCallbackSetters<
+    RequestContext<TContextData>,
+    TContextData,
+    void
+  >;
 }
 
 /**
@@ -954,3 +1022,139 @@ export interface FederationFetchOptions<TContextData> {
    */
   onUnauthorized?: (request: Request) => Response | Promise<Response>;
 }
+
+/**
+ * Additional settings for a custom collection dispatcher.
+ *
+ * @typeParam TContext The type of the context.  {@link Context} or
+ *                     {@link RequestContext}.
+ * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @typeParam TFilter The type of filter for the collection.
+ */
+export interface CustomCollectionCallbackSetters<
+  TContext extends Context<TContextData>,
+  TContextData,
+  TFilter,
+> {
+  /**
+   * Sets the counter for the custom collection.
+   * @param counter A callback that returns the number of items in the custom collection.
+   * @returns The setters object so that settings can be chained.
+   */
+  setCounter(
+    counter: CustomCollectionCounter<TContextData, TFilter>,
+  ): CustomCollectionCallbackSetters<TContext, TContextData, TFilter>;
+
+  /**
+   * Sets the first cursor for the custom collection.
+   * @param cursor The cursor for the first item in the custom collection.
+   * @returns The setters object so that settings can be chained.
+   */
+  setFirstCursor(
+    cursor: CustomCollectionCursor<TContext, TContextData, TFilter>,
+  ): CustomCollectionCallbackSetters<TContext, TContextData, TFilter>;
+
+  /**
+   * Sets the last cursor for the custom collection.
+   * @param cursor The cursor for the last item in the custom collection.
+   * @returns The setters object so that settings can be chained.
+   */
+  setLastCursor(
+    cursor: CustomCollectionCursor<TContext, TContextData, TFilter>,
+  ): CustomCollectionCallbackSetters<TContext, TContextData, TFilter>;
+
+  /**
+   * Specifies the conditions under which requests are authorized.
+   * @param predicate A callback that returns whether a request is authorized.
+   * @returns The setters object so that settings can be chained.
+   * @since 0.7.0
+   */
+  authorize(
+    predicate: AuthorizePredicate<TContextData>,
+  ): CustomCollectionCallbackSetters<TContext, TContextData, TFilter>;
+}
+
+/**
+ * Represents an object with a type ID, which is either a constructor or an
+ * instance of the object.
+ *
+ * @typeParam TObject The type of the object.
+ */
+export type ConstructorWithTypeId<TObject extends Object> =
+  // deno-lint-ignore no-explicit-any
+  (new (...args: any[]) => TObject) & { typeId: URL };
+
+/**
+ * Represents a path from the key of parameter objects.
+ * @param Params - A record of parameters where keys are parameter names and
+ *                 values are their string representations.
+ * @returns A string representing the path with all parameters.
+ * @example
+ * ```ts
+ * type UserPostPath = ParamsKeyPath<{ userId: string; postId: string }>;
+ * let userPostPath: UserPostPath;
+ * userPostPath = "/posts/{postId}"; // invalid
+ * userPostPath = "/users/{userId}"; // invalid
+ * userPostPath = "/users/{userId}/posts/{postId}"; // valid
+ * userPostPath = "/posts/{postId}/users/{userId}"; // valid
+ * ```
+ */
+export type ParamsKeyPath<Params extends Record<string, string>> =
+  & ParamsPath<Extract<keyof Params, string>>
+  & string;
+
+/**
+ * Represents a path with multiple parameters.
+ * All permutations of the parameters are included in the union type.
+ * The path must have all parameters in the form of `{paramName}`.
+ * @param Params - A union of parameter names.
+ * @returns A string representing the path with all parameters.
+ * @example
+ * ```ts
+ * type UserPostPath = ParamsPath<"userId" | "postId">;
+ * // = `${string}{userId}${string}` & `${string}{postId}${string}`
+ * // =
+ * //  | `${string}{userId}${string}{postId}${string}`
+ * //  | `${string}{postId}${string}{userId}${string}`
+ * let userPostPath: UserPostPath;
+ * userPostPath = "/users/posts"; // ❌ invalid
+ * userPostPath = "/users/{userId}"; // ❌ invalid
+ * userPostPath = "/posts/{postId}"; // ❌ invalid
+ * userPostPath = "/users/{userId}/posts/{postId}"; // ✅ valid
+ * userPostPath = "/posts/{postId}/users/{userId}"; // ✅ valid
+ */
+type ParamsPath<Params extends string> = UnionToIntersection<ParamPath<Params>>;
+/**
+ * Represents a path with a single parameter.
+ * The path must have at least one of the parameters in the form of `{paramName}`.
+ * @param Param - The name of the parameter.
+ * @returns A string representing the path with the parameter.
+ * @example
+ * ```ts
+ * type UserPostPath = ParamPath<"userId" | "postId">;
+ * // = `${string}{userId}${string}` | `${string}{postId}${string}`
+ * let userPostPath: UserPostPath;
+ * userPostPath = "/users/posts"; // ❌ invalid
+ * userPostPath = "/users/{userId}"; // ✅ valid
+ * userPostPath = "/posts/{postId}"; // ✅ valid
+ * userPostPath = "/users/{userId}/posts/{postId}"; // ✅ valid
+ * userPostPath = "/posts/{postId}/users/{userId}"; // ✅ valid
+ */
+type ParamPath<Param extends string> = `${string}{${Param}}${string}`;
+/**
+ * Converts union types to intersection types.
+ *
+ * @typeParam U - The union type to convert.
+ * @returns The intersection type of the union.
+ * @example
+ * ```ts
+ * type A = { a: string };
+ * type B = { b: number };
+ * type AorB = A | B;
+ * type AandB = UnionToIntersection<AorB>;
+ * // AandB = { a: string; b: number }
+ */
+type UnionToIntersection<U> =
+  (U extends unknown ? (x: U) => void : never) extends ((x: infer I) => void)
+    ? I
+    : never;
