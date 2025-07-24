@@ -423,6 +423,20 @@ export interface Context<TContextData> {
     activity: Activity,
     options?: RouteActivityOptions,
   ): Promise<boolean>;
+
+  /**
+   * Builds the URI of a collection of objects with the given name and values.
+   * @param name The name of the collection, which can be a string or a symbol.
+   * @param values The values of the URI parameters.
+   * @return The URI of the collection.
+   * @throws {RouteError} If no object dispatcher is available for the name.
+   * @throws {TypeError} If values are invalid.
+   * @since 1.8.0
+   */
+  getCollectionUri<TParam extends Record<string, string>>(
+    name: string | symbol,
+    values: TParam,
+  ): URL;
 }
 
 /**
