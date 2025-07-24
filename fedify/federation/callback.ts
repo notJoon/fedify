@@ -273,3 +273,58 @@ export type ObjectAuthorizePredicate<TContextData, TParam extends string> = (
   signedKey: CryptographicKey | null,
   signedKeyOwner: Actor | null,
 ) => boolean | Promise<boolean>;
+
+/**
+ * A callback that dispatches a custom collection.
+ *
+ * @typeParam TItem The type of items in the collection.
+ * @typeParam TContext The type of the context. {@link Context} or
+ *                     {@link RequestContext}.
+ * @typeParam TContextData The context data to pass to the `TContext`.
+ * @typeParam TFilter The type of the filter, if any.
+ * @param context The context.
+ * @param cursor The cursor to start the collection from, or `null` to dispatch
+ *               the entire collection without pagination.
+ * @param filter The filter to apply to the collection, if any.
+ */
+export type CustomCollectionDispatcher<
+  TItem,
+  TContext extends Context<TContextData>,
+  TContextData,
+  TFilter,
+> = (
+  context: TContext,
+  cursor: string | null,
+  filter?: TFilter,
+) => PageItems<TItem> | null | Promise<PageItems<TItem> | null>;
+
+/**
+ * A callback that counts the number of items in a custom collection.
+ *
+ * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @param context The context.
+ * @param filter The filter to apply to the collection, if any.
+ */
+export type CustomCollectionCounter<TContextData, TFilter> = (
+  context: RequestContext<TContextData>,
+  filter?: TFilter,
+) => number | bigint | null | Promise<number | bigint | null>;
+
+/**
+ * A callback that returns a cursor for a custom collection.
+ *
+ * @typeParam TContext The type of the context. {@link Context} or
+ *                     {@link RequestContext}.
+ * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @typeParam TFilter The type of the filter, if any.
+ * @param context The context.
+ * @param filter The filter to apply to the collection, if any.
+ */
+export type CustomCollectionCursor<
+  TContext extends Context<TContextData>,
+  TContextData,
+  TFilter,
+> = (
+  context: TContext,
+  filter?: TFilter,
+) => string | null | Promise<string | null>;
