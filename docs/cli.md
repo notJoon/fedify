@@ -956,7 +956,8 @@ or a full URL.
 ### `-r`/`--raw`: Raw JSON
 
 > [!NOTE]
-> This option is mutually exclusive with `-b`/`--best-effort`, `--no-favicon` and `-m`/`--meta-data`.
+> This option is mutually exclusive with `-b`/`--best-effort`, `--no-favicon`
+> and `-m`/`--metadata`.
 
 You can also output the fetched NodeInfo document in the raw JSON format by using
 the `-r`/`--raw` option:
