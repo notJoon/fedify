@@ -17,6 +17,11 @@ export const command = new Command()
     "-p, --allow-private-address",
     "Allow private IP addresses in the URL.",
   )
+  .option(
+    "--max-redirection <maxRedirection:number>",
+    "Maximum number of redirections to follow. (default: 5)",
+    { default: 5 },
+  )
   .action(async (options, ...resources: string[]) => {
     for (const resource of resources) {
       const spinner = ora({ // Create a spinner for the lookup process
@@ -25,6 +30,7 @@ export const command = new Command()
       }).start();
       try {
         const url = convertUrlIfHandle(resource); // Convert resource to URL
+        validateMaxRedirection(options.maxRedirection); // Validate max redirection
         const webFinger = await lookupWebFinger(url, options) ?? // Look up WebFinger
           new NotFoundError(resource).throw(); // throw NotFoundError if not found
 
@@ -33,6 +39,10 @@ export const command = new Command()
       } catch (error) {
         if (error instanceof InvalidHandleError) { // If the handle format is invalid,
           spinner.fail(`Invalid handle format: ${error.handle}`); // log error message with handle
+        } else if (error instanceof InvalidMaxRedirectionError) { // If max redirection is invalid,
+          spinner.fail(
+            `Invalid max redirection value: ${error.maxRedirection}`,
+          ); // log error message with value
         } else if (error instanceof NotFoundError) { // If the resource is not found,
           spinner.fail(`Resource not found: ${error.resource}`); // log not found message
         } else if (error instanceof Error) {
@@ -60,6 +70,17 @@ function convertUrlIfHandle(handleOrUrl: string): URL {
 }
 
 /**
+ * Validates the max redirection value.
+ * @param {number} maxRedirection The maximum number of redirections to validate.
+ * @throws {Error} If the max redirection value is invalid.
+ */
+function validateMaxRedirection(maxRedirection: number): void {
+  if (maxRedirection < 0 || !Number.isInteger(maxRedirection)) {
+    return new InvalidMaxRedirectionError(maxRedirection).throw();
+  }
+}
+
+/**
  * Custom error class for invalid handle formats.
  * @param {string} handle The invalid handle that caused the error.
  * @extends {Error}
@@ -68,6 +89,21 @@ class InvalidHandleError extends Error {
   constructor(public handle: string) {
     super(`Invalid handle format: ${handle}`);
     this.name = "InvalidHandleError";
+  }
+  throw(): never {
+    throw this;
+  }
+}
+
+/**
+ * Custom error class for invalid max redirection values.
+ * @param {number} maxRedirection The invalid max redirection value.
+ * @extends {Error}
+ */
+class InvalidMaxRedirectionError extends Error {
+  constructor(public maxRedirection: number) {
+    super(`Invalid maxRedirection value: ${maxRedirection}`);
+    this.name = "InvalidMaxRedirectionError";
   }
   throw(): never {
     throw this;
