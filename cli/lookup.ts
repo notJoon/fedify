@@ -9,19 +9,17 @@ import {
   getAuthenticatedDocumentLoader,
   type Link,
   lookupObject,
-  Object,
+  type Object,
   type ResourceDescriptor,
   respondWithObject,
   traverseCollection,
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
 import { dirname, isAbsolute, resolve } from "@std/path";
-import { write } from "node:fs";
 import util from "node:util";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
-import { printJson } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
@@ -156,66 +154,66 @@ export const command = new Command()
       options.traverse ? "collection" : urls.length > 1 ? "objects" : "object"
     }...`;
 
-    const fileContents: unknown[] = [];
+    async function writeObjectToStream(
+      object: Object | Link,
+    ): Promise<void> {
+      const stream = options.output
+        ? await createFileStream(options.output)
+        : Deno.stdout.writable;
 
-    async function printObject(object: Object | Link): Promise<void> {
-      if (options.raw) {
-        printJson(await object.toJsonLd({ contextLoader }));
-      } else if (options.compact) {
-        printJson(
-          await object.toJsonLd({ format: "compact", contextLoader }),
-        );
-      } else if (options.expand) {
-        printJson(
-          await object.toJsonLd({ format: "expand", contextLoader }),
-        );
-      } else {
-        console.log(object);
-      }
-    }
+      const writer = stream.getWriter();
 
-    async function writeObject(object: Object | Link): Promise<void> {
-      if (options.raw) {
-        fileContents.push(await object.toJsonLd({ contextLoader }));
-      } else if (options.compact) {
-        fileContents.push(
-          await object.toJsonLd({ format: "compact", contextLoader }),
-        );
-      } else if (options.expand) {
-        fileContents.push(
-          await object.toJsonLd({ format: "expand", contextLoader }),
-        );
-      } else {
-        fileContents.push(object);
-      }
-    }
-
-    async function writeOutput(): Promise<void> {
-      if (!options.output) {
-        console.error("Output path is not defined.");
-        Deno.exit(1);
-      }
       try {
-        spinner.start(`Writing output to ${colors.green(options.output)}...`);
+        let content;
 
-        const outputPath = isAbsolute(options.output)
-          ? options.output
-          : resolve(Deno.env.get("PWD") || Deno.cwd(), options.output);
-        const parentDir = dirname(outputPath);
+        if (options.raw) {
+          content = await object.toJsonLd({ contextLoader });
+        } else if (options.compact) {
+          content = await object.toJsonLd({ format: "compact", contextLoader });
+        } else if (options.expand) {
+          content = await object.toJsonLd({ format: "expand", contextLoader });
+        } else {
+          content = object;
+        }
+
+        content = util.inspect(content, {
+          depth: null,
+          colors: !(stream instanceof WritableStream),
+        });
+
+        const encoder = new TextEncoder();
+        const bytes = encoder.encode(content + "\n");
+
+        await writer.write(bytes);
+      } finally {
+        writer.releaseLock();
+      }
+    }
+    async function createFileStream(
+      outputPath: string,
+    ): Promise<WritableStream> {
+      try {
+        const filepath = isAbsolute(outputPath)
+          ? outputPath
+          : resolve(Deno.env.get("PWD") || Deno.cwd(), outputPath);
+        spinner.start(`Writing output to ${colors.green(filepath)}...`);
+        const parentDir = dirname(filepath);
         await Deno.mkdir(parentDir, { recursive: true });
 
-        const output = fileContents.map((item) =>
-          item instanceof Object
-            ? util.inspect(item, {
-              depth: null,
-              colors: false,
-            })
-            : JSON.stringify(item, null, 2)
-        ).join("\n" + options.separator + "\n");
+        const file = await Deno.open(filepath, {
+          write: true,
+          create: true,
+          truncate: true,
+        });
 
-        await Deno.writeTextFile(options.output, output);
-
-        spinner.succeed(`Output written to ${colors.green(options.output)}.`);
+        return new WritableStream({
+          write: (chunk) => file.write(chunk).then(() => {}),
+          close: () => file.close(),
+          abort: (reason) => {
+            file.close();
+            throw reason;
+          },
+        });
       } catch (err) {
         spinner.fail(`Failed to write output.`);
         console.error(`Error: ${String(err)}`);
@@ -269,7 +267,7 @@ export const command = new Command()
           })
         ) {
           if (!options.output && i > 0) console.log(options.separator);
-          (options.output ? writeObject : printObject)(item);
+          await writeObjectToStream(item);
           i++;
         }
       } catch (error) {
@@ -288,7 +286,7 @@ export const command = new Command()
         Deno.exit(1);
       }
       spinner.succeed("Successfully fetched all items in the collection.");
-      if (options.output) await writeOutput();
+
       await server?.close();
       Deno.exit(0);
     }
@@ -325,13 +323,9 @@ export const command = new Command()
           success = false;
         } else {
           spinner.succeed(`Fetched object: ${colors.green(url)}.`);
-          if (options.output) {
-            await writeObject(object);
-          } else {
-            printObject(object);
-            if (i < urls.length - 1) {
-              console.log(options.separator);
-            }
+          await writeObjectToStream(object);
+          if (i < urls.length - 1) {
+            console.log(options.separator);
           }
         }
       } catch (_) {
@@ -344,7 +338,6 @@ export const command = new Command()
           ? "Successfully fetched all objects."
           : "Successfully fetched the object.",
       );
-      await writeOutput();
     }
     await server?.close();
     if (!success) {
