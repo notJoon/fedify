@@ -464,21 +464,21 @@ export interface Federatable<TContextData> {
    */
   setCollectionDispatcher<
     TObject extends Object,
-    TParam extends Record<string, string>,
+    TParams extends Record<string, string>,
   >(
     name: string | symbol,
     itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParam>,
+    path: ParamsKeyPath<TParams>,
     dispatcher: CustomCollectionDispatcher<
       TObject,
+      TParams,
       RequestContext<TContextData>,
-      TContextData,
-      void
+      TContextData
     >,
   ): CustomCollectionCallbackSetters<
+    TParams,
     RequestContext<TContextData>,
-    TContextData,
-    void
+    TContextData
   >;
 
   /**
@@ -497,21 +497,21 @@ export interface Federatable<TContextData> {
    */
   setOrderedCollectionDispatcher<
     TObject extends Object,
-    TParam extends Record<string, string>,
+    TParams extends Record<string, string>,
   >(
     name: string | symbol,
     itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParam>,
+    path: ParamsKeyPath<TParams>,
     dispatcher: CustomCollectionDispatcher<
       TObject,
+      TParams,
       RequestContext<TContextData>,
-      TContextData,
-      void
+      TContextData
     >,
   ): CustomCollectionCallbackSetters<
+    TParams,
     RequestContext<TContextData>,
-    TContextData,
-    void
+    TContextData
   >;
 }
 
@@ -1026,15 +1026,16 @@ export interface FederationFetchOptions<TContextData> {
 /**
  * Additional settings for a custom collection dispatcher.
  *
+ * @typeParam TParams The type of the parameters in the URL path.
  * @typeParam TContext The type of the context.  {@link Context} or
  *                     {@link RequestContext}.
  * @typeParam TContextData The context data to pass to the {@link Context}.
  * @typeParam TFilter The type of filter for the collection.
  */
 export interface CustomCollectionCallbackSetters<
+  TParams extends Record<string, string>,
   TContext extends Context<TContextData>,
   TContextData,
-  TFilter,
 > {
   /**
    * Sets the counter for the custom collection.
@@ -1042,8 +1043,15 @@ export interface CustomCollectionCallbackSetters<
    * @returns The setters object so that settings can be chained.
    */
   setCounter(
-    counter: CustomCollectionCounter<TContextData, TFilter>,
-  ): CustomCollectionCallbackSetters<TContext, TContextData, TFilter>;
+    counter: CustomCollectionCounter<
+      TParams,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParams,
+    TContext,
+    TContextData
+  >;
 
   /**
    * Sets the first cursor for the custom collection.
@@ -1051,8 +1059,16 @@ export interface CustomCollectionCallbackSetters<
    * @returns The setters object so that settings can be chained.
    */
   setFirstCursor(
-    cursor: CustomCollectionCursor<TContext, TContextData, TFilter>,
-  ): CustomCollectionCallbackSetters<TContext, TContextData, TFilter>;
+    cursor: CustomCollectionCursor<
+      TParams,
+      TContext,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParams,
+    TContext,
+    TContextData
+  >;
 
   /**
    * Sets the last cursor for the custom collection.
@@ -1060,8 +1076,16 @@ export interface CustomCollectionCallbackSetters<
    * @returns The setters object so that settings can be chained.
    */
   setLastCursor(
-    cursor: CustomCollectionCursor<TContext, TContextData, TFilter>,
-  ): CustomCollectionCallbackSetters<TContext, TContextData, TFilter>;
+    cursor: CustomCollectionCursor<
+      TParams,
+      TContext,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParams,
+    TContext,
+    TContextData
+  >;
 
   /**
    * Specifies the conditions under which requests are authorized.
@@ -1070,8 +1094,12 @@ export interface CustomCollectionCallbackSetters<
    * @since 0.7.0
    */
   authorize(
-    predicate: AuthorizePredicate<TContextData>,
-  ): CustomCollectionCallbackSetters<TContext, TContextData, TFilter>;
+    predicate: ObjectAuthorizePredicate<TContextData, string>,
+  ): CustomCollectionCallbackSetters<
+    TParams,
+    TContext,
+    TContextData
+  >;
 }
 
 /**

@@ -278,53 +278,62 @@ export type ObjectAuthorizePredicate<TContextData, TParam extends string> = (
  * A callback that dispatches a custom collection.
  *
  * @typeParam TItem The type of items in the collection.
+ * @typeParam TParams The parameter names of the requested URL.
  * @typeParam TContext The type of the context. {@link Context} or
  *                     {@link RequestContext}.
  * @typeParam TContextData The context data to pass to the `TContext`.
  * @typeParam TFilter The type of the filter, if any.
  * @param context The context.
+ * @param values The parameters of the requested URL.
  * @param cursor The cursor to start the collection from, or `null` to dispatch
  *               the entire collection without pagination.
- * @param filter The filter to apply to the collection, if any.
+ * @since 1.8.0
  */
 export type CustomCollectionDispatcher<
   TItem,
+  TParams extends Record<string, string>,
   TContext extends Context<TContextData>,
   TContextData,
-  TFilter,
 > = (
   context: TContext,
+  values: TParams,
   cursor: string | null,
-  filter?: TFilter,
 ) => PageItems<TItem> | null | Promise<PageItems<TItem> | null>;
 
 /**
  * A callback that counts the number of items in a custom collection.
  *
+ * @typeParam TParams The parameter names of the requested URL.
  * @typeParam TContextData The context data to pass to the {@link Context}.
  * @param context The context.
- * @param filter The filter to apply to the collection, if any.
+ * @param values The parameters of the requested URL.
+ * @since 1.8.0
  */
-export type CustomCollectionCounter<TContextData, TFilter> = (
+export type CustomCollectionCounter<
+  TParams extends Record<string, string>,
+  TContextData,
+> = (
   context: RequestContext<TContextData>,
-  filter?: TFilter,
+  values: TParams,
 ) => number | bigint | null | Promise<number | bigint | null>;
 
 /**
  * A callback that returns a cursor for a custom collection.
  *
+ * @typeParam TParams The parameter names of the requested URL.
  * @typeParam TContext The type of the context. {@link Context} or
  *                     {@link RequestContext}.
  * @typeParam TContextData The context data to pass to the {@link Context}.
  * @typeParam TFilter The type of the filter, if any.
  * @param context The context.
- * @param filter The filter to apply to the collection, if any.
+ * @param values The parameters of the requested URL.
+ * @since 1.8.0
  */
 export type CustomCollectionCursor<
+  TParams extends Record<string, string>,
   TContext extends Context<TContextData>,
   TContextData,
-  TFilter,
 > = (
   context: TContext,
-  filter?: TFilter,
+  values: TParams,
 ) => string | null | Promise<string | null>;
