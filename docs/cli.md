@@ -811,7 +811,7 @@ It does not affect the output when looking up a single object.
 > The separator is also used when looking up a collection object with the
 > [`-t`/`--traverse`](#t-traverse-traverse-the-collection) option.
 
-### '-o' /'--output': Output file path
+### `-o`/`--output`: Output file path
 
 *This option is available since Fedify 1.8.0.*
 
