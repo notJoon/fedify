@@ -77,7 +77,12 @@ test("SqliteKvStore.set()", async () => {
     const result = db.prepare(`
       SELECT * FROM ${tableName}
       WHERE key = ?
-    `).all(JSON.stringify(["foo", "baz"]));
+    `).all(JSON.stringify(["foo", "baz"])) as {
+      key: string;
+      value: string;
+      created: number;
+      expires: number | null;
+    }[];
 
     assert.strictEqual(result.length, 1);
     assert.deepStrictEqual(JSON.parse(result[0].key), ["foo", "baz"]);
@@ -90,17 +95,29 @@ test("SqliteKvStore.set()", async () => {
     const result2 = db.prepare(`
       SELECT * FROM ${tableName}
       WHERE key = ?
-    `).all(JSON.stringify(["foo", "qux"]));
+    `).all(JSON.stringify(["foo", "qux"])) as {
+      key: string;
+      value: string;
+      created: number;
+      expires: number | null;
+    }[];
     assert.strictEqual(result2.length, 1);
     assert.deepStrictEqual(JSON.parse(result2[0].key), ["foo", "qux"]);
     assert.strictEqual(JSON.parse(result2[0].value), "qux");
-    assert(result2[0].expires >= result2[0].created + 86400000);
+    assert(
+      result2[0].expires && result2[0].expires >= result2[0].created + 86400000,
+    );
 
     await store.set(["foo", "quux"], true);
     const result3 = db.prepare(`
       SELECT * FROM ${tableName}
       WHERE key = ?
-    `).all(JSON.stringify(["foo", "quux"]));
+    `).all(JSON.stringify(["foo", "quux"])) as {
+      key: string;
+      value: string;
+      created: number;
+      expires: number | null;
+    }[];
     assert.strictEqual(result3.length, 1);
     assert.deepStrictEqual(JSON.parse(result3[0].key), ["foo", "quux"]);
     assert.strictEqual(JSON.parse(result3[0].value), true);
@@ -174,7 +191,7 @@ test("SqliteKvStore.drop()", async () => {
 });
 
 test("SqliteKvStore.cas()", async () => {
-  const { db, tableName, store } = getStore();
+  const { db, store } = getStore();
   try {
     await store.set(["foo", "bar"], "foobar");
     assert.strictEqual(await store.cas(["foo", "bar"], "bar", "baz"), false);
@@ -195,7 +212,7 @@ test("SqliteKvStore.cas()", async () => {
 });
 
 test("SqliteKvStore - complex values", async () => {
-  const { db, tableName, store } = getStore();
+  const { db, store } = getStore();
   try {
     await store.set(["complex"], {
       nested: {

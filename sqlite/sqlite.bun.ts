@@ -1,4 +1,4 @@
-import { Database, Statement } from "bun:sqlite";
+import { Database, type Statement } from "bun:sqlite";
 import type {
   SqliteDatabaseAdapter,
   SqliteStatementAdapter,

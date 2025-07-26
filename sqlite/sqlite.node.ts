@@ -1,4 +1,8 @@
-import { DatabaseSync, StatementSync } from "node:sqlite";
+import {
+  DatabaseSync,
+  type SQLInputValue,
+  type StatementSync,
+} from "node:sqlite";
 import type {
   SqliteDatabaseAdapter,
   SqliteStatementAdapter,
@@ -27,14 +31,18 @@ export class SqliteStatement implements SqliteStatementAdapter {
   constructor(private readonly stmt: StatementSync) {}
 
   run(...params: unknown[]): { changes: number; lastInsertRowid: number } {
-    return this.stmt.run(...params);
+    const result = this.stmt.run(...params as SQLInputValue[]);
+    return {
+      changes: Number(result.changes),
+      lastInsertRowid: Number(result.lastInsertRowid),
+    };
   }
 
   get(...params: unknown[]): unknown | undefined {
-    return this.stmt.get(...params);
+    return this.stmt.get(...params as SQLInputValue[]);
   }
 
   all(...params: unknown[]): unknown[] {
-    return this.stmt.all(...params);
+    return this.stmt.all(...params as SQLInputValue[]);
   }
 }

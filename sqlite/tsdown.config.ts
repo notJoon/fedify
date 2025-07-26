@@ -7,7 +7,7 @@ export default defineConfig({
   platform: "node",
   outputOptions: {
     intro: `
-      import { Temporal } from "@js-temporal/polyfill";
+import { Temporal } from "@js-temporal/polyfill";
     `,
   },
 });

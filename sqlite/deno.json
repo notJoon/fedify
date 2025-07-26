@@ -3,31 +3,24 @@
   "version": "1.8.0",
   "license": "MIT",
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "./kv": "./kv.ts"
   },
   "imports": {
     "@fedify/sqlite": "./mod.ts",
     "@fedify/sqlite/": "./",
-    "#sqlite": "./dist/sqlite.node.js"
+    "#sqlite": "./sqlite.node.ts"
   },
-  "nodeModulesDir": "none",
-  "unstable": [
-    "temporal"
-  ],
   "exclude": [
-    "dist",
     "node_modules"
   ],
+  "publish": {
+    "exclude": [
+      "!dist/"
+    ]
+  },
   "tasks": {
     "check": "deno fmt --check && deno lint && deno check *.ts",
     "test": "deno test --allow-net --allow-env --doc --no-check=leaks"
-  },
-  "test": {
-    "include": [
-      "deno.test.ts"
-    ],
-    "exclude": [
-      "node.test.ts"
-    ]
   }
 }

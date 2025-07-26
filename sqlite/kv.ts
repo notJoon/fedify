@@ -1,4 +1,4 @@
-import { PlatformDatabase, SqliteDatabase } from "#sqlite";
+import { type PlatformDatabase, SqliteDatabase } from "#sqlite";
 import type { KvKey, KvStore, KvStoreSetOptions } from "@fedify/fedify";
 import { Temporal } from "@js-temporal/polyfill";
 import { getLogger } from "@logtape/logtape";
@@ -67,8 +67,9 @@ export class SqliteKvStore implements KvStore {
   /**
    * {@inheritDoc KvStore.get}
    */
+  // deno-lint-ignore require-await
   async get<T = unknown>(key: KvKey): Promise<T | undefined> {
-    await this.initialize();
+    this.initialize();
 
     const encodedKey = this.#encodeKey(key);
     const now = Temporal.Now.instant().epochMilliseconds;
@@ -90,12 +91,13 @@ export class SqliteKvStore implements KvStore {
   /**
    * {@inheritDoc KvStore.set}
    */
+  // deno-lint-ignore require-await
   async set(
     key: KvKey,
     value: unknown,
     options?: KvStoreSetOptions,
   ): Promise<void> {
-    await this.initialize();
+    this.initialize();
 
     if (value === undefined) {
       return;
@@ -118,14 +120,16 @@ export class SqliteKvStore implements KvStore {
       )
       .run(encodedKey, encodedValue, now, expiresAt);
 
-    await this.#expire();
+    this.#expire();
+    return;
   }
 
   /**
    * {@inheritDoc KvStore.delete}
    */
+  // deno-lint-ignore require-await
   async delete(key: KvKey): Promise<void> {
-    await this.initialize();
+    this.initialize();
 
     const encodedKey = this.#encodeKey(key);
 
@@ -134,19 +138,21 @@ export class SqliteKvStore implements KvStore {
       DELETE FROM "${this.#tableName}" WHERE key = ?
     `)
       .run(encodedKey);
-    await this.#expire();
+    this.#expire();
+    return Promise.resolve();
   }
 
   /**
    * {@inheritDoc KvStore.cas}
    */
+  // deno-lint-ignore require-await
   async cas(
     key: KvKey,
     expectedValue: unknown,
     newValue: unknown,
     options?: KvStoreSetOptions,
   ): Promise<boolean> {
-    await this.initialize();
+    this.initialize();
 
     const encodedKey = this.#encodeKey(key);
     const now = Temporal.Now.instant().epochMilliseconds;
@@ -194,7 +200,7 @@ export class SqliteKvStore implements KvStore {
       }
 
       this.#db.exec("COMMIT");
-      await this.#expire();
+      this.#expire();
       return true;
     } catch (error) {
       this.#db.exec("ROLLBACK");
@@ -206,7 +212,7 @@ export class SqliteKvStore implements KvStore {
    * Creates the table used by the key-value store if it does not already exist.
    * Does nothing if the table already exists.
    */
-  async initialize(): Promise<void> {
+  initialize() {
     if (this.#initialized) {
       return;
     }
@@ -235,7 +241,7 @@ export class SqliteKvStore implements KvStore {
     });
   }
 
-  async #expire(): Promise<void> {
+  #expire() {
     const now = Temporal.Now.instant().epochMilliseconds;
     this.#db
       .prepare(`
@@ -249,7 +255,7 @@ export class SqliteKvStore implements KvStore {
    * Drops the table used by the key-value store.  Does nothing if the table
    * does not exist.
    */
-  async drop(): Promise<void> {
+  drop() {
     this.#db.exec(`DROP TABLE IF EXISTS "${this.#tableName}"`);
     this.#initialized = false;
   }
