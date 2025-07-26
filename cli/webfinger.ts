@@ -30,7 +30,7 @@ export const command = new Command()
       }).start();
       try {
         const url = convertUrlIfHandle(resource); // Convert resource to URL
-        validateMaxRedirection(options.maxRedirection); // Validate max redirection
+        validateMaxRedirection(options.maxRedirection);
         const webFinger = await lookupWebFinger(url, options) ?? // Look up WebFinger
           new NotFoundError(resource).throw(); // throw NotFoundError if not found
 
