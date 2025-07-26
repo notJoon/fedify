@@ -2,4 +2,4 @@
  * SQLite drivers for Fedify.
  * @module
  */
-export * from "./kv.ts";
+export { SqliteKvStore } from "./deno.ts";

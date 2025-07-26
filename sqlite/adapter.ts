@@ -1,7 +1,8 @@
 /**
- * SQLite adapter
+ * SQLite database adapter.
+ *
+ * An abstract interface for SQLite database for different runtime environments.
  */
-
 export interface SQLiteDatabase {
   /**
    * Prepares a SQL statement.
@@ -31,8 +32,9 @@ export interface SQLiteStatement {
   /**
    * Executes a SQL statement and returns the first row of the result set.
    * @param params - The parameters to bind to the SQL statement.
+   * @returns The first row of the result set, or `undefined` if the result set is empty.
    */
-  get(...params: unknown[]): unknown;
+  get(...params: unknown[]): unknown | undefined;
 
   /**
    * Executes a SQL statement and returns all rows of the result set.
