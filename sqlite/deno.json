@@ -1,6 +1,6 @@
 {
   "name": "@fedify/sqlite",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
@@ -12,7 +12,8 @@
     "#sqlite": "./sqlite.node.ts"
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "sqlite.bun.ts"
   ],
   "publish": {
     "exclude": [
