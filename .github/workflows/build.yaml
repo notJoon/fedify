@@ -426,6 +426,7 @@ jobs:
           | @fedify/nestjs   | ${{ steps.versioning.outputs.version }} |                             | [npm][npm:@fedify/nestjs]   |
           | @fedify/postgres | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] |
           | @fedify/redis    | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/redis]    | [npm][npm:@fedify/redis]    |
+          | @fedify/testing  | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/testing]  | [npm][npm:@fedify/testing]  |
 
           [jsr:@fedify/fedify]: https://jsr.io/@fedify/fedify@${{ steps.versioning.outputs.version }}
           [npm:@fedify/fedify]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
@@ -441,6 +442,8 @@ jobs:
           [npm:@fedify/postgres]: https://www.npmjs.com/package/@fedify/postgres/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/redis]: https://jsr.io/@fedify/redis@${{ steps.versioning.outputs.version }}
           [npm:@fedify/redis]: https://www.npmjs.com/package/@fedify/redis/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/testing]: https://jsr.io/@fedify/testing@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/testing]: https://www.npmjs.com/package/@fedify/testing/v/${{ steps.versioning.outputs.short_version }}
         pr-number: ${{ github.event.pull_request.number }}
         comment-tag: publish
 
