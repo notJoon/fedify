@@ -76,7 +76,7 @@ function convertUrlIfHandle(handleOrUrl: string): URL {
  */
 function validateMaxRedirection(maxRedirection: number): void {
   if (maxRedirection < 0 || !Number.isInteger(maxRedirection)) {
-    return new InvalidMaxRedirectionError(maxRedirection).throw();
+    new InvalidMaxRedirectionError(maxRedirection).throw();
   }
 }
 
