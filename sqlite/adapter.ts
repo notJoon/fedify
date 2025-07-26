@@ -3,12 +3,12 @@
  *
  * An abstract interface for SQLite database for different runtime environments.
  */
-export interface SQLiteDatabase {
+export interface SqliteDatabaseAdapter {
   /**
    * Prepares a SQL statement.
    * @param sql - The SQL statement to prepare.
    */
-  prepare(sql: string): SQLiteStatement;
+  prepare(sql: string): SqliteStatementAdapter;
 
   /**
    * Executes a SQL statement.
@@ -22,7 +22,7 @@ export interface SQLiteDatabase {
   close(): void;
 }
 
-export interface SQLiteStatement {
+export interface SqliteStatementAdapter {
   /**
    * Executes a SQL statement and returns the number of changes made to the database.
    * @param params - The parameters to bind to the SQL statement.
@@ -41,8 +41,4 @@ export interface SQLiteStatement {
    * @param params - The parameters to bind to the SQL statement.
    */
   all(...params: unknown[]): unknown[];
-}
-
-export function createSQLiteDatabase(db: unknown): SQLiteDatabase {
-  throw new Error("Unsupported database type");
 }

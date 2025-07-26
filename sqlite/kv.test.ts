@@ -1,8 +1,9 @@
+import { PlatformDatabase } from "#sqlite";
 import * as temporal from "@js-temporal/polyfill";
 import { delay } from "@std/async/delay";
-import { Database } from "bun:sqlite";
-import { expect, test } from "bun:test";
-import { SqliteKvStore } from "./bun.ts";
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import { SqliteKvStore } from "./kv.ts";
 
 let Temporal: typeof temporal.Temporal;
 if ("Temporal" in globalThis) {
@@ -12,11 +13,11 @@ if ("Temporal" in globalThis) {
 }
 
 function getStore(): {
-  db: Database;
+  db: PlatformDatabase;
   tableName: string;
   store: SqliteKvStore;
 } {
-  const db = new Database(":memory:");
+  const db = new PlatformDatabase(":memory:");
   const tableName = `fedify_kv_test_${Math.random().toString(36).slice(5)}`;
   return {
     db,
@@ -29,14 +30,14 @@ test("SqliteKvStore.initialize()", async () => {
   const { db, tableName, store } = getStore();
   try {
     await store.initialize();
-    const result = db.query(`
+    const result = await db.prepare(`
       SELECT name FROM sqlite_master 
       WHERE type='table' AND name=?
     `).get(tableName);
-    expect(result).toBeDefined();
+    assert(result !== undefined);
   } finally {
     await store.drop();
-    db.close();
+    await db.close();
   }
 });
 
@@ -49,7 +50,7 @@ test("SqliteKvStore.get()", async () => {
       INSERT INTO ${tableName} (key, value, created)
       VALUES (?, ?, ?)
     `).run(JSON.stringify(["foo", "bar"]), JSON.stringify(["foobar"]), now);
-    expect(await store.get(["foo", "bar"])).toEqual(["foobar"]);
+    assert.deepStrictEqual(await store.get(["foo", "bar"]), ["foobar"]);
 
     db.prepare(`
       INSERT INTO ${tableName} (key, value, expires, created)
@@ -61,10 +62,10 @@ test("SqliteKvStore.get()", async () => {
       Temporal.Now.instant().epochMilliseconds,
     );
     await delay(500);
-    expect(await store.get(["foo", "bar", "ttl"])).toBeUndefined();
+    assert.strictEqual(await store.get(["foo", "bar", "ttl"]), undefined);
   } finally {
     await store.drop();
-    db.close();
+    await db.close();
   }
 });
 
@@ -78,10 +79,10 @@ test("SqliteKvStore.set()", async () => {
       WHERE key = ?
     `).all(JSON.stringify(["foo", "baz"]));
 
-    expect(result.length).toBe(1);
-    expect(JSON.parse(result[0].key as string)).toEqual(["foo", "baz"]);
-    expect(JSON.parse(result[0].value as string)).toBe("baz");
-    expect(result[0].expires).toBeNull();
+    assert.strictEqual(result.length, 1);
+    assert.deepStrictEqual(JSON.parse(result[0].key), ["foo", "baz"]);
+    assert.strictEqual(JSON.parse(result[0].value), "baz");
+    assert.strictEqual(result[0].expires, null);
 
     await store.set(["foo", "qux"], "qux", {
       ttl: Temporal.Duration.from({ days: 1 }),
@@ -90,26 +91,23 @@ test("SqliteKvStore.set()", async () => {
       SELECT * FROM ${tableName}
       WHERE key = ?
     `).all(JSON.stringify(["foo", "qux"]));
-    expect(result2.length).toBe(1);
-    expect(JSON.parse(result2[0].key as string)).toEqual(["foo", "qux"]);
-    expect(JSON.parse(result2[0].value as string)).toBe("qux");
-    expect(
-      (result2[0].expires as number) >=
-        (result2[0].created as number) + 86400000,
-    ).toBe(true);
+    assert.strictEqual(result2.length, 1);
+    assert.deepStrictEqual(JSON.parse(result2[0].key), ["foo", "qux"]);
+    assert.strictEqual(JSON.parse(result2[0].value), "qux");
+    assert(result2[0].expires >= result2[0].created + 86400000);
 
     await store.set(["foo", "quux"], true);
     const result3 = db.prepare(`
       SELECT * FROM ${tableName}
       WHERE key = ?
     `).all(JSON.stringify(["foo", "quux"]));
-    expect(result3.length).toBe(1);
-    expect(JSON.parse(result3[0].key as string)).toEqual(["foo", "quux"]);
-    expect(JSON.parse(result3[0].value as string)).toBe(true);
-    expect(result3[0].expires).toBeNull();
+    assert.strictEqual(result3.length, 1);
+    assert.deepStrictEqual(JSON.parse(result3[0].key), ["foo", "quux"]);
+    assert.strictEqual(JSON.parse(result3[0].value), true);
+    assert.strictEqual(result3[0].expires, null);
   } finally {
     await store.drop();
-    db.close();
+    await db.close();
   }
 });
 
@@ -117,29 +115,28 @@ test("SqliteKvStore.set() - upsert functionality", async () => {
   const { db, tableName, store } = getStore();
   try {
     await store.set(["upsert"], "initial");
-    expect(await store.get(["upsert"])).toBe("initial");
+    assert.strictEqual(await store.get(["upsert"]), "initial");
     await store.set(["upsert"], "updated");
-    expect(await store.get(["upsert"])).toBe("updated");
+    assert.strictEqual(await store.get(["upsert"]), "updated");
     const result = db.prepare(`
       SELECT COUNT(*) as count FROM ${tableName} WHERE key = ?
     `).get(JSON.stringify(["upsert"]));
-    expect((result as { count: number }).count).toBe(1);
+    assert.strictEqual((result as { count: number }).count, 1);
   } finally {
     await store.drop();
-    db.close();
+    await db.close();
   }
 });
 
 test("SqliteKvStore.delete()", async () => {
   const { db, tableName, store } = getStore();
   try {
-    await store.initialize();
     await store.delete(["foo", "qux"]);
     const result = db.prepare(`
       SELECT * FROM ${tableName}
       WHERE key = ?
     `).all(JSON.stringify(["foo", "qux"]));
-    expect(result.length).toBe(0);
+    assert.strictEqual(result.length, 0);
 
     db.prepare(`
       INSERT INTO ${tableName} (key, value, created)
@@ -154,10 +151,10 @@ test("SqliteKvStore.delete()", async () => {
       SELECT * FROM ${tableName}
       WHERE key = ?
     `).all(JSON.stringify(["foo", "qux"]));
-    expect(result2.length).toBe(0);
+    assert.strictEqual(result2.length, 0);
   } finally {
     await store.drop();
-    db.close();
+    await db.close();
   }
 });
 
@@ -165,13 +162,14 @@ test("SqliteKvStore.drop()", async () => {
   const { db, tableName, store } = getStore();
   try {
     await store.drop();
-    const result = db.query(`
+    const result = await db.prepare(`
       SELECT name FROM sqlite_master 
       WHERE type='table' AND name=?
     `).get(tableName);
-    expect(result).toBeNull();
+    // Bun returns null, Node returns undefined
+    assert(result === undefined || result === null);
   } finally {
-    db.close();
+    await db.close();
   }
 });
 
@@ -179,20 +177,20 @@ test("SqliteKvStore.cas()", async () => {
   const { db, tableName, store } = getStore();
   try {
     await store.set(["foo", "bar"], "foobar");
-    expect(await store.cas(["foo", "bar"], "bar", "baz")).toBe(false);
-    expect(await store.get(["foo", "bar"])).toBe("foobar");
-    expect(await store.cas(["foo", "bar"], "foobar", "baz")).toBe(true);
-    expect(await store.get(["foo", "bar"])).toBe("baz");
+    assert.strictEqual(await store.cas(["foo", "bar"], "bar", "baz"), false);
+    assert.strictEqual(await store.get(["foo", "bar"]), "foobar");
+    assert.strictEqual(await store.cas(["foo", "bar"], "foobar", "baz"), true);
+    assert.strictEqual(await store.get(["foo", "bar"]), "baz");
     await store.delete(["foo", "bar"]);
-    expect(await store.cas(["foo", "bar"], "foobar", "baz")).toBe(false);
-    expect(await store.get(["foo", "bar"])).toBeUndefined();
-    expect(await store.cas(["foo", "bar"], undefined, "baz")).toBe(true);
-    expect(await store.get(["foo", "bar"])).toBe("baz");
-    expect(await store.cas(["foo", "bar"], "baz", undefined)).toBe(true);
-    expect(await store.get(["foo", "bar"])).toBeUndefined();
+    assert.strictEqual(await store.cas(["foo", "bar"], "foobar", "baz"), false);
+    assert.strictEqual(await store.get(["foo", "bar"]), undefined);
+    assert.strictEqual(await store.cas(["foo", "bar"], undefined, "baz"), true);
+    assert.strictEqual(await store.get(["foo", "bar"]), "baz");
+    assert.strictEqual(await store.cas(["foo", "bar"], "baz", undefined), true);
+    assert.strictEqual(await store.get(["foo", "bar"]), undefined);
   } finally {
     await store.drop();
-    db.close();
+    await db.close();
   }
 });
 
@@ -204,53 +202,55 @@ test("SqliteKvStore - complex values", async () => {
         value: "test",
       },
     });
-    expect(await store.get(["complex"])).toEqual({
+    assert.deepStrictEqual(await store.get(["complex"]), {
       nested: {
         value: "test",
       },
     });
 
     await store.set(["undefined"], undefined);
-    expect(await store.get(["undefined"])).toBeUndefined();
-    expect(await store.cas(["undefined"], undefined, "baz")).toBe(true);
-    expect(await store.get(["undefined"])).toBe("baz");
+    assert.strictEqual(await store.get(["undefined"]), undefined);
+    assert.strictEqual(await store.cas(["undefined"], undefined, "baz"), true);
+    assert.strictEqual(await store.get(["undefined"]), "baz");
 
     await store.set(["null"], null);
-    expect(await store.get(["null"])).toBeNull();
-    expect(await store.cas(["null"], null, "baz")).toBe(true);
-    expect(await store.get(["null"])).toBe("baz");
+    assert.strictEqual(await store.get(["null"]), null);
+    assert.strictEqual(await store.cas(["null"], null, "baz"), true);
+    assert.strictEqual(await store.get(["null"]), "baz");
 
     await store.set(["empty string"], "");
-    expect(await store.get(["empty string"])).toBe("");
-    expect(await store.cas(["empty string"], "", "baz")).toBe(true);
-    expect(await store.get(["empty string"])).toBe("baz");
+    assert.strictEqual(await store.get(["empty string"]), "");
+    assert.strictEqual(await store.cas(["empty string"], "", "baz"), true);
+    assert.strictEqual(await store.get(["empty string"]), "baz");
 
     await store.set(["array"], [1, 2, 3]);
-    expect(await store.get(["array"])).toEqual([1, 2, 3]);
-    expect(
+    assert.deepStrictEqual(await store.get(["array"]), [1, 2, 3]);
+    assert.strictEqual(
       await store.cas(["array"], [1, 2, 3], [1, 2, 3, 4]),
-    ).toBe(true);
-    expect(await store.get(["array"])).toEqual([1, 2, 3, 4]);
+      true,
+    );
+    assert.deepStrictEqual(await store.get(["array"]), [1, 2, 3, 4]);
 
     await store.set(["object"], { a: 1, b: 2 });
-    expect(await store.get(["object"])).toEqual({ a: 1, b: 2 });
-    expect(
+    assert.deepStrictEqual(await store.get(["object"]), { b: 2, a: 1 });
+    assert.strictEqual(
       await store.cas(["object"], { a: 1, b: 2 }, { a: 1, b: 2, c: 3 }),
-    ).toBe(true);
-    expect(await store.get(["object"])).toEqual({ a: 1, b: 2, c: 3 });
+      true,
+    );
+    assert.deepStrictEqual(await store.get(["object"]), { a: 1, b: 2, c: 3 });
 
     await store.set(["falsy", "false"], false);
-    expect(await store.get(["falsy", "false"])).toBe(false);
-    expect(await store.cas(["falsy", "false"], false, true)).toBe(true);
-    expect(await store.get(["falsy", "false"])).toBe(true);
+    assert.strictEqual(await store.get(["falsy", "false"]), false);
+    assert.strictEqual(await store.cas(["falsy", "false"], false, true), true);
+    assert.strictEqual(await store.get(["falsy", "false"]), true);
 
     await store.set(["falsy", "0"], 0);
-    expect(await store.get(["falsy", "0"])).toBe(0);
-    expect(await store.cas(["falsy", "0"], 0, 1)).toBe(true);
-    expect(await store.get(["falsy", "0"])).toBe(1);
+    assert.strictEqual(await store.get(["falsy", "0"]), 0);
+    assert.strictEqual(await store.cas(["falsy", "0"], 0, 1), true);
+    assert.strictEqual(await store.get(["falsy", "0"]), 1);
   } finally {
     await store.drop();
-    db.close();
+    await db.close();
   }
 });
 
@@ -264,8 +264,14 @@ test("SqliteKvStore.set() - preserves created timestamp on update", async () => 
     `).get(JSON.stringify(["timestamp-test"]));
 
     const initialCreated = (initialResult as { created: number }).created;
-    expect(initialCreated).toBeDefined();
-    expect((initialResult as { expires: number | null }).expires).toBeNull();
+    assert(
+      initialCreated !== undefined,
+      "Initial created timestamp should be set",
+    );
+    assert.strictEqual(
+      (initialResult as { expires: number | null }).expires,
+      null,
+    );
 
     await delay(100);
 
@@ -277,12 +283,13 @@ test("SqliteKvStore.set() - preserves created timestamp on update", async () => 
       WHERE key = ?
     `).get(JSON.stringify(["timestamp-test"]));
 
-    expect((updatedResult as { created: number }).created).toBe(
+    assert.strictEqual(
+      (updatedResult as { created: number }).created,
       initialCreated,
       "Created timestamp should remain unchanged after update",
     );
   } finally {
     await store.drop();
-    db.close();
+    await db.close();
   }
 });

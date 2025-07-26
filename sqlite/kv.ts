@@ -1,8 +1,9 @@
+import { PlatformDatabase, SqliteDatabase } from "#sqlite";
 import type { KvKey, KvStore, KvStoreSetOptions } from "@fedify/fedify";
 import { Temporal } from "@js-temporal/polyfill";
 import { getLogger } from "@logtape/logtape";
 import { isEqual } from "es-toolkit";
-import type { SQLiteDatabase } from "./adapter.ts";
+import type { SqliteDatabaseAdapter } from "./adapter.ts";
 
 const logger = getLogger(["fedify", "sqlite", "kv"]);
 
@@ -44,15 +45,15 @@ export interface SqliteKvStoreOptions {
 export class SqliteKvStore implements KvStore {
   static readonly #defaultTableName = "fedify_kv";
   static readonly #tableNameRegex = /^[A-Za-z_][A-Za-z0-9_]{0,63}$/;
-  readonly #db: SQLiteDatabase;
+  readonly #db: SqliteDatabaseAdapter;
   readonly #tableName: string;
   #initialized: boolean;
 
   constructor(
-    readonly db: SQLiteDatabase,
+    readonly db: PlatformDatabase,
     readonly options: SqliteKvStoreOptions = {},
   ) {
-    this.#db = db;
+    this.#db = new SqliteDatabase(db);
     this.#initialized = options.initialized ?? false;
     this.#tableName = options.tableName ?? SqliteKvStore.#defaultTableName;
 
@@ -214,7 +215,7 @@ export class SqliteKvStore implements KvStore {
       tableName: this.#tableName,
     });
 
-    this.db.exec(`
+    this.#db.exec(`
       CREATE TABLE IF NOT EXISTS "${this.#tableName}" (
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL,
@@ -223,7 +224,7 @@ export class SqliteKvStore implements KvStore {
       )
     `);
 
-    this.db.exec(`
+    this.#db.exec(`
       CREATE INDEX IF NOT EXISTS "idx_${this.#tableName}_expires" 
       ON "${this.#tableName}" (expires)
     `);
@@ -249,7 +250,7 @@ export class SqliteKvStore implements KvStore {
    * does not exist.
    */
   async drop(): Promise<void> {
-    this.db.exec(`DROP TABLE IF EXISTS "${this.#tableName}"`);
+    this.#db.exec(`DROP TABLE IF EXISTS "${this.#tableName}"`);
     this.#initialized = false;
   }
 
