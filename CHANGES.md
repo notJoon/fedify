@@ -82,24 +82,27 @@ the versioning.
         in the WebFinger request.
      -  The `--allow-private-address` or `-p` option allows looking up
         WebFinger information for private addresses (e.g., `localhost`).
+     -  The `--max-redirection` option allows uses to specify the maximum
+        number of redirects to follow when performing WebFinger lookups.
+        [[#311], [#328] by KeunHyeong Park]
 
-  -  Added `--dry-run` option to `fedify init` command.  This option allows users
+ -  Added `--dry-run` option to `fedify init` command.  This option allows users
     to preview what files and configurations would be created without actually
     creating them.  [[#263], [#298] by Lee ByeongJun]
 
-  -  Fixed a bug where the `fedify node` command had failed to correctly
-     render the favicon in terminal emulators that do not support 24-bit
-     colors.  [[#168], [#282], [#304] by Hyeonseo Kim]
+ -  Fixed a bug where the `fedify node` command had failed to correctly
+    render the favicon in terminal emulators that do not support 24-bit
+    colors.  [[#168], [#282], [#304] by Hyeonseo Kim]
 
-  -  Supported NestJS integration with the `@fedify/nestjs` package.
-     [[#269], [#309] by Jaeyeol Lee]
+ -  Supported NestJS integration with the `@fedify/nestjs` package.
+    [[#269], [#309] by Jaeyeol Lee]
 
      -  Added `@fedify/nestjs` package.
      -  Added `FedifyModule` for integrating Fedify into NestJS applications.
 
-  -  Added `-o`/`--output` option to `fedify lookup` command. This option allows
-     users to save retrieved lookup results to specified path. 
-     [[#261], [#321] by Jiwon Kwon]
+ -  Added `-o`/`--output` option to `fedify lookup` command. This option allows
+    users to save retrieved lookup results to specified path.
+    [[#261], [#321] by Jiwon Kwon]
 
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#197]: https://github.com/fedify-dev/fedify/issues/197
@@ -118,8 +121,9 @@ the versioning.
 [#300]: https://github.com/fedify-dev/fedify/pull/300
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
+[#311]: https://github.com/fedify-dev/fedify/issues/311
 [#321]: https://github.com/fedify-dev/fedify/pull/321
-
+[#328]: https://github.com/fedify-dev/fedify/pull/309
 
 
 Version 1.7.6

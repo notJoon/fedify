@@ -815,7 +815,7 @@ It does not affect the output when looking up a single object.
 
 *This option is available since Fedify 1.8.0.*
 
-You can specify the output file path to save lookup results, instead of 
+You can specify the output file path to save lookup results, instead of
 printing results to stdout. For example, to save the retrieved information
 about the specified objects to a given path, run the command below:
 
@@ -1182,6 +1182,23 @@ fedify webfinger --allow-private-address @username@localhost
 ~~~~
 
 Mostly useful for testing purposes.  *Do not use this in production.*
+
+### `--max-redirection`: Maximum number of redirections
+
+The `--max-redirection` option is used to control the maximum number of
+redirections allowed during WebFinger lookups.  By default, it is set to 5.
+If you want to set a custom limit, run the below command:
+
+~~~~ sh
+# Use default redirection limit (5)
+fedify webfinger @user@example.com
+
+# Set custom redirection limit
+fedify webfinger @user@example.com --max-redirection 3
+
+# Disable redirections entirely
+fedify webfinger @user@example.com --max-redirection 0
+~~~~
 
 
 Shell completions
