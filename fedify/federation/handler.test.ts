@@ -78,7 +78,7 @@ test("handleActor()", async () => {
     federation,
     data: undefined,
     url: new URL("https://example.com/"),
-    getActorUri(identifier) {
+    getActorUri(identifier: string) {
       return new URL(`https://example.com/users/${identifier}`);
     },
   });
@@ -122,7 +122,7 @@ test("handleActor()", async () => {
   onNotFoundCalled = null;
   context = createRequestContext<void>({
     ...context,
-    getActor(handle) {
+    getActor(handle: string) {
       return Promise.resolve(actorDispatcher(context, handle));
     },
   });
@@ -344,7 +344,11 @@ test("handleObject()", async () => {
     federation,
     data: undefined,
     url: new URL("https://example.com/"),
-    getObjectUri(_cls, values) {
+    getObjectUri(
+      // deno-lint-ignore no-explicit-any
+      _cls: (new (...args: any[]) => Object) & { typeId: URL },
+      values: Record<string, string>,
+    ) {
       return new URL(
         `https://example.com/users/${values.handle}/notes/${values.id}`,
       );
@@ -605,7 +609,7 @@ test("handleCollection()", async () => {
     federation,
     data: undefined,
     url: new URL("https://example.com/"),
-    getActorUri(identifier) {
+    getActorUri(identifier: string) {
       return new URL(`https://example.com/users/${identifier}`);
     },
   });

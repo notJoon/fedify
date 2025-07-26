@@ -811,6 +811,18 @@ It does not affect the output when looking up a single object.
 > The separator is also used when looking up a collection object with the
 > [`-t`/`--traverse`](#t-traverse-traverse-the-collection) option.
 
+### `-o`/`--output`: Output file path
+
+*This option is available since Fedify 1.8.0.*
+
+You can specify the output file path to save lookup results, instead of
+printing results to stdout. For example, to save the retrieved information
+about the specified objects to a given path, run the command below:
+
+~~~~ sh
+fedify lookup -o actors.json @fedify@hollo.social @hongminhee@fosstodon.org
+~~~~
+
 
 `fedify inbox`: Ephemeral inbox server
 --------------------------------------
@@ -953,7 +965,55 @@ or a full URL.
 [NodeInfo]: https://nodeinfo.diaspora.software/
 [`neofetch`]: https://github.com/dylanaraps/neofetch
 
+### `-r`/`--raw`: Raw JSON
+
+> [!NOTE]
+> This option is mutually exclusive with `-b`/`--best-effort`, `--no-favicon`
+> and `-m`/`--metadata`.
+
+You can also output the fetched NodeInfo document in the raw JSON format by using
+the `-r`/`--raw` option:
+
+~~~~ sh
+fedify node --raw fosstodon.org
+~~~~
+
+The output will be like the below:
+
+~~~~ json
+{
+  "version": "2.0",
+  "software": {
+    "name": "mastodon",
+    "version": "4.4.2"
+  },
+  "protocols": [
+    "activitypub"
+  ],
+  "services": {
+    "outbound": [],
+    "inbound": []
+  },
+  "usage": {
+    "users": {
+      "total": 62444,
+      "activeMonth": 8788,
+      "activeHalfyear": 14000
+    },
+    "localPosts": 4335412
+  },
+  "openRegistrations": false,
+  "metadata": {
+    "nodeName": "Fosstodon",
+    "nodeDescription": "Fosstodon is an invite only Mastodon instance that is open to those who are interested in technology; particularly free & open source software.\r\n\r\nIf you wish to join, contact us for an invite."
+  }
+}
+~~~~
+
 ### `-b`/`--best-effort`: Parsing with best effort
+
+> [!NOTE]
+> This option is mutually exclusive with `-r`/`--raw`.
 
 The `-b`/`--best-effort` option is used to parse the NodeInfo document with
 best effort.  If the NodeInfo document is not well-formed, the option will
@@ -961,10 +1021,16 @@ try to parse it as much as possible.
 
 ### `--no-favicon`: Disabling favicon fetching
 
+> [!NOTE]
+> This option is mutually exclusive with `-r`/`--raw`.
+
 The `--no-favicon` option is used to disable fetching the favicon of the
 instance.
 
 ### `-m`/`--metadata`: Showing metadata
+
+> [!NOTE]
+> This option is mutually exclusive with `-r`/`--raw`.
 
 The `-m`/`--metadata` option is used to show the extra metadata of the NodeInfo,
 i.e., the `metadata` field of the document.
@@ -1116,6 +1182,23 @@ fedify webfinger --allow-private-address @username@localhost
 ~~~~
 
 Mostly useful for testing purposes.  *Do not use this in production.*
+
+### `--max-redirection`: Maximum number of redirections
+
+The `--max-redirection` option is used to control the maximum number of
+redirections allowed during WebFinger lookups.  By default, it is set to 5.
+If you want to set a custom limit, run the below command:
+
+~~~~ sh
+# Use default redirection limit (5)
+fedify webfinger @user@example.com
+
+# Set custom redirection limit
+fedify webfinger @user@example.com --max-redirection 3
+
+# Disable redirections entirely
+fedify webfinger @user@example.com --max-redirection 0
+~~~~
 
 
 Shell completions
