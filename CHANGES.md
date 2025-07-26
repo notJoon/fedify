@@ -101,6 +101,10 @@ the versioning.
      users to save retrieved lookup results to specified path. 
      [[#261], [#321] by Jiwon Kwon]
 
+  - Added `--max-redirect` option to `fedify webfinger` command.
+     This option allows users to specify the maximum number of redirects to
+     follow when performing WebFinger lookups. [[#311], [#328] by KeunHyeong Park]
+
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
@@ -118,9 +122,9 @@ the versioning.
 [#300]: https://github.com/fedify-dev/fedify/pull/300
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
+[#311]: https://github.com/fedify-dev/fedify/issues/311
 [#321]: https://github.com/fedify-dev/fedify/pull/321
-
-
+[#328]: https://github.com/fedify-dev/fedify/pull/309
 
 Version 1.7.6
 -------------
