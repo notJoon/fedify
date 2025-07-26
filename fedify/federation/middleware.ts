@@ -88,6 +88,7 @@ import {
   handleCollection,
   handleInbox,
   handleObject,
+  handleOrderedCollection,
 } from "./handler.ts";
 import { routeActivity } from "./inbox.ts";
 import { KvKeyCache } from "./keycache.ts";
@@ -1464,6 +1465,44 @@ export class FederationImpl<TContextData>
           onNotFound,
           onNotAcceptable,
         });
+      case "collection": {
+        const name = route.name.replace(/^collection:/, "");
+        const callbacks = this.collectionCallbacks[name];
+        return await handleOrderedCollection<
+          URL | Object | Link | Recipient,
+          Record<string, string>,
+          RequestContext<TContextData>,
+          TContextData
+        >(request, {
+          name,
+          context,
+          values: route.values,
+          collectionCallbacks: callbacks,
+          tracerProvider: this.tracerProvider,
+          onUnauthorized,
+          onNotFound,
+          onNotAcceptable,
+        });
+      }
+      case "orderedCollection": {
+        const name = route.name.replace(/^orderedCollection:/, "");
+        const callbacks = this.collectionCallbacks[name];
+        return await handleOrderedCollection<
+          URL | Object | Link | Recipient,
+          Record<string, string>,
+          RequestContext<TContextData>,
+          TContextData
+        >(request, {
+          name,
+          context,
+          values: route.values,
+          collectionCallbacks: callbacks,
+          tracerProvider: this.tracerProvider,
+          onUnauthorized,
+          onNotFound,
+          onNotAcceptable,
+        });
+      }
       default: {
         const response = onNotFound(request);
         return response instanceof Promise ? await response : response;
@@ -1688,6 +1727,37 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     return new URL(path, this.canonicalOrigin);
   }
 
+  getCollectionUri<TParam extends Record<string, string>>(
+    name: string | symbol,
+    values: TParam,
+  ): URL {
+    // Check if it's a custom collection
+    const customCallbacks = this.federation.collectionCallbacks[name];
+    if (customCallbacks != null) {
+      // For custom collections, use collection: or orderedCollection: prefix
+      const collectionRouteName = `collection:${String(name)}`;
+      const orderedCollectionRouteName = `orderedCollection:${String(name)}`;
+
+      let path = this.federation.router.build(collectionRouteName, values);
+      if (path == null) {
+        path = this.federation.router.build(orderedCollectionRouteName, values);
+      }
+
+      if (path == null) {
+        throw new RouterError(
+          `No collection dispatcher registered for ${String(name)}.`,
+        );
+      }
+
+      return new URL(path, this.canonicalOrigin);
+    }
+
+    // Fall back to built-in collections (for backward compatibility)
+    throw new RouterError(
+      `No collection dispatcher registered for ${String(name)}.`,
+    );
+  }
+
   parseUri(uri: URL | null): ParseUriResult | null {
     if (uri == null) return null;
     if (uri.origin !== this.origin && uri.origin !== this.canonicalOrigin) {
@@ -1815,6 +1885,24 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
           );
           return identifier;
         },
+      };
+    }
+
+    const collectionRegex = /^(orderedC|c)ollection:(.*)$/;
+    const match = route.name.match(collectionRegex) as null | [
+      unknown,
+      "collection" | "orderedCollection",
+      string,
+    ];
+    if (match !== null) {
+      const [, type, name] = match;
+      const cls = this.federation.collectionTypeIds[name];
+      return {
+        type,
+        name,
+        class: cls,
+        typeId: cls.typeId,
+        values: route.values,
       };
     }
     return null;
