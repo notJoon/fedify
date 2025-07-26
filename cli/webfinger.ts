@@ -19,7 +19,7 @@ export const command = new Command()
   )
   .option(
     "--max-redirection <maxRedirection:number>",
-    "Maximum number of redirections to follow. (default: 5)",
+    "Maximum number of redirections to follow.",
     { default: 5 },
   )
   .action(async (options, ...resources: string[]) => {
