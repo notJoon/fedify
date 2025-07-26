@@ -16,7 +16,6 @@ import {
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
 import { dirname, isAbsolute, resolve } from "@std/path";
-import util from "node:util";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
@@ -108,8 +107,7 @@ export async function writeObjectToStream(
       content = object;
     }
 
-    content = util.inspect(content, {
-      depth: null,
+    content = Deno.inspect(content, {
       colors: !(options.output),
     });
 
