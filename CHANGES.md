@@ -97,6 +97,12 @@ the versioning.
      -  Added `@fedify/nestjs` package.
      -  Added `FedifyModule` for integrating Fedify into NestJS applications.
 
+  -  Supported `KvStore` using SQLite with the `@fedify/sqlite` package, compatible with Bun, Deno and Node.js. [[#274], [#318] By An Subin]
+
+     -  Added `@fedify/sqlite` package.
+     -  Added `SqliteKvStore`, SQLite implementation of KvStore.
+
+
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
@@ -113,6 +119,8 @@ the versioning.
 [#300]: https://github.com/fedify-dev/fedify/pull/300
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
+[#274]: https://github.com/fedify-dev/fedify/issues/274
+[#318]: https://github.com/fedify-dev/fedify/pull/318
 
 
 Version 1.7.6
