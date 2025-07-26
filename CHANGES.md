@@ -97,10 +97,15 @@ the versioning.
      -  Added `@fedify/nestjs` package.
      -  Added `FedifyModule` for integrating Fedify into NestJS applications.
 
+  -  Added `-o`/`--output` option to `fedify lookup` command. This option allows
+     users to save retrieved lookup results to specified path. 
+     [[#261], [#321] by Jiwon Kwon]
+
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
 [#260]: https://github.com/fedify-dev/fedify/issues/260
+[#261]: https://github.com/fedify-dev/fedify/issues/261
 [#262]: https://github.com/fedify-dev/fedify/issues/262
 [#263]: https://github.com/fedify-dev/fedify/issues/263
 [#269]: https://github.com/fedify-dev/fedify/issues/269
@@ -113,6 +118,8 @@ the versioning.
 [#300]: https://github.com/fedify-dev/fedify/pull/300
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
+[#321]: https://github.com/fedify-dev/fedify/pull/321
+
 
 
 Version 1.7.6

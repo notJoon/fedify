@@ -811,6 +811,18 @@ It does not affect the output when looking up a single object.
 > The separator is also used when looking up a collection object with the
 > [`-t`/`--traverse`](#t-traverse-traverse-the-collection) option.
 
+### `-o`/`--output`: Output file path
+
+*This option is available since Fedify 1.8.0.*
+
+You can specify the output file path to save lookup results, instead of 
+printing results to stdout. For example, to save the retrieved information
+about the specified objects to a given path, run the command below:
+
+~~~~ sh
+fedify lookup -o actors.json @fedify@hollo.social @hongminhee@fosstodon.org
+~~~~
+
 
 `fedify inbox`: Ephemeral inbox server
 --------------------------------------
