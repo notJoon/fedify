@@ -5,7 +5,6 @@
   "exports": {
     ".": "./mod.ts",
     "./compat": "./compat/mod.ts",
-    "./sqlite": "./sqlite/mod.ts",
     "./federation": "./federation/mod.ts",
     "./nodeinfo": "./nodeinfo/mod.ts",
     "./runtime": "./runtime/mod.ts",
