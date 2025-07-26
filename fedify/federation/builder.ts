@@ -13,6 +13,9 @@ import type {
   CollectionCounter,
   CollectionCursor,
   CollectionDispatcher,
+  CustomCollectionCounter,
+  CustomCollectionCursor,
+  CustomCollectionDispatcher,
   InboxErrorHandler,
   InboxListener,
   NodeInfoDispatcher,
@@ -24,13 +27,19 @@ import type { Context, RequestContext } from "./context.ts";
 import type {
   ActorCallbackSetters,
   CollectionCallbackSetters,
+  ConstructorWithTypeId,
+  CustomCollectionCallbackSetters,
   Federation,
   FederationBuilder,
   FederationOptions,
   InboxListenerSetters,
   ObjectCallbackSetters,
+  ParamsKeyPath,
 } from "./federation.ts";
-import type { CollectionCallbacks } from "./handler.ts";
+import type {
+  CollectionCallbacks,
+  CustomCollectionCallbacks,
+} from "./handler.ts";
 import { InboxListenerSet } from "./inbox.ts";
 import { Router, RouterError } from "./router.ts";
 
@@ -91,11 +100,26 @@ export class FederationBuilderImpl<TContextData>
   inboxListeners?: InboxListenerSet<TContextData>;
   inboxErrorHandler?: InboxErrorHandler<TContextData>;
   sharedInboxKeyDispatcher?: SharedInboxKeyDispatcher<TContextData>;
+  collectionTypeIds: Record<
+    string | symbol,
+    ConstructorWithTypeId<Object>
+  >;
+  collectionCallbacks: Record<
+    string | symbol,
+    CustomCollectionCallbacks<
+      Object,
+      Record<string, string>,
+      RequestContext<TContextData>,
+      TContextData
+    >
+  >;
 
   constructor() {
     this.router = new Router();
     this.objectCallbacks = {};
     this.objectTypeIds = {};
+    this.collectionCallbacks = {};
+    this.collectionTypeIds = {};
   }
 
   async build(
@@ -1162,6 +1186,157 @@ export class FederationBuilderImpl<TContextData>
         dispatcher: SharedInboxKeyDispatcher<TContextData>,
       ): InboxListenerSetters<TContextData> => {
         this.sharedInboxKeyDispatcher = dispatcher;
+        return setters;
+      },
+    };
+    return setters;
+  }
+
+  setCollectionDispatcher<
+    TObject extends Object,
+    TParams extends Record<string, string>,
+  >(
+    name: string | symbol,
+    ...args: [
+      ConstructorWithTypeId<TObject>,
+      ParamsKeyPath<TParams>,
+      CustomCollectionDispatcher<
+        TObject,
+        TParams,
+        RequestContext<TContextData>,
+        TContextData
+      >,
+    ]
+  ): CustomCollectionCallbackSetters<
+    TParams,
+    RequestContext<TContextData>,
+    TContextData
+  > {
+    return this.#setCustomCollectionDispatcher(
+      name,
+      "collection",
+      ...args,
+    );
+  }
+
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParams extends Record<string, string>,
+  >(
+    name: string | symbol,
+    ...args: [
+      ConstructorWithTypeId<TObject>,
+      ParamsKeyPath<TParams>,
+      CustomCollectionDispatcher<
+        TObject,
+        TParams,
+        RequestContext<TContextData>,
+        TContextData
+      >,
+    ]
+  ): CustomCollectionCallbackSetters<
+    TParams,
+    RequestContext<TContextData>,
+    TContextData
+  > {
+    return this.#setCustomCollectionDispatcher(
+      name,
+      "orderedCollection",
+      ...args,
+    );
+  }
+  #setCustomCollectionDispatcher<
+    TObject extends Object,
+    TParams extends Record<string, string>,
+  >(
+    name: string | symbol,
+    collectionType: "collection" | "orderedCollection",
+    itemType: ConstructorWithTypeId<TObject>,
+    path: ParamsKeyPath<TParams>,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParams,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParams,
+    RequestContext<TContextData>,
+    TContextData
+  > {
+    const routeName = `${collectionType}:${String(name)}`;
+    if (this.router.has(routeName)) {
+      throw new RouterError(
+        `Collection dispatcher for ${String(name)} already set.`,
+      );
+    }
+
+    // Check if identifier is already used in collectionCallbacks
+    if (this.collectionCallbacks[name] != null) {
+      throw new RouterError(
+        `Collection dispatcher for ${String(name)} already set.`,
+      );
+    }
+
+    const variables = this.router.add(path, routeName);
+    if (variables.size < 1) {
+      throw new RouterError(
+        "Path for collection dispatcher must have at least one variable.",
+      );
+    }
+
+    const callbacks: CustomCollectionCallbacks<
+      TObject,
+      TParams,
+      RequestContext<TContextData>,
+      TContextData
+    > = { dispatcher };
+
+    // @ts-ignore: TypeScript does not infer the type correctly
+    this.collectionCallbacks[name] = callbacks;
+    this.collectionTypeIds[name] = itemType;
+
+    const setters: CustomCollectionCallbackSetters<
+      TParams,
+      RequestContext<TContextData>,
+      TContextData
+    > = {
+      setCounter(
+        counter: CustomCollectionCounter<
+          TParams,
+          TContextData
+        >,
+      ) {
+        callbacks.counter = counter;
+        return setters;
+      },
+      setFirstCursor(
+        cursor: CustomCollectionCursor<
+          TParams,
+          RequestContext<TContextData>,
+          TContextData
+        >,
+      ) {
+        callbacks.firstCursor = cursor;
+        return setters;
+      },
+      setLastCursor(
+        cursor: CustomCollectionCursor<
+          TParams,
+          RequestContext<TContextData>,
+          TContextData
+        >,
+      ) {
+        callbacks.lastCursor = cursor;
+        return setters;
+      },
+      authorize(
+        predicate: ObjectAuthorizePredicate<
+          TContextData,
+          keyof TParams & string
+        >,
+      ) {
+        callbacks.authorizePredicate = predicate;
         return setters;
       },
     };
