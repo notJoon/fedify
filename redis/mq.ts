@@ -43,7 +43,7 @@ export interface RedisMessageQueueOptions {
   lockKey?: RedisKey;
 
   /**
-   * The codec to use for encoding and decoding messages in the key-value store.
+   * The codec to use for encoding and decoding messages in the key–value store.
    * Defaults to {@link JsonCodec}.
    * @default {@link JsonCodec}
    */

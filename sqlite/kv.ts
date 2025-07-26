@@ -8,11 +8,11 @@ import type { SqliteDatabaseAdapter } from "./adapter.ts";
 const logger = getLogger(["fedify", "sqlite", "kv"]);
 
 /**
- * Options for the SQLite key-value store.
+ * Options for the SQLite key–value store.
  */
 export interface SqliteKvStoreOptions {
   /**
-   * The table name to use for the key-value store.
+   * The table name to use for the key–value store.
    * Only letters, digits, and underscores are allowed.
    * `"fedify_kv"` by default.
    * @default `"fedify_kv"`
@@ -27,7 +27,7 @@ export interface SqliteKvStoreOptions {
 }
 
 /**
- * A key-value store that uses SQLite as the underlying storage.
+ * A key–value store that uses SQLite as the underlying storage.
  *
  * @example
  * ```ts
@@ -59,7 +59,7 @@ export class SqliteKvStore implements KvStore {
 
     if (!SqliteKvStore.#tableNameRegex.test(this.#tableName)) {
       throw new Error(
-        `Invalid table name for the key-value store: ${this.#tableName}`,
+        `Invalid table name for the key–value store: ${this.#tableName}`,
       );
     }
   }
@@ -209,7 +209,7 @@ export class SqliteKvStore implements KvStore {
   }
 
   /**
-   * Creates the table used by the key-value store if it does not already exist.
+   * Creates the table used by the key–value store if it does not already exist.
    * Does nothing if the table already exists.
    */
   initialize() {
@@ -217,7 +217,7 @@ export class SqliteKvStore implements KvStore {
       return;
     }
 
-    logger.debug("Initializing the key-value store table {tableName}...", {
+    logger.debug("Initializing the key–value store table {tableName}...", {
       tableName: this.#tableName,
     });
 
@@ -236,7 +236,7 @@ export class SqliteKvStore implements KvStore {
     `);
 
     this.#initialized = true;
-    logger.debug("Initialized the key-value store table {tableName}.", {
+    logger.debug("Initialized the key–value store table {tableName}.", {
       tableName: this.#tableName,
     });
   }
@@ -252,7 +252,7 @@ export class SqliteKvStore implements KvStore {
   }
 
   /**
-   * Drops the table used by the key-value store.  Does nothing if the table
+   * Drops the table used by the key–value store.  Does nothing if the table
    * does not exist.
    */
   drop() {
