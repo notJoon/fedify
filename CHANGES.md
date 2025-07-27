@@ -104,6 +104,8 @@ the versioning.
     users to save retrieved lookup results to specified path.
     [[#261], [#321] by Jiwon Kwon]
 
+ -  Rename `fedify node` to `fedify nodeinfo` [[#267], [#331] by Hyeonseo Kim]
+
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
@@ -111,6 +113,7 @@ the versioning.
 [#261]: https://github.com/fedify-dev/fedify/issues/261
 [#262]: https://github.com/fedify-dev/fedify/issues/262
 [#263]: https://github.com/fedify-dev/fedify/issues/263
+[#267]: https://github.com/fedify-dev/fedify/issues/267
 [#269]: https://github.com/fedify-dev/fedify/issues/269
 [#278]: https://github.com/fedify-dev/fedify/pull/278
 [#281]: https://github.com/fedify-dev/fedify/pull/281
@@ -123,7 +126,9 @@ the versioning.
 [#309]: https://github.com/fedify-dev/fedify/pull/309
 [#311]: https://github.com/fedify-dev/fedify/issues/311
 [#321]: https://github.com/fedify-dev/fedify/pull/321
-[#328]: https://github.com/fedify-dev/fedify/pull/309
+[#328]: https://github.com/fedify-dev/fedify/pull/328
+[#331]: https://github.com/fedify-dev/fedify/pull/331
+
 
 
 Version 1.7.6
