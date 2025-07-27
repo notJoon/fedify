@@ -1423,6 +1423,12 @@ async function getBookmarkedPostsByUserId(
 ): Promise<{ posts: BookmarkedPost[]; nextCursor: string | null }> {
   return { posts: [], nextCursor: null };
 }
+/**
+ * A hypothetical function that counts bookmarked posts for a user.
+ */
+async function getBookmarkCountByUserId(userId: string): Promise<number> {
+  return 0;
+}
 // ---cut-before---
 federation
   .setCollectionDispatcher(
@@ -1650,6 +1656,10 @@ async function getBookmarkedPostsByUserId(
   limit = 10,
 ): Promise<{ posts: any[]; nextCursor: string | null }> {
   return { posts: [], nextCursor: null };
+}
+async function getActorIdentifier(actorId: URL|null): Promise<string | null> {
+  // Hypothetical function to get the identifier of an actor
+  return "";
 }
 // ---cut-before---
 federation
