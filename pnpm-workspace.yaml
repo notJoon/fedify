@@ -9,6 +9,7 @@ packages:
 - redis
 - testing
 - docs
+- examples/cloudflare-workers
 
 catalog:
   "@cloudflare/workers-types": ^4.20250529.0
