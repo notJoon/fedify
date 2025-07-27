@@ -9,7 +9,7 @@ import { defaultFormats, defaultPlugins, intToRGBA } from "jimp";
 import ora from "ora";
 import { printJson } from "./utils.ts";
 
-const logger = getLogger(["fedify", "cli", "node"]);
+const logger = getLogger(["fedify", "cli", "nodeinfo"]);
 
 export const command = new Command()
   .alias("node")
