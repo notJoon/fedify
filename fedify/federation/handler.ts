@@ -984,7 +984,7 @@ async function _handleCustomCollection<
   verifyJsonLdRequest(request);
   await authIfNeeded(context, values, callbacks);
   const cursor = new URL(request.url).searchParams.get("cursor");
-  return await new CustomCollection(
+  return await new CustomCollectionHandler(
     name,
     values,
     context,
@@ -1048,7 +1048,7 @@ async function _handleOrderedCollection<
   verifyJsonLdRequest(request);
   await authIfNeeded(context, values, callbacks);
   const cursor = new URL(request.url).searchParams.get("cursor");
-  return await new CustomCollection(
+  return await new CustomCollectionHandler(
     name,
     values,
     context,
@@ -1074,7 +1074,7 @@ async function _handleOrderedCollection<
  * @typeParam TCollectionPage The type of the collection page, extending {@link CollectionPage}.
  * @since 1.8.0
  */
-class CustomCollection<
+class CustomCollectionHandler<
   TItem extends URL | Object | Link | Recipient,
   TParams extends Record<string, string>,
   TContextData,
