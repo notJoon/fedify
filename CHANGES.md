@@ -104,6 +104,22 @@ the versioning.
     users to save retrieved lookup results to specified path.
     [[#261], [#321] by Jiwon Kwon]
 
+ -  Supported custom collection dispatchers.
+    [[#310] by ChanHaeng Lee]
+
+     -  Added `CustomCollectionDispatcher`, `CustomCollectionCounter`, and
+        `CustomCollectionCursor` types for custom collection dispatching.
+     -  Added `CustomCollectionCallbackSetters` type for setting custom
+        collection callbacks.
+     -  Added `CustomCollectionHandler` class and `handleCustomCollection()` and
+        `handleOrderedCollection()` functions to process custom collections.
+     -  Added `setCollectionDispatcher()` and `setOrderedCollectionDispatcher()`
+        methods to the `Federatable` interface. Implemented in
+        `FederationBuilderImpl` class.
+     -  Added `getCollectionUri()` method to the `Context` interface.
+     -  Added utility types `ConstructorWithTypeId` and `ParamsKeyPath` for
+        custom collection dispatchers.
+
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
@@ -121,6 +137,7 @@ the versioning.
 [#300]: https://github.com/fedify-dev/fedify/pull/300
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
+[#310]: https://github.com/fedify-dev/fedify/issues/310
 [#311]: https://github.com/fedify-dev/fedify/issues/311
 [#321]: https://github.com/fedify-dev/fedify/pull/321
 [#328]: https://github.com/fedify-dev/fedify/pull/309
