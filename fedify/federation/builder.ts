@@ -114,6 +114,11 @@ export class FederationBuilderImpl<TContextData>
     >
   >;
 
+  /**
+   * Symbol registry for unique identification of unnamed symbols.
+   */
+  #symbolRegistry = new Map<symbol, string>();
+
   constructor() {
     this.router = new Router();
     this.objectCallbacks = {};
@@ -1264,17 +1269,18 @@ export class FederationBuilderImpl<TContextData>
     RequestContext<TContextData>,
     TContextData
   > {
-    const routeName = `${collectionType}:${String(name)}`;
+    const strName = String(name);
+    const routeName = `${collectionType}:${this.#uniqueCollectionId(name)}`;
     if (this.router.has(routeName)) {
       throw new RouterError(
-        `Collection dispatcher for ${String(name)} already set.`,
+        `Collection dispatcher for ${strName} already set.`,
       );
     }
 
     // Check if identifier is already used in collectionCallbacks
     if (this.collectionCallbacks[name] != null) {
       throw new RouterError(
-        `Collection dispatcher for ${String(name)} already set.`,
+        `Collection dispatcher for ${strName} already set.`,
       );
     }
 
@@ -1341,6 +1347,24 @@ export class FederationBuilderImpl<TContextData>
       },
     };
     return setters;
+  }
+
+  /**
+   * Converts a name (string or symbol) to a unique string identifier.
+   * For symbols, generates and caches a UUID if not already present.
+   * For strings, returns the string as-is.
+   * @param name The name to convert to a unique identifier
+   * @returns A unique string identifier
+   */
+  #uniqueCollectionId(name: string | symbol): string {
+    if (typeof name === "string") return name;
+    // Check if symbol already has a unique ID
+    if (!this.#symbolRegistry.has(name)) {
+      // Generate a new UUID for this symbol
+      this.#symbolRegistry.set(name, crypto.randomUUID());
+    }
+
+    return this.#symbolRegistry.get(name)!;
   }
 }
 
