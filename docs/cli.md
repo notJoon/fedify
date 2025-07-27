@@ -946,15 +946,17 @@ about the security implications of exposing the server to the public internet.
 > be served via HTTP instead of HTTPS.
 
 
-`fedify node`: Visualizing an instance's NodeInfo
--------------------------------------------------
+`fedify nodeinfo`: Visualizing an instance's NodeInfo
+-----------------------------------------------------
 
-*This command is available since Fedify 1.2.0.*
+*This command is available since Fedify 1.8.0.*
+
+*The `fedify node` alias is deprecated and will be removed in version 2.0.0.*
 
 ![The result of fedify lookup fosstodon.org. The NodeInfo document is
-visualized along with the favicon.](cli/fedify-node.png)
+visualized along with the favicon.](cli/fedify-nodeinfo.png)
 
-The `fedify node` command fetches the given instance's [NodeInfo] document and
+The `fedify nodeinfo` command fetches the given instance's [NodeInfo] document and
 visualizes it in [`neofetch`]-style.  The argument can be either a bare hostname
 or a full URL.
 
@@ -975,7 +977,7 @@ You can also output the fetched NodeInfo document in the raw JSON format by usin
 the `-r`/`--raw` option:
 
 ~~~~ sh
-fedify node --raw fosstodon.org
+fedify nodeinfo --raw fosstodon.org
 ~~~~
 
 The output will be like the below:
@@ -1039,14 +1041,14 @@ i.e., the `metadata` field of the document.
 
 *This option is available since Fedify 1.3.0.*
 
-By default, the `fedify node` command sends the `User-Agent` header with the
+By default, the `fedify nodeinfo` command sends the `User-Agent` header with the
 value `Fedify/1.3.0 (Deno/2.0.4)` (version numbers may vary).  You can specify
 a custom `User-Agent` header by using the `-u`/`--user-agent` option.  For
 example, to send the `User-Agent` header with the value `MyApp/1.0`, run the
 below command:
 
 ~~~~ sh
-fedify node --user-agent MyApp/1.0 mastodon.social
+fedify nodeinfo --user-agent MyApp/1.0 mastodon.social
 ~~~~
 
 
