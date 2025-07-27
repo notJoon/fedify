@@ -1889,10 +1889,11 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       };
     }
 
-    const collectionRegex = /^(orderedC|c)ollection:(.*)$/;
+    const collectionTypes = ["collection", "orderedCollection"] as const;
+    const collectionRegex = new RegExp(`^(${collectionTypes.join("|")}):(.*)$`);
     const match = route.name.match(collectionRegex) as null | [
       unknown,
-      "collection" | "orderedCollection",
+      typeof collectionTypes[number],
       string,
     ];
     if (match !== null) {
