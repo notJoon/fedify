@@ -31,6 +31,7 @@ import type {
 import type { RequestContext } from "./context.ts";
 import {
   acceptsJsonLd,
+  type CustomCollectionCallbacks,
   handleActor,
   handleCollection,
   handleCustomCollection,

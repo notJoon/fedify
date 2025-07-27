@@ -1121,8 +1121,8 @@ export type ConstructorWithTypeId<TObject extends Object> =
  * ```ts
  * type UserPostPath = ParamsKeyPath<{ userId: string; postId: string }>;
  * let userPostPath: UserPostPath;
- * userPostPath = "/posts/{postId}"; // invalid
- * userPostPath = "/users/{userId}"; // invalid
+ * // userPostPath = "/posts/{postId}"; // invalid - does not contain `{userId}`
+ * // userPostPath = "/users/{userId}"; // invalid - does not contain `{postId}`
  * userPostPath = "/users/{userId}/posts/{postId}"; // valid
  * userPostPath = "/posts/{postId}/users/{userId}"; // valid
  * ```

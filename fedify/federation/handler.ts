@@ -1287,7 +1287,6 @@ class CustomCollectionHandler<
     cursor = null,
   }) =>
   async (span: Span): Promise<PageItems<TItem>> => {
-    // suggestion: Make as a wrapper around the dispatcher
     try {
       if (totalItems !== null) {
         span.setAttribute(this.ATTRS.TOTAL_ITEMS, totalItems);

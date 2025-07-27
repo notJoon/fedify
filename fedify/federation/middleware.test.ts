@@ -258,6 +258,10 @@ test({
       assertThrows(() => ctx.getLikedUri("handle"), RouterError);
       assertThrows(() => ctx.getFeaturedUri("handle"), RouterError);
       assertThrows(() => ctx.getFeaturedTagsUri("handle"), RouterError);
+      assertThrows(
+        () => ctx.getCollectionUri("test", { id: "123" }),
+        RouterError,
+      );
       assertEquals(ctx.parseUri(new URL("https://example.com/")), null);
       assertEquals(ctx.parseUri(null), null);
       assertEquals(await ctx.getActorKeyPairs("handle"), []);
