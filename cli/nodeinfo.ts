@@ -37,7 +37,10 @@ export const command = new Command()
   )
   .option("-u, --user-agent <string>", "The custom User-Agent header value.")
   .action(async (options, host: string) => {
-    if (Deno.args.includes("node")) {
+    const command = Deno.args.find((arg) =>
+      arg === "node" || arg === "nodeinfo"
+    );
+    if (command === "node") {
       console.warn(
         "Warning: `fedify node` will be deprecated in Fedify 2.0.0. Use `fedify nodeinfo` instead.",
       );
