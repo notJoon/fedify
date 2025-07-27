@@ -39,7 +39,7 @@ export const command = new Command()
   .action(async (options, host: string) => {
     if (Deno.args[0] === "node") {
       console.warn(
-        "fedify node will be deprecated in fedify 2.0.0. Use fedify nodeinfo instead.",
+        "Warning: `fedify node` will be deprecated in Fedify 2.0.0. Use `fedify nodeinfo` instead.",
       );
     }
 
