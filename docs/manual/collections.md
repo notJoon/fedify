@@ -1609,21 +1609,6 @@ ctx.getCollectionUri("category-posts", {
 })
 ~~~~
 
-If you [decouple the WebFinger username from the actor's
-identifier](./actor.md#decoupling-actor-uris-from-webfinger-usernames),
-you should pass the identifier that is used in
-the [actor dispatcher](./actor.md) to the parameter values,
-not the WebFinger username:
-
-~~~~ typescript twoslash
-import type { Context } from "@fedify/fedify";
-const ctx = null as unknown as Context<void>;
-// ---cut-before---
-ctx.getCollectionUri("bookmarks", { 
-  identifier: "2bd304f9-36b3-44f0-bf0b-29124aafcbb4" 
-})
-~~~~
-
 > [!NOTE]
 >
 > The `Context.getCollectionUri()` method does not guarantee that the custom
