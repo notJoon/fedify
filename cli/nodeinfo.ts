@@ -12,6 +12,7 @@ import { printJson } from "./utils.ts";
 const logger = getLogger(["fedify", "cli", "node"]);
 
 export const command = new Command()
+  .alias("node")
   .arguments("<host:string>")
   .description(
     "Get information about a remote node using the NodeInfo protocol.  " +
@@ -36,6 +37,12 @@ export const command = new Command()
   )
   .option("-u, --user-agent <string>", "The custom User-Agent header value.")
   .action(async (options, host: string) => {
+    if (Deno.args[0] === "node") {
+      console.warn(
+        "fedify node will be deprecated in fedify 2.0.0. Use fedify nodeinfo instead.",
+      );
+    }
+
     const spinner = ora({
       text: "Fetching a NodeInfo document...",
       discardStdin: false,
