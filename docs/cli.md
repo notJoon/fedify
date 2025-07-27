@@ -951,7 +951,7 @@ about the security implications of exposing the server to the public internet.
 
 *This command is available since Fedify 1.8.0.*
 
-*This command was `fedify node` before 1.8.0. However, after 2.0.0 release, `fedify node` will be deprecated.*
+*The `fedify node` alias is deprecated and will be removed in version 2.0.0.*
 
 ![The result of fedify lookup fosstodon.org. The NodeInfo document is
 visualized along with the favicon.](cli/fedify-nodeinfo.png)
