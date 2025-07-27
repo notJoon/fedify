@@ -1585,7 +1585,7 @@ class ItemsNotFoundError extends HandlerError {
  */
 class NotAcceptableError extends HandlerError {
   constructor() {
-    super("Items not found in the collection.");
+    super("The request is not acceptable.");
   }
 }
 
