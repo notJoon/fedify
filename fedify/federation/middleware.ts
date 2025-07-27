@@ -86,6 +86,7 @@ import type {
 import {
   handleActor,
   handleCollection,
+  handleCustomCollection,
   handleInbox,
   handleObject,
   handleOrderedCollection,
@@ -1468,7 +1469,7 @@ export class FederationImpl<TContextData>
       case "collection": {
         const name = route.name.replace(/^collection:/, "");
         const callbacks = this.collectionCallbacks[name];
-        return await handleOrderedCollection<
+        return await handleCustomCollection<
           URL | Object | Link | Recipient,
           Record<string, string>,
           RequestContext<TContextData>,
