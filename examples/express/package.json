@@ -2,6 +2,7 @@
   "name": "fedify-express-example",
   "version": "1.0.0",
   "description": "Fedify Express Example",
+  "private": true,
   "main": "app.js",
   "type": "module",
   "scripts": {
@@ -25,13 +26,13 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^22.5.1",
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4"
   },
   "dependencies": {
     "@fedify/express": "workspace:",
     "@fedify/fedify": "workspace:",
     "@logtape/logtape": "catalog:",
-    "express": "catalog:",
-    "tsx": "catalog:"
+    "express": "catalog:"
   }
 }

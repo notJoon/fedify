@@ -10,6 +10,9 @@ packages:
 - testing
 - docs
 - examples/cloudflare-workers
+- examples/express
+- examples/next14-app-router
+- examples/next15-app-router
 
 catalog:
   "@cloudflare/workers-types": ^4.20250529.0
