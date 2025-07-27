@@ -332,7 +332,7 @@ jobs:
       working-directory: ${{ github.workspace }}/fedify/
     - run: |
         pnpm install
-        pnpm pack --recursive --filter="\!./examples/**"
+        pnpm pack --recursive --filter='!./examples/**'
         if [[ "$GITHUB_REF_TYPE" != tag ]]; then
           rm fedify-cli-*.tgz
         fi
