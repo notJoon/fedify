@@ -8,6 +8,18 @@ Version 1.7.7
 
 To be released.
 
+ -  Optimized `doubleKnock()` function to avoid multiple request body clones
+    during redirects.  The request body is now read once and reused throughout
+    the entire operation, preventing potential `TypeError: unusable` errors
+    and improving performance.  [[#300], [#335] by Fabien O'Carroll]
+
+     -  Added `SignRequestOptions.body` option.
+     -  Added `DoubleKnockOptions.body` option.
+     -  Updated internal signing functions to accept pre-read body buffers.
+
+[#300]: https://github.com/fedify-dev/fedify/pull/300
+[#335]: https://github.com/fedify-dev/fedify/pull/335
+
 
 Version 1.7.6
 -------------
