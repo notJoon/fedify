@@ -218,9 +218,8 @@ test("FederationBuilder", async (t) => {
 
   await t.step(
     "should handle symbol names uniquely in custom collection dispatchers",
-    async () => {
+    () => {
       const builder = createFederationBuilder<string>();
-      const kv = new MemoryKvStore();
 
       // Create two unnamed symbols
       const unnamedSymbol1 = Symbol();
