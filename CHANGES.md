@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.7.7
 -------------
 
-To be released.
+Released on July 28, 2025.
 
  -  Optimized `doubleKnock()` function to avoid multiple request body clones
     during redirects.  The request body is now read once and reused throughout
