@@ -1350,6 +1350,26 @@ export class FederationBuilderImpl<TContextData>
   }
 
   /**
+   * Get the URL path for a custom collection.
+   * If the collection is not registered, returns null.
+   * @typeParam TParam The parameter names of the requested URL.
+   * @param {string | symbol} name The name of the custom collection.
+   * @param {TParam} values The values to fill in the URL parameters.
+   * @returns {string | null} The URL path for the custom collection, or null if not registered.
+   */
+  getCollectionPath<TParam extends Record<string, string>>(
+    name: string | symbol,
+    values: TParam,
+  ): string | null {
+    // Check if it's a registered custom collection
+    if (!(name in this.collectionCallbacks)) return null;
+    const routeName = this.#uniqueCollectionId(name);
+    const path = this.router.build(`collection:${routeName}`, values) ??
+      this.router.build(`orderedCollection:${routeName}`, values);
+    return path;
+  }
+
+  /**
    * Converts a name (string or symbol) to a unique string identifier.
    * For symbols, generates and caches a UUID if not already present.
    * For strings, returns the string as-is.

@@ -1732,31 +1732,17 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
     name: string | symbol,
     values: TParam,
   ): URL {
-    // Check if it's a custom collection
-    const customCallbacks = this.federation.collectionCallbacks[name];
-    if (customCallbacks != null) {
-      // For custom collections, use collection: or orderedCollection: prefix
-      const collectionRouteName = `collection:${String(name)}`;
-      const orderedCollectionRouteName = `orderedCollection:${String(name)}`;
-
-      let path = this.federation.router.build(collectionRouteName, values);
-      if (path == null) {
-        path = this.federation.router.build(orderedCollectionRouteName, values);
-      }
-
-      if (path == null) {
-        throw new RouterError(
-          `No collection dispatcher registered for ${String(name)}.`,
-        );
-      }
-
-      return new URL(path, this.canonicalOrigin);
+    // Get a path for a collection dispatcher registered for the given name.
+    const path = this.federation.getCollectionPath(name, values);
+    if (path === null) {
+      // If no collection dispatcher is registered for the given name,
+      // throw a router error.
+      throw new RouterError(
+        `No collection dispatcher registered for "${String(name)}".`,
+      );
     }
-
-    // Fall back to built-in collections (for backward compatibility)
-    throw new RouterError(
-      `No collection dispatcher registered for ${String(name)}.`,
-    );
+    // Return a URL for the collection path.
+    return new URL(path, this.canonicalOrigin);
   }
 
   parseUri(uri: URL | null): ParseUriResult | null {
