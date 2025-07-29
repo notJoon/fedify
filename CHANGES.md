@@ -98,6 +98,21 @@ the versioning.
  -  Added `fedify nodeinfo` command, and deprecated `fedify node` command in
     favor of `fedify nodeinfo`.  [[#267], [#331] by Hyeonseo Kim]
 
+ -  Added custom collection dispatchers.  [[#310], [#332] by ChanHaeng Lee]
+
+     -  Added `CustomCollectionDispatcher`, `CustomCollectionCounter`, and
+        `CustomCollectionCursor` types for custom collection dispatching.
+     -  Added `CustomCollectionCallbackSetters` type for setting custom
+        collection callbacks.
+     -  Added `CustomCollectionHandler` class and `handleCustomCollection()` and
+        `handleOrderedCollection()` functions to process custom collections.
+     -  Added `setCollectionDispatcher()` and `setOrderedCollectionDispatcher()`
+        methods to the `Federatable` interface. Implemented in
+        `FederationBuilderImpl` class.
+     -  Added `getCollectionUri()` method to the `Context` interface.
+     -  Added utility types `ConstructorWithTypeId` and `ParamsKeyPath` for
+        custom collection dispatchers.
+
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
@@ -115,10 +130,12 @@ the versioning.
 [#298]: https://github.com/fedify-dev/fedify/pull/298
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
+[#310]: https://github.com/fedify-dev/fedify/issues/310
 [#311]: https://github.com/fedify-dev/fedify/issues/311
 [#321]: https://github.com/fedify-dev/fedify/pull/321
 [#328]: https://github.com/fedify-dev/fedify/pull/328
 [#331]: https://github.com/fedify-dev/fedify/pull/331
+[#332]: https://github.com/fedify-dev/fedify/pull/332
 
 
 Version 1.7.7
