@@ -16,7 +16,6 @@ import { command as webfinger } from "./webfinger.ts";
 const colorEnabled = Deno.stdout.isTerminal() &&
   Deno.env.get("NO_COLOR") === undefined;
 setColorEnabled(colorEnabled);
-console.log("Color Enabled:", colorEnabled);
 
 const command = new Command()
   .name("fedify")
