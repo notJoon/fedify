@@ -13,8 +13,7 @@ import { command as nodeinfo } from "./nodeinfo.ts";
 import { command as tunnel } from "./tunnel.ts";
 import { command as webfinger } from "./webfinger.ts";
 
-const colorEnabled = Deno.stdout.isTerminal() &&
-  Deno.env.get("NO_COLOR") === undefined;
+const colorEnabled = Deno.stdout.isTerminal() && !Deno.env.has("NO_COLOR");
 setColorEnabled(colorEnabled);
 
 const command = new Command()
