@@ -108,7 +108,7 @@ import { extractInboxes, sendActivity, type SenderKeyPair } from "./send.ts";
 
 /**
  * Options for {@link createFederation} function.
- * @typeParam TContextData The type of the context data.
+ * @template TContextData The type of the context data.
  * @since 0.10.0
  * @deprecated Use {@link FederationOptions} instead.
  */

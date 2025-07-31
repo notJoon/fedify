@@ -61,7 +61,7 @@ export interface FederationStartQueueOptions {
 
 /**
  * A common interface between {@link Federation} and {@link FederationBuilder}.
- * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @template TContextData The context data to pass to the {@link Context}.
  * @since 1.6.0
  */
 export interface Federatable<TContextData> {
@@ -111,9 +111,9 @@ export interface Federatable<TContextData> {
   /**
    * Registers an object dispatcher.
    *
-   * @typeParam TContextData The context data to pass to the {@link Context}.
-   * @typeParam TObject The type of object to dispatch.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of object to dispatch.
+   * @template TParam The parameter names of the requested URL.
    * @param cls The Activity Vocabulary class of the object to dispatch.
    * @param path The URI path pattern for the object dispatcher.  The syntax is
    *             based on URI Template
@@ -132,9 +132,9 @@ export interface Federatable<TContextData> {
   /**
    * Registers an object dispatcher.
    *
-   * @typeParam TContextData The context data to pass to the {@link Context}.
-   * @typeParam TObject The type of object to dispatch.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of object to dispatch.
+   * @template TParam The parameter names of the requested URL.
    * @param cls The Activity Vocabulary class of the object to dispatch.
    * @param path The URI path pattern for the object dispatcher.  The syntax is
    *             based on URI Template
@@ -153,9 +153,9 @@ export interface Federatable<TContextData> {
   /**
    * Registers an object dispatcher.
    *
-   * @typeParam TContextData The context data to pass to the {@link Context}.
-   * @typeParam TObject The type of object to dispatch.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of object to dispatch.
+   * @template TParam The parameter names of the requested URL.
    * @param cls The Activity Vocabulary class of the object to dispatch.
    * @param path The URI path pattern for the object dispatcher.  The syntax is
    *             based on URI Template
@@ -174,9 +174,9 @@ export interface Federatable<TContextData> {
   /**
    * Registers an object dispatcher.
    *
-   * @typeParam TContextData The context data to pass to the {@link Context}.
-   * @typeParam TObject The type of object to dispatch.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of object to dispatch.
+   * @template TParam The parameter names of the requested URL.
    * @param cls The Activity Vocabulary class of the object to dispatch.
    * @param path The URI path pattern for the object dispatcher.  The syntax is
    *             based on URI Template
@@ -195,9 +195,9 @@ export interface Federatable<TContextData> {
   /**
    * Registers an object dispatcher.
    *
-   * @typeParam TContextData The context data to pass to the {@link Context}.
-   * @typeParam TObject The type of object to dispatch.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of object to dispatch.
+   * @template TParam The parameter names of the requested URL.
    * @param cls The Activity Vocabulary class of the object to dispatch.
    * @param path The URI path pattern for the object dispatcher.  The syntax is
    *             based on URI Template
@@ -215,9 +215,9 @@ export interface Federatable<TContextData> {
   /**
    * Registers an object dispatcher.
    *
-   * @typeParam TContextData The context data to pass to the {@link Context}.
-   * @typeParam TObject The type of object to dispatch.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of object to dispatch.
+   * @template TParam The parameter names of the requested URL.
    * @param cls The Activity Vocabulary class of the object to dispatch.
    * @param path The URI path pattern for the object dispatcher.  The syntax is
    *             based on URI Template
@@ -451,9 +451,9 @@ export interface Federatable<TContextData> {
   /**
    * Registers a collection of objects dispatcher.
    *
-   * @typeParam TContextData The context data to pass to the {@link Context}.
-   * @typeParam TObject The type of objects to dispatch.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
    * @param name A unique name for the collection dispatcher.
    * @param itemType The Activity Vocabulary class of the object to dispatch.
    * @param path The URI path pattern for the collection dispatcher.
@@ -484,9 +484,9 @@ export interface Federatable<TContextData> {
   /**
    * Registers an ordered collection of objects dispatcher.
    *
-   * @typeParam TContextData The context data to pass to the {@link Context}.
-   * @typeParam TObject The type of objects to dispatch.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
    * @param name A unique name for the collection dispatcher.
    * @param itemType The Activity Vocabulary class of the object to dispatch.
    * @param path The URI path pattern for the collection dispatcher.
@@ -521,7 +521,7 @@ export interface Federatable<TContextData> {
  *
  * It also provides a middleware interface for handling requests before your
  * web framework's router; see {@link Federation.fetch}.
- * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @template TContextData The context data to pass to the {@link Context}.
  * @since 0.13.0
  */
 export interface Federation<TContextData> extends Federatable<TContextData> {
@@ -594,7 +594,7 @@ export interface Federation<TContextData> extends Federatable<TContextData> {
  * instantiation of the {@link Federation} object until the {@link build}
  * method is called so that dispatchers and listeners can be registered
  * before the {@link Federation} object is instantiated.
- * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @template TContextData The context data to pass to the {@link Context}.
  * @since 1.6.0
  */
 export interface FederationBuilder<TContextData>
@@ -610,7 +610,7 @@ export interface FederationBuilder<TContextData>
 
 /**
  * Options for creating a {@link Federation} object.
- * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @template TContextData The context data to pass to the {@link Context}.
  * @since 1.6.0
  */
 export interface FederationOptions<TContextData> {
@@ -895,10 +895,10 @@ export interface ObjectCallbackSetters<
 /**
  * Additional settings for a collection dispatcher.
  *
- * @typeParam TContext The type of the context.  {@link Context} or
+ * @template TContext The type of the context.  {@link Context} or
  *                     {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the {@link Context}.
- * @typeParam TFilter The type of filter for the collection.
+ * @template TContextData The context data to pass to the {@link Context}.
+ * @template TFilter The type of filter for the collection.
  */
 export interface CollectionCallbackSetters<
   TContext extends Context<TContextData>,
@@ -988,7 +988,7 @@ export interface InboxListenerSetters<TContextData> {
 /**
  * Parameters of {@link Federation.fetch} method.
  *
- * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @template TContextData The context data to pass to the {@link Context}.
  * @since 0.6.0
  */
 export interface FederationFetchOptions<TContextData> {
@@ -1026,11 +1026,11 @@ export interface FederationFetchOptions<TContextData> {
 /**
  * Additional settings for a custom collection dispatcher.
  *
- * @typeParam TParams The type of the parameters in the URL path.
- * @typeParam TContext The type of the context.  {@link Context} or
+ * @template TParams The type of the parameters in the URL path.
+ * @template TContext The type of the context.  {@link Context} or
  *                     {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the {@link Context}.
- * @typeParam TFilter The type of filter for the collection.
+ * @template TContextData The context data to pass to the {@link Context}.
+ * @template TFilter The type of filter for the collection.
  */
 export interface CustomCollectionCallbackSetters<
   TParams extends Record<string, string>,
@@ -1106,7 +1106,7 @@ export interface CustomCollectionCallbackSetters<
  * Represents an object with a type ID, which is either a constructor or an
  * instance of the object.
  *
- * @typeParam TObject The type of the object.
+ * @template TObject The type of the object.
  */
 export type ConstructorWithTypeId<TObject extends Object> =
   // deno-lint-ignore no-explicit-any
@@ -1172,7 +1172,7 @@ type ParamPath<Param extends string> = `${string}{${Param}}${string}`;
 /**
  * Converts union types to intersection types.
  *
- * @typeParam U - The union type to convert.
+ * @template U - The union type to convert.
  * @returns The intersection type of the union.
  * @example
  * ```ts

@@ -1352,7 +1352,7 @@ export class FederationBuilderImpl<TContextData>
   /**
    * Get the URL path for a custom collection.
    * If the collection is not registered, returns null.
-   * @typeParam TParam The parameter names of the requested URL.
+   * @template TParam The parameter names of the requested URL.
    * @param {string | symbol} name The name of the custom collection.
    * @param {TParam} values The values to fill in the URL parameters.
    * @returns {string | null} The URL path for the custom collection, or null if not registered.
