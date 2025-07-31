@@ -13,8 +13,10 @@ import { command as nodeinfo } from "./nodeinfo.ts";
 import { command as tunnel } from "./tunnel.ts";
 import { command as webfinger } from "./webfinger.ts";
 
-const colorEnabled = Deno.stdout.isTerminal();
+const colorEnabled = Deno.stdout.isTerminal() &&
+  Deno.env.get("NO_COLOR") === undefined;
 setColorEnabled(colorEnabled);
+console.log("Color Enabled:", colorEnabled);
 
 const command = new Command()
   .name("fedify")

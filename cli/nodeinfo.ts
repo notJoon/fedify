@@ -1,9 +1,9 @@
-import { colors } from "@cliffy/ansi";
 import { Command } from "@cliffy/command";
 import { formatSemVer, getNodeInfo, getUserAgent } from "@fedify/fedify";
 import { createJimp } from "@jimp/core";
 import webp from "@jimp/wasm-webp";
 import { getLogger } from "@logtape/logtape";
+import * as colors from "@std/fmt/colors";
 import { isICO, parseICO } from "icojs";
 import { defaultFormats, defaultPlugins, intToRGBA } from "jimp";
 import ora from "ora";
@@ -139,7 +139,7 @@ export const command = new Command()
     };
     layout[i] += colors.bold(url.host);
     layout[next()] += colors.dim("=".repeat(url.host.length));
-    layout[next()] += colors.bold.dim("Software:");
+    layout[next()] += colors.bold(colors.dim("Software:"));
     layout[next()] += `  ${nodeInfo.software.name} v${
       formatSemVer(nodeInfo.software.version)
     }`;
@@ -151,19 +151,19 @@ export const command = new Command()
         colors.dim(nodeInfo.software.repository.href);
     }
     if (nodeInfo.protocols.length > 0) {
-      layout[next()] += colors.bold.dim("Protocols:");
+      layout[next()] += colors.bold(colors.dim("Protocols:"));
       for (const protocol of nodeInfo.protocols) {
         layout[next()] += `  ${protocol}`;
       }
     }
     if (nodeInfo.services?.inbound?.length ?? 0 > 0) {
-      layout[next()] += colors.bold.dim("Inbound services:");
+      layout[next()] += colors.bold(colors.dim("Inbound services:"));
       for (const service of nodeInfo.services?.inbound ?? []) {
         layout[next()] += `  ${service}`;
       }
     }
     if (nodeInfo.services?.outbound?.length ?? 0 > 0) {
-      layout[next()] += colors.bold.dim("Outbound services:");
+      layout[next()] += colors.bold(colors.dim("Outbound services:"));
       for (const service of nodeInfo.services?.outbound ?? []) {
         layout[next()] += `  ${service}`;
       }
@@ -173,7 +173,7 @@ export const command = new Command()
         nodeInfo.usage.users.activeHalfyear != null ||
         nodeInfo.usage.users.activeMonth != null)
     ) {
-      layout[next()] += colors.bold.dim("Users:");
+      layout[next()] += colors.bold(colors.dim("Users:"));
       if (nodeInfo.usage.users.total != null) {
         layout[next()] +=
           `  ${nodeInfo.usage.users.total.toLocaleString("en-US")} ` +
@@ -191,24 +191,24 @@ export const command = new Command()
       }
     }
     if (nodeInfo.usage?.localPosts != null) {
-      layout[next()] += colors.bold.dim("Local posts: ");
+      layout[next()] += colors.bold(colors.dim("Local posts: "));
       layout[next()] += "  " +
         nodeInfo.usage.localPosts.toLocaleString("en-US");
     }
     if (nodeInfo.usage?.localComments != null) {
-      layout[next()] += colors.bold.dim("Local comments:");
+      layout[next()] += colors.bold(colors.dim("Local comments:"));
       layout[next()] += "  " +
         nodeInfo.usage.localComments.toLocaleString("en-US");
     }
     if (nodeInfo.openRegistrations != null) {
-      layout[next()] += colors.bold.dim("Open registrations:");
+      layout[next()] += colors.bold(colors.dim("Open registrations:"));
       layout[next()] += "  " + (nodeInfo.openRegistrations ? "Yes" : "No");
     }
     if (
       options.metadata &&
       nodeInfo.metadata != null && Object.keys(nodeInfo.metadata).length > 0
     ) {
-      layout[next()] += colors.bold.dim("Metadata:");
+      layout[next()] += colors.bold(colors.dim("Metadata:"));
       for (const [key, value] of Object.entries(nodeInfo.metadata)) {
         layout[next()] += `  ${colors.dim(key + ":")} ${
           indent(

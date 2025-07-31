@@ -1,4 +1,3 @@
-import { colors } from "@cliffy/ansi";
 import { Command, EnumType } from "@cliffy/command";
 import {
   Application,
@@ -15,6 +14,7 @@ import {
   traverseCollection,
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
+import * as colors from "@std/fmt/colors";
 import { dirname, isAbsolute, resolve } from "@std/path";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
