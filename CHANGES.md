@@ -24,6 +24,13 @@ the versioning.
     All packages now follow the same version number and are released together.
     Previously, each package had independent versioning.
 
+
+ - The CLI now correctly disables color output when standard output isn't a TTY (for example, when redirecting to a file) or when the NO_COLOR environment variable is set. While general color control has been improved, the automatic color formatting by console.log() for JavaScript objects remains unaffected. [[#257], [#341] by Cho Hasang]
+  
+   - Implemented NO_COLOR environment variable detection for global color control using @std/fmt/colors.setColorEnabled().
+   - Standardized color application by switching from @cliffy/ansi/colors to @std/fmt/colors and adapting the syntax (for example, colors.bold(colors.green(...))).
+   - The automatic color formatting applied by Deno's console.log() when printing JavaScript objects (for example, in fedify lookup command output) is a built-in runtime feature and remains unaffected by this change.
+
  -  Added mock classes for `Federation` and `Context` interfaces to improve
     testability without requiring a real federation server setup. The mock
     classes track all sent activities with metadata and support all standard
@@ -121,6 +128,7 @@ the versioning.
 [#191]: https://github.com/fedify-dev/fedify/issues/191
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
+[#257]: https://github.com/fedify-dev/fedify/issues/257
 [#260]: https://github.com/fedify-dev/fedify/issues/260
 [#261]: https://github.com/fedify-dev/fedify/issues/261
 [#262]: https://github.com/fedify-dev/fedify/issues/262
@@ -142,6 +150,7 @@ the versioning.
 [#331]: https://github.com/fedify-dev/fedify/pull/331
 [#332]: https://github.com/fedify-dev/fedify/pull/332
 [#342]: https://github.com/fedify-dev/fedify/pull/342
+[#341]: https://github.com/fedify-dev/fedify/pull/341
 
 
 Version 1.7.7

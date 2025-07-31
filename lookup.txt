@@ -1,0 +1,60 @@
+Person {
+  id: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e",
+  name: "크롸상",
+  icon: Image {
+    url: URL "https://media.hackers.pub/avatars/5dc3abd1-0205-4ee8-a764-e49a9e87ff31.jpg"
+  },
+  published: 2025-07-05T06:52:16.864Z,
+  summary: "",
+  url: URL "https://hackers.pub/@crohasang",
+  preferredUsername: "crohasang",
+  publicKey: CryptographicKey {
+    id: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e#main-key",
+    owner: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e",
+    publicKey: CryptoKey {
+      type: "public",
+      extractable: true,
+      algorithm: {
+        name: "RSASSA-PKCS1-v1_5",
+        modulusLength: 4096,
+        publicExponent: Uint8Array(3) [ 1, 0, 1 ],
+        hash: { name: "SHA-256" }
+      },
+      usages: [ "verify" ]
+    }
+  },
+  assertionMethods: [
+    Multikey {
+      id: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e#main-key",
+      controller: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e",
+      publicKey: CryptoKey {
+        type: "public",
+        extractable: true,
+        algorithm: {
+          name: "RSASSA-PKCS1-v1_5",
+          modulusLength: 4096,
+          publicExponent: Uint8Array(3) [ 1, 0, 1 ],
+          hash: { name: "SHA-256" }
+        },
+        usages: [ "verify" ]
+      }
+    },
+    Multikey {
+      id: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e#key-2",
+      controller: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e",
+      publicKey: CryptoKey {
+        type: "public",
+        extractable: true,
+        algorithm: { name: "Ed25519" },
+        usages: [ "verify" ]
+      }
+    }
+  ],
+  manuallyApprovesFollowers: false,
+  inbox: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e/inbox",
+  outbox: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e/outbox",
+  following: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e/followees",
+  followers: URL "https://hackers.pub/ap/actors/0197d95b-6c5d-713e-88af-7bea53091a0e/followers",
+  endpoints: Endpoints { sharedInbox: URL "https://hackers.pub/ap/inbox" }
+}
+Successfully fetched the object.
