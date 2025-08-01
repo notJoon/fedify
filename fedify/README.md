@@ -100,6 +100,7 @@ Here is the list of packages:
 | [@fedify/nestjs](/nestjs/)     |                             | [npm][npm:@fedify/nestjs]   | NestJS integration                      |
 | [@fedify/postgres](/postgres/) | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] | PostgreSQL driver                       |
 | [@fedify/redis](/redis/)       | [JSR][jsr:@fedify/redis]    | [npm][npm:@fedify/redis]    | Redis driver                            |
+| [@fedify/sqlite](/sqlite/)     | [JSR][jsr:@fedify/sqlite]   | [npm][npm:@fedify/sqlite]   | SQLite driver                           |
 | [@fedify/testing](/testing/)   | [JSR][jsr:@fedify/testing]  | [npm][npm:@fedify/testing]  | Testing utilities                       |
 
 [jsr:@fedify/cli]: https://jsr.io/@fedify/cli
@@ -115,6 +116,8 @@ Here is the list of packages:
 [npm:@fedify/postgres]: https://www.npmjs.com/package/@fedify/postgres
 [jsr:@fedify/redis]: https://jsr.io/@fedify/redis
 [npm:@fedify/redis]: https://www.npmjs.com/package/@fedify/redis
+[jsr:@fedify/sqlite]: https://jsr.io/@fedify/sqlite
+[npm:@fedify/sqlite]: https://www.npmjs.com/package/@fedify/sqlite
 [jsr:@fedify/testing]: https://jsr.io/@fedify/testing
 [npm:@fedify/testing]: https://www.npmjs.com/package/@fedify/testing
 
