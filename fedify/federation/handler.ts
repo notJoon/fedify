@@ -60,7 +60,7 @@ export function acceptsJsonLd(request: Request): boolean {
 
 /**
  * Parameters for handling an actor request.
- * @typeParam TContextData The context data to pass to the context.
+ * @template TContextData The context data to pass to the context.
  */
 export interface ActorHandlerParameters<TContextData> {
   identifier: string;
@@ -74,7 +74,7 @@ export interface ActorHandlerParameters<TContextData> {
 
 /**
  * Handles an actor request.
- * @typeParam TContextData The context data to pass to the context.
+ * @template TContextData The context data to pass to the context.
  * @param request The HTTP request.
  * @param parameters The parameters for handling the actor.
  * @returns A promise that resolves to an HTTP response.
@@ -138,7 +138,7 @@ export async function handleActor<TContextData>(
 
 /**
  * Parameters for handling an object request.
- * @typeParam TContextData The context data to pass to the context.
+ * @template TContextData The context data to pass to the context.
  */
 export interface ObjectHandlerParameters<TContextData> {
   values: Record<string, string>;
@@ -152,7 +152,7 @@ export interface ObjectHandlerParameters<TContextData> {
 
 /**
  * Handles an object request.
- * @typeParam TContextData The context data to pass to the context.
+ * @template TContextData The context data to pass to the context.
  * @param request The HTTP request.
  * @param parameters The parameters for handling the object.
  * @returns A promise that resolves to an HTTP response.
@@ -209,10 +209,10 @@ export async function handleObject<TContextData>(
 
 /**
  * Callbacks for handling a collection.
- * @typeParam TItem The type of items in the collection.
- * @typeParam TContext The type of the context. {@link Context} or {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the `TContext`.
- * @typeParam TFilter The type of the filter.
+ * @template TItem The type of items in the collection.
+ * @template TContext The type of the context. {@link Context} or {@link RequestContext}.
+ * @template TContextData The context data to pass to the `TContext`.
+ * @template TFilter The type of the filter.
  */
 export interface CollectionCallbacks<
   TItem,
@@ -248,10 +248,10 @@ export interface CollectionCallbacks<
 
 /**
  * Parameters for handling a collection request.
- * @typeParam TItem The type of items in the collection.
- * @typeParam TContext The type of the context, extending {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the `TContext`.
- * @typeParam TFilter The type of the filter.
+ * @template TItem The type of items in the collection.
+ * @template TContext The type of the context, extending {@link RequestContext}.
+ * @template TContextData The context data to pass to the `TContext`.
+ * @template TFilter The type of the filter.
  */
 export interface CollectionHandlerParameters<
   TItem,
@@ -279,10 +279,10 @@ export interface CollectionHandlerParameters<
 
 /**
  * Handles a collection request.
- * @typeParam TItem The type of items in the collection.
- * @typeParam TContext The type of the context, extending {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the `TContext`.
- * @typeParam TFilter The type of the filter.
+ * @template TItem The type of items in the collection.
+ * @template TContext The type of the context, extending {@link RequestContext}.
+ * @template TContextData The context data to pass to the `TContext`.
+ * @template TFilter The type of the filter.
  * @param request The HTTP request.
  * @param parameters The parameters for handling the collection.
  * @returns A promise that resolves to an HTTP response.
@@ -490,7 +490,7 @@ export async function handleCollection<
 
 /**
  * Filters collection items based on the provided predicate.
- * @typeParam TItem The type of items to filter.
+ * @template TItem The type of items to filter.
  * @param items The items to filter.
  * @param collectionName The name of the collection for logging purposes.
  * @param filterPredicate Optional predicate function to filter items.
@@ -528,7 +528,7 @@ function filterCollectionItems<TItem extends Object | Link | Recipient | URL>(
 
 /**
  * Parameters for handling an inbox request.
- * @typeParam TContextData The context data to pass to the context.
+ * @template TContextData The context data to pass to the context.
  */
 export interface InboxHandlerParameters<TContextData> {
   recipient: string | null;
@@ -556,7 +556,7 @@ export interface InboxHandlerParameters<TContextData> {
 
 /**
  * Handles an inbox request for ActivityPub activities.
- * @typeParam TContextData The context data to pass to the context.
+ * @template TContextData The context data to pass to the context.
  * @param request The HTTP request.
  * @param options The parameters for handling the inbox.
  * @returns A promise that resolves to an HTTP response.
@@ -591,7 +591,7 @@ export async function handleInbox<TContextData>(
 
 /**
  * Internal function for handling inbox requests with detailed processing.
- * @typeParam TContextData The context data to pass to the context.
+ * @template TContextData The context data to pass to the context.
  * @param request The HTTP request.
  * @param options The parameters for handling the inbox.
  * @param span The OpenTelemetry span for tracing.
@@ -861,10 +861,10 @@ async function handleInboxInternal<TContextData>(
 
 /**
  * Callbacks for handling a custom collection.
- * @typeParam TItem The type of items in the collection.
- * @typeParam TParams The parameter names of the requested URL.
- * @typeParam TContext The type of the context. {@link Context} or {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the `TContext`.
+ * @template TItem The type of items in the collection.
+ * @template TParams The parameter names of the requested URL.
+ * @template TContext The type of the context. {@link Context} or {@link RequestContext}.
+ * @template TContextData The context data to pass to the `TContext`.
  * @since 1.8.0
  */
 export interface CustomCollectionCallbacks<
@@ -909,10 +909,10 @@ export interface CustomCollectionCallbacks<
 
 /**
  * Parameters for handling a custom collection.
- * @typeParam TItem The type of items in the collection.
- * @typeParam TParams The parameter names of the requested URL.
- * @typeParam TContext The type of the context, extending {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the `TContext`.
+ * @template TItem The type of items in the collection.
+ * @template TParams The parameter names of the requested URL.
+ * @template TContext The type of the context, extending {@link RequestContext}.
+ * @template TContextData The context data to pass to the `TContext`.
  * @since 1.8.0
  */
 export interface CustomCollectionHandlerParameters<
@@ -936,10 +936,10 @@ export interface CustomCollectionHandlerParameters<
 
 /**
  * Handles a custom collection request.
- * @typeParam TItem The type of items in the collection.
- * @typeParam TParams The parameter names of the requested URL.
- * @typeParam TContext The type of the context, extending {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the `TContext`.
+ * @template TItem The type of items in the collection.
+ * @template TParams The parameter names of the requested URL.
+ * @template TContext The type of the context, extending {@link RequestContext}.
+ * @template TContextData The context data to pass to the `TContext`.
  * @param request The HTTP request.
  * @param handleParams Parameters for handling the collection.
  * @returns A promise that resolves to an HTTP response.
@@ -1000,10 +1000,10 @@ async function _handleCustomCollection<
 
 /**
  * Handles an ordered collection request.
- * @typeParam TItem The type of items in the collection.
- * @typeParam TParams The parameter names of the requested URL.
- * @typeParam TContext The type of the context, extending {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the `TContext`.
+ * @template TItem The type of items in the collection.
+ * @template TParams The parameter names of the requested URL.
+ * @template TContext The type of the context, extending {@link RequestContext}.
+ * @template TContextData The context data to pass to the `TContext`.
  * @param request The HTTP request.
  * @param handleParams Parameters for handling the collection.
  * @returns A promise that resolves to an HTTP response.
@@ -1066,12 +1066,12 @@ async function _handleOrderedCollection<
  * Handling custom collections with support for pagination and filtering.
  * The main flow is on `getCollection`, `dispatch`.
  *
- * @typeParam TItem The type of items in the collection.
- * @typeParam TParams The parameter names of the requested URL.
- * @typeParam TContext The type of the context. {@link Context} or {@link RequestContext}.
- * @typeParam TContextData The context data to pass to the `TContext`.
- * @typeParam TCollection The type of the collection, extending {@link Collection}.
- * @typeParam TCollectionPage The type of the collection page, extending {@link CollectionPage}.
+ * @template TItem The type of items in the collection.
+ * @template TParams The parameter names of the requested URL.
+ * @template TContext The type of the context. {@link Context} or {@link RequestContext}.
+ * @template TContextData The context data to pass to the `TContext`.
+ * @template TCollection The type of the collection, extending {@link Collection}.
+ * @template TCollectionPage The type of the collection page, extending {@link CollectionPage}.
  * @since 1.8.0
  */
 class CustomCollectionHandler<
@@ -1401,7 +1401,7 @@ type TotalItems = number | bigint | null | undefined;
 
 /**
  * A wrapper function that catches specific errors and handles them appropriately.
- * @typeParam TParams The type of parameters that extend ErrorHandlers.
+ * @template TParams The type of parameters that extend ErrorHandlers.
  * @param handler The handler function to wrap.
  * @returns A wrapped handler function that catches and handles specific errors.
  * @since 1.8.0
@@ -1440,7 +1440,7 @@ interface ErrorHandlers {
 
 /**
  * Verifies that a value is defined (not undefined).
- * @typeParam T The type of the value, excluding undefined.
+ * @template T The type of the value, excluding undefined.
  * @param callbacks The value to verify.
  * @throws {ItemsNotFoundError} If the value is undefined.
  * @since 1.8.0
@@ -1465,7 +1465,7 @@ const verifyJsonLdRequest = (request: Request): void | never => {
 
 /**
  * Performs authorization if needed based on the authorization predicate.
- * @typeParam TContextData The context data type.
+ * @template TContextData The context data type.
  * @param {RequestContext<TContextData>} context The request context.
  * @param {Record<string, string>} values The parameter values.
  * @param options Options containing the authorization predicate.
@@ -1519,7 +1519,7 @@ const warning = {
 
 /**
  * Appends a cursor parameter to a URL if the cursor exists.
- * @typeParam Cursor The type of the cursor (string, null, or undefined).
+ * @template Cursor The type of the cursor (string, null, or undefined).
  * @param {URL} url The base URL to append the cursor to.
  * @param {string | null | undefined} cursor The cursor value to append.
  * @returns The URL with cursor appended if cursor is a string, null otherwise.

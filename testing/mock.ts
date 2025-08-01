@@ -99,7 +99,7 @@ export interface SentActivity {
  * await federation.receiveActivity(createActivity);
  * ```
  *
- * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @template TContextData The context data to pass to the {@link Context}.
  * @since 1.8.0
  */
 export class MockFederation<TContextData> implements Federation<TContextData> {
@@ -616,7 +616,7 @@ interface InboxListener<TContextData, TActivity extends Activity> {
  * console.log(sent[0].activity);
  * ```
  *
- * @typeParam TContextData The context data to pass to the {@link Context}.
+ * @template TContextData The context data to pass to the {@link Context}.
  * @since 1.8.0
  */
 export class MockContext<TContextData> implements Context<TContextData> {
