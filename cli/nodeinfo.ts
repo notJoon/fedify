@@ -7,8 +7,7 @@ import * as colors from "@std/fmt/colors";
 import { isICO, parseICO } from "icojs";
 import { defaultFormats, defaultPlugins, intToRGBA } from "jimp";
 import ora from "ora";
-import { formatObjectForOutput } from "./mod.ts";
-import { printJson } from "./utils.ts";
+import { formatCliObjectOutputWithColor, printJson } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "nodeinfo"]);
 
@@ -213,7 +212,9 @@ export const command = new Command()
       for (const [key, value] of Object.entries(nodeInfo.metadata)) {
         layout[next()] += `  ${colors.dim(key + ":")} ${
           indent(
-            typeof value === "string" ? value : formatObjectForOutput(value),
+            typeof value === "string"
+              ? value
+              : formatCliObjectOutputWithColor(value),
             defaultWidth + 4 + key.length,
           )
         }`;

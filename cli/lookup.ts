@@ -18,8 +18,8 @@ import * as colors from "@std/fmt/colors";
 import { dirname, isAbsolute, resolve } from "@std/path";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
-import { colorEnabled, formatObjectForOutput } from "./mod.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
+import { colorEnabled, formatCliObjectOutputWithColor } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
@@ -109,7 +109,7 @@ export async function writeObjectToStream(
     }
 
     const enableColors = colorEnabled && options.output === undefined;
-    content = formatObjectForOutput(content, enableColors);
+    content = formatCliObjectOutputWithColor(content, enableColors);
 
     const encoder = new TextEncoder();
     const bytes = encoder.encode(content + "\n");
