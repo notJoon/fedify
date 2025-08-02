@@ -6,11 +6,11 @@ import { driverSerializesJson } from "./utils.ts";
 const logger = getLogger(["fedify", "postgres", "kv"]);
 
 /**
- * Options for the PostgreSQL key-value store.
+ * Options for the PostgreSQL key–value store.
  */
 export interface PostgresKvStoreOptions {
   /**
-   * The table name to use for the key-value store.
+   * The table name to use for the key–value store.
    * `"fedify_kv_v2"` by default.
    * @default `"fedify_kv_v2"`
    */
@@ -24,7 +24,7 @@ export interface PostgresKvStoreOptions {
 }
 
 /**
- * A key-value store that uses PostgreSQL as the underlying storage.
+ * A key–value store that uses PostgreSQL as the underlying storage.
  *
  * @example
  * ```ts
@@ -46,9 +46,9 @@ export class PostgresKvStore implements KvStore {
   #driverSerializesJson = false;
 
   /**
-   * Creates a new PostgreSQL key-value store.
+   * Creates a new PostgreSQL key–value store.
    * @param sql The PostgreSQL client to use.
-   * @param options The options for the key-value store.
+   * @param options The options for the key–value store.
    */
   constructor(
     // deno-lint-ignore ban-types
@@ -108,12 +108,12 @@ export class PostgresKvStore implements KvStore {
   }
 
   /**
-   * Creates the table used by the key-value store if it does not already exist.
+   * Creates the table used by the key–value store if it does not already exist.
    * Does nothing if the table already exists.
    */
   async initialize(): Promise<void> {
     if (this.#initialized) return;
-    logger.debug("Initializing the key-value store table {tableName}...", {
+    logger.debug("Initializing the key–value store table {tableName}...", {
       tableName: this.#tableName,
     });
     await this.#sql`
@@ -126,13 +126,13 @@ export class PostgresKvStore implements KvStore {
     `;
     this.#driverSerializesJson = await driverSerializesJson(this.#sql);
     this.#initialized = true;
-    logger.debug("Initialized the key-value store table {tableName}.", {
+    logger.debug("Initialized the key–value store table {tableName}.", {
       tableName: this.#tableName,
     });
   }
 
   /**
-   * Drops the table used by the key-value store.  Does nothing if the table
+   * Drops the table used by the key–value store.  Does nothing if the table
    * does not exist.
    */
   async drop(): Promise<void> {

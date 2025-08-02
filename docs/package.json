@@ -10,6 +10,7 @@
     "@fedify/nestjs": "workspace:",
     "@fedify/postgres": "workspace:",
     "@fedify/redis": "workspace:",
+    "@fedify/sqlite": "workspace:",
     "@fedify/testing": "workspace:",
     "@hono/node-server": "^1.13.7",
     "@js-temporal/polyfill": "catalog:",

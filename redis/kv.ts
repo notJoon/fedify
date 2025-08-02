@@ -8,20 +8,20 @@ import { type Codec, JsonCodec } from "./codec.ts";
  */
 export interface RedisKvStoreOptions {
   /**
-   * The prefix to use for all keys in the key-value store in Redis.
+   * The prefix to use for all keys in the key–value store in Redis.
    * Defaults to `"fedify::"`.
    */
   keyPrefix?: RedisKey;
 
   /**
-   * The codec to use for encoding and decoding values in the key-value store.
+   * The codec to use for encoding and decoding values in the key–value store.
    * Defaults to {@link JsonCodec}.
    */
   codec?: Codec;
 }
 
 /**
- * A key-value store that uses Redis as the underlying storage.
+ * A key–value store that uses Redis as the underlying storage.
  *
  * @example
  * ```ts ignore
@@ -42,9 +42,9 @@ export class RedisKvStore implements KvStore {
   #textEncoder = new TextEncoder();
 
   /**
-   * Creates a new Redis key-value store.
+   * Creates a new Redis key–value store.
    * @param redis The Redis client to use.
-   * @param options The options for the key-value store.
+   * @param options The options for the key–value store.
    */
   constructor(redis: Redis, options: RedisKvStoreOptions = {}) {
     this.#redis = redis;
