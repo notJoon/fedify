@@ -1,13 +1,14 @@
 packages:
-- fedify
-- cli
-- amqp
-- express
-- nestjs
-- h3
-- postgres
-- redis
-- testing
+- packages/fedify
+- packages/cli
+- packages/amqp
+- packages/express
+- packages/nestjs
+- packages/h3
+- packages/postgres
+- packages/redis
+- packages/sqlite
+- packages/testing
 - docs
 - examples/cloudflare-workers
 - examples/express

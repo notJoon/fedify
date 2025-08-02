@@ -91,6 +91,13 @@ the versioning.
      -  Added `@fedify/nestjs` package.
      -  Added `FedifyModule` for integrating Fedify into NestJS applications.
 
+ -  Added `SqliteKvStore`, implementing `KvStore` using SQLite with the
+    `@fedify/sqlite` package. Compatible with Bun, Deno, and Node.js.
+    [[#274], [#318] by An Subin]
+
+     -  Added `@fedify/sqlite` package.
+     -  Added `SqliteKvStore`, a SQLite implementation of `KvStore`.
+
  -  Added `-o`/`--output` option to `fedify lookup` command. This option allows
     users to save retrieved lookup results to specified path.
     [[#261], [#321] by Jiwon Kwon]
@@ -117,10 +124,15 @@ the versioning.
     in each activity, in addition to the activity's own type.
     [[#191], [#342] by Jang Hanarae]
 
+ -  The `fedify` CLI now correctly disables color output when standard output
+    isn't a TTY (for example, when redirecting to a file) or when the `NO_COLOR`
+    environment variable is set.  [[#257], [#341] by Cho Hasang]
+
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#191]: https://github.com/fedify-dev/fedify/issues/191
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
+[#257]: https://github.com/fedify-dev/fedify/issues/257
 [#260]: https://github.com/fedify-dev/fedify/issues/260
 [#261]: https://github.com/fedify-dev/fedify/issues/261
 [#262]: https://github.com/fedify-dev/fedify/issues/262
@@ -135,6 +147,8 @@ the versioning.
 [#298]: https://github.com/fedify-dev/fedify/pull/298
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
+[#274]: https://github.com/fedify-dev/fedify/issues/274
+[#318]: https://github.com/fedify-dev/fedify/pull/318
 [#310]: https://github.com/fedify-dev/fedify/issues/310
 [#311]: https://github.com/fedify-dev/fedify/issues/311
 [#321]: https://github.com/fedify-dev/fedify/pull/321
@@ -142,6 +156,7 @@ the versioning.
 [#331]: https://github.com/fedify-dev/fedify/pull/331
 [#332]: https://github.com/fedify-dev/fedify/pull/332
 [#342]: https://github.com/fedify-dev/fedify/pull/342
+[#341]: https://github.com/fedify-dev/fedify/pull/341
 
 
 Version 1.7.7
@@ -160,6 +175,7 @@ Released on July 28, 2025.
 
 [#300]: https://github.com/fedify-dev/fedify/pull/300
 [#335]: https://github.com/fedify-dev/fedify/pull/335
+
 
 
 Version 1.7.6

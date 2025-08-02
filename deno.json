@@ -1,13 +1,14 @@
 {
   "workspace": [
-    "./fedify",
-    "./cli",
-    "./amqp",
-    "./express",
-    "./h3",
-    "./postgres",
-    "./redis",
-    "./testing",
+    "./packages/fedify",
+    "./packages/cli",
+    "./packages/amqp",
+    "./packages/express",
+    "./packages/h3",
+    "./packages/postgres",
+    "./packages/redis",
+    "./packages/sqlite",
+    "./packages/testing",
     "./examples/blog",
     "./examples/cloudflare-workers",
     "./examples/hono-sample"
@@ -85,7 +86,6 @@
         "test:bun"
       ]
     },
-    "publish": "deno task -f @fedify/fedify publish && deno task -f @fedify/cli publish",
     "cli": "deno task -f @fedify/cli run",
     "hooks:install": "deno run --allow-read=deno.json,.git/hooks/ --allow-write=.git/hooks/ jsr:@hongminhee/deno-task-hooks",
     "hooks:pre-commit": {

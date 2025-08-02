@@ -236,6 +236,7 @@ export default withMermaid(defineConfig({
               "dom",
               "dom.iterable",
               "esnext",
+              "node",
               "@teidesu/deno-types/full",
               "@cloudflare/workers-types/experimental",
             ],
