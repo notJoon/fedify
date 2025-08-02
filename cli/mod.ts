@@ -13,8 +13,17 @@ import { command as nodeinfo } from "./nodeinfo.ts";
 import { command as tunnel } from "./tunnel.ts";
 import { command as webfinger } from "./webfinger.ts";
 
-const colorEnabled = Deno.stdout.isTerminal() && !Deno.env.has("NO_COLOR");
+export const colorEnabled: boolean = Deno.stdout.isTerminal() &&
+  !Deno.env.has("NO_COLOR");
 setColorEnabled(colorEnabled);
+
+export function formatObjectForOutput(obj: unknown): string {
+  if (colorEnabled) {
+    return Deno.inspect(obj, { colors: true });
+  } else {
+    return Deno.inspect(obj, { colors: false });
+  }
+}
 
 const command = new Command()
   .name("fedify")
