@@ -70,39 +70,6 @@ importers:
 
   .: {}
 
-  amqp:
-    dependencies:
-      '@fedify/fedify':
-        specifier: 'workspace:'
-        version: link:../fedify
-      amqplib:
-        specifier: 'catalog:'
-        version: 0.10.8
-    devDependencies:
-      '@alinea/suite':
-        specifier: ^0.6.3
-        version: 0.6.3
-      '@js-temporal/polyfill':
-        specifier: 'catalog:'
-        version: 0.5.1
-      '@std/assert':
-        specifier: 'catalog:'
-        version: '@jsr/std__assert@1.0.13'
-      '@std/async':
-        specifier: 'catalog:'
-        version: '@jsr/std__async@1.0.13'
-      '@types/amqplib':
-        specifier: 'catalog:'
-        version: 0.10.7
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.12.9(typescript@5.8.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.8.3
-
-  cli: {}
-
   docs:
     devDependencies:
       '@braintree/sanitize-url':
@@ -116,31 +83,31 @@ importers:
         version: 0.8.4
       '@fedify/amqp':
         specifier: 'workspace:'
-        version: link:../amqp
+        version: link:../packages/amqp
       '@fedify/express':
         specifier: 'workspace:'
-        version: link:../express
+        version: link:../packages/express
       '@fedify/fedify':
         specifier: 'workspace:'
-        version: link:../fedify
+        version: link:../packages/fedify
       '@fedify/h3':
         specifier: 'workspace:'
-        version: link:../h3
+        version: link:../packages/h3
       '@fedify/nestjs':
         specifier: 'workspace:'
-        version: link:../nestjs
+        version: link:../packages/nestjs
       '@fedify/postgres':
         specifier: 'workspace:'
-        version: link:../postgres
+        version: link:../packages/postgres
       '@fedify/redis':
         specifier: 'workspace:'
-        version: link:../redis
+        version: link:../packages/redis
       '@fedify/sqlite':
         specifier: 'workspace:'
-        version: link:../sqlite
+        version: link:../packages/sqlite
       '@fedify/testing':
         specifier: 'workspace:'
-        version: link:../testing
+        version: link:../packages/testing
       '@hono/node-server':
         specifier: ^1.13.7
         version: 1.14.4(hono@4.8.3)
@@ -251,7 +218,7 @@ importers:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
-        version: link:../../fedify
+        version: link:../../packages/fedify
     devDependencies:
       typescript:
         specifier: 'catalog:'
@@ -264,10 +231,10 @@ importers:
     dependencies:
       '@fedify/express':
         specifier: 'workspace:'
-        version: link:../../express
+        version: link:../../packages/express
       '@fedify/fedify':
         specifier: 'workspace:'
-        version: link:../../fedify
+        version: link:../../packages/fedify
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 1.0.0
@@ -292,7 +259,7 @@ importers:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
-        version: link:../../fedify
+        version: link:../../packages/fedify
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 1.0.0
@@ -338,7 +305,7 @@ importers:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
-        version: link:../../fedify
+        version: link:../../packages/fedify
       next:
         specifier: 15.3.1
         version: 15.3.1(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -380,7 +347,40 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
-  express:
+  packages/amqp:
+    dependencies:
+      '@fedify/fedify':
+        specifier: 'workspace:'
+        version: link:../fedify
+      amqplib:
+        specifier: 'catalog:'
+        version: 0.10.8
+    devDependencies:
+      '@alinea/suite':
+        specifier: ^0.6.3
+        version: 0.6.3
+      '@js-temporal/polyfill':
+        specifier: 'catalog:'
+        version: 0.5.1
+      '@std/assert':
+        specifier: 'catalog:'
+        version: '@jsr/std__assert@1.0.13'
+      '@std/async':
+        specifier: 'catalog:'
+        version: '@jsr/std__async@1.0.13'
+      '@types/amqplib':
+        specifier: 'catalog:'
+        version: 0.10.7
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.12.9(typescript@5.8.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+
+  packages/cli: {}
+
+  packages/express:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
@@ -402,7 +402,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
-  fedify:
+  packages/fedify:
     dependencies:
       '@cfworker/json-schema':
         specifier: ^4.1.1
@@ -479,7 +479,7 @@ importers:
         version: '@jsr/std__yaml@1.0.8'
       '@types/node':
         specifier: ^22.15.21
-        version: 22.15.34
+        version: 22.16.0
       fast-check:
         specifier: ^3.22.0
         version: 3.23.2
@@ -502,7 +502,7 @@ importers:
         specifier: ^4.17.0
         version: 4.22.0(@cloudflare/workers-types@4.20250529.0)
 
-  h3:
+  packages/h3:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
@@ -518,7 +518,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
-  nestjs:
+  packages/nestjs:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
@@ -543,7 +543,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
-  postgres:
+  packages/postgres:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
@@ -568,7 +568,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
-  redis:
+  packages/redis:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
@@ -596,7 +596,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
-  sqlite:
+  packages/sqlite:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
@@ -621,7 +621,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
-  testing:
+  packages/testing:
     dependencies:
       '@fedify/fedify':
         specifier: 'workspace:'
@@ -7213,7 +7213,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.33.5':
     dependencies:
-      '@emnapi/runtime': 1.4.3
+      '@emnapi/runtime': 1.4.5
     optional: true
 
   '@img/sharp-wasm32@0.34.3':
