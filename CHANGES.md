@@ -127,8 +127,17 @@ the versioning.
  -  The `fedify` CLI now correctly disables color output when standard output
     isn't a TTY (for example, when redirecting to a file) or when the `NO_COLOR`
     environment variable is set.  [[#257], [#341] by Cho Hasang]
+    
+ -  The 'fedify lookup' command now displays images depending on user's 
+    terminal emulator. [[#169], [#348] by Jiwon Kwon]
+
+     - Supported terminal emulators are `Kitty`, `WezTerm`, `Konsole`, `Warp`,
+      `Wayst`, `st`, and `iterms`.
+
+
 
 [#168]: https://github.com/fedify-dev/fedify/issues/168
+[#169]: https://github.com/fedify-dev/fedify/issues/169
 [#191]: https://github.com/fedify-dev/fedify/issues/191
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
@@ -155,8 +164,9 @@ the versioning.
 [#328]: https://github.com/fedify-dev/fedify/pull/328
 [#331]: https://github.com/fedify-dev/fedify/pull/331
 [#332]: https://github.com/fedify-dev/fedify/pull/332
-[#342]: https://github.com/fedify-dev/fedify/pull/342
 [#341]: https://github.com/fedify-dev/fedify/pull/341
+[#342]: https://github.com/fedify-dev/fedify/pull/342
+[#348]: https://github.com/fedify-dev/fedify/pull/348
 
 
 Version 1.7.7
