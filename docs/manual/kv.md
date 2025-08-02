@@ -45,8 +45,32 @@ const federation = createFederation<void>({
 
 ### `SqliteKvStore`
 
-> [!NOTE]
-> The [`SqliteKvStore`] class is available in the *@fedify/sqlite* package.
+To use the [`SqliteKvStore`], you need to install the *@fedify/sqlite* package
+first:
+
+::: code-group
+
+~~~~ bash [Deno]
+deno add jsr:@fedify/sqlite
+~~~~
+
+~~~~ bash [npm]
+npm add @fedify/sqlite
+~~~~
+
+~~~~ bash [pnpm]
+pnpm add @fedify/sqlite
+~~~~
+
+~~~~ bash [Yarn]
+yarn add @fedify/sqlite
+~~~~
+
+~~~~ bash [Bun]
+bun add @fedify/sqlite
+~~~~
+
+:::
 
 [`SqliteKvStore`] is a simple key–value store implementation that uses SQLite as
 the backend storage. It provides persistent storage with minimal configuration.
@@ -139,8 +163,32 @@ const federation = createFederation<void>({
 
 ### [`RedisKvStore`]
 
-> [!NOTE]
-> The [`RedisKvStore`] class is available in the [@fedify/redis] package.
+To use the [`RedisKvStore`], you need to install the *@fedify/redis* package
+first:
+
+::: code-group
+
+~~~~ bash [Deno]
+deno add jsr:@fedify/redis
+~~~~
+
+~~~~ bash [npm]
+npm add @fedify/redis
+~~~~
+
+~~~~ bash [pnpm]
+pnpm add @fedify/redis
+~~~~
+
+~~~~ bash [Yarn]
+yarn add @fedify/redis
+~~~~
+
+~~~~ bash [Bun]
+bun add @fedify/redis
+~~~~
+
+:::
 
 [`RedisKvStore`] is a key–value store implementation that uses Redis as
 the backend storage. It provides scalability and high performance, making it
@@ -168,13 +216,36 @@ const federation = createFederation<void>({
 });
 ~~~~
 
-[@fedify/redis]: https://github.com/fedify-dev/redis
 [`RedisKvStore`]: https://jsr.io/@fedify/redis/doc/kv/~/RedisKvStore
 
 ### [`PostgresKvStore`]
 
-> [!NOTE]
-> The [`PostgresKvStore`] class is available in the [@fedify/postgres] package.
+To use the [`PostgresKvStore`], you need to install the *@fedify/postgres*
+package first:
+
+::: code-group
+
+~~~~ bash [Deno]
+deno add jsr:@fedify/postgres
+~~~~
+
+~~~~ bash [npm]
+npm add @fedify/postgres
+~~~~
+
+~~~~ bash [pnpm]
+pnpm add @fedify/postgres
+~~~~
+
+~~~~ bash [Yarn]
+yarn add @fedify/postgres
+~~~~
+
+~~~~ bash [Bun]
+bun add @fedify/postgres
+~~~~
+
+:::
 
 [`PostgresKvStore`] is a key–value store implementation that uses PostgreSQL as
 the backend storage. It provides scalability and high performance, making it
@@ -204,7 +275,6 @@ const federation = createFederation<void>({
 ~~~~
 
 [`PostgresKvStore`]: https://jsr.io/@fedify/postgres/doc/kv/~/PostgresKvStore
-[@fedify/postgres]: https://github.com/fedify-dev/postgres
 
 ### `WorkersKvStore` (Cloudflare Workers only)
 
