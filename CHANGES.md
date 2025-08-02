@@ -112,8 +112,10 @@ the versioning.
      -  Added `getCollectionUri()` method to the `Context` interface.
      -  Added utility types `ConstructorWithTypeId` and `ParamsKeyPath` for
         custom collection dispatchers.
+  - Update the `fedify inbox` command to display the type of the object contained in each activity, in addition to the activity’s own type. [[#191], [#342] by Jang Hanarae]
 
 [#168]: https://github.com/fedify-dev/fedify/issues/168
+[#191]: https://github.com/fedify-dev/fedify/issues/191
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
 [#260]: https://github.com/fedify-dev/fedify/issues/260
@@ -136,7 +138,7 @@ the versioning.
 [#328]: https://github.com/fedify-dev/fedify/pull/328
 [#331]: https://github.com/fedify-dev/fedify/pull/331
 [#332]: https://github.com/fedify-dev/fedify/pull/332
-
+[#342]: https://github.com/fedify-dev/fedify/pull/342
 
 Version 1.7.7
 -------------
