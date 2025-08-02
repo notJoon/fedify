@@ -16,7 +16,7 @@ export const fedifyRequestHandler = integrateFederation(() => {});
 
 const routePrefix = `/fedify-activity-handler`;
 
-const federation = createFederation<void>({
+const federation = createFederation({
   kv: new MemoryKvStore(),
 });
 
