@@ -63,7 +63,7 @@
     "!vocab/vocab.ts"
   ],
   "tasks": {
-    "codegen": "deno run --allow-read --allow-write --check codegen/main.ts vocab/ ../runtime/ > vocab/.vocab.ts && deno fmt vocab/.vocab.ts && mv vocab/.vocab.ts vocab/vocab.ts && deno cache vocab/vocab.ts && deno check vocab/vocab.ts",
+    "codegen": "GENPATH=vocab-$(deno eval \"console.log(crypto.randomUUID());\").ts && deno run --allow-read --allow-write --check codegen/main.ts vocab/ ../runtime/ vocab/$GENPATH && deno fmt vocab/$GENPATH && mv vocab/$GENPATH vocab/vocab.ts && deno cache vocab/vocab.ts && deno check vocab/vocab.ts",
     "cache": {
       "command": "deno cache mod.ts",
       "dependencies": [
