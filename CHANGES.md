@@ -29,7 +29,7 @@ the versioning.
   
    - Implemented NO_COLOR environment variable detection for global color control using @std/fmt/colors.setColorEnabled().
    - Standardized color application by switching from @cliffy/ansi/colors to @std/fmt/colors and adapting the syntax (for example, colors.bold(colors.green(...))).
-   - The automatic color formatting applied by Deno's console.log() when printing JavaScript objects (for example, in fedify lookup command output) is a built-in runtime feature and remains unaffected by this change.
+   - The automatic color formatting applied by Deno's console.log() when printing JavaScript objects has been addressed by a new helper function that uses Deno.inspect() to correctly format objects without color in non-terminal environments.
 
  -  Added mock classes for `Federation` and `Context` interfaces to improve
     testability without requiring a real federation server setup. The mock
