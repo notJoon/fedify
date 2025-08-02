@@ -117,10 +117,15 @@ the versioning.
     in each activity, in addition to the activity's own type.
     [[#191], [#342] by Jang Hanarae]
 
+ -  The `fedify` CLI now correctly disables color output when standard output
+    isn't a TTY (for example, when redirecting to a file) or when the `NO_COLOR`
+    environment variable is set.  [[#257], [#341] by Cho Hasang]
+
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#191]: https://github.com/fedify-dev/fedify/issues/191
 [#197]: https://github.com/fedify-dev/fedify/issues/197
 [#248]: https://github.com/fedify-dev/fedify/issues/248
+[#257]: https://github.com/fedify-dev/fedify/issues/257
 [#260]: https://github.com/fedify-dev/fedify/issues/260
 [#261]: https://github.com/fedify-dev/fedify/issues/261
 [#262]: https://github.com/fedify-dev/fedify/issues/262
@@ -142,6 +147,7 @@ the versioning.
 [#331]: https://github.com/fedify-dev/fedify/pull/331
 [#332]: https://github.com/fedify-dev/fedify/pull/332
 [#342]: https://github.com/fedify-dev/fedify/pull/342
+[#341]: https://github.com/fedify-dev/fedify/pull/341
 
 
 Version 1.7.7

@@ -1,6 +1,5 @@
 /** @jsx react-jsx */
 /** @jsxImportSource hono/jsx */
-import { colors } from "@cliffy/ansi";
 import { Command } from "@cliffy/command";
 import { Cell, Table } from "@cliffy/table";
 import {
@@ -23,6 +22,7 @@ import {
   type Recipient,
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
+import * as colors from "@std/fmt/colors";
 import { parse } from "@std/semver";
 import { type Context as HonoContext, Hono } from "hono";
 import type { BlankEnv, BlankInput } from "hono/types";

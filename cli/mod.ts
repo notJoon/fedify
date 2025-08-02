@@ -1,6 +1,7 @@
 import { Command, CompletionsCommand, HelpCommand } from "@cliffy/command";
 import { getFileSink } from "@logtape/file";
 import { configure, getConsoleSink } from "@logtape/logtape";
+import { setColorEnabled } from "@std/fmt/colors";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { DEFAULT_CACHE_DIR, setCacheDir } from "./cache.ts";
 import metadata from "./deno.json" with { type: "json" };
@@ -10,11 +11,15 @@ import { logFile, recordingSink } from "./log.ts";
 import { command as lookup } from "./lookup.ts";
 import { command as nodeinfo } from "./nodeinfo.ts";
 import { command as tunnel } from "./tunnel.ts";
+import { colorEnabled } from "./utils.ts";
 import { command as webfinger } from "./webfinger.ts";
+
+setColorEnabled(colorEnabled);
 
 const command = new Command()
   .name("fedify")
   .version(metadata.version)
+  .help({ colors: colorEnabled })
   .globalEnv(
     "FEDIFY_LOG_FILE=<file:file>",
     "An optional file to write logs to.  " +

@@ -1,4 +1,3 @@
-import { colors } from "@cliffy/ansi";
 import { Command, EnumType } from "@cliffy/command";
 import {
   Application,
@@ -15,10 +14,12 @@ import {
   traverseCollection,
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
+import * as colors from "@std/fmt/colors";
 import { dirname, isAbsolute, resolve } from "@std/path";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
+import { colorEnabled, formatCliObjectOutputWithColor } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
@@ -107,9 +108,8 @@ export async function writeObjectToStream(
       content = object;
     }
 
-    content = Deno.inspect(content, {
-      colors: !(options.output),
-    });
+    const enableColors = colorEnabled && options.output === undefined;
+    content = formatCliObjectOutputWithColor(content, enableColors);
 
     const encoder = new TextEncoder();
     const bytes = encoder.encode(content + "\n");
