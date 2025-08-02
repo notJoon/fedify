@@ -1,8 +1,8 @@
-import { colors } from "@cliffy/ansi";
 import { Command, EnumType } from "@cliffy/command";
 import { Select } from "@cliffy/prompt";
 import { getLogger } from "@logtape/logtape";
 import { stringify } from "@std/dotenv/stringify";
+import * as colors from "@std/fmt/colors";
 import { exists } from "@std/fs";
 import { basename, dirname, join, normalize } from "@std/path";
 import metadata from "./deno.json" with { type: "json" };
@@ -172,11 +172,11 @@ Deno.serve({ handler, ...config.server });
       instruction: `
 To start the server, run the following command:
 
-  ${colors.bold.green("deno task start")}
+  ${colors.bold(colors.green("deno task start"))}
 
 Then, try look up an actor from your server:
 
-  ${colors.bold.green("fedify lookup http://localhost:8000/users/john")}
+  ${colors.bold(colors.green("fedify lookup http://localhost:8000/users/john"))}
 `,
     }),
   },
@@ -293,18 +293,18 @@ Deno.serve(
 To start the server, run the following command:
 
   ${
-        colors.bold.green(
+        colors.bold(colors.green(
           runtime === "deno"
             ? "deno task dev"
             : runtime === "bun"
             ? "bun dev"
             : `${pm} run dev`,
-        )
+        ))
       }
 
 Then, try look up an actor from your server:
 
-  ${colors.bold.green("fedify lookup http://localhost:8000/users/john")}
+  ${colors.bold(colors.green("fedify lookup http://localhost:8000/users/john"))}
 `,
     }),
   },
@@ -377,11 +377,11 @@ app.listen(8000, () => {
       instruction: `
 To start the server, run the following command:
 
-  ${colors.bold.green(runtime === "bun" ? "bun dev" : `${pm} run dev`)}
+  ${colors.bold(colors.green(runtime === "bun" ? "bun dev" : `${pm} run dev`))}
 
 Then, try look up an actor from your server:
 
-  ${colors.bold.green("fedify lookup http://localhost:8000/users/john")}
+  ${colors.bold(colors.green("fedify lookup http://localhost:8000/users/john"))}
 `,
     }),
   },
@@ -430,11 +430,11 @@ export default defineNitroConfig({
       instruction: `
 To start the server, run the following command:
 
-  ${colors.bold.green(runtime === "bun" ? "bun dev" : `${pm} run dev`)}
+  ${colors.bold(colors.green(runtime === "bun" ? "bun dev" : `${pm} run dev`))}
 
 Then, try look up an actor from your server:
 
-  ${colors.bold.green("fedify lookup http://localhost:3000/users/john")}
+  ${colors.bold(colors.green("fedify lookup http://localhost:3000/users/john"))}
 `,
     }),
   },
@@ -879,18 +879,18 @@ Deno.serve(
 To start the server, run the following command:
 
   ${
-          colors.bold.green(
+          colors.bold(colors.green(
             runtime === "deno"
               ? "deno task dev"
               : runtime === "bun"
               ? "bun dev"
               : `${packageManager} run dev`,
-          )
+          ))
         }
 
 Then, try look up an actor from your server:
 
-  ${colors.bold.green("fedify lookup http://localhost:8000/users/john")}
+  ${colors.bold(colors.green("fedify lookup http://localhost:8000/users/john"))}
 `,
       };
     } else {
@@ -1017,7 +1017,9 @@ await configure({
 
     if (dryRun) {
       console.log(
-        colors.bold.yellow("🔍 DRY RUN MODE - No files will be created\n"),
+        colors.bold(
+          colors.yellow("🔍 DRY RUN MODE - No files will be created\n"),
+        ),
       );
     }
 
@@ -1043,7 +1045,7 @@ await configure({
     }
     if (initializer.command != null) {
       if (dryRun) {
-        console.log(colors.bold.cyan("📦 Would run command:"));
+        console.log(colors.bold(colors.cyan("📦 Would run command:")));
         console.log(
           `  ${
             [initializer.command[0], ...initializer.command.slice(1)].join(" ")
@@ -1088,7 +1090,7 @@ await configure({
         .map(([name, version]) => `${name}@${version}`)
         .join("\n");
       if (deps) {
-        console.log(colors.bold.cyan("📦 Would install dependencies:"));
+        console.log(colors.bold(colors.cyan("📦 Would install dependencies:")));
         console.log(`${deps}\n`);
       }
     } else {
@@ -1111,7 +1113,9 @@ await configure({
           .map(([name, version]) => `${name}@${version}`)
           .join("\n");
         if (devDeps) {
-          console.log(colors.bold.cyan("📦 Would install dev dependencies:"));
+          console.log(
+            colors.bold(colors.cyan("📦 Would install dev dependencies:")),
+          );
           console.log(`${devDeps}\n`);
         }
       } else {
@@ -1125,7 +1129,7 @@ await configure({
       }
     }
     if (dryRun) {
-      console.log(colors.bold.green("📄 Would create files:\n"));
+      console.log(colors.bold(colors.green("📄 Would create files:\n")));
       for (const [filename, content] of Object.entries(files)) {
         const path = join(dir, filename);
         displayFileContent(path, content);
@@ -1140,7 +1144,7 @@ await configure({
     }
     if (prependFiles != null) {
       if (dryRun) {
-        console.log(colors.bold.blue("Would prepend to files:\n"));
+        console.log(colors.bold(colors.blue("Would prepend to files:\n")));
         for (const [filename, prefix] of Object.entries(prependFiles)) {
           const path = join(dir, filename);
           console.log(colors.blue(`${path}`));
@@ -1163,7 +1167,9 @@ await configure({
     }
     if (runtime === "deno") {
       if (dryRun) {
-        console.log(colors.bold.green("Would create/update JSON files:\n"));
+        console.log(
+          colors.bold(colors.green("Would create/update JSON files:\n")),
+        );
       }
       await rewriteJsonFile(
         join(dir, "deno.json"),
@@ -1248,7 +1254,9 @@ await configure({
       );
     } else {
       if (dryRun) {
-        console.log(colors.bold.green("Would create/update JSON files:\n"));
+        console.log(
+          colors.bold(colors.green("Would create/update JSON files:\n")),
+        );
       }
       await rewriteJsonFile(
         join(dir, "package.json"),
@@ -1362,23 +1370,25 @@ await configure({
     if (Object.keys(env).length > 0) {
       console.error(
         `Note that you probably want to edit the ${
-          colors.bold.blue(".env")
+          colors.bold(colors.blue(".env"))
         } file.  It currently contains the following values:\n`,
       );
       for (const key in env) {
         const value = stringify({ _: env[key] }).substring(2);
-        console.error(`  ${colors.green.bold(key)}${colors.gray("=")}${value}`);
+        console.error(
+          `  ${colors.bold(colors.green(key))}${colors.gray("=")}${value}`,
+        );
       }
       console.error();
     }
     console.error(`\
-Start by editing the ${colors.bold.blue(initializer.federationFile)} \
+Start by editing the ${colors.bold(colors.blue(initializer.federationFile))} \
 file to define your federation!
 `);
   });
 
 function drawDinosaur() {
-  const d = colors.bgBlue.black;
+  const d = (text: string) => colors.bgBlue(colors.black(text));
   const f = colors.blue;
   console.error(`\
 ${d("             ___   ")}  ${f(" _____        _ _  __")}
