@@ -17,8 +17,10 @@ export const colorEnabled: boolean = Deno.stdout.isTerminal() &&
   !Deno.env.has("NO_COLOR");
 setColorEnabled(colorEnabled);
 
-export function formatObjectForOutput(obj: unknown): string {
-  if (colorEnabled) {
+export function formatObjectForOutput(obj: unknown, colors?: boolean): string {
+  const enableColors = colors ?? colorEnabled;
+
+  if (enableColors) {
     return Deno.inspect(obj, { colors: true });
   } else {
     return Deno.inspect(obj, { colors: false });

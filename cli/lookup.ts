@@ -18,6 +18,7 @@ import * as colors from "@std/fmt/colors";
 import { dirname, isAbsolute, resolve } from "@std/path";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
+import { colorEnabled, formatObjectForOutput } from "./mod.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
@@ -107,9 +108,8 @@ export async function writeObjectToStream(
       content = object;
     }
 
-    content = Deno.inspect(content, {
-      colors: !(options.output),
-    });
+    const enableColors = colorEnabled && options.output === undefined;
+    content = formatObjectForOutput(content, enableColors);
 
     const encoder = new TextEncoder();
     const bytes = encoder.encode(content + "\n");
