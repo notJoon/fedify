@@ -34,7 +34,6 @@ import { ActivityEntryPage, ActivityListPage } from "./inbox/view.tsx";
 import { recordingSink } from "./log.ts";
 import { tableStyle } from "./table.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
-import { colorEnabled } from "./utils.ts";
 
 /**
  * Context data for the ephemeral ActivityPub inbox server.
