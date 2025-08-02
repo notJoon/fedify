@@ -49,6 +49,11 @@ export class SqliteKvStore implements KvStore {
   readonly #tableName: string;
   #initialized: boolean;
 
+  /**
+   * Creates a new SQLite key–value store.
+   * @param db The SQLite database to use. Supports `node:sqlite` and `bun:sqlite`.
+   * @param options The options for the key–value store.
+   */
   constructor(
     readonly db: PlatformDatabase,
     readonly options: SqliteKvStoreOptions = {},

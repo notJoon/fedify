@@ -59,18 +59,46 @@ Pros
 Cons
 :   Limited scalability, not suitable for high-traffic production.
 
-~~~~ typescript
-# Node.js and Deno. Use `'bun:sqlite'` on Bun instead.
-import { DatbaseSync } from "node:sqlite";
+
+::: code-group
+
+~~~~ typescript [Deno]
+import { DatabaseSync } from "node:sqlite";
 import { createFederation } from "@fedify/fedify";
 import { SqliteKvStore } from "@fedify/sqlite";
 
-const db = new DatabaseSync(:memory:);
+const db = new DatabaseSync(":memory:");
 const federation = createFederation<void>({
   // ...
   kv: new SqliteKvStore(db),
 });
 ~~~~
+
+~~~~ typescript [Node.js]
+import { DatabaseSync } from "node:sqlite";
+import { createFederation } from "@fedify/fedify";
+import { SqliteKvStore } from "@fedify/sqlite";
+
+const db = new DatabaseSync(":memory:");
+const federation = createFederation<void>({
+  // ...
+  kv: new SqliteKvStore(db),
+});
+~~~~
+
+~~~~ typescript [Bun]
+import { Database } from "bun:sqlite";
+import { createFederation } from "@fedify/fedify";
+import { SqliteKvStore } from "@fedify/sqlite";
+
+const db = new Database(":memory:");
+const federation = createFederation<void>({
+  // ...
+  kv: new SqliteKvStore(db),
+});
+~~~~
+
+:::
 
 ### `DenoKvStore` (Deno only)
 
