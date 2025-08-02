@@ -12,7 +12,7 @@ import {
 import { keyPairsStore, relationStore } from "~/data/store";
 import { revalidatePath } from "next/cache";
 
-export const fedifyRequestHanlder = integrateFederation(() => {});
+export const fedifyRequestHandler = integrateFederation(() => {});
 
 const routePrefix = `/fedify-activity-handler`;
 
