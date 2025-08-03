@@ -61,7 +61,7 @@ export function getAuthenticatedDocumentLoader(
   validateCryptoKey(identity.privateKey);
   async function load(
     url: string,
-    _options?: DocumentLoaderOptions,
+    options?: DocumentLoaderOptions,
   ): Promise<RemoteDocument> {
     if (!allowPrivateAddress) {
       try {
@@ -77,7 +77,12 @@ export function getAuthenticatedDocumentLoader(
     const response = await doubleKnock(
       originalRequest,
       identity,
-      { specDeterminer, log: logRequest, tracerProvider },
+      {
+        specDeterminer,
+        log: logRequest,
+        tracerProvider,
+        signal: options?.signal,
+      },
     );
     return getRemoteDocument(url, response, load);
   }
