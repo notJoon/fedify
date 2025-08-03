@@ -1237,6 +1237,12 @@ export interface DoubleKnockOptions {
    * is used.
    */
   tracerProvider?: TracerProvider;
+
+  /**
+   * An `AbortSignal` for cancellation.
+   * @since 1.8.0
+   */
+  signal?: AbortSignal;
 }
 
 /**
@@ -1283,7 +1289,7 @@ export async function doubleKnock(
   identity: { keyId: URL; privateKey: CryptoKey },
   options: DoubleKnockOptions = {},
 ): Promise<Response> {
-  const { specDeterminer, log, tracerProvider } = options;
+  const { specDeterminer, log, tracerProvider, signal } = options;
   const origin = new URL(request.url).origin;
   const firstTrySpec: HttpMessageSignaturesSpec = specDeterminer == null
     ? "rfc9421"
@@ -1308,6 +1314,7 @@ export async function doubleKnock(
     // to work around it we specify `redirect: "manual"` here too:
     // https://github.com/oven-sh/bun/issues/10754
     redirect: "manual",
+    signal,
   });
   // Follow redirects manually to get the final URL:
   if (
@@ -1355,6 +1362,7 @@ export async function doubleKnock(
       // to work around it we specify `redirect: "manual"` here too:
       // https://github.com/oven-sh/bun/issues/10754
       redirect: "manual",
+      signal,
     });
     // Follow redirects manually to get the final URL:
     if (

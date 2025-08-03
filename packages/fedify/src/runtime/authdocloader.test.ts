@@ -57,3 +57,69 @@ test("getAuthenticatedDocumentLoader()", async (t) => {
     assertRejects(() => loader("http://localhost"), UrlError);
   });
 });
+
+test("getAuthenticatedDocumentLoader() cancellation", {
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async (t) => {
+  fetchMock.spyGlobal();
+
+  await t.step("document loader cancellation", async () => {
+    fetchMock.get(
+      "https://example.com/slow-object",
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+              status: 200,
+              headers: { "Content-Type": "application/activity+json" },
+              body: {
+                "@context": "https://www.w3.org/ns/activitystreams",
+                type: "Note",
+                content: "Slow response",
+              },
+            });
+          }, 1000);
+        }),
+    );
+
+    const loader = getAuthenticatedDocumentLoader({
+      keyId: new URL("https://example.com/key2"),
+      privateKey: rsaPrivateKey2,
+    });
+
+    const controller = new AbortController();
+    const promise = loader("https://example.com/slow-object", {
+      signal: controller.signal,
+    });
+
+    controller.abort();
+
+    await assertRejects(
+      () => promise,
+      Error,
+    );
+
+    await assertRejects(
+      () => loader("https://example.com/object", { signal: controller.signal }),
+      Error,
+    );
+  });
+
+  await t.step("immediate cancellation", async () => {
+    const loader = getAuthenticatedDocumentLoader({
+      keyId: new URL("https://example.com/key2"),
+      privateKey: rsaPrivateKey2,
+    });
+
+    const controller = new AbortController();
+    controller.abort();
+
+    await assertRejects(
+      () => loader("https://example.com/object", { signal: controller.signal }),
+      Error,
+    );
+  });
+
+  fetchMock.hardReset();
+});

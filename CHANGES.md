@@ -91,6 +91,16 @@ the versioning.
      -  Added `@fedify/nestjs` package.
      -  Added `FedifyModule` for integrating Fedify into NestJS applications.
 
+ -  APIs making HTTP requests became able to optionally take `AbortSignal`.
+    [[#51], [#315] by Hyunchae Kim]
+
+     -  Added `DocumentLoaderOptions` interface.
+     -  The `DocumentLoader` type became able to optionally take
+        the second parameter.
+     -  Added `LookupObjectOptions.signal` option.
+     -  Added `LookupWebFingerOptions.signal` option.
+     -  Added `DoubleKnockOptions.signal` option.
+
  -  Added `SqliteKvStore`, implementing `KvStore` using SQLite with the
     `@fedify/sqlite` package. Compatible with Bun, Deno, and Node.js.
     [[#274], [#318] by An Subin]
@@ -146,6 +156,7 @@ the versioning.
 [#263]: https://github.com/fedify-dev/fedify/issues/263
 [#267]: https://github.com/fedify-dev/fedify/issues/267
 [#269]: https://github.com/fedify-dev/fedify/issues/269
+[#274]: https://github.com/fedify-dev/fedify/issues/274
 [#278]: https://github.com/fedify-dev/fedify/pull/278
 [#281]: https://github.com/fedify-dev/fedify/pull/281
 [#282]: https://github.com/fedify-dev/fedify/pull/282
@@ -154,10 +165,10 @@ the versioning.
 [#298]: https://github.com/fedify-dev/fedify/pull/298
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
-[#274]: https://github.com/fedify-dev/fedify/issues/274
-[#318]: https://github.com/fedify-dev/fedify/pull/318
 [#310]: https://github.com/fedify-dev/fedify/issues/310
 [#311]: https://github.com/fedify-dev/fedify/issues/311
+[#315]: https://github.com/fedify-dev/fedify/pull/315
+[#318]: https://github.com/fedify-dev/fedify/pull/318
 [#321]: https://github.com/fedify-dev/fedify/pull/321
 [#328]: https://github.com/fedify-dev/fedify/pull/328
 [#331]: https://github.com/fedify-dev/fedify/pull/331
@@ -165,6 +176,7 @@ the versioning.
 [#341]: https://github.com/fedify-dev/fedify/pull/341
 [#342]: https://github.com/fedify-dev/fedify/pull/342
 [#348]: https://github.com/fedify-dev/fedify/pull/348
+[#51]: https://github.com/fedify-dev/fedify/issues/51
 [Kitty]: https://sw.kovidgoyal.net/kitty/
 [WezTerm]: https://wezterm.org/
 [Konsole]: https://konsole.kde.org/
@@ -172,7 +184,6 @@ the versioning.
 [Wayst]: https://github.com/91861/wayst
 [st]: https://st.suckless.org/
 [iTerm]: https://iterm2.com/
-
 
 Version 1.7.7
 -------------

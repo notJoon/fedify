@@ -30,11 +30,27 @@ export interface RemoteDocument {
 }
 
 /**
+ * Options for {@link DocumentLoader}.
+ * @since 1.8.0
+ */
+export interface DocumentLoaderOptions {
+  /**
+   * An `AbortSignal` for cancellation.
+   * @since 1.8.0
+   */
+  signal?: AbortSignal;
+}
+
+/**
  * A JSON-LD document loader that fetches documents from the Web.
  * @param url The URL of the document to load.
+ * @param options The options for the document loader.
  * @returns The loaded remote document.
  */
-export type DocumentLoader = (url: string) => Promise<RemoteDocument>;
+export type DocumentLoader = (
+  url: string,
+  options?: DocumentLoaderOptions,
+) => Promise<RemoteDocument>;
 
 /**
  * A factory function that creates a {@link DocumentLoader} with options.
@@ -163,7 +179,10 @@ export function logRequest(request: Request) {
 export async function getRemoteDocument(
   url: string,
   response: Response,
-  fetch: (url: string) => Promise<RemoteDocument>,
+  fetch: (
+    url: string,
+    options?: DocumentLoaderOptions,
+  ) => Promise<RemoteDocument>,
 ): Promise<RemoteDocument> {
   const documentUrl = response.url === "" ? url : response.url;
   const docUrl = new URL(documentUrl);
@@ -311,7 +330,11 @@ export function getDocumentLoader(
   { allowPrivateAddress, skipPreloadedContexts, userAgent }:
     GetDocumentLoaderOptions = {},
 ): DocumentLoader {
-  async function load(url: string): Promise<RemoteDocument> {
+  async function load(
+    url: string,
+    options?: DocumentLoaderOptions,
+  ): Promise<RemoteDocument> {
+    options?.signal?.throwIfAborted();
     if (!skipPreloadedContexts && url in preloadedContexts) {
       logger.debug("Using preloaded context: {url}.", { url });
       return {
@@ -337,13 +360,14 @@ export function getDocumentLoader(
       // to work around it we specify `redirect: "manual"` here too:
       // https://github.com/oven-sh/bun/issues/10754
       redirect: "manual",
+      signal: options?.signal,
     });
     // Follow redirects manually to get the final URL:
     if (
       response.status >= 300 && response.status < 400 &&
       response.headers.has("Location")
     ) {
-      return load(response.headers.get("Location")!);
+      return load(response.headers.get("Location")!, options);
     }
     return getRemoteDocument(url, response, load);
   }
@@ -375,15 +399,25 @@ const _fetchDocumentLoader_allowPrivateAddress = getDocumentLoader({
  */
 export function fetchDocumentLoader(
   url: string,
-  allowPrivateAddress: boolean = false,
+  allowPrivateAddress?: boolean,
+): Promise<RemoteDocument>;
+export function fetchDocumentLoader(
+  url: string,
+  options?: DocumentLoaderOptions,
+): Promise<RemoteDocument>;
+export function fetchDocumentLoader(
+  url: string,
+  arg: boolean | DocumentLoaderOptions = false,
 ): Promise<RemoteDocument> {
+  const allowPrivateAddress = typeof arg === "boolean" ? arg : false;
   logger.warn(
     "fetchDocumentLoader() function is deprecated.  " +
       "Use getDocumentLoader() function instead.",
   );
-  return (allowPrivateAddress
+  const loader = allowPrivateAddress
     ? _fetchDocumentLoader_allowPrivateAddress
-    : _fetchDocumentLoader)(url);
+    : _fetchDocumentLoader;
+  return loader(url);
 }
 
 /**
@@ -455,9 +489,12 @@ export function kvCache(
     return null;
   }
 
-  return async (url: string): Promise<RemoteDocument> => {
+  return async (
+    url: string,
+    options?: DocumentLoaderOptions,
+  ): Promise<RemoteDocument> => {
     const match = matchRule(url);
-    if (match == null) return await loader(url);
+    if (match == null) return await loader(url, options);
     const key: KvKey = [...keyPrefix, url];
     let cache: RemoteDocument | undefined = undefined;
     try {
@@ -471,7 +508,7 @@ export function kvCache(
       }
     }
     if (cache == null) {
-      const remoteDoc = await loader(url);
+      const remoteDoc = await loader(url, options);
       try {
         await kv.set(key, remoteDoc, { ttl: match });
       } catch (error) {
