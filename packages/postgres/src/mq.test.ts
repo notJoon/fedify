@@ -34,6 +34,7 @@ test("PostgresMessageQueue", { skip: dbUrl == null }, async () => {
     const listening = mq.listen((message: string) => {
       messages.push(message);
     }, { signal: controller.signal });
+    await delay(500); // prevent initialization race condition
     const listening2 = mq2.listen((message: string) => {
       messages.push(message);
     }, { signal: controller.signal });
