@@ -14,12 +14,10 @@ const KITTY_IDENTIFIERS: string[] = [
 type KittyCommand = Record<string, string | number>;
 
 export function detectTerminalCapabilities(): TerminalType {
-  const term = (Deno.env.get("TERM") || "").toLowerCase();
   const termProgram = (Deno.env.get("TERM_PROGRAM") || "").toLowerCase();
-  const combinedTerm = `${term}|${termProgram}`;
 
   for (const id of KITTY_IDENTIFIERS) {
-    if (combinedTerm.includes(id)) {
+    if (termProgram === id) {
       return "kitty";
     }
   }
@@ -64,10 +62,11 @@ function serializeGrCommand(
   return result;
 }
 
-export function renderImageKitty(
-  data: Uint8Array,
+export async function renderImageKitty(
+  imagePath: string,
   cmd: KittyCommand,
-): void {
+): Promise<void> {
+  const data = await Deno.readFile(imagePath);
   const base64Data = btoa(String.fromCharCode(...data));
   let remaining = base64Data;
   let isFirst = true;
@@ -136,8 +135,7 @@ export async function renderImage(
       .toFile(resizedPath);
 
     if (graphicsProtocol === "kitty") {
-      const imageData = await Deno.readFile(resizedPath);
-      await renderImageKitty(imageData, {
+      await renderImageKitty(resizedPath, {
         a: "T",
         f: 100, // specify the image format is png
       });
