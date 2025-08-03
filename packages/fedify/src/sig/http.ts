@@ -1240,6 +1240,7 @@ export interface DoubleKnockOptions {
 
   /**
    * An `AbortSignal` for cancellation.
+   * @since 1.8.0
    */
   signal?: AbortSignal;
 }

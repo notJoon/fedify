@@ -36,6 +36,7 @@ export interface RemoteDocument {
 export interface DocumentLoaderOptions {
   /**
    * An `AbortSignal` for cancellation.
+   * @since 1.8.0
    */
   signal?: AbortSignal;
 }
