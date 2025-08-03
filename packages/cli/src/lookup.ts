@@ -8,7 +8,7 @@ import {
   getAuthenticatedDocumentLoader,
   type Link,
   lookupObject,
-  Object as ActivityObject,
+  Object as APObject,
   type ResourceDescriptor,
   respondWithObject,
   traverseCollection,
@@ -18,7 +18,7 @@ import * as colors from "@std/fmt/colors";
 import { dirname, isAbsolute, resolve } from "@std/path";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
-import { renderImage } from "./renderimage.ts";
+import { renderImage } from "./imagerenderer.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 import { colorEnabled, formatCliObjectOutputWithColor } from "./utils.ts";
 
@@ -85,7 +85,7 @@ export async function createFileStream(
   }
 }
 
-async function findAllImages(obj: ActivityObject): Promise<URL[]> {
+async function findAllImages(obj: APObject): Promise<URL[]> {
   const result: URL[] = [];
   const icon = await obj.getIcon();
   const image = await obj.getImage();
@@ -101,7 +101,7 @@ async function findAllImages(obj: ActivityObject): Promise<URL[]> {
 }
 
 export async function writeObjectToStream(
-  object: ActivityObject | Link,
+  object: APObject | Link,
   options: CommandOptions,
   contextLoader: DocumentLoader,
 ): Promise<void> {
@@ -133,7 +133,7 @@ export async function writeObjectToStream(
 
     await writer.write(bytes);
 
-    if (object instanceof ActivityObject) {
+    if (object instanceof APObject) {
       imageUrls = await findAllImages(object);
     }
     if (!options.output && imageUrls.length > 0) {
@@ -336,7 +336,7 @@ export const command = new Command()
       Deno.exit(0);
     }
 
-    const promises: Promise<ActivityObject | null>[] = [];
+    const promises: Promise<APObject | null>[] = [];
     for (const url of urls) {
       promises.push(
         lookupObject(
