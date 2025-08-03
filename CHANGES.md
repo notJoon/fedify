@@ -91,8 +91,13 @@ the versioning.
      -  Added `@fedify/nestjs` package.
      -  Added `FedifyModule` for integrating Fedify into NestJS applications.
      
-  -  `lookupWebFinger()` now supports request cancellation via `AbortSignal`.
-     [[#51] by Hyunchae Kim]
+    -  APIs making HTTP requests became able to optionally take `AbortSignal`.
+     [[#51], [#315] by Hyunchae Kim]
+      -  Added `DocumentLoaderOptions` interface.
+      -  The `DocumentLoader` type became able to optionally take
+         the second parameter.
+      -  Added `LookupObjectOptions.signal` option.
+      -  Added `LookupWebFingerOptions.signal` option.   
 
 
  -  Added `SqliteKvStore`, implementing `KvStore` using SQLite with the
@@ -170,6 +175,7 @@ the versioning.
 [#342]: https://github.com/fedify-dev/fedify/pull/342
 [#348]: https://github.com/fedify-dev/fedify/pull/348
 [#51]: https://github.com/fedify-dev/fedify/issues/51
+[#315]: https://github.com/fedify-dev/fedify/pull/315
 [Kitty]: https://sw.kovidgoyal.net/kitty/
 [WezTerm]: https://wezterm.org/
 [Konsole]: https://konsole.kde.org/
