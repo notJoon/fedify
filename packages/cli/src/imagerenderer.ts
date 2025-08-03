@@ -1,3 +1,4 @@
+import { encodeBase64 } from "@std/encoding/base64";
 import sharp from "sharp";
 
 export type TerminalType = "kitty" | "iterm2" | "none";
@@ -16,15 +17,9 @@ type KittyCommand = Record<string, string | number>;
 export function detectTerminalCapabilities(): TerminalType {
   const termProgram = (Deno.env.get("TERM_PROGRAM") || "").toLowerCase();
 
-  for (const id of KITTY_IDENTIFIERS) {
-    if (termProgram === id) {
-      return "kitty";
-    }
-  }
+  if (KITTY_IDENTIFIERS.includes(termProgram)) return "kitty";
 
-  if (termProgram === "iterm.app") {
-    return "iterm2";
-  }
+  if (termProgram === "iterm.app") return "iterm2";
 
   return "none";
 }
@@ -66,8 +61,8 @@ export async function renderImageKitty(
   imagePath: string,
   cmd: KittyCommand,
 ): Promise<void> {
-  const data = await Deno.readFile(imagePath);
-  const base64Data = btoa(String.fromCharCode(...data));
+  const imageData = await Deno.readFile(imagePath);
+  const base64Data = encodeBase64(imageData);
   let remaining = base64Data;
   let isFirst = true;
 
@@ -77,9 +72,9 @@ export async function renderImageKitty(
 
     const chunkCmd = {
       ...(isFirst ? cmd : {}),
-      m: remaining.length > 0 ? 1 : 0, // The required 'm' property
+      m: remaining.length > 0 ? 1 : 0,
     };
-    chunkCmd.m = remaining.length > 0 ? 1 : 0;
+
     const command = serializeGrCommand(chunkCmd, chunk);
 
     Deno.stdout.writeSync(command);
@@ -92,7 +87,7 @@ export async function renderImageITerm2(
   imagePath: string,
 ): Promise<void> {
   const imageData = await Deno.readFile(imagePath);
-  const base64Data = btoa(String.fromCharCode(...imageData));
+  const base64Data = encodeBase64(imageData);
 
   const encoder = new TextEncoder();
   const command = encoder.encode(
@@ -105,10 +100,8 @@ export async function downloadImage(url: string): Promise<string | null> {
   try {
     const response = await fetch(url);
     const imageData = new Uint8Array(await response.arrayBuffer());
-    const tempDir = Deno.env.get("TMPDIR") || Deno.env.get("TMP") || "/tmp";
-    const filename = `terminal_image_${Date.now()}_${crypto.randomUUID()}`;
     const extension = new URL(url).pathname.split(".").pop() || "jpg";
-    const tempPath = `${tempDir}/${filename}.${extension}`;
+    const tempPath = await Deno.makeTempFile({ suffix: `.${extension}` });
 
     await Deno.writeFile(tempPath, imageData);
 
@@ -118,7 +111,7 @@ export async function downloadImage(url: string): Promise<string | null> {
   }
 }
 
-export async function renderImage(
+export async function renderImages(
   imageUrls: URL[],
 ): Promise<void> {
   const graphicsProtocol = await detectTerminalCapabilities();
@@ -134,6 +127,8 @@ export async function renderImage(
       .resize(300)
       .toFile(resizedPath);
 
+    console.log(""); // clear the line before rendering image
+
     if (graphicsProtocol === "kitty") {
       await renderImageKitty(resizedPath, {
         a: "T",
@@ -142,8 +137,8 @@ export async function renderImage(
     } else if (graphicsProtocol === "iterm2") {
       await renderImageITerm2(resizedPath);
     } else {
-      // Skip rendering for unsupported terminals
       continue;
     }
+    console.log(""); // clear the line after rendering image
   }
 }

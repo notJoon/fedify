@@ -18,7 +18,7 @@ import * as colors from "@std/fmt/colors";
 import { dirname, isAbsolute, resolve } from "@std/path";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
-import { renderImage } from "./imagerenderer.ts";
+import { renderImages } from "./imagerenderer.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 import { colorEnabled, formatCliObjectOutputWithColor } from "./utils.ts";
 
@@ -137,7 +137,7 @@ export async function writeObjectToStream(
       imageUrls = await findAllImages(object);
     }
     if (!options.output && imageUrls.length > 0) {
-      await renderImage(imageUrls);
+      await renderImages(imageUrls);
     }
   } finally {
     writer.releaseLock();

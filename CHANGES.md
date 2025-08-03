@@ -128,11 +128,11 @@ the versioning.
     isn't a TTY (for example, when redirecting to a file) or when the `NO_COLOR`
     environment variable is set.  [[#257], [#341] by Cho Hasang]
     
- -  The 'fedify lookup' command now displays images depending on user's 
+ -  The `fedify lookup` command now displays images depending on user's 
     terminal emulator. [[#169], [#348] by Jiwon Kwon]
 
-     - Supported terminal emulators are `Kitty`, `WezTerm`, `Konsole`, `Warp`,
-      `Wayst`, `st`, and `iterms`.
+     - Supported terminal emulators are Kitty, WezTerm, Konsole, Warp,
+      Wayst, st, and iTerm.
 
 
 
