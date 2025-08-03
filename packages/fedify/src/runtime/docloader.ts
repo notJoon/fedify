@@ -34,6 +34,9 @@ export interface RemoteDocument {
  * @since 1.8.0
  */
 export interface DocumentLoaderOptions {
+  /**
+   * An `AbortSignal` for cancellation.
+   */
   signal?: AbortSignal;
 }
 
@@ -328,11 +331,9 @@ export function getDocumentLoader(
 ): DocumentLoader {
   async function load(
     url: string,
-    _options?: DocumentLoaderOptions,
+    options?: DocumentLoaderOptions,
   ): Promise<RemoteDocument> {
-    if (_options?.signal?.aborted) {
-      throw new DOMException("Aborted", "AbortError");
-    }
+    options?.signal?.throwIfAborted();
     if (!skipPreloadedContexts && url in preloadedContexts) {
       logger.debug("Using preloaded context: {url}.", { url });
       return {
@@ -358,14 +359,14 @@ export function getDocumentLoader(
       // to work around it we specify `redirect: "manual"` here too:
       // https://github.com/oven-sh/bun/issues/10754
       redirect: "manual",
-      signal: _options?.signal,
+      signal: options?.signal,
     });
     // Follow redirects manually to get the final URL:
     if (
       response.status >= 300 && response.status < 400 &&
       response.headers.has("Location")
     ) {
-      return load(response.headers.get("Location")!, _options);
+      return load(response.headers.get("Location")!, options);
     }
     return getRemoteDocument(url, response, load);
   }
@@ -489,10 +490,10 @@ export function kvCache(
 
   return async (
     url: string,
-    _options?: DocumentLoaderOptions,
+    options?: DocumentLoaderOptions,
   ): Promise<RemoteDocument> => {
     const match = matchRule(url);
-    if (match == null) return await loader(url);
+    if (match == null) return await loader(url, options);
     const key: KvKey = [...keyPrefix, url];
     let cache: RemoteDocument | undefined = undefined;
     try {
@@ -506,7 +507,7 @@ export function kvCache(
       }
     }
     if (cache == null) {
-      const remoteDoc = await loader(url);
+      const remoteDoc = await loader(url, options);
       try {
         await kv.set(key, remoteDoc, { ttl: match });
       } catch (error) {
