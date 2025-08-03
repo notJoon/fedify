@@ -97,7 +97,8 @@ the versioning.
       -  The `DocumentLoader` type became able to optionally take
          the second parameter.
       -  Added `LookupObjectOptions.signal` option.
-      -  Added `LookupWebFingerOptions.signal` option.   
+      -  Added `LookupWebFingerOptions.signal` option.
+      -  Added `DoubleKnockOptions.signal` option.
 
 
  -  Added `SqliteKvStore`, implementing `KvStore` using SQLite with the
