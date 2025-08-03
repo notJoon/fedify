@@ -3,6 +3,7 @@ import {
   assertEquals,
   assertExists,
   assertFalse,
+  assertRejects,
   assertStringIncludes,
   assertThrows,
 } from "@std/assert";
@@ -1972,6 +1973,75 @@ test("doubleKnock() regression test for redirect handling bug", async () => {
   );
 
   assertEquals(response.status, 200);
+
+  fetchMock.hardReset();
+});
+
+test("signRequest() and verifyRequest() cancellation", {
+  sanitizeResources: false,
+  sanitizeOps: false,
+}, async (t) => {
+  fetchMock.spyGlobal();
+
+  await t.step("doubleKnock cancellation", async () => {
+    fetchMock.post(
+      "https://example.com/slow-endpoint",
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(new Response("", { status: 202 }));
+          }, 1000);
+        }),
+    );
+
+    const request = new Request("https://example.com/slow-endpoint", {
+      method: "POST",
+      body: "Test message",
+      headers: {
+        "Content-Type": "text/plain",
+      },
+    });
+
+    const controller = new AbortController();
+    const promise = doubleKnock(
+      request,
+      {
+        keyId: rsaPublicKey2.id!,
+        privateKey: rsaPrivateKey2,
+      },
+      { signal: controller.signal },
+    );
+
+    controller.abort();
+
+    await assertRejects(
+      () => promise,
+      Error,
+    );
+  });
+
+  await t.step("doubleKnock immediate cancellation", async () => {
+    const request = new Request("https://example.com/", {
+      method: "POST",
+      body: "Hello, world!",
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        Accept: "text/plain",
+      },
+    });
+
+    const controller = new AbortController();
+    controller.abort();
+
+    await assertRejects(
+      () =>
+        doubleKnock(request, {
+          keyId: rsaPublicKey2.id!,
+          privateKey: rsaPrivateKey2,
+        }, { signal: controller.signal }),
+      Error,
+    );
+  });
 
   fetchMock.hardReset();
 });
