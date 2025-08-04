@@ -1,7 +1,7 @@
 {
   "workspaces": {
     "packages": [
-      "packages/feidfy",
+      "packages/fedify",
       "packages/elysia"
     ],
     "catalog": {
