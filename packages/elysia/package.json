@@ -43,7 +43,6 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "dev": "bun run --watch example.ts",
     "prepack": "tsdown"
   },
   "peerDependencies": {
