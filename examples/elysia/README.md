@@ -1,10 +1,10 @@
-Fedify–Express integration example
-==================================
+Fedify–ElysiaJS integration example
+===================================
 
 This is a simple example of how to integrate Fedify into an [ElysiaJS]
 application.
 
-[Express]: https://elysiajs.com/
+[ElysiaJS]: https://elysiajs.com/
 
 
 Running the example
