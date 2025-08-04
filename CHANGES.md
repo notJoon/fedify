@@ -138,11 +138,19 @@ the versioning.
     isn't a TTY (for example, when redirecting to a file) or when the `NO_COLOR`
     environment variable is set.  [[#257], [#341] by Cho Hasang]
 
+
  -  The `fedify lookup` command now displays images depending on user's
     terminal emulator. [[#169], [#348] by Jiwon Kwon]
 
      -  Supported terminal emulators are [Kitty], [WezTerm], [Konsole], [Warp],
         [Wayst], [st], and [iTerm].
+
+ -  Supported ElysiaJS integration with the `@fedify/elysia` package.
+    [[#286], [#339] by Hyeonseo Kim]
+
+     -  Added `@fedify/elysia` package.
+     -  Added `fedify` ElysiaJS plugin for integrating Fedify into ElysiaJS applications.
+
 
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#169]: https://github.com/fedify-dev/fedify/issues/169
@@ -157,6 +165,7 @@ the versioning.
 [#267]: https://github.com/fedify-dev/fedify/issues/267
 [#269]: https://github.com/fedify-dev/fedify/issues/269
 [#274]: https://github.com/fedify-dev/fedify/issues/274
+[#286]: https://github.com/fedify-dev/fedify/issues/286
 [#278]: https://github.com/fedify-dev/fedify/pull/278
 [#281]: https://github.com/fedify-dev/fedify/pull/281
 [#282]: https://github.com/fedify-dev/fedify/pull/282
@@ -173,6 +182,7 @@ the versioning.
 [#328]: https://github.com/fedify-dev/fedify/pull/328
 [#331]: https://github.com/fedify-dev/fedify/pull/331
 [#332]: https://github.com/fedify-dev/fedify/pull/332
+[#339]: https://github.com/fedify-dev/fedify/pull/339
 [#341]: https://github.com/fedify-dev/fedify/pull/341
 [#342]: https://github.com/fedify-dev/fedify/pull/342
 [#348]: https://github.com/fedify-dev/fedify/pull/348
