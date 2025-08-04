@@ -1,15 +1,30 @@
-# Elysia with Bun runtime
+Fedify–Express integration example
+==================================
 
-## Getting Started
-To get started with this template, simply paste this command into your terminal:
-```bash
-bun create elysia ./elysia-example
-```
+This is a simple example of how to integrate Fedify into an [ElysiaJS]
+application.
 
-## Development
-To start the development server run:
-```bash
-bun run dev
-```
+[Express]: https://elysiajs.com/
 
-Open http://localhost:3000/ with your browser to see the result.
+
+Running the example
+-------------------
+
+ 1. Clone the repository:
+
+    ~~~~ sh
+    git clone https://github.com/fedify-dev/fedify.git
+    cd fedify/examples/elysia
+    ~~~~
+
+ 2. Install dependencies:
+
+    ~~~~ sh
+    bun install
+    ~~~~
+
+ 3. Start the server:
+
+    ~~~~ sh
+    bun start
+    ~~~~
