@@ -14,7 +14,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fedify-dev/fedify.git",
-    "directory": "elysia"
+    "directory": "packages/elysia"
   },
   "license": "MIT",
   "bugs": {
@@ -42,13 +42,17 @@
     "package.json"
   ],
   "scripts": {
-    "dev": "bun run --watch example.ts"
+    "build": "tsdown",
+    "dev": "bun run --watch example.ts",
+    "prepack": "tsdown"
   },
   "peerDependencies": {
     "elysia": "catalog:",
     "@fedify/fedify": "workspace:*"
   },
   "devDependencies": {
-    "bun-types": "^1.2.19"
+    "bun-types": "^1.2.19",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   }
 }
