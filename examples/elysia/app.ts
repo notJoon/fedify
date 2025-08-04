@@ -1,6 +1,6 @@
+import { fedify } from "@fedify/elysia";
 import { createFederation, MemoryKvStore, Person } from "@fedify/fedify";
 import { Elysia, redirect } from "elysia";
-import { fedify } from "./src/index.ts";
 
 const federation = createFederation<void>({
   kv: new MemoryKvStore(),
@@ -40,3 +40,5 @@ app
   .get("/", () => redirect("sample"))
   .get("/sample", () => "Hi, I am Sample!\n")
   .listen(3000);
+
+console.log("Elysia App Start!");
