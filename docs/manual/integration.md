@@ -527,11 +527,7 @@ ElysiaJS
 
 *This API is available since Fedify 1.8.0.*
 
-[ElysiaJS] is an ergonomic framework designed for humans, featuring built-in TypeScript support with end-to-end type safety, type integrity, and an exceptional developer experience. Powered by Bun, it delivers high performance and modern tooling. The @fedify/elysia package provides a seamless plugin for integrating Fedify with Elysia:
-
-elysia:
-
-
+[ElysiaJS] is an ergonomic framework designed for humans, featuring built-in TypeScript support with end-to-end type safety, type integrity, and an exceptional developer experience. Powered by Bun, it delivers high performance and modern tooling. The *@fedify/elysia* package provides a seamless plugin for integrating Fedify with ElysiaJS:
 
 ::: code-group
 ~~~~ sh [Bun]
