@@ -3,6 +3,7 @@
     "./packages/fedify",
     "./packages/cli",
     "./packages/amqp",
+    "./packages/elysia",
     "./packages/express",
     "./packages/h3",
     "./packages/postgres",
