@@ -234,7 +234,7 @@ importers:
         version: link:../../packages/elysia
       '@fedify/fedify':
         specifier: ^1.7.7
-        version: 1.7.8(web-streams-polyfill@3.3.3)
+        version: 1.7.8
       elysia:
         specifier: ^1.3.6
         version: 1.3.8(exact-mirror@0.1.3(@sinclair/typebox@0.34.38))(file-type@21.0.0)(typescript@5.8.3)
@@ -399,8 +399,8 @@ importers:
   packages/elysia:
     dependencies:
       '@fedify/fedify':
-        specifier: ^1.7.7
-        version: 1.7.8(web-streams-polyfill@3.3.3)
+        specifier: 'workspace:'
+        version: link:../fedify
       elysia:
         specifier: ^1.3.6
         version: 1.3.8(exact-mirror@0.1.3(@sinclair/typebox@0.34.38))(file-type@21.0.0)(typescript@5.8.3)
@@ -409,10 +409,10 @@ importers:
         specifier: ^1.2.19
         version: 1.2.19(@types/react@19.1.8)
       tsdown:
-        specifier: ^0.12.9
+        specifier: 'catalog:'
         version: 0.12.9(typescript@5.8.3)
       typescript:
-        specifier: ^5.8.3
+        specifier: 'catalog:'
         version: 5.8.3
 
   packages/express:
@@ -7057,7 +7057,7 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@fedify/fedify@1.7.8(web-streams-polyfill@3.3.3)':
+  '@fedify/fedify@1.7.8':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       '@es-toolkit/es-toolkit': es-toolkit@1.39.5
