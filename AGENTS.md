@@ -64,6 +64,7 @@ The repository is organized as a monorepo with the following packages:
     -  *src/x/*: Framework integrations
  -  *packages/cli/*: Fedify CLI implementation (@fedify/cli, built with Deno)
  -  *packages/amqp/*: AMQP/RabbitMQ driver (@fedify/amqp)
+ -  *packages/elysia/*: Elysia integration (@fedify/elysia)
  -  *packages/express/*: Express.js integration (@fedify/express)
  -  *packages/h3/*: h3 framework integration (@fedify/h3)
  -  *packages/postgres/*: PostgreSQL drivers (@fedify/postgres)
@@ -256,8 +257,9 @@ The monorepo uses different build processes for different packages:
 2. **@fedify/cli**: Built with Deno, distributed via JSR and npm
 
 3. **Database adapters and integrations**: Use tsdown for TypeScript compilation:
-   - *packages/amqp/*, *packages/express/*, *packages/h3/*, *packages/sqlite/*,
-     *packages/postgres/*, *packages/redis/*, *packages/nestjs/*
+   - *packages/amqp/*, *packages/elysia*, *packages/express/*, *packages/h3/*,
+     *packages/sqlite/*, *packages/postgres/*, *packages/redis/*,
+     *packages/nestjs/*
    - Built to support Node.js and Bun environments
 
 Ensure changes work across all distribution formats and target environments.

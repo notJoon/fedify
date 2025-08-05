@@ -144,6 +144,15 @@ the versioning.
      -  Supported terminal emulators are [Kitty], [WezTerm], [Konsole], [Warp],
         [Wayst], [st], and [iTerm].
 
+ -  Supported Elysia integration with the `@fedify/elysia` package.
+    [[#286], [#339] by Hyeonseo Kim]
+
+     -  Added `@fedify/elysia` package.
+     -  Added `fedify` Elysia plugin for integrating Fedify into Elysia
+        applications.
+
+
+[#51]: https://github.com/fedify-dev/fedify/issues/51
 [#168]: https://github.com/fedify-dev/fedify/issues/168
 [#169]: https://github.com/fedify-dev/fedify/issues/169
 [#191]: https://github.com/fedify-dev/fedify/issues/191
@@ -162,6 +171,7 @@ the versioning.
 [#282]: https://github.com/fedify-dev/fedify/pull/282
 [#283]: https://github.com/fedify-dev/fedify/pull/283
 [#285]: https://github.com/fedify-dev/fedify/pull/285
+[#286]: https://github.com/fedify-dev/fedify/issues/286
 [#298]: https://github.com/fedify-dev/fedify/pull/298
 [#304]: https://github.com/fedify-dev/fedify/issues/304
 [#309]: https://github.com/fedify-dev/fedify/pull/309
@@ -173,10 +183,10 @@ the versioning.
 [#328]: https://github.com/fedify-dev/fedify/pull/328
 [#331]: https://github.com/fedify-dev/fedify/pull/331
 [#332]: https://github.com/fedify-dev/fedify/pull/332
+[#339]: https://github.com/fedify-dev/fedify/pull/339
 [#341]: https://github.com/fedify-dev/fedify/pull/341
 [#342]: https://github.com/fedify-dev/fedify/pull/342
 [#348]: https://github.com/fedify-dev/fedify/pull/348
-[#51]: https://github.com/fedify-dev/fedify/issues/51
 [Kitty]: https://sw.kovidgoyal.net/kitty/
 [WezTerm]: https://wezterm.org/
 [Konsole]: https://konsole.kde.org/

@@ -448,6 +448,38 @@ export class AppModule implements NestModule {
 [NestJS]: https://nestjs.com/
 
 
+Elysia
+------
+
+*This API is available since Fedify 1.8.0.*
+
+[Elysia] is an ergonomic framework designed for humans, featuring built-in
+TypeScript support with end-to-end type safety, type integrity, and
+an exceptional developer experience.  Powered by Bun, it delivers high
+performance and modern tooling.  The *@fedify/elysia* package provides
+a seamless plugin for integrating Fedify with Elysia:
+
+~~~~ sh [Bun]
+bun add @fedify/elysia
+~~~~
+
+~~~~ typescript
+import { fedify } from "@fedify/elysia";
+import { federation } from "./federation.ts";  // Your `Federation` instance
+import { Elysia } from "elysia";
+
+const app = new Elysia();
+
+app
+  .use(fedify(federation, () => "context data goes here"))
+  .listen(3000);
+
+console.log("Elysia App Start!");
+~~~~
+
+[Elysia]: https://elysiajs.com/
+
+
 Custom middleware
 -----------------
 

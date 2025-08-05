@@ -421,6 +421,7 @@ jobs:
           | @fedify/fedify   | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/fedify]   | [npm][npm:@fedify/fedify]   |
           | @fedify/cli      | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/cli]      |                             |
           | @fedify/amqp     | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/amqp]     | [npm][npm:@fedify/amqp]     |
+          | @fedify/elysia   | ${{ steps.versioning.outputs.version }} |                             | [npm][npm:@fedify/elysia]   |
           | @fedify/express  | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  |
           | @fedify/h3       | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       |
           | @fedify/nestjs   | ${{ steps.versioning.outputs.version }} |                             | [npm][npm:@fedify/nestjs]   |
@@ -434,6 +435,7 @@ jobs:
           [jsr:@fedify/cli]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
           [jsr:@fedify/amqp]: https://jsr.io/@fedify/amqp@${{ steps.versioning.outputs.version }}
           [npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp/v/${{ steps.versioning.outputs.short_version }}
+          [npm:@fedify/elysia]: https://www.npmjs.com/package/@fedify/elysia/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/express]: https://jsr.io/@fedify/express@${{ steps.versioning.outputs.version }}
           [npm:@fedify/express]: https://www.npmjs.com/package/@fedify/express/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/h3]: https://jsr.io/@fedify/h3@${{ steps.versioning.outputs.version }}
