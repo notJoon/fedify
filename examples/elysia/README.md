@@ -20,7 +20,7 @@ Running the example
  2. Install dependencies:
 
     ~~~~ sh
-    bun install
+    pnpm install
     ~~~~
 
  3. Start the server:
