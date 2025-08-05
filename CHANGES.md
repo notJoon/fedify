@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.7.8
 -------------
 
-To be released.
+Released on August 5, 2025.
 
  -  Updated `kvCache()` wrapper to read from preloaded contexts rather than
     from the `KvStore`. This saves network and disk overheads when parsing
