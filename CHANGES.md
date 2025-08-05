@@ -185,6 +185,20 @@ the versioning.
 [st]: https://st.suckless.org/
 [iTerm]: https://iterm2.com/
 
+
+Version 1.7.8
+-------------
+
+Released on August 5, 2025.
+
+ -  Updated `kvCache()` wrapper to read from preloaded contexts rather than
+    from the `KvStore`. This saves network and disk overheads when parsing
+    activities and objects using the JSON-LD processor.
+    [[#352] by Fabien O'Carroll]
+
+[#352]: https://github.com/fedify-dev/fedify/pull/352
+
+
 Version 1.7.7
 -------------
 
