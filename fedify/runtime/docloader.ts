@@ -456,6 +456,14 @@ export function kvCache(
   }
 
   return async (url: string): Promise<RemoteDocument> => {
+    if (url in preloadedContexts) {
+      logger.debug("Using preloaded context: {url}.", { url });
+      return {
+        contextUrl: null,
+        document: preloadedContexts[url],
+        documentUrl: url,
+      };
+    }
     const match = matchRule(url);
     if (match == null) return await loader(url);
     const key: KvKey = [...keyPrefix, url];

@@ -8,6 +8,13 @@ Version 1.7.8
 
 To be released.
 
+ -  Updated `kvCache()` wrapper to read from preloaded contexts rather than
+    from the `KvStore`. This saves network and disk overheads when parsing
+    activities and objects using the JSON-LD processor.
+    [[#352] by Fabien O'Carroll]
+
+[#352]: https://github.com/fedify-dev/fedify/pull/352
+
 
 Version 1.7.7
 -------------
