@@ -16,11 +16,13 @@ Running the example
     git clone https://github.com/fedify-dev/fedify.git
     ~~~~
 
- 2. Install dependencies & Build `@fedify/elysia`
+ 2. Build pacakges
 
     ~~~~ sh
     cd fedify/packages/elysia
     pnpm install
+    pnpm build
+    cd ../fedify
     pnpm build
     ~~~~
 
