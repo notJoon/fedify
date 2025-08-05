@@ -14,17 +14,25 @@ Running the example
 
     ~~~~ sh
     git clone https://github.com/fedify-dev/fedify.git
-    cd fedify/examples/elysia
     ~~~~
 
- 2. Install dependencies:
+ 2. Install dependencies & Build `@fedify/elysia`
 
     ~~~~ sh
+    cd fedify/packages/elysia
+    pnpm install
+    pnpm build
+    ~~~~
+
+ 3. Move to example folder
+
+    ~~~~ sh
+    cd ../../examples/elysia
     pnpm install
     ~~~~
 
- 3. Start the server:
+ 4. Start the server:
 
     ~~~~ sh
-    bun start
+    bun run start
     ~~~~
