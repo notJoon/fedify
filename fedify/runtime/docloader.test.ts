@@ -8,6 +8,7 @@ import { mockDocumentLoader } from "../testing/docloader.ts";
 import { test } from "../testing/mod.ts";
 import preloadedContexts from "./contexts.ts";
 import {
+  type DocumentLoader,
   FetchError,
   getDocumentLoader,
   getUserAgent,
@@ -515,6 +516,89 @@ test("kvCache()", async (t) => {
         type: "Object",
       },
     });
+  });
+
+  await t.step("preloaded contexts bypass cache", async () => {
+    const kv = new MemoryKvStore();
+    let loaderCalled = false;
+    const mockLoader: DocumentLoader = (url: string) => {
+      loaderCalled = true;
+      return Promise.resolve({
+        contextUrl: null,
+        documentUrl: url,
+        document: { "mock": "document" },
+      });
+    };
+
+    const loader = kvCache({
+      kv,
+      loader: mockLoader,
+      prefix: ["_test", "preloaded"],
+    });
+
+    // Test that preloaded context URLs return preloaded data without calling the wrapped loader
+    const activityStreamsUrl = "https://www.w3.org/ns/activitystreams";
+    loaderCalled = false;
+    const result = await loader(activityStreamsUrl);
+
+    assertEquals(result, {
+      contextUrl: null,
+      documentUrl: activityStreamsUrl,
+      document: preloadedContexts[activityStreamsUrl],
+    });
+    assertEquals(
+      loaderCalled,
+      false,
+      "Loader should not be called for preloaded contexts",
+    );
+
+    // Verify that the preloaded context was not cached in KV store
+    const cachedValue = await kv.get([
+      "_test",
+      "preloaded",
+      activityStreamsUrl,
+    ]);
+    assertEquals(
+      cachedValue,
+      undefined,
+      "Preloaded contexts should not be cached in KV store",
+    );
+
+    // Test another preloaded context
+    const securityUrl = "https://w3id.org/security/v1";
+    loaderCalled = false;
+    const result2 = await loader(securityUrl);
+
+    assertEquals(result2, {
+      contextUrl: null,
+      documentUrl: securityUrl,
+      document: preloadedContexts[securityUrl],
+    });
+    assertEquals(
+      loaderCalled,
+      false,
+      "Loader should not be called for preloaded contexts",
+    );
+
+    // Test that non-preloaded URLs still use the cache normally
+    const nonPreloadedUrl = "https://example.com/not-preloaded";
+    loaderCalled = false;
+    const result3 = await loader(nonPreloadedUrl);
+
+    assertEquals(result3, {
+      contextUrl: null,
+      documentUrl: nonPreloadedUrl,
+      document: { "mock": "document" },
+    });
+    assertEquals(
+      loaderCalled,
+      true,
+      "Loader should be called for non-preloaded URLs",
+    );
+
+    // Verify that non-preloaded URL was cached
+    const cachedValue2 = await kv.get(["_test", "preloaded", nonPreloadedUrl]);
+    assertEquals(cachedValue2, result3, "Non-preloaded URLs should be cached");
   });
 });
 

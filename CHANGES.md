@@ -8,6 +8,10 @@ Version 1.7.8
 
 To be released.
 
+ -  Updated `kvCache` wrapper to read from preloaded contexts rather than
+    from the KvStore. This saves network and disk overheads when parsing
+    activities and objects using the JSON-LD library.
+
 
 Version 1.7.7
 -------------
