@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.8.1
 -------------
 
-To be released.  Note that 1.8.0 was skipped due to a mistake in
+Released on August 6, 2025.  Note that 1.8.0 was skipped due to a mistake in
 the versioning.
 
  -  The repository has been restructured as a monorepo, consolidating all
