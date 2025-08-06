@@ -1,3 +1,43 @@
+<!-- deno-fmt-ignore-file -->
+
+@fedify/nextjs: Integrate Fedify with Next.js
+=============================================
+
+[![Follow @fedify@hollo.social][@fedify@hollo.social badge]][@fedify@hollo.social]
+
+This package provides a simple way to integrate [Fedify] with [Next.js].
+
+
+### Usage
+
+~~~~ typescript
+// --- middleware.ts ---
+import { fedifyWith } from "@fedify/nextjs";
+import { federation } from "./federation";
+
+export default fedifyWith(federation)();
+
+// This config must be defined on `middleware.ts`.
+export const config = {
+  runtime: "nodejs",
+  matcher: [{
+    source: "/:path*",
+    has: [
+      {
+        type: "header",
+        key: "Accept",
+        value: ".*application\\/((jrd|activity|ld)\\+json|xrd\\+xml).*",
+      },
+    ],
+  }],
+};
+~~~~
+
+
+The integration code looks like this:
+
+
+~~~~ typescript
 /**
  * Fedify with Next.js
  * ================
@@ -144,3 +184,9 @@ const onNotAcceptable = () =>
     status: 406,
     headers: { "Content-Type": "text/plain", Vary: "Accept" },
   });
+~~~~
+
+[@fedify@hollo.social badge]: https://fedi-badge.deno.dev/@fedify@hollo.social/followers.svg
+[@fedify@hollo.social]: https://hollo.social/@fedify
+[Fedify]: https://fedify.dev/
+[Next.js]: https://nextjs.org/

@@ -193,6 +193,7 @@ The repository is organized as a monorepo with the following packages:
  -  *packages/postgres/*: PostgreSQL drivers (@fedify/postgres) for Fedify.
  -  *packages/redis/*: Redis drivers (@fedify/redis) for Fedify.
  -  *packages/nestjs/*: NestJS integration (@fedify/nestjs) for Fedify.
+ -  *packages/nextjs/*: Next.js integration (@fedify/nextjs) for Fedify.
  -  *packages/sqlite/*: SQLite driver (@fedify/sqlite) for Fedify.
  -  *packages/testing/*: Testing utilities (@fedify/testing) for Fedify.
  -  *docs/*: The Fedify docs.  The docs are built with [Node.js] and

@@ -99,6 +99,7 @@ Here is the list of packages:
 | [@fedify/express](/packages/express/)   | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  | Express integration                     |
 | [@fedify/h3](/packages/h3/)             | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       | H3 integration                          |
 | [@fedify/nestjs](/packages/nestjs/)     |                             | [npm][npm:@fedify/nestjs]   | NestJS integration                      |
+| [@fedify/nestjs](/packages/nextjs/)     |                             |                             | Next.js integration                     |
 | [@fedify/postgres](/packages/postgres/) | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] | PostgreSQL driver                       |
 | [@fedify/redis](/packages/redis/)       | [JSR][jsr:@fedify/redis]    | [npm][npm:@fedify/redis]    | Redis driver                            |
 | [@fedify/sqlite](/packages/sqlite/)     | [JSR][jsr:@fedify/sqlite]   | [npm][npm:@fedify/sqlite]   | SQLite driver                           |
