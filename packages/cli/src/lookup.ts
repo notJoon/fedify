@@ -8,7 +8,7 @@ import {
   getAuthenticatedDocumentLoader,
   type Link,
   lookupObject,
-  type Object,
+  Object as APObject,
   type ResourceDescriptor,
   respondWithObject,
   traverseCollection,
@@ -18,6 +18,7 @@ import * as colors from "@std/fmt/colors";
 import { dirname, isAbsolute, resolve } from "@std/path";
 import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
+import { renderImages } from "./imagerenderer.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 import { colorEnabled, formatCliObjectOutputWithColor } from "./utils.ts";
 
@@ -84,8 +85,23 @@ export async function createFileStream(
   }
 }
 
+async function findAllImages(obj: APObject): Promise<URL[]> {
+  const result: URL[] = [];
+  const icon = await obj.getIcon();
+  const image = await obj.getImage();
+
+  if (icon && icon.url instanceof URL) {
+    result.push(icon.url);
+  }
+  if (image && image.url instanceof URL) {
+    result.push(image.url);
+  }
+
+  return result;
+}
+
 export async function writeObjectToStream(
-  object: Object | Link,
+  object: APObject | Link,
   options: CommandOptions,
   contextLoader: DocumentLoader,
 ): Promise<void> {
@@ -97,6 +113,7 @@ export async function writeObjectToStream(
 
   try {
     let content;
+    let imageUrls: URL[] = [];
 
     if (options.raw) {
       content = await object.toJsonLd({ contextLoader });
@@ -115,6 +132,13 @@ export async function writeObjectToStream(
     const bytes = encoder.encode(content + "\n");
 
     await writer.write(bytes);
+
+    if (object instanceof APObject) {
+      imageUrls = await findAllImages(object);
+    }
+    if (!options.output && imageUrls.length > 0) {
+      await renderImages(imageUrls);
+    }
   } finally {
     writer.releaseLock();
     if (options.output) {
@@ -312,7 +336,7 @@ export const command = new Command()
       Deno.exit(0);
     }
 
-    const promises: Promise<Object | null>[] = [];
+    const promises: Promise<APObject | null>[] = [];
     for (const url of urls) {
       promises.push(
         lookupObject(

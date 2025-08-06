@@ -31,6 +31,7 @@ test("PostgresMessageQueue", { skip: dbUrl == null }, async () => {
   try {
     const messages: string[] = [];
     const controller = new AbortController();
+    await mq.initialize();
     const listening = mq.listen((message: string) => {
       messages.push(message);
     }, { signal: controller.signal });

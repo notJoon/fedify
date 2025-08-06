@@ -9,6 +9,7 @@ import {
   createRequest,
   type DocumentLoader,
   type DocumentLoaderFactoryOptions,
+  type DocumentLoaderOptions,
   getRemoteDocument,
   logRequest,
   type RemoteDocument,
@@ -58,7 +59,10 @@ export function getAuthenticatedDocumentLoader(
     GetAuthenticatedDocumentLoaderOptions = {},
 ): DocumentLoader {
   validateCryptoKey(identity.privateKey);
-  async function load(url: string): Promise<RemoteDocument> {
+  async function load(
+    url: string,
+    options?: DocumentLoaderOptions,
+  ): Promise<RemoteDocument> {
     if (!allowPrivateAddress) {
       try {
         await validatePublicUrl(url);
@@ -73,7 +77,12 @@ export function getAuthenticatedDocumentLoader(
     const response = await doubleKnock(
       originalRequest,
       identity,
-      { specDeterminer, log: logRequest, tracerProvider },
+      {
+        specDeterminer,
+        log: logRequest,
+        tracerProvider,
+        signal: options?.signal,
+      },
     );
     return getRemoteDocument(url, response, load);
   }

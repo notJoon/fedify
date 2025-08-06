@@ -95,6 +95,7 @@ Here is the list of packages:
 | [@fedify/fedify](/packages/fedify/)     | [JSR]                       | [npm]                       | The core framework of Fedify            |
 | [@fedify/cli](/packages/cli/)           | [JSR][jsr:@fedify/cli]      | [npm][npm:@fedify/cli]      | CLI toolchain for testing and debugging |
 | [@fedify/amqp](/packages/amqp/)         | [JSR][jsr:@fedify/amqp]     | [npm][npm:@fedify/amqp]     | AMQP/RabbitMQ driver                    |
+| [@fedify/elysia](/packages/elysia/)     |                             | [npm][npm:@fedify/elysia]   | Elysia integration                      |
 | [@fedify/express](/packages/express/)   | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  | Express integration                     |
 | [@fedify/h3](/packages/h3/)             | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       | H3 integration                          |
 | [@fedify/nestjs](/packages/nestjs/)     |                             | [npm][npm:@fedify/nestjs]   | NestJS integration                      |
@@ -107,6 +108,7 @@ Here is the list of packages:
 [npm:@fedify/cli]: https://www.npmjs.com/package/@fedify/cli
 [jsr:@fedify/amqp]: https://jsr.io/@fedify/amqp
 [npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp
+[npm:@fedify/elysia]: https://www.npmjs.com/package/@fedify/elysia
 [jsr:@fedify/express]: https://jsr.io/@fedify/express
 [npm:@fedify/express]: https://www.npmjs.com/package/@fedify/express
 [jsr:@fedify/h3]: https://jsr.io/@fedify/h3
