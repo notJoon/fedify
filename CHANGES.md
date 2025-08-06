@@ -8,6 +8,20 @@ Version 1.8.2
 
 To be released.
 
+### @fedify/cli
+
+ -  Fixed `npx @fedify/cli` command not working on various platforms by
+    correcting the binary path resolution in the Node.js wrapper script.
+
+ -  Temporarily removed Sharp dependency to resolve installation issues
+    across different platforms. As a result, `fedify lookup` command will no
+    longer resize images when displaying them in the terminal. This is a
+    temporary workaround and image resizing functionality will be restored
+    in a future patch version using an alternative approach.
+
+ -  Fixed build artifact paths in GitHub Actions workflow to correctly
+    reference CLI package location in the monorepo structure.
+
 
 Version 1.8.1
 -------------
