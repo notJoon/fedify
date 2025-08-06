@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.8.3
 -------------
 
-To be released.
+Released on August 6, 2025.
 
 ### @fedify/cli
 
