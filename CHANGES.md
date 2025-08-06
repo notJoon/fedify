@@ -8,6 +8,17 @@ Version 1.8.3
 
 To be released.
 
+### @fedify/cli
+
+ -  Restored image resizing functionality in `fedify lookup` command by using
+    the existing [Jimp] library for image manipulation. This properly displays
+    `icon` and `image` fields with appropriate sizing in terminals.
+
+ -  Added support for Ghostty terminal emulator for image rendering in
+    `fedify lookup` command.
+
+[Jimp]: https://jimp-dev.github.io/jimp/
+
 
 Version 1.8.2
 -------------

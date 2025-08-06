@@ -1,4 +1,5 @@
 import { encodeBase64 } from "@std/encoding/base64";
+import { Jimp } from "./nodeinfo.ts";
 
 export type TerminalType = "kitty" | "iterm2" | "none";
 
@@ -9,6 +10,7 @@ const KITTY_IDENTIFIERS: string[] = [
   "warp",
   "wayst",
   "st",
+  "ghostty",
 ];
 
 type KittyCommand = Record<string, string | number>;
@@ -76,7 +78,7 @@ export async function renderImageKitty(
 
     const command = serializeGrCommand(chunkCmd, chunk);
 
-    Deno.stdout.writeSync(command);
+    await Deno.stderr.write(command);
 
     isFirst = false;
   }
@@ -92,7 +94,7 @@ export async function renderImageITerm2(
   const command = encoder.encode(
     `\x1b]1337;File=inline=1preserveAspectRatio=1:${base64Data}\x07\n`,
   );
-  Deno.stdout.writeSync(command);
+  await Deno.stderr.write(command);
 }
 
 export async function downloadImage(url: string): Promise<string | null> {
@@ -118,18 +120,25 @@ export async function renderImages(
     const tempPath = await downloadImage(url.href);
     if (!tempPath) continue;
 
-    console.log(""); // clear the line before rendering image
+    const convertedImagePath: `${string}.png` = `${tempPath}.converted.png`;
+    const image = await Jimp.read(tempPath);
+    await image.write(convertedImagePath);
+    await Deno.remove(tempPath);
+
+    console.error(); // clear the line before rendering image
 
     if (graphicsProtocol === "kitty") {
-      await renderImageKitty(tempPath, {
+      await renderImageKitty(convertedImagePath, {
         a: "T",
         f: 100, // specify the image format is png
       });
     } else if (graphicsProtocol === "iterm2") {
-      await renderImageITerm2(tempPath);
+      await renderImageITerm2(convertedImagePath);
     } else {
       continue;
     }
-    console.log(""); // clear the line after rendering image
+    console.error(); // clear the line after rendering image
   }
 }
+
+// cSpell: ignore ghostty iterm konsole magick wezterm wayst
