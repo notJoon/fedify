@@ -9,6 +9,20 @@ Version 1.9.0
 To be released.
 
 
+Version 1.8.4
+-------------
+
+Released on August 7, 2025.
+
+### @fedify/cli
+
+ -  Fixed `fedify lookup` command's `-r`/`--raw`, `-C`/`--compact`, and
+    `-e`/`--expand` options to properly output valid JSON format instead of
+    Deno's object inspection format.  [[#357]]
+
+[#357]: https://github.com/fedify-dev/fedify/issues/357
+
+
 Version 1.8.3
 -------------
 
