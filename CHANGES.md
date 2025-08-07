@@ -8,6 +8,13 @@ Version 1.8.5
 
 To be released.
 
+### @fedify/cli
+
+ -  Fixed `fedify nodeinfo` color support in Windows Terminal. [[#358], [#360] by KeunHyeong Park]
+
+[#358]: https://github.com/fedify-dev/fedify/issues/358
+[#360]: https://github.com/fedify-dev/fedify/pull/360
+
 
 Version 1.8.4
 -------------
