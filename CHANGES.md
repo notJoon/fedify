@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.6.8
 -------------
 
-To be released.
+Released on August 8, 2025.
 
  -  Fixed a critical authentication bypass vulnerability in the inbox handler
     that allowed unauthenticated attackers to impersonate any ActivityPub actor.
