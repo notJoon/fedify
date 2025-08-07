@@ -8,6 +8,15 @@ Version 1.3.20
 
 To be released.
 
+ -  Fixed a critical authentication bypass vulnerability in the inbox handler
+    that allowed unauthenticated attackers to impersonate any ActivityPub actor.
+    The vulnerability occurred because activities were processed before
+    verifying that the HTTP Signatures key belonged to the claimed actor.
+    Now authentication verification is performed before activity processing to
+    prevent actor impersonation attacks.  [[CVE-2025-54888]]
+
+[CVE-2025-54888]: https://github.com/fedify-dev/fedify/security/advisories/GHSA-6jcc-xgcr-q3h4
+
 
 Version 1.3.19
 --------------
