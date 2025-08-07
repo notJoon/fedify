@@ -8,6 +8,14 @@ Version 1.8.4
 
 To be released.
 
+### @fedify/cli
+
+ -  Fixed `fedify lookup` command's `-r`/`--raw`, `-C`/`--compact`, and
+    `-e`/`--expand` options to properly output valid JSON format instead of
+    Deno's object inspection format.  [[#357]]
+
+[#357]: https://github.com/fedify-dev/fedify/issues/357
+
 
 Version 1.8.3
 -------------
