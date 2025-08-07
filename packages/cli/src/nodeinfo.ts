@@ -299,6 +299,14 @@ function checkTerminalColorSupport(): "truecolor" | "256color" | "none" {
     return "256color";
   }
 
+  // Check for Windows Terminal support
+  // FIXME: WT_SESSION is not a reliable way to check for Windows Terminal support
+  const isWindows = Deno.build.os === "windows";
+  const isWT = Deno.env.get("WT_SESSION");
+  if (isWindows && isWT != null && isWT !== "") {
+    return "truecolor";
+  }
+
   return "none";
 }
 
