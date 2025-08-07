@@ -1,9 +1,9 @@
-import { fedifyRequestHanlder } from "~/shared/integrate-fedify";
+import { fedifyRequestHandler } from "~/shared/integrate-fedify";
 
 export {
-  fedifyRequestHanlder as DELETE,
-  fedifyRequestHanlder as GET,
-  fedifyRequestHanlder as PATCH,
-  fedifyRequestHanlder as POST,
-  fedifyRequestHanlder as PUT,
+  fedifyRequestHandler as DELETE,
+  fedifyRequestHandler as GET,
+  fedifyRequestHandler as PATCH,
+  fedifyRequestHandler as POST,
+  fedifyRequestHandler as PUT,
 };
