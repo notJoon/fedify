@@ -38,7 +38,7 @@
     "@opentelemetry/semantic-conventions": "npm:@opentelemetry/semantic-conventions@^1.27.0",
     "@phensley/language-tag": "npm:@phensley/language-tag@^1.9.0",
     "@std/assert": "jsr:@std/assert@^0.226.0",
-    "@std/async": "jsr:@std/async@^1.0.5",
+    "@std/async": "jsr:@std/async@1.0.13",
     "@std/bytes": "jsr:@std/bytes@^1.0.2",
     "@std/collections": "jsr:@std/collections@^1.0.6",
     "@std/encoding": "jsr:@std/encoding@1.0.7",
