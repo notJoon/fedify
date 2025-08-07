@@ -649,20 +649,6 @@ async function handleInboxInternal<TContextData>(
     span.setAttribute("activitypub.activity.id", activity.id.href);
   }
   span.setAttribute("activitypub.activity.type", getTypeId(activity).href);
-  const routeResult = await routeActivity({
-    context: ctx,
-    json,
-    activity,
-    recipient,
-    inboxListeners,
-    inboxContextFactory,
-    inboxErrorHandler,
-    kv,
-    kvPrefixes,
-    queue,
-    span,
-    tracerProvider,
-  });
   if (
     httpSigKey != null && !await doesActorOwnKey(activity, httpSigKey, ctx)
   ) {
@@ -685,6 +671,20 @@ async function handleInboxInternal<TContextData>(
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
   }
+  const routeResult = await routeActivity({
+    context: ctx,
+    json,
+    activity,
+    recipient,
+    inboxListeners,
+    inboxContextFactory,
+    inboxErrorHandler,
+    kv,
+    kvPrefixes,
+    queue,
+    span,
+    tracerProvider,
+  });
   if (routeResult === "alreadyProcessed") {
     return new Response(
       `Activity <${activity.id}> has already been processed.`,
