@@ -7,6 +7,16 @@
 
 This package provides a simple way to integrate [Fedify] with [Next.js].
 
+> [!IMPORTANT]
+> We recommend initializing your app using the `init` command of the
+> [Fedify CLI] rather than installing this package directly.
+
+> [!IMPORTANT]
+> This package runs Next.js middleware on the Node.js runtime.
+> Therefore, you must use version 15.5 or later, or at least 15.4 canary.
+> For more details, refer to the [official documentation of `middleware`].
+
+
 
 ### Usage
 
@@ -190,3 +200,5 @@ const onNotAcceptable = () =>
 [@fedify@hollo.social]: https://hollo.social/@fedify
 [Fedify]: https://fedify.dev/
 [Next.js]: https://nextjs.org/
+[official documentation of `middleware`]: https://nextjs.org/docs/app/api-reference/file-conventions/middleware#runtime
+[Fedify CLI]: https://www.npmjs.com/package/@fedify/cli
