@@ -5,7 +5,7 @@ packages:
 - packages/elysia
 - packages/express
 - packages/nestjs
-- packages/nextjs
+- packages/next
 - packages/h3
 - packages/postgres
 - packages/redis

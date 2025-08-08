@@ -486,7 +486,7 @@ Next.js
 *This API is available since Fedify 1.9.0.*
 
 [Next.js] is a React framework that enables you to build server-rendered
-and statically generated web applications.  Fedify has the `@fedify/nextjs`
+and statically generated web applications.  Fedify has the `@fedify/next`
 module that provides a middleware to integrate Fedify with Next.js.  Create
 an app with the following command using the Fedify CLI:
 
@@ -510,7 +510,7 @@ from the Next.js framework:
 
 
 ~~~~ typescript
-import { fedifyWith } from "@fedify/nextjs";
+import { fedifyWith } from "@fedify/next";
 import federation from "./federation";
 
 export default fedifyWith(federation)(

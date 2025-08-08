@@ -14,7 +14,7 @@ const packagesMetaData: Record<`@fedify/${string}`, string> = {
   "@fedify/amqp": metadata.version,
   "@fedify/express": metadata.version,
   "@fedify/h3": metadata.version,
-  "@fedify/nextjs": metadata.version,
+  "@fedify/next": metadata.version,
 };
 
 const logger = getLogger(["fedify", "cli", "init"]);
@@ -457,7 +457,7 @@ Then, try look up an actor from your server:
         "--skip-install",
       ],
       dependencies: {
-        "@fedify/nextjs": getLatestVersion("@fedify/nextjs"),
+        "@fedify/next": getLatestVersion("@fedify/next"),
       },
       devDependencies: {
         "@types/node": "^20.11.2",
@@ -466,7 +466,7 @@ Then, try look up an actor from your server:
       loggingFile: "logging.ts",
       files: {
         "middleware.ts": `
-import { fedifyWith } from "@fedify/nextjs";
+import { fedifyWith } from "@fedify/next";
 import federation from "./federation";
 
 export default fedifyWith(federation)(

@@ -1,7 +1,7 @@
 <!-- deno-fmt-ignore-file -->
 
-@fedify/nextjs: Integrate Fedify with Next.js
-=============================================
+@fedify/next: Integrate Fedify with Next.js
+===========================================
 
 [![Follow @fedify@hollo.social][@fedify@hollo.social badge]][@fedify@hollo.social]
 
@@ -12,7 +12,7 @@ This package provides a simple way to integrate [Fedify] with [Next.js].
 
 ~~~~ typescript
 // --- middleware.ts ---
-import { fedifyWith } from "@fedify/nextjs";
+import { fedifyWith } from "@fedify/next";
 import { federation } from "./federation";
 
 export default fedifyWith(federation)();

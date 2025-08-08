@@ -8,9 +8,9 @@ Version 1.9.0
 
 To be released.
 
-### @fedify/nextjs
+### @fedify/next
 
- -  Created [Next.js] integration as the *@fedify/nextjs* package.
+ -  Created [Next.js] integration as the *@fedify/next* package.
       [[#313] by Chanhaeng Lee]
 
 ### @fedify/cli
