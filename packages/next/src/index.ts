@@ -12,7 +12,6 @@
 import type { Federation, FederationFetchOptions } from "@fedify/fedify";
 import { notFound } from "next/navigation";
 import { NextResponse } from "next/server";
-import { getXForwardedRequest } from "x-forwarded-fetch";
 
 interface ContextDataFactory<TContextData> {
   (request: Request):
@@ -121,19 +120,16 @@ export function integrateFederation<TContextData>(
     undefined as TContextData,
   errorHandlers?: Partial<ErrorHandlers>,
 ) {
-  return async (request: Request) => {
-    const forwardedRequest = await getXForwardedRequest(request);
-    const contextData = await contextDataFactory(forwardedRequest);
-    return await federation.fetch(
-      forwardedRequest,
+  return async (request: Request) =>
+    await federation.fetch(
+      request,
       {
-        contextData,
+        contextData: await contextDataFactory(request),
         onNotFound: notFound,
         onNotAcceptable,
         ...errorHandlers,
       },
     );
-  };
 }
 const onNotAcceptable = () =>
   new Response("Not acceptable", {
