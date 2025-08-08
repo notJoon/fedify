@@ -549,10 +549,10 @@ in the middleware, you can omit the function argument of `fedifyWith()`.
 The `config` object is necessary to let Next.js know that the middleware
 should process requests with the `Accept` header matching the federation
 accept regex.  This is because Next.js middleware processes only requests
-with the `Accept` header matching the regex by default.  More details can be
-found in the [Next.js documentation](https://nextjs.org/docs/app/api-reference/file-conventions/middleware#config-object-optional).
+with the `Accept` header matching the regex by default.  More details can be found in the Next.js official documentation [`config` in `middleware.js`].
 
 [Next.js]: https://nextjs.org/
+[`config` in `middleware.js`]: https://nextjs.org/docs/app/api-reference/file-conventions/middleware#config-object-optional
 
 
 Custom middleware

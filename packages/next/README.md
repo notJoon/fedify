@@ -77,13 +77,11 @@ type ErrorHandlers = Omit<FederationFetchOptions<unknown>, "contextData">;
  *
  * @template TContextData A type of the context data for the
  *                         {@link Federation} object.
- * @param {Federation<TContextData>} federation A {@link Federation} object
- *                         to integrate with Next.js.
- * @param {ContextDataFactory<TContextData>} contextDataFactory A function
- *                         to create a context data for the
+ * @param federation A {@link Federation} object to integrate with Next.js.
+ * @param contextDataFactory A function to create a context data for the
  *                         {@link Federation} object.
- * @param {Partial<ErrorHandlers>} errorHandlers A set of error handlers to
- *                         handle errors during the federation fetch.
+ * @param errorHandlers A set of error handlers to handle errors during
+ *                      the federation fetch.
  * @returns A Next.js middleware function to integrate with the
  *          {@link Federation} object.
  *
@@ -159,14 +157,12 @@ const FEDERATION_ACCEPT_REGEX =
  * Create a Next.js handler to integrate with the {@link Federation} object.
  *
  * @template TContextData A type of the context data for the
- *                         {@link Federation} object.
- * @param {Federation<TContextData>} federation A {@link Federation} object
- *                         to integrate with Next.js.
- * @param {ContextDataFactory<TContextData>} contextDataFactory A function
- *                         to create a context data for the
- *                         {@link Federation} object.
- * @param {Partial<ErrorHandlers>} errorHandlers A set of error handlers to
- *                         handle errors during the federation fetch.
+ *                        {@link Federation} object.
+ * @param federation A {@link Federation} object to integrate with Next.js.
+ * @param contextDataFactory A function to create a context data for the
+ *                           {@link Federation} object.
+ * @param errorHandlers A set of error handlers to handle errors during
+ *                      the federation fetch.
  * @returns A Next.js handler.
  */
 export function integrateFederation<TContextData>(
