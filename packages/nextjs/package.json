@@ -53,7 +53,7 @@
   },
   "peerDependencies": {
     "@fedify/fedify": "workspace:",
-    "next": "workspace:"
+    "next": "catalog:"
   },
   "devDependencies": {
     "tsdown": "catalog:",
