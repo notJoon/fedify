@@ -481,7 +481,7 @@ console.log("Elysia App Start!");
 
 
 Next.js
-------
+-------
 
 *This API is available since Fedify 1.9.0.*
 

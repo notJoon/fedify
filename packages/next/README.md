@@ -40,7 +40,7 @@ The integration code looks like this:
 ~~~~ typescript
 /**
  * Fedify with Next.js
- * ================
+ * ===================
  *
  * This module provides a [Next.js] middleware to integrate with the Fedify.
  *
