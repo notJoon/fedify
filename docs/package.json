@@ -8,6 +8,7 @@
     "@fedify/fedify": "workspace:",
     "@fedify/h3": "workspace:",
     "@fedify/nestjs": "workspace:",
+    "@fedify/next": "workspace:",
     "@fedify/postgres": "workspace:",
     "@fedify/redis": "workspace:",
     "@fedify/sqlite": "workspace:",

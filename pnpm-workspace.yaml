@@ -5,6 +5,7 @@ packages:
 - packages/elysia
 - packages/express
 - packages/nestjs
+- packages/next
 - packages/h3
 - packages/postgres
 - packages/redis
@@ -34,6 +35,7 @@ catalog:
   express: ^4.0.0
   h3: ^1.15.0
   ioredis: ^5.6.1
+  next: ^15.4.2-canary
   postgres: ^3.4.7
   tsdown: ^0.12.9
   typescript: ^5.8.3

@@ -6,3 +6,4 @@ node_modules/
 repomix-output.xml
 t.ts
 t2.ts
+.pnpm-store/

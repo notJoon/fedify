@@ -425,6 +425,7 @@ jobs:
           | @fedify/express  | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  |
           | @fedify/h3       | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       |
           | @fedify/nestjs   | ${{ steps.versioning.outputs.version }} |                             | [npm][npm:@fedify/nestjs]   |
+          | @fedify/next     | ${{ steps.versioning.outputs.version }} |                             | [npm][npm:@fedify/next]     |
           | @fedify/postgres | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] |
           | @fedify/redis    | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/redis]    | [npm][npm:@fedify/redis]    |
           | @fedify/sqlite   | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/sqlite]   | [npm][npm:@fedify/sqlite]   |

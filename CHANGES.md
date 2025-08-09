@@ -8,6 +8,20 @@ Version 1.9.0
 
 To be released.
 
+### @fedify/cli
+
+ -  Added `Next.js` option to `fedify init` command. This option allows users
+    to initialize a new Fedify project with Next.js integration.
+    [[#313] by Chanhaeng Lee]
+
+### @fedify/next
+
+ -  Created [Next.js] integration as the *@fedify/next* package.
+    [[#313] by Chanhaeng Lee]
+
+[Next.js]: https://nextjs.org/
+[#313]: https://github.com/fedify-dev/fedify/issues/313
+
 
 Version 1.8.5
 -------------

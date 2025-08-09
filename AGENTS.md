@@ -70,6 +70,7 @@ The repository is organized as a monorepo with the following packages:
  -  *packages/postgres/*: PostgreSQL drivers (@fedify/postgres)
  -  *packages/redis/*: Redis drivers (@fedify/redis)
  -  *packages/nestjs/*: NestJS integration (@fedify/nestjs)
+ -  *packages/next/*: Next.js integration (@fedify/next)
  -  *packages/sqlite/*: SQLite driver (@fedify/sqlite)
  -  *packages/testing/*: Testing utilities (@fedify/testing)
  -  *docs/*: Documentation built with Node.js and VitePress
