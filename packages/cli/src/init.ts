@@ -446,7 +446,7 @@ Then, try look up an actor from your server:
       label: "Next.js",
       runtimes: ["node"],
       command: [
-        "npx",
+        ...(packageManager === "npm" ? ["npx"] : [packageManager, "dlx"]),
         "create-next-app@canary",
         ".",
         "--ts",
