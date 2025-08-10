@@ -1,16 +1,4 @@
-import {
-  Create,
-  createFederation,
-  CustomCollectionDispatcher,
-  MemoryKvStore,
-  RequestContext,
-} from "@fedify/fedify";
-import {
-  handleCustomCollection,
-} from "../../packages/fedify/src/federation/handler.ts";
-import {
-  createRequestContext,
-} from "../../packages/fedify/src/testing/context.ts";
+import { Create, createFederation, MemoryKvStore, Note } from "@fedify/fedify";
 
 // Mock data - in a real application, this would query your database
 const POSTS = [
@@ -44,116 +32,78 @@ const POSTS = [
   }),
 ];
 
-function getTaggedPostsByTag(tag: string): Promise<Create[]> {
-  return Promise.resolve(
-    POSTS.filter((post) => {
-      return post.tagIds?.some((tagId) => tagId.toString() === tag);
-    }),
-  );
+function getTagFromUrl(url: string): string {
+  const parts = url.split("/");
+  return parts[parts.length - 1];
 }
 
-function getTaggedPostsCounts(tag: string): Promise<number> {
-  return Promise.resolve(
-    POSTS.filter((post) => {
-      return post.tagIds?.some((tagId) => tagId.toString() === tag);
-    }).length,
-  );
+function getTaggedPostsByTag(tag: string): Create[] {
+  const results = POSTS.filter((post) => {
+    if (!post.tagIds) {
+      return false;
+    }
+    const postTags = post.tagIds;
+    const matches = postTags.some((tagId) => {
+      return getTagFromUrl(tagId.toString()) === tag;
+    });
+    return matches;
+  });
+
+  return results;
 }
 
 async function demonstrateCustomCollection() {
   // Note: federation instance created for demonstration
   const federation = createFederation<void>({ kv: new MemoryKvStore() });
-  const url = new URL("https://example.com/");
-  const context = createRequestContext<void>({
-    federation,
-    data: undefined,
-    url,
-    request: new Request(url, {
-      headers: {
-        Accept: "application/activity+json",
-      },
-    }),
-  });
 
   federation.setCollectionDispatcher(
     "TaggedPosts",
-    Create,
-    "/tags/{tag}",
-    async (
+    Note,
+    "/users/{userId}/tags/{tag}",
+    (
       _ctx: { url: URL },
       values: Record<string, string>,
       cursor: string | null,
     ) => {
-      if (values.handle !== "someone") return null; // Example handle check
-      const posts = await getTaggedPostsByTag(values.tag);
+      if (!values.userId || !values.tag) {
+        throw new Error("Missing userId or tag in values");
+      }
+      const posts = getTaggedPostsByTag(values.tag);
+      const items = posts.map((post) => (new Note({
+        id: new URL(`/posts/${post.id}`, _ctx.url),
+        content: post.content,
+      })));
 
       if (cursor != null) {
-        const idx = parseInt(cursor);
+        const idx = Number.parseInt(cursor, 10);
+        if (Number.isNaN(idx)) {
+          throw new Error("Invalid cursor");
+        }
         return {
-          items: [posts[idx]],
-          nextCursor: idx < posts.length - 1 ? (idx + 1).toString() : null,
+          items: [items[idx]],
+          nextCursor: idx < items.length - 1 ? (idx + 1).toString() : null,
           prevCursor: idx > 0 ? (idx - 1).toString() : null,
         };
       }
-      return { items: posts };
+      return { items };
     },
   ).setCounter(async (_ctx, values) => {
-    // Return the total count of bookmarked posts
-    const count = await getTaggedPostsCounts(values.tag);
+    // Return the total count of tagged posts
+    const count = (await getTaggedPostsByTag(values.tag)).length;
     return count;
   });
 
-  const dispatcher: CustomCollectionDispatcher<
-    Create,
-    Record<string, string>,
-    RequestContext<unknown>,
-    unknown
-  > = async (_ctx, values, cursor) => {
-    if (values.handle !== "someone") return null; // Example handle check
-    const posts = await getTaggedPostsByTag(values.tag);
-    if (cursor != null) {
-      const idx = parseInt(cursor);
-      return {
-        items: [posts[idx]],
-        nextCursor: idx < posts.length - 1 ? (idx + 1).toString() : null,
-        prevCursor: idx > 0 ? (idx - 1).toString() : null,
-      };
-    }
-    return { items: posts };
-  };
-
-  let _onNotFoundCalled: Request | null = null;
-  const onNotFound = (request: Request) => {
-    _onNotFoundCalled = request;
-    return new Response("Not found", { status: 404 });
-  };
-
-  const onNotAcceptable = (_request: Request) => {
-    return new Response("Not acceptable", { status: 406 });
-  };
-
-  const onUnauthorized = (_request: Request) => {
-    return new Response("Unauthorized", { status: 401 });
-  };
-
-  const values = {
-    handle: "someone",
-    tag: "https://example.com/tags/ActivityPub",
-  };
-
-  const response = await handleCustomCollection(
-    context.request,
-    {
-      context,
-      name: "TaggedPosts",
-      values: {
-        handle: "someone",
-        tag: "https://example.com/tags/ActivityPub",
+  const response = await federation.fetch(
+    new Request(
+      "https://example.com/users/someone/tags/ActivityPub",
+      {
+        headers: {
+          Accept: "application/activity+json",
+        },
       },
-      collectionCallbacks: { dispatcher },
-      onNotFound,
-      onNotAcceptable,
-      onUnauthorized,
+    ),
+    {
+      contextData: undefined,
     },
   );
 
@@ -166,12 +116,6 @@ async function demonstrateCustomCollection() {
     const errorText = await response.text();
     console.log("Error response:", errorText);
   }
-
-  console.log(
-    `Demonstration complete. Collection for tag: ${
-      values.tag.toString().split("/").pop()
-    }`,
-  );
 }
 
 if (import.meta.main) {
