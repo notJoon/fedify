@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "@fedify/fedify": "workspace:",
-    "next": "15.3.1",
+    "@fedify/next": "workspace:",
+    "next": "^15.4.2-canary",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "x-forwarded-fetch": "^0.2.0"
