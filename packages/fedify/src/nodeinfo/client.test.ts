@@ -371,6 +371,42 @@ test("parseSoftware()", () => {
       version: { major: 1, minor: 2, patch: 3, build: [], prerelease: [] },
     },
   );
+  assertEquals(
+    parseSoftware({
+      name: "foo",
+      version: "2.81",
+      repository: "",
+      homepage: "",
+    }, { tryBestEffort: true }),
+    {
+      name: "foo",
+      version: { major: 2, minor: 81, patch: 0, build: [], prerelease: [] },
+    },
+  );
+  assertEquals(
+    parseSoftware({
+      name: "foo",
+      version: "3",
+      repository: "",
+      homepage: "",
+    }, { tryBestEffort: true }),
+    {
+      name: "foo",
+      version: { major: 3, minor: 0, patch: 0, build: [], prerelease: [] },
+    },
+  );
+  assertEquals(
+    parseSoftware({
+      name: "foo",
+      version: "2.1.3.4",
+      repository: "",
+      homepage: "",
+    }, { tryBestEffort: true }),
+    {
+      name: "foo",
+      version: { major: 2, minor: 1, patch: 3, build: [], prerelease: [] },
+    },
+  );
 });
 
 test("parseProtocol()", () => {
