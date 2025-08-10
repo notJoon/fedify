@@ -271,7 +271,18 @@ export function parseSoftware(
       version = parseSemVer(data.version);
     } catch {
       if (!options.tryBestEffort) return null;
-      version = { major: 0, minor: 0, patch: 0, build: [], prerelease: [] };
+      const splitted_numbers = data.version.split(".");
+
+      const toInt = (letter: string) => {
+        const num = parseInt(letter ?? "0");
+        return isNaN(num) ? 0 : num;
+      };
+
+      const major = toInt(splitted_numbers[0]);
+      const minor = toInt(splitted_numbers[1]);
+      const patch = toInt(splitted_numbers[2]);
+
+      version = { major, minor, patch, build: [], prerelease: [] };
     }
   } else {
     if (!options.tryBestEffort) return null;
@@ -304,6 +315,7 @@ export function parseSoftware(
   const result: Software = { name, version };
   if (repository != null) result.repository = repository;
   if (homepage != null) result.homepage = homepage;
+
   return result;
 }
 
