@@ -43,18 +43,20 @@ const POSTS = [
   }),
 ];
 
-function getBookmarkedPosts(): Create[] {
-  return POSTS;
+function getPosts(): Promise<Create[]> {
+  return Promise.resolve(POSTS);
 }
 
-function getBookmarkCounts(): number {
-  return 5; // Total number of bookmarks for any user
+function getPostsCounts(): number {
+  return 5;
 }
 
-function getTaggedPostsByTag(tag: URL): Create[] {
-  return POSTS.filter((post) => {
-    return post.tagIds?.some((tagId) => tagId.toString() === tag.toString());
-  });
+function getTaggedPostsByTag(tag: string): Promise<Create[]> {
+  return Promise.resolve(
+    POSTS.filter((post) => {
+      return post.tagIds?.some((tagId) => tagId.toString() === tag);
+    }),
+  );
 }
 
 async function demonstrateCustomCollection() {
@@ -67,7 +69,7 @@ async function demonstrateCustomCollection() {
   });
 
   // Create a simple dispatcher function for testing
-  const dispatcher: CustomCollectionDispatcher<
+  const postsDispatcher: CustomCollectionDispatcher<
     Create,
     Record<string, string>,
     RequestContext<void>,
@@ -79,9 +81,7 @@ async function demonstrateCustomCollection() {
   ) => {
     if (values.handle !== "someone") return null;
 
-    // Get bookmarked posts for the user
-    const posts = await getBookmarkedPosts();
-
+    const posts = await getPosts();
     if (cursor != null) {
       const idx = parseInt(cursor);
       return {
@@ -94,13 +94,41 @@ async function demonstrateCustomCollection() {
     return { items: posts };
   };
 
+  const taggedPostsDispatcher: CustomCollectionDispatcher<
+    Create,
+    Record<string, string>,
+    RequestContext<void>,
+    void
+  > = async (
+    _ctx: { url: URL },
+    values: Record<string, string>,
+    cursor: string | null,
+  ) => {
+    if (values.handle !== "someone") return null;
+
+    const posts = await getTaggedPostsByTag(values.tag);
+
+    if (cursor != null) {
+      const idx = parseInt(cursor);
+      return {
+        items: [posts[idx]],
+        nextCursor: idx < posts.length - 1 ? (idx + 1).toString() : null,
+        prevCursor: idx > 0 ? (idx - 1).toString() : null,
+      };
+    }
+    return { items: posts };
+  };
+
   const counter: CustomCollectionCounter<Record<string, string>, void> = (
     _ctx: RequestContext<void>,
     values: Record<string, string>,
-  ) => values.handle === "someone" ? getBookmarkCounts() : 6;
+  ) => values.handle === "someone" ? getPostsCounts() : null;
 
-  const values = { handle: "someone" };
-  const posts = await dispatcher(context, values, null);
+  const values = {
+    handle: "someone",
+    tag: "https://example.com/tags/ActivityPub",
+  };
+  const posts = await postsDispatcher(context, values, null);
   console.log("All Posts for user: ", values.handle);
   console.log(posts);
 
@@ -108,9 +136,11 @@ async function demonstrateCustomCollection() {
   console.log("Count:", count);
 
   // Example of using a custom collection to get tagged posts
-  const tag = new URL("https://example.com/tags/ActivityPub");
-  const taggedPosts = getTaggedPostsByTag(tag);
-  console.log(`${tag.toString().split("/").pop()} Tagged Posts:`, taggedPosts);
+  const taggedPosts = await taggedPostsDispatcher(context, values, null);
+  console.log(
+    `${values.tag.toString().split("/").pop()} Tagged Posts:`,
+    taggedPosts,
+  );
 }
 
 if (import.meta.main) {
