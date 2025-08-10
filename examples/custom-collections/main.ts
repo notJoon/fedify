@@ -1,12 +1,13 @@
 import {
   Create,
   createFederation,
-  CustomCollectionCounter,
   CustomCollectionDispatcher,
   MemoryKvStore,
   RequestContext,
 } from "@fedify/fedify";
-
+import {
+  handleCustomCollection,
+} from "../../packages/fedify/src/federation/handler.ts";
 import {
   createRequestContext,
 } from "../../packages/fedify/src/testing/context.ts";
@@ -43,14 +44,6 @@ const POSTS = [
   }),
 ];
 
-function getPosts(): Promise<Create[]> {
-  return Promise.resolve(POSTS);
-}
-
-function getPostsCounts(): number {
-  return 5;
-}
-
 function getTaggedPostsByTag(tag: string): Promise<Create[]> {
   return Promise.resolve(
     POSTS.filter((post) => {
@@ -59,55 +52,65 @@ function getTaggedPostsByTag(tag: string): Promise<Create[]> {
   );
 }
 
+function getTaggedPostsCounts(tag: string): Promise<number> {
+  return Promise.resolve(
+    POSTS.filter((post) => {
+      return post.tagIds?.some((tagId) => tagId.toString() === tag);
+    }).length,
+  );
+}
+
 async function demonstrateCustomCollection() {
   // Note: federation instance created for demonstration
   const federation = createFederation<void>({ kv: new MemoryKvStore() });
-  let context = createRequestContext<void>({
+  const url = new URL("https://example.com/");
+  const context = createRequestContext<void>({
     federation,
     data: undefined,
-    url: new URL("https://example.com/"),
+    url,
+    request: new Request(url, {
+      headers: {
+        Accept: "application/activity+json",
+      },
+    }),
   });
 
-  // Create a simple dispatcher function for testing
-  const postsDispatcher: CustomCollectionDispatcher<
+  federation.setCollectionDispatcher(
+    "TaggedPosts",
+    Create,
+    "/tags/{tag}",
+    async (
+      _ctx: { url: URL },
+      values: Record<string, string>,
+      cursor: string | null,
+    ) => {
+      if (values.handle !== "someone") return null; // Example handle check
+      const posts = await getTaggedPostsByTag(values.tag);
+
+      if (cursor != null) {
+        const idx = parseInt(cursor);
+        return {
+          items: [posts[idx]],
+          nextCursor: idx < posts.length - 1 ? (idx + 1).toString() : null,
+          prevCursor: idx > 0 ? (idx - 1).toString() : null,
+        };
+      }
+      return { items: posts };
+    },
+  ).setCounter(async (_ctx, values) => {
+    // Return the total count of bookmarked posts
+    const count = await getTaggedPostsCounts(values.tag);
+    return count;
+  });
+
+  const dispatcher: CustomCollectionDispatcher<
     Create,
     Record<string, string>,
-    RequestContext<void>,
-    void
-  > = async (
-    _ctx: { url: URL },
-    values: Record<string, string>,
-    cursor: string | null,
-  ) => {
-    if (values.handle !== "someone") return null;
-
-    const posts = await getPosts();
-    if (cursor != null) {
-      const idx = parseInt(cursor);
-      return {
-        items: [posts[idx]],
-        nextCursor: idx < posts.length - 1 ? (idx + 1).toString() : null,
-        prevCursor: idx > 0 ? (idx - 1).toString() : null,
-      };
-    }
-
-    return { items: posts };
-  };
-
-  const taggedPostsDispatcher: CustomCollectionDispatcher<
-    Create,
-    Record<string, string>,
-    RequestContext<void>,
-    void
-  > = async (
-    _ctx: { url: URL },
-    values: Record<string, string>,
-    cursor: string | null,
-  ) => {
-    if (values.handle !== "someone") return null;
-
+    RequestContext<unknown>,
+    unknown
+  > = async (_ctx, values, cursor) => {
+    if (values.handle !== "someone") return null; // Example handle check
     const posts = await getTaggedPostsByTag(values.tag);
-
     if (cursor != null) {
       const idx = parseInt(cursor);
       return {
@@ -119,27 +122,55 @@ async function demonstrateCustomCollection() {
     return { items: posts };
   };
 
-  const counter: CustomCollectionCounter<Record<string, string>, void> = (
-    _ctx: RequestContext<void>,
-    values: Record<string, string>,
-  ) => values.handle === "someone" ? getPostsCounts() : null;
+  let _onNotFoundCalled: Request | null = null;
+  const onNotFound = (request: Request) => {
+    _onNotFoundCalled = request;
+    return new Response("Not found", { status: 404 });
+  };
+
+  const onNotAcceptable = (_request: Request) => {
+    return new Response("Not acceptable", { status: 406 });
+  };
+
+  const onUnauthorized = (_request: Request) => {
+    return new Response("Unauthorized", { status: 401 });
+  };
 
   const values = {
     handle: "someone",
     tag: "https://example.com/tags/ActivityPub",
   };
-  const posts = await postsDispatcher(context, values, null);
-  console.log("All Posts for user: ", values.handle);
-  console.log(posts);
 
-  const count = await counter(context, values);
-  console.log("Count:", count);
+  const response = await handleCustomCollection(
+    context.request,
+    {
+      context,
+      name: "TaggedPosts",
+      values: {
+        handle: "someone",
+        tag: "https://example.com/tags/ActivityPub",
+      },
+      collectionCallbacks: { dispatcher },
+      onNotFound,
+      onNotAcceptable,
+      onUnauthorized,
+    },
+  );
 
-  // Example of using a custom collection to get tagged posts
-  const taggedPosts = await taggedPostsDispatcher(context, values, null);
+  console.log("Custom collection response status:", response.status);
+
+  if (response.ok) {
+    const jsonResponse = await response.json();
+    console.log("Custom collection data:", jsonResponse);
+  } else {
+    const errorText = await response.text();
+    console.log("Error response:", errorText);
+  }
+
   console.log(
-    `${values.tag.toString().split("/").pop()} Tagged Posts:`,
-    taggedPosts,
+    `Demonstration complete. Collection for tag: ${
+      values.tag.toString().split("/").pop()
+    }`,
   );
 }
 
