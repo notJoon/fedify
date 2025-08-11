@@ -1,4 +1,3 @@
-import { getXForwardedRequest } from "x-forwarded-fetch";
 import {
   Accept,
   createFederation,
@@ -9,12 +8,8 @@ import {
   Person,
   Undo,
 } from "@fedify/fedify";
-import { keyPairsStore, relationStore } from "~/data/store";
 import { revalidatePath } from "next/cache";
-
-export const fedifyRequestHandler = integrateFederation(() => {});
-
-const routePrefix = `/fedify-activity-handler`;
+import { keyPairsStore, relationStore } from "~/data/store";
 
 const federation = createFederation({
   kv: new MemoryKvStore(),
@@ -22,7 +17,7 @@ const federation = createFederation({
 
 federation
   .setActorDispatcher(
-    `${routePrefix}/users/{identifier}`,
+    `/users/{identifier}`,
     async (context, identifier) => {
       if (identifier != "demo") {
         return null;
@@ -57,7 +52,7 @@ federation
   });
 
 federation
-  .setInboxListeners(`${routePrefix}/users/{identifier}/inbox`, "/inbox")
+  .setInboxListeners(`/users/{identifier}/inbox`, "/inbox")
   .on(Follow, async (context, follow) => {
     if (
       follow.id == null ||
@@ -105,28 +100,4 @@ federation
     }
   });
 
-function integrateFederation<TContextData>(
-  contextDataFactory: (
-    request: Request,
-  ) => TContextData | Promise<TContextData>,
-) {
-  return async (request: Request) => {
-    const forwardedRequest = await getXForwardedRequest(request);
-    const contextData = await contextDataFactory(forwardedRequest);
-    return await federation.fetch(forwardedRequest, {
-      contextData,
-      onNotFound: () => {
-        return new Response("Not found", { status: 404 }); // unused
-      },
-      onNotAcceptable: () => {
-        return new Response("Not acceptable", {
-          status: 406,
-          headers: {
-            "Content-Type": "text/plain",
-            Vary: "Accept",
-          },
-        });
-      },
-    });
-  };
-}
+export default federation;

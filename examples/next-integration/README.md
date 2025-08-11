@@ -18,7 +18,7 @@
 3.  Start the server:
 
     ```sh
-    pnpm dev && pnpx @fedify/cli tunnel 3000
+    pnpm dev & pnpx @fedify/cli tunnel 3000
     ```
 
 4.  Open your browser tunneled URL and start interacting with the app.
