@@ -271,18 +271,15 @@ export function parseSoftware(
       version = parseSemVer(data.version);
     } catch {
       if (!options.tryBestEffort) return null;
-      const splitted_numbers = data.version.split(".");
 
-      const toInt = (letter: string) => {
-        const num = parseInt(letter ?? "0");
-        return isNaN(num) ? 0 : num;
+      const parts = data.version.split(".").map((p) => parseInt(p, 10));
+      version = {
+        major: !isNaN(parts[0]) ? parts[0] : 0,
+        minor: !isNaN(parts[1]) ? parts[1] : 0,
+        patch: !isNaN(parts[2]) ? parts[2] : 0,
+        build: [],
+        prerelease: [],
       };
-
-      const major = toInt(splitted_numbers[0]);
-      const minor = toInt(splitted_numbers[1]);
-      const patch = toInt(splitted_numbers[2]);
-
-      version = { major, minor, patch, build: [], prerelease: [] };
     }
   } else {
     if (!options.tryBestEffort) return null;
