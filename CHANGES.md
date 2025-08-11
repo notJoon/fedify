@@ -8,6 +8,12 @@ Version 1.9.0
 
 To be released.
 
+### @fedify/fedify
+
+ -  Changed fallback behavior of `parseSoftware()` to handle non-Semver number
+    string.
+    [[#353], [#365] by Hyeonseo Kim]]
+
 ### @fedify/cli
 
  -  Added `Next.js` option to `fedify init` command. This option allows users
@@ -21,7 +27,8 @@ To be released.
 
 [Next.js]: https://nextjs.org/
 [#313]: https://github.com/fedify-dev/fedify/issues/313
-
+[#353]: https://github.com/fedify-dev/fedify/issues/353
+[#365]: https://github.com/fedify-dev/fedify/pull/365
 
 Version 1.8.5
 -------------
