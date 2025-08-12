@@ -1,5 +1,4 @@
-import { Create, createFederation, MemoryKvStore, Note } from "@fedify/fedify";
-import { print } from "ioredis";
+import { createFederation, MemoryKvStore, Note } from "@fedify/fedify";
 
 // Mock data - in a real application, this would query your database
 const POSTS = [
@@ -11,6 +10,7 @@ const POSTS = [
       new URL("https://example.com/tags/Decentralization"),
     ],
   }),
+
   new Note({
     id: new URL("https://example.com/posts/post-2"),
     content: "Fedify makes it easy to build federated applications...",
@@ -50,8 +50,8 @@ function getTaggedPostsByTag(tag: string): Note[] {
     });
 }
 
-async function demonstrateCustomCollection() {
-  // Note: federation instance created for demonstration
+async function demonstrateCustomCollection(): Promise<Response> {
+  // Federation instance created for demonstration
   const federation = createFederation<void>({ kv: new MemoryKvStore() });
 
   federation.setCollectionDispatcher(
@@ -63,15 +63,17 @@ async function demonstrateCustomCollection() {
       values: Record<string, string>,
       cursor: string | null,
     ) => {
-      if (!values.userId || !values.tag) {
+      if (!values.tag) {
         throw new Error("Missing userId or tag in values");
       }
+
+      // Normally here you would look up posts from a database by user ID and tag name:
       const posts = getTaggedPostsByTag(values.tag);
 
       if (cursor != null) {
         const idx = Number.parseInt(cursor, 10);
-        if (Number.isNaN(idx)) {
-          throw new Error("Invalid cursor");
+        if (Number.isNaN(idx) || idx > posts.length || idx < 0) {
+          return { items: [], nextCursor: null, prevCursor: null };
         }
         return {
           items: idx < posts.length ? [posts[idx]] : [],
@@ -81,15 +83,15 @@ async function demonstrateCustomCollection() {
       }
       return { items: posts, nextCursor: null, prevCursor: null };
     },
-  ).setCounter(async (_ctx, values) => {
+  ).setCounter((_ctx, values) => {
     // Return the total count of tagged posts
     const count = getTaggedPostsByTag(values.tag).length;
     return count;
   });
 
-  const response = await federation.fetch(
+  return await federation.fetch(
     new Request(
-      "https://example.com/users/someone/tags/ActivityPub",
+      "https://example.com/users/123/tags/ActivityPub",
       {
         headers: {
           Accept: "application/activity+json",
@@ -100,8 +102,10 @@ async function demonstrateCustomCollection() {
       contextData: undefined,
     },
   );
+}
 
-  console.log("Custom collection response status:", response.status);
+if (import.meta.main) {
+  const response = await demonstrateCustomCollection();
 
   if (response.ok) {
     const jsonResponse = await response.json();
@@ -110,8 +114,4 @@ async function demonstrateCustomCollection() {
     const errorText = await response.text();
     console.log("Error response:", errorText);
   }
-}
-
-if (import.meta.main) {
-  demonstrateCustomCollection().catch(console.error);
 }
