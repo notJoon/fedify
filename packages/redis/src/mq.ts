@@ -224,9 +224,10 @@ export class RedisMessageQueue implements MessageQueue, Disposable {
        * @see https://github.com/redis/ioredis/blob/main/lib/Redis.ts#L863 (has specific overloads)
        * @see https://github.com/redis/ioredis/blob/main/lib/cluster/index.ts#L1110 (empty interface)
        */
-      (this.#subRedis as Redis).on("message", poll);
+      const subRedis = this.#subRedis as Redis;
+      subRedis.on("message", poll);
       signal?.addEventListener("abort", () => {
-        (this.#subRedis as Redis).off("message", poll);
+        subRedis.off("message", poll);
       });
     });
     signal?.addEventListener(
