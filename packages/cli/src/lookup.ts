@@ -177,6 +177,18 @@ export function clearTimeoutSignal(signal?: AbortSignal): void {
   }
 }
 
+function handleTimeoutError(
+  spinner: { fail: (text: string) => void },
+  timeoutSeconds?: number,
+  url?: string,
+): void {
+  const urlText = url ? ` for: ${colors.red(url)}` : "";
+  spinner.fail(`Request timed out after ${timeoutSeconds} seconds${urlText}.`);
+  console.error(
+    "Try increasing the timeout with --timeout option or check network connectivity.",
+  );
+}
+
 function wrapDocumentLoaderWithTimeout(
   loader: DocumentLoader,
   timeoutSeconds?: number,
@@ -185,7 +197,9 @@ function wrapDocumentLoaderWithTimeout(
 
   return (url: string, options?) => {
     const signal = createTimeoutSignal(timeoutSeconds);
-    return loader(url, { ...options, signal });
+    return loader(url, { ...options, signal }).finally(() =>
+      clearTimeoutSignal(signal)
+    );
   };
 }
 
@@ -345,10 +359,7 @@ export const command = new Command()
         });
       } catch (error) {
         if (error instanceof Error && error.message.includes("timed out")) {
-          spinner.fail(`Request timed out after ${options.timeout} seconds.`);
-          console.error(
-            "Try increasing the timeout with --timeout option or check network connectivity.",
-          );
+          handleTimeoutError(spinner, options.timeout, url);
         } else {
           spinner.fail(`Failed to fetch object: ${colors.red(url)}.`);
           if (authLoader == null) {
@@ -395,10 +406,7 @@ export const command = new Command()
       } catch (error) {
         logger.error("Failed to complete the traversal: {error}", { error });
         if (error instanceof Error && error.message.includes("timed out")) {
-          spinner.fail(`Request timed out after ${options.timeout} seconds.`);
-          console.error(
-            "Try increasing the timeout with --timeout option or check network connectivity.",
-          );
+          handleTimeoutError(spinner, options.timeout);
         } else {
           spinner.fail("Failed to complete the traversal.");
           if (authLoader == null) {
@@ -432,14 +440,7 @@ export const command = new Command()
           },
         ).catch((error) => {
           if (error instanceof Error && error.message.includes("timed out")) {
-            spinner.fail(
-              `Request timed out after ${options.timeout} seconds for: ${
-                colors.red(url)
-              }.`,
-            );
-            console.error(
-              "Try increasing the timeout with --timeout option or check network connectivity.",
-            );
+            handleTimeoutError(spinner, options.timeout, url);
           }
           throw error;
         }),
