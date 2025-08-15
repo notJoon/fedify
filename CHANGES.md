@@ -25,7 +25,7 @@ To be released.
     allows it to parse non-Semantic Versioning number strings more flexibly.
     [[#353], [#365] by Hyeonseo Kim]]
 
- -  Added `--timeout` option to `fedify lookup` command. This option allows
+ -  Added `-T`/`--timeout` option to `fedify lookup` command. This option allows
     users to specify timeout in seconds for network requests to prevent
     hanging on slow or unresponsive servers.
     [[#258] by Hyunchae Kim]

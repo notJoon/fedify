@@ -187,7 +187,7 @@ function handleTimeoutError(
   const urlText = url ? ` for: ${colors.red(url)}` : "";
   spinner.fail(`Request timed out after ${timeoutSeconds} seconds${urlText}.`);
   console.error(
-    "Try increasing the timeout with --timeout option or check network connectivity.",
+    "Try increasing the timeout with -T/--timeout option or check network connectivity.",
   );
 }
 
@@ -251,7 +251,7 @@ export const command = new Command()
     "Specify the output file path.",
   )
   .option(
-    "--timeout <seconds:number>",
+    "-T, --timeout <seconds:number>",
     "Set timeout for network requests in seconds.",
   )
   .action(async (options, ...urls: string[]) => {
