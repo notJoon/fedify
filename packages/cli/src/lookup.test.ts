@@ -1,7 +1,12 @@
 import { Activity, Note } from "@fedify/fedify";
 import { assertEquals, assertExists } from "@std/assert";
 import { getContextLoader } from "./docloader.ts";
-import { createFileStream, writeObjectToStream } from "./lookup.ts";
+import {
+  clearTimeoutSignal,
+  createFileStream,
+  createTimeoutSignal,
+  writeObjectToStream,
+} from "./lookup.ts";
 
 Deno.test("createFileStream - creates file stream with proper directory creation", async () => {
   const testDir = "./test_output";
@@ -298,4 +303,49 @@ Deno.test("writeObjectToStream - handles empty content properly", async () => {
   assertEquals(content.includes("Note"), true);
 
   await Deno.remove(testDir, { recursive: true });
+});
+
+Deno.test("createTimeoutSignal - returns undefined when no timeout specified", () => {
+  const signal = createTimeoutSignal();
+  assertEquals(signal, undefined);
+});
+
+Deno.test("createTimeoutSignal - returns undefined when timeout is null", () => {
+  const signal = createTimeoutSignal(undefined);
+  assertEquals(signal, undefined);
+});
+
+Deno.test("createTimeoutSignal - creates AbortSignal that aborts after timeout", async () => {
+  const signal = createTimeoutSignal(0.1);
+  assertExists(signal);
+  assertEquals(signal.aborted, false);
+
+  await new Promise((resolve) => setTimeout(resolve, 150));
+
+  assertEquals(signal.aborted, true);
+  assertEquals(signal.reason instanceof Error, true);
+  assertEquals(
+    (signal.reason as Error).message,
+    "Request timed out after 0.1 seconds",
+  );
+});
+
+Deno.test("createTimeoutSignal - signal is not aborted before timeout", () => {
+  const signal = createTimeoutSignal(1); // 1 second timeout
+  assertExists(signal);
+  assertEquals(signal.aborted, false);
+
+  clearTimeoutSignal(signal);
+});
+
+Deno.test("clearTimeoutSignal - cleans up timer properly", async () => {
+  const signal = createTimeoutSignal(0.05); // 50ms timeout
+  assertExists(signal);
+  assertEquals(signal.aborted, false);
+
+  clearTimeoutSignal(signal);
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  assertEquals(signal.aborted, false);
 });
