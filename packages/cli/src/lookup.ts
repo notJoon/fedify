@@ -159,7 +159,9 @@ export function createTimeoutSignal(
   const controller = new AbortController();
   const timerId = setTimeout(() => {
     controller.abort(
-      new Error(`Request timed out after ${timeoutSeconds} seconds`),
+      new Deno.errors.TimedOut(
+        `Request timed out after ${timeoutSeconds} seconds`,
+      ),
     );
   }, timeoutSeconds * 1000);
 
@@ -358,7 +360,7 @@ export const command = new Command()
           userAgent: options.userAgent,
         });
       } catch (error) {
-        if (error instanceof Error && error.message.includes("timed out")) {
+        if (error instanceof Deno.errors.TimedOut) {
           handleTimeoutError(spinner, options.timeout, url);
         } else {
           spinner.fail(`Failed to fetch object: ${colors.red(url)}.`);
@@ -405,7 +407,7 @@ export const command = new Command()
         }
       } catch (error) {
         logger.error("Failed to complete the traversal: {error}", { error });
-        if (error instanceof Error && error.message.includes("timed out")) {
+        if (error instanceof Deno.errors.TimedOut) {
           handleTimeoutError(spinner, options.timeout);
         } else {
           spinner.fail("Failed to complete the traversal.");
@@ -439,7 +441,7 @@ export const command = new Command()
             userAgent: options.userAgent,
           },
         ).catch((error) => {
-          if (error instanceof Error && error.message.includes("timed out")) {
+          if (error instanceof Deno.errors.TimedOut) {
             handleTimeoutError(spinner, options.timeout, url);
           }
           throw error;

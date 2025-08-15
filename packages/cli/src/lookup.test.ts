@@ -323,9 +323,9 @@ Deno.test("createTimeoutSignal - creates AbortSignal that aborts after timeout",
   await new Promise((resolve) => setTimeout(resolve, 150));
 
   assertEquals(signal.aborted, true);
-  assertEquals(signal.reason instanceof Error, true);
+  assertEquals(signal.reason instanceof Deno.errors.TimedOut, true);
   assertEquals(
-    (signal.reason as Error).message,
+    (signal.reason as Deno.errors.TimedOut).message,
     "Request timed out after 0.1 seconds",
   );
 });
