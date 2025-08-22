@@ -80,3 +80,83 @@ properties:
   range:
   - "https://www.w3.org/ns/activitystreams#Object"
   - "https://www.w3.org/ns/activitystreams#Link"
+
+- singularName: likesOf
+  functional: true
+  compactName: likesOf
+  uri: "https://w3id.org/fep/5711#likesOf"
+  description: |
+    Identifies the {@link Collection} of {@link Like} activities that are
+    associated with the collection.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: sharesOf
+  functional: true
+  compactName: sharesOf
+  uri: "https://w3id.org/fep/5711#sharesOf"
+  description: |
+    Identifies the {@link Collection} of {@link Share} activities that are
+    associated with the collection.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: repliesOf
+  functional: true
+  compactName: repliesOf
+  uri: "https://w3id.org/fep/5711#repliesOf"
+  description: |
+    Identifies the {@link Collection} of {@link Reply} activities that are
+    associated with the collection.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"  
+
+- singularName: inboxOf
+  functional: true
+  compactName: inboxOf
+  uri: "https://w3id.org/fep/5711#inboxOf"
+  description: |
+    Identifies the {@link Collection} of {@link Activity} instances that are
+    sent to the collection.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: outboxOf
+  functional: true
+  compactName: outboxOf
+  uri: "https://w3id.org/fep/5711#outboxOf"
+  description: |
+    Identifies the {@link Collection} of {@link Activity} instances that are
+    sent from the collection.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: followersOf
+  functional: true
+  compactName: followersOf
+  uri: "https://w3id.org/fep/5711#followersOf"
+  description: |
+    Identifies the {@link Collection} of {@link Follow} activities that are
+    associated with the collection.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: followingOf
+  functional: true
+  compactName: followingOf
+  uri: "https://w3id.org/fep/5711#followingOf"
+  description: |
+    Identifies the {@link Collection} of {@link Follow} activities that are
+    associated with the collection.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: likedOf
+  functional: true
+  compactName: likedOf
+  uri: "https://w3id.org/fep/5711#likedOf"
+  description: |
+    Identifies the {@link Collection} of {@link Like} activities that are
+    associated with the collection.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
