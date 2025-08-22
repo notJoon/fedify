@@ -196,13 +196,15 @@ maintenance:
 
 ### Branch Types
 
-1. **main**: Contains unreleased development for the next major/minor version
-2. **x.y-maintenance**: Maintenance branches for released major/minor versions
+1. **next**: Contains unreleased development for the next major version
+2. **main**: Contains unreleased development for the next minor version
+3. **x.y-maintenance**: Maintenance branches for released major/minor versions
    (e.g., `1.5-maintenance`, `1.6-maintenance`)
 
 ### Development Workflow
 
-- **New features**: Always target the `main` branch
+- **Breaking changes**: Target the `next` branch
+- **New features**: Target the `main` branch
 - **Bug fixes**: Target the oldest applicable maintenance branch that contains
   the bug
 
@@ -215,9 +217,10 @@ When a bug is fixed in a maintenance branch:
 3. Merge the fix into the next maintenance branch (e.g., `1.6-maintenance`)
 4. Create a new patch release tag for that branch (e.g., `1.6.1`)
 5. Continue merging forward through all subsequent maintenance branches
-6. Finally merge into `main`
+6. Merge into `main`
+7. Finally merge into `next`
 
-This ensures that all maintenance branches and the main development branch
+This ensures that all maintenance branches and the development branches
 include the fix.
 
 
@@ -242,7 +245,7 @@ When adding features:
 3. Update documentation for API changes
 4. Verify examples work with the change
 5. Update CHANGES.md with details
-6. Target the main branch
+6. Target the main branch for non-breaking changes, or the next branch for breaking changes
 
 
 Build and Distribution

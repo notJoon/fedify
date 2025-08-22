@@ -94,13 +94,15 @@ maintenance:
 
 #### Branch types
 
- -  **main**: Contains unreleased development for the next major/minor version.
+ -  **next**: Contains unreleased development for the next major version.
+ -  **main**: Contains unreleased development for the next minor version.
  -  **x.y-maintenance**: Maintenance branches for released major/minor versions
     (e.g., *1.5-maintenance*, *1.6-maintenance*).
 
 #### Target branches
 
- -  **New features**: Always target the *main* branch.
+ -  **Breaking changes**: Target the *next* branch.
+ -  **New features**: Target the *main* branch.
  -  **Bug fixes**: Target the oldest applicable maintenance branch that contains
     the bug.
 
@@ -114,9 +116,10 @@ When a bug is fixed in a maintenance branch:
  3. Merge the fix into the next maintenance branch (e.g., *1.6-maintenance*).
  4. Create a new patch release tag for that branch (e.g., `1.6.1`).
  5. Continue merging forward through all subsequent maintenance branches.
- 6. Finally merge into *main*.
+ 6. Merge into *main*.
+ 7. Finally merge into *next*.
 
-This ensures that all maintenance branches and the main development branch
+This ensures that all maintenance branches and the development branches
 include the fix.
 
 ### Bug fix
@@ -161,7 +164,8 @@ A patch set should include the following:
  -  The *CHANGES.md* entry.  The entry should include the issue number,
     the pull request number, and your name (unless you want to be anonymous).
 
-Feature pull requests should target the *main* branch.
+Feature pull requests should target the *main* branch for non-breaking changes,
+or the *next* branch for breaking changes.
 
 ### Pull request builds
 

@@ -120,7 +120,7 @@
     "@std/path": "catalog:",
     "@std/url": "jsr:1.0.0-rc.3",
     "@std/yaml": "jsr:^1.0.6",
-    "@types/node": "^22.15.21",
+    "@types/node": "^24.2.1",
     "fast-check": "^3.22.0",
     "fetch-mock": "^12.5.2",
     "miniflare": "^4.20250523.0",

@@ -8,11 +8,27 @@ Version 1.9.0
 
 To be released.
 
+### @fedify/fedify
+
+ -  Changed how `parseSoftware()` function handles non-Semantic Versioning
+    number strings on `tryBestEffort` mode.  [[#353], [#365] by Hyeonseo Kim]]
+
 ### @fedify/cli
 
  -  Added `Next.js` option to `fedify init` command. This option allows users
     to initialize a new Fedify project with Next.js integration.
     [[#313] by Chanhaeng Lee]
+
+ -  Changed how `fedify nodeinfo` command handles non-Semantic Versioning
+    number strings on `-b`/`--best-effort` mode.  Now it uses the same logic as
+    the `parseSoftware()` function in the *@fedify/fedify* package, which
+    allows it to parse non-Semantic Versioning number strings more flexibly.
+    [[#353], [#365] by Hyeonseo Kim]]
+
+ -  Added `-T`/`--timeout` option to `fedify lookup` command. This option allows
+    users to specify timeout in seconds for network requests to prevent
+    hanging on slow or unresponsive servers.
+    [[#258] by Hyunchae Kim]
 
 ### @fedify/next
 
@@ -21,6 +37,8 @@ To be released.
 
 [Next.js]: https://nextjs.org/
 [#313]: https://github.com/fedify-dev/fedify/issues/313
+[#353]: https://github.com/fedify-dev/fedify/issues/353
+[#365]: https://github.com/fedify-dev/fedify/pull/365
 
 
 Version 1.8.5

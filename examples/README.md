@@ -6,6 +6,7 @@ Currently, there is only few examples, but more examples will be
 added in the future.[^1]
 
   -  [Actor lookup CLI](./actor-lookup-cli/)
+  -  [Custom collections example](./custom-collections/)
   -  [Federated single-user blog](./blog/)
   -  [Federated microblog](https://github.com/fedify-dev/microblog), which is
      a final result of
