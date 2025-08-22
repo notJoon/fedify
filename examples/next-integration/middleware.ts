@@ -1,13 +1,16 @@
 import { fedifyWith } from "@fedify/next";
 import federation from "@/federation";
+import { replaceHost } from "./lib/utils";
 
-export default fedifyWith(federation)(
-  /*
-    function(request: Request){
-      // Add any additional middleware here
-      return NextResponse.next()
-    }
-  */
+export default replaceHost(
+  fedifyWith(federation)(
+    /*
+      function(request: Request){
+        // Add any additional middleware here
+        return NextResponse.next()
+      }
+    */
+  ),
 );
 
 // This config makes middleware process only requests with the
