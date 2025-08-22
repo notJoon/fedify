@@ -23,32 +23,33 @@ Released on August 8, 2025.
     Now authentication verification is performed before activity processing to
     prevent actor impersonation attacks.  [[CVE-2025-54888]]
 
- - Added [FEP-5711 inverse properties for collections][FEP-5711] to Vocabulary
+ -  Added [FEP-5711 inverse properties for collections][FEP-5711] to Vocabulary
    API.  [[#373], [#381] by Jiwon Kwon]
-   -  `new Collection()` constructor now accepts `likesOf` option.
-   - Added `Collection.likesOfId` property. 
-   - Added `Collection.getLikesOf()` method.
-   -  `new Collection()` constructor now accepts `sharesOf` option.
-   - Added `Collection.sharedOfId` property.
-   - Added `Collection.getSharedOf()` method.
-   -  `new Collection()` constructor now accepts `repliesOf` option.
-   - Added `Collection.repliesOfId` property.
-   - Added `Collection.getRepliesOf()` method.
-   -  `new Collection()` constructor now accepts `inboxOf` option.
-   - Added `Collection.inboxOfId` property.
-   - Added `Collection.getInboxOf()` method.
-   -  `new Collection()` constructor now accepts `outboxOf` option.
-   - Added `Collection.outboxOfId` property.
-   - Added `Collection.getOutboxOf()` method.
-   -  `new Collection()` constructor now accepts `followersOf` option.
-   - Added `Collection.followersOfId` property.
-   - Added `Collection.getFollowersOf()` method.
-   -  `new Collection()` constructor now accepts `followingOf` option.
-   - Added `Collection.followingOfId` property.
-   - Added `Collection.getFollowingOf()` method.
-   -  `new Collection()` constructor now accepts `likedOf` option.
-   - Added `Collection.likedOfId` property.
-   - Added `Collection.getLikedOf()` method.
+
+     -  `new Collection()` constructor now accepts `likesOf` option.
+     -  Added `Collection.likesOfId` property. 
+     -  Added `Collection.getLikesOf()` method.
+     -  `new Collection()` constructor now accepts `sharesOf` option.
+     -  Added `Collection.sharedOfId` property.
+     -  Added `Collection.getSharedOf()` method.
+     -  `new Collection()` constructor now accepts `repliesOf` option.
+     -  Added `Collection.repliesOfId` property.
+     -  Added `Collection.getRepliesOf()` method.
+     -  `new Collection()` constructor now accepts `inboxOf` option.
+     -  Added `Collection.inboxOfId` property.
+     -  Added `Collection.getInboxOf()` method.
+     -  `new Collection()` constructor now accepts `outboxOf` option.
+     -  Added `Collection.outboxOfId` property.
+     -  Added `Collection.getOutboxOf()` method.
+     -  `new Collection()` constructor now accepts `followersOf` option.
+     -  Added `Collection.followersOfId` property.
+     -  Added `Collection.getFollowersOf()` method.
+     -  `new Collection()` constructor now accepts `followingOf` option.
+     -  Added `Collection.followingOfId` property.
+     -  Added `Collection.getFollowingOf()` method.
+     -  `new Collection()` constructor now accepts `likedOf` option.
+     -  Added `Collection.likedOfId` property.
+     -  Added `Collection.getLikedOf()` method.
 
 [FEP-5711]: https://w3id.org/fep/5711
 [#373]: https://github.com/fedify-dev/fedify/issues/373
