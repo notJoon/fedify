@@ -9,7 +9,7 @@ import {
   Undo,
 } from "@fedify/fedify";
 import { revalidatePath } from "next/cache";
-import { keyPairsStore, relationStore } from "~/data/store";
+import { keyPairsStore, relationStore } from "@/data/store";
 
 const federation = createFederation({
   kv: new MemoryKvStore(),
@@ -49,7 +49,7 @@ federation
     const { privateKey, publicKey } = await generateCryptoKeyPair();
     keyPairsStore.set(identifier, [{ privateKey, publicKey }]);
     return [{ privateKey, publicKey }];
-  });
+  }) /* .mapAlias() */;
 
 federation
   .setInboxListeners(`/users/{identifier}/inbox`, "/inbox")

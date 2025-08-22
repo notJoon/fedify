@@ -70,8 +70,10 @@ export const fedifyWith = <TContextData>(
   errorHandlers?: Partial<ErrorHandlers>,
 ) =>
 (
-  middleware: (request: Request) => unknown =
-    ((_: Request) => NextResponse.next()),
+  middleware: (request: Request) => unknown = ((_: Request) => {
+    console.log(_);
+    return NextResponse.next();
+  }),
 ): (request: Request) => unknown =>
 async (request: Request) => {
   if (hasFederationAcceptHeader(request)) {

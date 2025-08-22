@@ -1,14 +1,14 @@
-import { getXForwardedRequest } from "x-forwarded-fetch";
-import { hasFederationAcceptHeader, integrateFederation } from "@fedify/next";
-import federation from "~/federation";
+import { fedifyWith } from "@fedify/next";
+import federation from "@/federation";
 
-export default async function (request: Request) {
-  console.log(request);
-  if (hasFederationAcceptHeader(request)) {
-    const req = await getXForwardedRequest(request);
-    return integrateFederation(federation)(req);
-  }
-}
+export default fedifyWith(federation)(
+  /*
+    function(request: Request){
+      // Add any additional middleware here
+      return NextResponse.next()
+    }
+  */
+);
 
 // This config makes middleware process only requests with the
 // "Accept" header matching the federation accept regex.
