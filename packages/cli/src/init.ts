@@ -14,6 +14,7 @@ const packagesMetaData: Record<`@fedify/${string}`, string> = {
   "@fedify/amqp": metadata.version,
   "@fedify/express": metadata.version,
   "@fedify/h3": metadata.version,
+  "@fedify/next": metadata.version,
 };
 
 const logger = getLogger(["fedify", "cli", "init"]);
@@ -85,7 +86,7 @@ const packageManagerLocations: Record<PackageManager, string | undefined> =
     ),
   );
 
-type WebFramework = "fresh" | "hono" | "express" | "nitro";
+type WebFramework = "fresh" | "hono" | "express" | "nitro" | "next";
 
 interface WebFrameworkInitializer {
   command?: [string, ...string[]] | [...string[], string];
@@ -435,6 +436,75 @@ To start the server, run the following command:
 Then, try look up an actor from your server:
 
   ${colors.bold(colors.green("fedify lookup http://localhost:3000/users/john"))}
+`,
+    }),
+  },
+  next: {
+    label: "Next.js",
+    runtimes: ["node"],
+    init: (_, __, packageManager) => ({
+      label: "Next.js",
+      runtimes: ["node"],
+      command: [
+        ...(packageManager === "npm" ? ["npx"] : [packageManager, "dlx"]),
+        "create-next-app@canary",
+        ".",
+        "--ts",
+        "--tailwind",
+        "--eslint",
+        "--app",
+        "--turbopack",
+        "--skip-install",
+      ],
+      dependencies: {
+        "@fedify/next": getLatestVersion("@fedify/next"),
+      },
+      devDependencies: {
+        "@types/node": "^20.11.2",
+      },
+      federationFile: "federation/index.ts",
+      loggingFile: "logging.ts",
+      files: {
+        "middleware.ts": `
+import { fedifyWith } from "@fedify/next";
+import federation from "./federation";
+
+export default fedifyWith(federation)(
+/*
+  function (request: Request) {
+    // If you need to handle other requests besides federation
+    // requests in middleware, you can do it here.
+    // If you handle only federation requests in middleware,
+    // you don't need this function.
+    return NextResponse.next();
+  },
+*/
+)
+
+// This config needs because middleware process only requests with the
+// "Accept" header matching the federation accept regex.
+// More details: https://nextjs.org/docs/app/api-reference/file-conventions/middleware#config-object-optional
+export const config = {
+  runtime: "nodejs",
+  matcher: [{
+    source: "/:path*",
+    has: [
+      {
+        type: "header",
+        key: "Accept",
+        value: ".*application\\\\/((jrd|activity|ld)\\\\+json|xrd\\\\+xml).*",
+      },
+    ],
+  }],
+};
+`,
+      },
+      instruction: `
+To start the server, run the following command:
+
+  ${colors.bold(colors.green(packageManager + " run dev"))}
+Then, try look up an actor from your server:
+      ${colors.bold(colors.green("fedify lookup @john@localhost:3000"))}
 `,
     }),
   },
