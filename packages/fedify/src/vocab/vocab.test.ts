@@ -24,6 +24,7 @@ import * as vocab from "./vocab.ts";
 import {
   Activity,
   Announce,
+  Collection,
   Create,
   CryptographicKey,
   type DataIntegrityProof,
@@ -665,6 +666,26 @@ test("Person.toJsonLd()", async () => {
     alsoKnownAs: "https://example.com/alias",
     type: "Person",
   });
+});
+
+test("Collection.fromJsonLd()", async () => {
+  const collection = await Collection.fromJsonLd({
+    "@context": [
+      "https://www.w3.org/ns/activitystreams",
+      "https://w3id.org/fep/5711",
+    ],
+    "type": "Collection",
+    "id": "https://example.com/collection/jzc50wc28l",
+    "inboxOf": "https://example.com/person/bup9a8eqm",
+  });
+  assertEquals(
+    collection.id,
+    new URL("https://example.com/collection/jzc50wc28l"),
+  );
+  assertEquals(
+    collection.inboxOfId,
+    new URL("https://example.com/person/bup9a8eqm"),
+  );
 });
 
 test("Note.quoteUrl", async () => {
