@@ -1,0 +1,67 @@
+{
+  "name": "@fedify/next",
+  "version": "1.9.0",
+  "description": "Integrate Fedify with Next.js",
+  "keywords": [
+    "Fedify",
+    "ActivityPub",
+    "Fediverse",
+    "Next",
+    "Next.js"
+  ],
+  "author": {
+    "name": "Chanhaeng Lee",
+    "email": "2chanhaeng@gmail.com",
+    "url": "https://chomu.dev"
+  },
+  "homepage": "https://fedify.dev/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fedify-dev/fedify.git",
+    "directory": "packages/next"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fedify-dev/fedify/issues"
+  },
+  "funding": [
+    "https://opencollective.com/fedify",
+    "https://github.com/sponsors/dahlia"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "package.json"
+  ],
+  "peerDependencies": {
+    "@fedify/fedify": "workspace:",
+    "next": "catalog:"
+  },
+  "devDependencies": {
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "tsdown",
+    "prepublish": "tsdown"
+  }
+}

@@ -178,7 +178,7 @@ Works with virtually any JavaScript/TypeScript web framework:
  -  [Hono](./manual/integration.md#hono)
  -  [Fresh](./manual/integration.md#fresh)
  -  [SvelteKit](./manual/integration.md#sveltekit)
- -  Next.js
+ -  [Next.js](./manual/integration.md#next.js)
  -  [h3](./manual/integration.md#h3)/Nitro
 
 … and many more!

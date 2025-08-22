@@ -480,6 +480,83 @@ console.log("Elysia App Start!");
 [Elysia]: https://elysiajs.com/
 
 
+Next.js
+-------
+
+*This API is available since Fedify 1.9.0.*
+
+[Next.js] is a React framework that enables you to build server-rendered
+and statically generated web applications.  Fedify has the `@fedify/next`
+module that provides a middleware to integrate Fedify with Next.js.  Create
+an app with the following command using the Fedify CLI:
+
+~~~~ sh
+fedify init my-next-app
+~~~~
+
+~~~~
+? Choose the JavaScript runtime to use › Node.js
+? Choose the package manager to use › npm
+? Choose the web framework to integrate Fedify with › Next.js
+? Choose the key–value store to use for caching › In-memory
+? Choose the message queue to use for background jobs › In-process
+✔ Would you like your code inside a `src/` directory? … No
+✔ Would you like to customize the import alias (`@/*` by default)? … No
+~~~~
+
+Then you can see the Next.js boilerplate code in the `my-next-app` directory.
+But if you created a Next.js app with `create-next-app` before, you'll see
+some differences in the code. There is a `middleware.ts` file in the
+`my-next-app` directory, which is the entry point to the Fedify middleware
+from the Next.js framework:
+
+~~~~ typescript
+import { fedifyWith } from "@fedify/next";
+import federation from "./federation";
+
+export default fedifyWith(federation)(
+/*
+  function (request: Request) {
+    // If you need to handle other requests besides federation
+    // requests in middleware, you can do it here.
+    // If you handle only federation requests in middleware,
+    // you don't need this function.
+    return NextResponse.next();
+  },
+*/
+)
+
+// This config needs because middleware process only requests with the
+// "Accept" header matching the federation accept regex.
+// More details: https://nextjs.org/docs/app/api-reference/file-conventions/middleware#config-object-optional
+export const config = {
+  runtime: "nodejs",
+  matcher: [{
+    source: "/:path*",
+    has: [
+      {
+        type: "header",
+        key: "Accept",
+        value: ".*application\\\\/((jrd|activity|ld)\\\\+json|xrd\\\\+xml).*",
+      },
+    ],
+  }],
+};
+~~~~
+
+As you can see in the comment, you can handle other requests besides
+federation requests in the middleware.  If you handle only federation requests
+in the middleware, you can omit the function argument of `fedifyWith()`.
+The `config` object is necessary to let Next.js know that the middleware
+should process requests with the `Accept` header matching the federation
+accept regex.  This is because Next.js middleware processes only requests
+with the `Accept` header matching the regex by default.  More details can be
+found in the Next.js official documentation [`config` in `middleware.js`].
+
+[Next.js]: https://nextjs.org/
+[`config` in `middleware.js`]: https://nextjs.org/docs/app/api-reference/file-conventions/middleware#config-object-optional
+
+
 Custom middleware
 -----------------
 
