@@ -72,6 +72,15 @@ To be released.
 [Next.js]: https://nextjs.org/
 [#313]: https://github.com/fedify-dev/fedify/issues/313
 
+### examples/next-integration
+
+
+ -  Created example using *@fedify/next* package.
+    [[#356] by Chanhaeng Lee]
+
+[Next.js]: https://nextjs.org/
+[#356]: https://github.com/fedify-dev/fedify/issues/356
+
 
 Version 1.8.5
 -------------

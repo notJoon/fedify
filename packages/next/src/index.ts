@@ -3,6 +3,7 @@
  * ===================
  *
  * This module provides a [Next.js] middleware to integrate with the Fedify.
+ * You can see the example in `examples/next-integration`.
  *
  * [Next.js]: https://nextjs.org/
  *

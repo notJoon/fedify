@@ -1,5 +1,12 @@
 # Fedify–Next.js integration example
 
+## `create-next-app`
+
+If you created Fedify–Next.js app with `create-next-app` and
+`-e https://github.com/fedify-dev/fedify --example-path examples/next-integration`
+option, you should fix `@fedify/fedify` and `@fedify/next` packages version
+to `^1.9.0` from `:workspace` in [`package.json`](./package.json).
+
 ## Running the Example
 
 1.  Clone the repository:

@@ -485,6 +485,13 @@ Next.js
 
 *This API is available since Fedify 1.9.0.*
 
+> [!TIP]
+> You can see the example in the `examples/next-integration` directory.
+> Or you can just create Fedify–Next.js with following command!:
+> ```sh
+> npx create-next-app -e https://github.com/fedify-dev/fedify --example-path examples/next-integration
+> ```
+
 [Next.js] is a React framework that enables you to build server-rendered
 and statically generated web applications.  Fedify has the `@fedify/next`
 module that provides a middleware to integrate Fedify with Next.js.  Create
