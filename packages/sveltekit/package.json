@@ -53,7 +53,7 @@
   ],
   "peerDependencies": {
     "@fedify/fedify": "workspace:",
-    "@sveltejs/kit": "workspace:"
+    "@sveltejs/kit": "catalog:"
   },
   "devDependencies": {
     "tsdown": "catalog:",

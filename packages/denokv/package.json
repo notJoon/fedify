@@ -53,6 +53,9 @@
   "peerDependencies": {
     "@fedify/fedify": "workspace:"
   },
+  "dependencies": {
+    "es-toolkit": "catalog:"
+  },
   "devDependencies": {
     "tsdown": "catalog:",
     "typescript": "catalog:"

@@ -52,7 +52,7 @@
   ],
   "peerDependencies": {
     "@fedify/fedify": "workspace:",
-    "@cloudflare/workers-types": "workspace:"
+    "@cloudflare/workers-types": "catalog:"
   },
   "devDependencies": {
     "tsdown": "catalog:",
