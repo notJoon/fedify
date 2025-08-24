@@ -37,6 +37,7 @@ interface CommandOptions {
   userAgent?: string;
   separator: string;
   output?: string;
+  timeout?: number;
 }
 
 export async function createFileStream(
@@ -149,6 +150,61 @@ export async function writeObjectToStream(
   }
 }
 
+const signalTimers = new WeakMap<AbortSignal, number>();
+
+export function createTimeoutSignal(
+  timeoutSeconds?: number,
+): AbortSignal | undefined {
+  if (timeoutSeconds == null) return undefined;
+  const controller = new AbortController();
+  const timerId = setTimeout(() => {
+    controller.abort(
+      new Deno.errors.TimedOut(
+        `Request timed out after ${timeoutSeconds} seconds`,
+      ),
+    );
+  }, timeoutSeconds * 1000);
+
+  signalTimers.set(controller.signal, timerId);
+
+  return controller.signal;
+}
+
+export function clearTimeoutSignal(signal?: AbortSignal): void {
+  if (!signal) return;
+  const timerId = signalTimers.get(signal);
+  if (timerId !== undefined) {
+    clearTimeout(timerId);
+    signalTimers.delete(signal);
+  }
+}
+
+function handleTimeoutError(
+  spinner: { fail: (text: string) => void },
+  timeoutSeconds?: number,
+  url?: string,
+): void {
+  const urlText = url ? ` for: ${colors.red(url)}` : "";
+  spinner.fail(`Request timed out after ${timeoutSeconds} seconds${urlText}.`);
+  console.error(
+    "Try increasing the timeout with -T/--timeout option or check network connectivity.",
+  );
+}
+
+function wrapDocumentLoaderWithTimeout(
+  loader: DocumentLoader,
+  timeoutSeconds?: number,
+): DocumentLoader {
+  if (timeoutSeconds == null) return loader;
+
+  return (url: string, options?) => {
+    const signal = createTimeoutSignal(timeoutSeconds);
+    return loader(url, { ...options, signal }).finally(() =>
+      clearTimeoutSignal(signal)
+    );
+  };
+}
+
 export const command = new Command()
   .type("sig-spec", sigSpec)
   .arguments("<...urls:string>")
@@ -194,6 +250,10 @@ export const command = new Command()
     "-o, --output <file>",
     "Specify the output file path.",
   )
+  .option(
+    "-T, --timeout <seconds:number>",
+    "Set timeout for network requests in seconds.",
+  )
   .action(async (options, ...urls: string[]) => {
     if (urls.length < 1) {
       console.error("At least one URL or actor handle must be provided.");
@@ -212,12 +272,20 @@ export const command = new Command()
       discardStdin: false,
     }).start();
     let server: TemporaryServer | undefined = undefined;
-    const documentLoader = await getDocumentLoader({
+    const baseDocumentLoader = await getDocumentLoader({
       userAgent: options.userAgent,
     });
-    const contextLoader = await getContextLoader({
+    const documentLoader = wrapDocumentLoaderWithTimeout(
+      baseDocumentLoader,
+      options.timeout,
+    );
+    const baseContextLoader = await getContextLoader({
       userAgent: options.userAgent,
     });
+    const contextLoader = wrapDocumentLoaderWithTimeout(
+      baseContextLoader,
+      options.timeout,
+    );
     let authLoader: DocumentLoader | undefined = undefined;
     if (options.authorizedFetch) {
       spinner.text = "Generating a one-time key pair...";
@@ -257,7 +325,7 @@ export const command = new Command()
           { contextLoader },
         );
       });
-      authLoader = getAuthenticatedDocumentLoader(
+      const baseAuthLoader = getAuthenticatedDocumentLoader(
         {
           keyId: new URL("#main-key", server.url),
           privateKey: key.privateKey,
@@ -272,6 +340,10 @@ export const command = new Command()
           },
         },
       );
+      authLoader = wrapDocumentLoaderWithTimeout(
+        baseAuthLoader,
+        options.timeout,
+      );
     }
 
     spinner.text = `Looking up the ${
@@ -280,11 +352,27 @@ export const command = new Command()
 
     if (options.traverse) {
       const url = urls[0];
-      const collection = await lookupObject(url, {
-        documentLoader: authLoader ?? documentLoader,
-        contextLoader,
-        userAgent: options.userAgent,
-      });
+      let collection: APObject | null;
+      try {
+        collection = await lookupObject(url, {
+          documentLoader: authLoader ?? documentLoader,
+          contextLoader,
+          userAgent: options.userAgent,
+        });
+      } catch (error) {
+        if (error instanceof Deno.errors.TimedOut) {
+          handleTimeoutError(spinner, options.timeout, url);
+        } else {
+          spinner.fail(`Failed to fetch object: ${colors.red(url)}.`);
+          if (authLoader == null) {
+            console.error(
+              "It may be a private object.  Try with -a/--authorized-fetch.",
+            );
+          }
+        }
+        await server?.close();
+        Deno.exit(1);
+      }
       if (collection == null) {
         spinner.fail(`Failed to fetch object: ${colors.red(url)}.`);
         if (authLoader == null) {
@@ -319,15 +407,19 @@ export const command = new Command()
         }
       } catch (error) {
         logger.error("Failed to complete the traversal: {error}", { error });
-        spinner.fail("Failed to complete the traversal.");
-        if (authLoader == null) {
-          console.error(
-            "It may be a private object.  Try with -a/--authorized-fetch.",
-          );
+        if (error instanceof Deno.errors.TimedOut) {
+          handleTimeoutError(spinner, options.timeout);
         } else {
-          console.error(
-            "Use the -S/--suppress-errors option to suppress partial errors.",
-          );
+          spinner.fail("Failed to complete the traversal.");
+          if (authLoader == null) {
+            console.error(
+              "It may be a private object.  Try with -a/--authorized-fetch.",
+            );
+          } else {
+            console.error(
+              "Use the -S/--suppress-errors option to suppress partial errors.",
+            );
+          }
         }
         await server?.close();
         Deno.exit(1);
@@ -348,11 +440,22 @@ export const command = new Command()
             contextLoader,
             userAgent: options.userAgent,
           },
-        ),
+        ).catch((error) => {
+          if (error instanceof Deno.errors.TimedOut) {
+            handleTimeoutError(spinner, options.timeout, url);
+          }
+          throw error;
+        }),
       );
     }
 
-    const objects = await Promise.all(promises);
+    let objects: (APObject | null)[];
+    try {
+      objects = await Promise.all(promises);
+    } catch (_error) {
+      await server?.close();
+      Deno.exit(1);
+    }
     let success = true;
     let i = 0;
     for (const object of objects) {

@@ -10,7 +10,6 @@
  * @since 1.9.0
  */
 import type { Federation, FederationFetchOptions } from "@fedify/fedify";
-import { notFound } from "next/navigation";
 import { NextResponse } from "next/server";
 
 interface ContextDataFactory<TContextData> {
@@ -52,16 +51,30 @@ type ErrorHandlers = Omit<FederationFetchOptions<unknown>, "contextData">;
  * // More details: https://nextjs.org/docs/app/api-reference/file-conventions/middleware#config-object-optional.
  * export const config = {
  *   runtime: "nodejs",
- *   matcher: [{
- *     source: "/:path*",
- *     has: [
- *       {
- *         type: "header",
- *         key: "Accept",
- *         value: ".*application\\/((jrd|activity|ld)\\+json|xrd\\+xml).*",
- *       },
- *     ],
- *   }],
+ *   matcher: [
+ *     {
+ *       source: "/:path*",
+ *       has: [
+ *         {
+ *           type: "header",
+ *           key: "Accept",
+ *           value: ".*application\\/((jrd|activity|ld)\\+json|xrd\\+xml).*",
+ *         },
+ *       ],
+ *     },
+ *     {
+ *       source: "/:path*",
+ *       has: [
+ *         {
+ *           type: "header",
+ *           key: "content-type",
+ *           value: ".*application\\/((jrd|activity|ld)\\+json|xrd\\+xml).*",
+ *         },
+ *       ],
+ *     },
+ *     { source: "/.well-known/nodeinfo" },
+ *     { source: "/.well-known/x-nodeinfo2" },
+ *   ],
  * };
  * ```
  */
@@ -75,7 +88,7 @@ export const fedifyWith = <TContextData>(
     ((_: Request) => NextResponse.next()),
 ): (request: Request) => unknown =>
 async (request: Request) => {
-  if (hasFederationAcceptHeader(request)) {
+  if (isFederationRequest(request)) {
     return await integrateFederation(
       federation,
       contextDataFactory,
@@ -85,20 +98,37 @@ async (request: Request) => {
   return await middleware(request);
 };
 
+export const isFederationRequest = (request: Request): boolean =>
+  [
+    hasFederationHeader("accept"),
+    hasFederationHeader("content-type"),
+    isNodeInfoRequest,
+  ].some((f) => f(request));
+
 /**
- * Check if the request has the "Accept" header matching the federation
+ * Check if the request has the header matching the federation
  * accept regex.
- *
+ * @param key The header key to check.
  * @param request The request to check.
- * @returns `true` if the request has the "Accept" header matching
+ * @returns `true` if the request has the header matching
  *                    the federation accept regex, `false` otherwise.
  */
-export const hasFederationAcceptHeader = (request: Request): boolean => {
-  const acceptHeader = request.headers.get("Accept");
-  // Check if the Accept header matches the federation accept regex.
-  // If the header is not present, return false.
-  return acceptHeader ? FEDERATION_ACCEPT_REGEX.test(acceptHeader) : false;
+export const hasFederationHeader =
+  (key: string) => (request: Request): boolean => {
+    const value = request.headers.get(key);
+    return value ? FEDERATION_ACCEPT_REGEX.test(value) : false;
+  };
+
+export const isNodeInfoRequest = (request: Request): boolean => {
+  const url = new URL(request.url);
+  return NODEINFO_PATHS.some((path) => url.pathname.startsWith(path));
 };
+
+const NODEINFO_PATHS = [
+  "/.well-known/nodeinfo",
+  "/.well-known/x-nodeinfo2",
+];
+
 const FEDERATION_ACCEPT_REGEX =
   /.*application\/((jrd|activity|ld)\+json|xrd\+xml).*/;
 
@@ -125,12 +155,13 @@ export function integrateFederation<TContextData>(
       request,
       {
         contextData: await contextDataFactory(request),
-        onNotFound: notFound,
+        onNotFound,
         onNotAcceptable,
         ...errorHandlers,
       },
     );
 }
+const onNotFound = () => new Response("Not found", { status: 404 });
 const onNotAcceptable = () =>
   new Response("Not acceptable", {
     status: 406,

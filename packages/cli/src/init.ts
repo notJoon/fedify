@@ -486,16 +486,30 @@ export default fedifyWith(federation)(
 // More details: https://nextjs.org/docs/app/api-reference/file-conventions/middleware#config-object-optional
 export const config = {
   runtime: "nodejs",
-  matcher: [{
-    source: "/:path*",
-    has: [
-      {
-        type: "header",
-        key: "Accept",
-        value: ".*application\\\\/((jrd|activity|ld)\\\\+json|xrd\\\\+xml).*",
-      },
-    ],
-  }],
+  matcher: [
+    {
+      source: "/:path*",
+      has: [
+        {
+          type: "header",
+          key: "Accept",
+          value: ".*application\\/((jrd|activity|ld)\\+json|xrd\\+xml).*",
+        },
+      ],
+    },
+    {
+      source: "/:path*",
+      has: [
+        {
+          type: "header",
+          key: "content-type",
+          value: ".*application\\/((jrd|activity|ld)\\+json|xrd\\+xml).*",
+        },
+      ],
+    },
+    { source: "/.well-known/nodeinfo" },
+    { source: "/.well-known/x-nodeinfo2" },
+  ],
 };
 `,
       },
