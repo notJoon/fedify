@@ -3,9 +3,10 @@
  * ===================
  *
  * This module provides a [Next.js] middleware to integrate with the Fedify.
- * You can see the example in `examples/next-integration`.
+ * You can see the example in `examples/next-integration` of the [Fedify repository].
  *
  * [Next.js]: https://nextjs.org/
+ * [Fedify repository]: https://github.com/fedify-dev/fedify/
  *
  * @module
  * @since 1.9.0
