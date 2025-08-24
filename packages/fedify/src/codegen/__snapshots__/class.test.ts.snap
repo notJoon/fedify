@@ -26395,6 +26395,14 @@ export class Collection extends Object {
 #_J52RqweMe6hhv7RnLJMC8BExTE5_first: (CollectionPage | URL)[] = [];
 #_gyJJnyEFnuNVi1HFZKfAn3Hfn26_last: (CollectionPage | URL)[] = [];
 #_2JPCKWTcfBmTCcW8Tv3TpRaLVaqg_items: (Object | Link | URL)[] = [];
+#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf: (Object | URL)[] = [];
+#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf: (Object | URL)[] = [];
+#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf: (Object | URL)[] = [];
+#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf: (Object | URL)[] = [];
+#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf: (Object | URL)[] = [];
+#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf: (Object | URL)[] = [];
+#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf: (Object | URL)[] = [];
+#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf: (Object | URL)[] = [];
 
   /**
    * Constructs a new instance of Collection with the given values.
@@ -26421,7 +26429,7 @@ tos?: (Object | URL)[];bto?: Object | URL | null;
 btos?: (Object | URL)[];cc?: Object | URL | null;
 ccs?: (Object | URL)[];bcc?: Object | URL | null;
 bccs?: (Object | URL)[];mediaType?: string | null;duration?: Temporal.Duration | null;sensitive?: boolean | null;source?: Source | null;proof?: DataIntegrityProof | URL | null;
-proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];}
+proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];likesOf?: Object | URL | null;sharesOf?: Object | URL | null;repliesOf?: Object | URL | null;inboxOf?: Object | URL | null;outboxOf?: Object | URL | null;followersOf?: Object | URL | null;followingOf?: Object | URL | null;likedOf?: Object | URL | null;}
 ,
     options: {
       documentLoader?: DocumentLoader,
@@ -26491,6 +26499,102 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
             );
           }
         }
+      
+        if (\\"likesOf\\" in values &&             values.likesOf != null) {
+          if (values.likesOf instanceof Object || values.likesOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf = [values.likesOf];
+          } else {
+            throw new TypeError(
+              \\"The likesOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      
+        if (\\"sharesOf\\" in values &&             values.sharesOf != null) {
+          if (values.sharesOf instanceof Object || values.sharesOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf = [values.sharesOf];
+          } else {
+            throw new TypeError(
+              \\"The sharesOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      
+        if (\\"repliesOf\\" in values &&             values.repliesOf != null) {
+          if (values.repliesOf instanceof Object || values.repliesOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf = [values.repliesOf];
+          } else {
+            throw new TypeError(
+              \\"The repliesOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      
+        if (\\"inboxOf\\" in values &&             values.inboxOf != null) {
+          if (values.inboxOf instanceof Object || values.inboxOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf = [values.inboxOf];
+          } else {
+            throw new TypeError(
+              \\"The inboxOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      
+        if (\\"outboxOf\\" in values &&             values.outboxOf != null) {
+          if (values.outboxOf instanceof Object || values.outboxOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf = [values.outboxOf];
+          } else {
+            throw new TypeError(
+              \\"The outboxOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      
+        if (\\"followersOf\\" in values &&             values.followersOf != null) {
+          if (values.followersOf instanceof Object || values.followersOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf = [values.followersOf];
+          } else {
+            throw new TypeError(
+              \\"The followersOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      
+        if (\\"followingOf\\" in values &&             values.followingOf != null) {
+          if (values.followingOf instanceof Object || values.followingOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf = [values.followingOf];
+          } else {
+            throw new TypeError(
+              \\"The followingOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      
+        if (\\"likedOf\\" in values &&             values.likedOf != null) {
+          if (values.likedOf instanceof Object || values.likedOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf = [values.likedOf];
+          } else {
+            throw new TypeError(
+              \\"The likedOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
       }
 
   /**
@@ -26519,7 +26623,7 @@ tos?: (Object | URL)[];bto?: Object | URL | null;
 btos?: (Object | URL)[];cc?: Object | URL | null;
 ccs?: (Object | URL)[];bcc?: Object | URL | null;
 bccs?: (Object | URL)[];mediaType?: string | null;duration?: Temporal.Duration | null;sensitive?: boolean | null;source?: Source | null;proof?: DataIntegrityProof | URL | null;
-proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];}
+proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];likesOf?: Object | URL | null;sharesOf?: Object | URL | null;repliesOf?: Object | URL | null;inboxOf?: Object | URL | null;outboxOf?: Object | URL | null;followersOf?: Object | URL | null;followingOf?: Object | URL | null;likedOf?: Object | URL | null;}
 
     = {},
     options: {
@@ -26594,6 +26698,102 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
             throw new TypeError(
               \\"The items must be an array of type \\" +
               \\"Object | Link | URL\\" + \\".\\",
+            );
+          }
+        }
+      clone.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf = this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf;
+        if (\\"likesOf\\" in values &&             values.likesOf != null) {
+          if (values.likesOf instanceof Object || values.likesOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            clone.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf = [values.likesOf];
+          } else {
+            throw new TypeError(
+              \\"The likesOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      clone.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf = this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf;
+        if (\\"sharesOf\\" in values &&             values.sharesOf != null) {
+          if (values.sharesOf instanceof Object || values.sharesOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            clone.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf = [values.sharesOf];
+          } else {
+            throw new TypeError(
+              \\"The sharesOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      clone.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf = this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf;
+        if (\\"repliesOf\\" in values &&             values.repliesOf != null) {
+          if (values.repliesOf instanceof Object || values.repliesOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            clone.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf = [values.repliesOf];
+          } else {
+            throw new TypeError(
+              \\"The repliesOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      clone.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf = this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf;
+        if (\\"inboxOf\\" in values &&             values.inboxOf != null) {
+          if (values.inboxOf instanceof Object || values.inboxOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            clone.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf = [values.inboxOf];
+          } else {
+            throw new TypeError(
+              \\"The inboxOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      clone.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf = this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf;
+        if (\\"outboxOf\\" in values &&             values.outboxOf != null) {
+          if (values.outboxOf instanceof Object || values.outboxOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            clone.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf = [values.outboxOf];
+          } else {
+            throw new TypeError(
+              \\"The outboxOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      clone.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf = this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf;
+        if (\\"followersOf\\" in values &&             values.followersOf != null) {
+          if (values.followersOf instanceof Object || values.followersOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            clone.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf = [values.followersOf];
+          } else {
+            throw new TypeError(
+              \\"The followersOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      clone.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf = this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf;
+        if (\\"followingOf\\" in values &&             values.followingOf != null) {
+          if (values.followingOf instanceof Object || values.followingOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            clone.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf = [values.followingOf];
+          } else {
+            throw new TypeError(
+              \\"The followingOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
+            );
+          }
+        }
+      clone.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf = this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf;
+        if (\\"likedOf\\" in values &&             values.likedOf != null) {
+          if (values.likedOf instanceof Object || values.likedOf instanceof URL) {
+            // @ts-ignore: type is checked above.
+            clone.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf = [values.likedOf];
+          } else {
+            throw new TypeError(
+              \\"The likedOf must be of type \\" +
+              \\"Object | URL\\" + \\".\\",
             );
           }
         }
@@ -27286,6 +27486,1310 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
         }
       }
       
+    async #fetchLikesOf(
+      url: URL,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        suppressError?: boolean,
+        tracerProvider?: TracerProvider,
+      } = {}
+    ): Promise<Object | null> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+      const tracer = tracerProvider.getTracer(
+        \\"@fedify/fedify\\",
+        \\"0.0.0\\",
+      );
+      return await tracer.startActiveSpan(\\"activitypub.lookup_object\\", async (span) => {
+        let fetchResult: RemoteDocument;
+        try {
+          fetchResult = await documentLoader(url.href);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.end();
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to fetch {url}: {error}\\",
+              { error, url: url.href }
+            );
+            return null;
+          }
+          throw error;
+        }
+        const { document } = fetchResult;
+        try {
+          const obj = await this.#likesOf_fromJsonLd(
+            document,
+            { documentLoader, contextLoader, tracerProvider }
+          );
+          span.setAttribute(\\"activitypub.object.id\\", (obj.id ?? url).href);
+          span.setAttribute(
+            \\"activitypub.object.type\\",
+            // @ts-ignore: obj.constructor always has a typeId.
+            obj.constructor.typeId.href
+          );
+          return obj;
+        } catch (e) {
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to parse {url}: {error}\\",
+              { error: e, url: url.href }
+            );
+            return null;
+          }
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(e),
+          });
+          throw e;
+        } finally {
+          span.end();
+        }
+      });
+    }
+
+    async #likesOf_fromJsonLd(
+      jsonLd: unknown,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        tracerProvider?: TracerProvider,
+      }
+    ): Promise<Object> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+    
+        try {
+          return await Object.fromJsonLd(
+            jsonLd,
+            { documentLoader, contextLoader, tracerProvider },
+          );
+        } catch (e) {
+          if (!(e instanceof TypeError)) throw e;
+        }
+      
+      throw new TypeError(\\"Expected an object of any type of: \\" +
+        [\\"https://www.w3.org/ns/activitystreams#Object\\"].join(\\", \\"));
+    }
+
+    
+      /**
+       * Similar to
+       * {@link Collection.getLikesOf},
+       * but returns its \`@id\` URL instead of the object itself.
+       */
+       get likesOfId(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf.length < 1) return null;
+        const v = this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf[0];
+        if (v instanceof URL) return v;
+        return v.id;
+      }
+      
+/** Defines an object for which the collection is the value of the likes property.
+ * 
+ */
+
+       async getLikesOf(
+        options: {
+          documentLoader?: DocumentLoader,
+          contextLoader?: DocumentLoader,
+          suppressError?: boolean,
+          tracerProvider?: TracerProvider,
+        } = {}
+      ): Promise<Object | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf.length < 1) return null;
+        const v = this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf[0];
+        if (v instanceof URL) {
+          const fetched =
+            await this.#fetchLikesOf(v, options);
+          if (fetched == null) return null;
+          this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf[0] = fetched;
+          this._cachedJsonLd = undefined;
+          return fetched;
+        }
+      
+        if (
+          this._cachedJsonLd != null &&
+          typeof this._cachedJsonLd === \\"object\\" &&
+          \\"@context\\" in this._cachedJsonLd &&
+          \\"likesOf\\" in this._cachedJsonLd
+        ) {
+          const prop = this._cachedJsonLd[
+            \\"likesOf\\"];
+          const obj = Array.isArray(prop) ? prop[0] : prop;
+          if (obj != null && typeof obj === \\"object\\" && \\"@context\\" in obj) {
+            return await this.#likesOf_fromJsonLd(obj, options);
+          }
+        }
+        
+        return v;
+      }
+      
+    async #fetchSharesOf(
+      url: URL,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        suppressError?: boolean,
+        tracerProvider?: TracerProvider,
+      } = {}
+    ): Promise<Object | null> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+      const tracer = tracerProvider.getTracer(
+        \\"@fedify/fedify\\",
+        \\"0.0.0\\",
+      );
+      return await tracer.startActiveSpan(\\"activitypub.lookup_object\\", async (span) => {
+        let fetchResult: RemoteDocument;
+        try {
+          fetchResult = await documentLoader(url.href);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.end();
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to fetch {url}: {error}\\",
+              { error, url: url.href }
+            );
+            return null;
+          }
+          throw error;
+        }
+        const { document } = fetchResult;
+        try {
+          const obj = await this.#sharesOf_fromJsonLd(
+            document,
+            { documentLoader, contextLoader, tracerProvider }
+          );
+          span.setAttribute(\\"activitypub.object.id\\", (obj.id ?? url).href);
+          span.setAttribute(
+            \\"activitypub.object.type\\",
+            // @ts-ignore: obj.constructor always has a typeId.
+            obj.constructor.typeId.href
+          );
+          return obj;
+        } catch (e) {
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to parse {url}: {error}\\",
+              { error: e, url: url.href }
+            );
+            return null;
+          }
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(e),
+          });
+          throw e;
+        } finally {
+          span.end();
+        }
+      });
+    }
+
+    async #sharesOf_fromJsonLd(
+      jsonLd: unknown,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        tracerProvider?: TracerProvider,
+      }
+    ): Promise<Object> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+    
+        try {
+          return await Object.fromJsonLd(
+            jsonLd,
+            { documentLoader, contextLoader, tracerProvider },
+          );
+        } catch (e) {
+          if (!(e instanceof TypeError)) throw e;
+        }
+      
+      throw new TypeError(\\"Expected an object of any type of: \\" +
+        [\\"https://www.w3.org/ns/activitystreams#Object\\"].join(\\", \\"));
+    }
+
+    
+      /**
+       * Similar to
+       * {@link Collection.getSharesOf},
+       * but returns its \`@id\` URL instead of the object itself.
+       */
+       get sharesOfId(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf.length < 1) return null;
+        const v = this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf[0];
+        if (v instanceof URL) return v;
+        return v.id;
+      }
+      
+/** Defines an object for which the collection is the value of the shares property.
+ * 
+ */
+
+       async getSharesOf(
+        options: {
+          documentLoader?: DocumentLoader,
+          contextLoader?: DocumentLoader,
+          suppressError?: boolean,
+          tracerProvider?: TracerProvider,
+        } = {}
+      ): Promise<Object | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf.length < 1) return null;
+        const v = this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf[0];
+        if (v instanceof URL) {
+          const fetched =
+            await this.#fetchSharesOf(v, options);
+          if (fetched == null) return null;
+          this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf[0] = fetched;
+          this._cachedJsonLd = undefined;
+          return fetched;
+        }
+      
+        if (
+          this._cachedJsonLd != null &&
+          typeof this._cachedJsonLd === \\"object\\" &&
+          \\"@context\\" in this._cachedJsonLd &&
+          \\"sharesOf\\" in this._cachedJsonLd
+        ) {
+          const prop = this._cachedJsonLd[
+            \\"sharesOf\\"];
+          const obj = Array.isArray(prop) ? prop[0] : prop;
+          if (obj != null && typeof obj === \\"object\\" && \\"@context\\" in obj) {
+            return await this.#sharesOf_fromJsonLd(obj, options);
+          }
+        }
+        
+        return v;
+      }
+      
+    async #fetchRepliesOf(
+      url: URL,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        suppressError?: boolean,
+        tracerProvider?: TracerProvider,
+      } = {}
+    ): Promise<Object | null> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+      const tracer = tracerProvider.getTracer(
+        \\"@fedify/fedify\\",
+        \\"0.0.0\\",
+      );
+      return await tracer.startActiveSpan(\\"activitypub.lookup_object\\", async (span) => {
+        let fetchResult: RemoteDocument;
+        try {
+          fetchResult = await documentLoader(url.href);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.end();
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to fetch {url}: {error}\\",
+              { error, url: url.href }
+            );
+            return null;
+          }
+          throw error;
+        }
+        const { document } = fetchResult;
+        try {
+          const obj = await this.#repliesOf_fromJsonLd(
+            document,
+            { documentLoader, contextLoader, tracerProvider }
+          );
+          span.setAttribute(\\"activitypub.object.id\\", (obj.id ?? url).href);
+          span.setAttribute(
+            \\"activitypub.object.type\\",
+            // @ts-ignore: obj.constructor always has a typeId.
+            obj.constructor.typeId.href
+          );
+          return obj;
+        } catch (e) {
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to parse {url}: {error}\\",
+              { error: e, url: url.href }
+            );
+            return null;
+          }
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(e),
+          });
+          throw e;
+        } finally {
+          span.end();
+        }
+      });
+    }
+
+    async #repliesOf_fromJsonLd(
+      jsonLd: unknown,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        tracerProvider?: TracerProvider,
+      }
+    ): Promise<Object> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+    
+        try {
+          return await Object.fromJsonLd(
+            jsonLd,
+            { documentLoader, contextLoader, tracerProvider },
+          );
+        } catch (e) {
+          if (!(e instanceof TypeError)) throw e;
+        }
+      
+      throw new TypeError(\\"Expected an object of any type of: \\" +
+        [\\"https://www.w3.org/ns/activitystreams#Object\\"].join(\\", \\"));
+    }
+
+    
+      /**
+       * Similar to
+       * {@link Collection.getRepliesOf},
+       * but returns its \`@id\` URL instead of the object itself.
+       */
+       get repliesOfId(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf.length < 1) return null;
+        const v = this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf[0];
+        if (v instanceof URL) return v;
+        return v.id;
+      }
+      
+/** Defines an object for which the collection is the value of the replies property.
+ * 
+ */
+
+       async getRepliesOf(
+        options: {
+          documentLoader?: DocumentLoader,
+          contextLoader?: DocumentLoader,
+          suppressError?: boolean,
+          tracerProvider?: TracerProvider,
+        } = {}
+      ): Promise<Object | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf.length < 1) return null;
+        const v = this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf[0];
+        if (v instanceof URL) {
+          const fetched =
+            await this.#fetchRepliesOf(v, options);
+          if (fetched == null) return null;
+          this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf[0] = fetched;
+          this._cachedJsonLd = undefined;
+          return fetched;
+        }
+      
+        if (
+          this._cachedJsonLd != null &&
+          typeof this._cachedJsonLd === \\"object\\" &&
+          \\"@context\\" in this._cachedJsonLd &&
+          \\"repliesOf\\" in this._cachedJsonLd
+        ) {
+          const prop = this._cachedJsonLd[
+            \\"repliesOf\\"];
+          const obj = Array.isArray(prop) ? prop[0] : prop;
+          if (obj != null && typeof obj === \\"object\\" && \\"@context\\" in obj) {
+            return await this.#repliesOf_fromJsonLd(obj, options);
+          }
+        }
+        
+        return v;
+      }
+      
+    async #fetchInboxOf(
+      url: URL,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        suppressError?: boolean,
+        tracerProvider?: TracerProvider,
+      } = {}
+    ): Promise<Object | null> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+      const tracer = tracerProvider.getTracer(
+        \\"@fedify/fedify\\",
+        \\"0.0.0\\",
+      );
+      return await tracer.startActiveSpan(\\"activitypub.lookup_object\\", async (span) => {
+        let fetchResult: RemoteDocument;
+        try {
+          fetchResult = await documentLoader(url.href);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.end();
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to fetch {url}: {error}\\",
+              { error, url: url.href }
+            );
+            return null;
+          }
+          throw error;
+        }
+        const { document } = fetchResult;
+        try {
+          const obj = await this.#inboxOf_fromJsonLd(
+            document,
+            { documentLoader, contextLoader, tracerProvider }
+          );
+          span.setAttribute(\\"activitypub.object.id\\", (obj.id ?? url).href);
+          span.setAttribute(
+            \\"activitypub.object.type\\",
+            // @ts-ignore: obj.constructor always has a typeId.
+            obj.constructor.typeId.href
+          );
+          return obj;
+        } catch (e) {
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to parse {url}: {error}\\",
+              { error: e, url: url.href }
+            );
+            return null;
+          }
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(e),
+          });
+          throw e;
+        } finally {
+          span.end();
+        }
+      });
+    }
+
+    async #inboxOf_fromJsonLd(
+      jsonLd: unknown,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        tracerProvider?: TracerProvider,
+      }
+    ): Promise<Object> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+    
+        try {
+          return await Object.fromJsonLd(
+            jsonLd,
+            { documentLoader, contextLoader, tracerProvider },
+          );
+        } catch (e) {
+          if (!(e instanceof TypeError)) throw e;
+        }
+      
+      throw new TypeError(\\"Expected an object of any type of: \\" +
+        [\\"https://www.w3.org/ns/activitystreams#Object\\"].join(\\", \\"));
+    }
+
+    
+      /**
+       * Similar to
+       * {@link Collection.getInboxOf},
+       * but returns its \`@id\` URL instead of the object itself.
+       */
+       get inboxOfId(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf.length < 1) return null;
+        const v = this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf[0];
+        if (v instanceof URL) return v;
+        return v.id;
+      }
+      
+/** Defines an actor for which the collection is the value of the inbox property.
+ * 
+ */
+
+       async getInboxOf(
+        options: {
+          documentLoader?: DocumentLoader,
+          contextLoader?: DocumentLoader,
+          suppressError?: boolean,
+          tracerProvider?: TracerProvider,
+        } = {}
+      ): Promise<Object | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf.length < 1) return null;
+        const v = this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf[0];
+        if (v instanceof URL) {
+          const fetched =
+            await this.#fetchInboxOf(v, options);
+          if (fetched == null) return null;
+          this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf[0] = fetched;
+          this._cachedJsonLd = undefined;
+          return fetched;
+        }
+      
+        if (
+          this._cachedJsonLd != null &&
+          typeof this._cachedJsonLd === \\"object\\" &&
+          \\"@context\\" in this._cachedJsonLd &&
+          \\"inboxOf\\" in this._cachedJsonLd
+        ) {
+          const prop = this._cachedJsonLd[
+            \\"inboxOf\\"];
+          const obj = Array.isArray(prop) ? prop[0] : prop;
+          if (obj != null && typeof obj === \\"object\\" && \\"@context\\" in obj) {
+            return await this.#inboxOf_fromJsonLd(obj, options);
+          }
+        }
+        
+        return v;
+      }
+      
+    async #fetchOutboxOf(
+      url: URL,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        suppressError?: boolean,
+        tracerProvider?: TracerProvider,
+      } = {}
+    ): Promise<Object | null> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+      const tracer = tracerProvider.getTracer(
+        \\"@fedify/fedify\\",
+        \\"0.0.0\\",
+      );
+      return await tracer.startActiveSpan(\\"activitypub.lookup_object\\", async (span) => {
+        let fetchResult: RemoteDocument;
+        try {
+          fetchResult = await documentLoader(url.href);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.end();
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to fetch {url}: {error}\\",
+              { error, url: url.href }
+            );
+            return null;
+          }
+          throw error;
+        }
+        const { document } = fetchResult;
+        try {
+          const obj = await this.#outboxOf_fromJsonLd(
+            document,
+            { documentLoader, contextLoader, tracerProvider }
+          );
+          span.setAttribute(\\"activitypub.object.id\\", (obj.id ?? url).href);
+          span.setAttribute(
+            \\"activitypub.object.type\\",
+            // @ts-ignore: obj.constructor always has a typeId.
+            obj.constructor.typeId.href
+          );
+          return obj;
+        } catch (e) {
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to parse {url}: {error}\\",
+              { error: e, url: url.href }
+            );
+            return null;
+          }
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(e),
+          });
+          throw e;
+        } finally {
+          span.end();
+        }
+      });
+    }
+
+    async #outboxOf_fromJsonLd(
+      jsonLd: unknown,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        tracerProvider?: TracerProvider,
+      }
+    ): Promise<Object> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+    
+        try {
+          return await Object.fromJsonLd(
+            jsonLd,
+            { documentLoader, contextLoader, tracerProvider },
+          );
+        } catch (e) {
+          if (!(e instanceof TypeError)) throw e;
+        }
+      
+      throw new TypeError(\\"Expected an object of any type of: \\" +
+        [\\"https://www.w3.org/ns/activitystreams#Object\\"].join(\\", \\"));
+    }
+
+    
+      /**
+       * Similar to
+       * {@link Collection.getOutboxOf},
+       * but returns its \`@id\` URL instead of the object itself.
+       */
+       get outboxOfId(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf.length < 1) return null;
+        const v = this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf[0];
+        if (v instanceof URL) return v;
+        return v.id;
+      }
+      
+/** Defines an actor for which the collection is the value of the outbox property.
+ * 
+ */
+
+       async getOutboxOf(
+        options: {
+          documentLoader?: DocumentLoader,
+          contextLoader?: DocumentLoader,
+          suppressError?: boolean,
+          tracerProvider?: TracerProvider,
+        } = {}
+      ): Promise<Object | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf.length < 1) return null;
+        const v = this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf[0];
+        if (v instanceof URL) {
+          const fetched =
+            await this.#fetchOutboxOf(v, options);
+          if (fetched == null) return null;
+          this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf[0] = fetched;
+          this._cachedJsonLd = undefined;
+          return fetched;
+        }
+      
+        if (
+          this._cachedJsonLd != null &&
+          typeof this._cachedJsonLd === \\"object\\" &&
+          \\"@context\\" in this._cachedJsonLd &&
+          \\"outboxOf\\" in this._cachedJsonLd
+        ) {
+          const prop = this._cachedJsonLd[
+            \\"outboxOf\\"];
+          const obj = Array.isArray(prop) ? prop[0] : prop;
+          if (obj != null && typeof obj === \\"object\\" && \\"@context\\" in obj) {
+            return await this.#outboxOf_fromJsonLd(obj, options);
+          }
+        }
+        
+        return v;
+      }
+      
+    async #fetchFollowersOf(
+      url: URL,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        suppressError?: boolean,
+        tracerProvider?: TracerProvider,
+      } = {}
+    ): Promise<Object | null> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+      const tracer = tracerProvider.getTracer(
+        \\"@fedify/fedify\\",
+        \\"0.0.0\\",
+      );
+      return await tracer.startActiveSpan(\\"activitypub.lookup_object\\", async (span) => {
+        let fetchResult: RemoteDocument;
+        try {
+          fetchResult = await documentLoader(url.href);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.end();
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to fetch {url}: {error}\\",
+              { error, url: url.href }
+            );
+            return null;
+          }
+          throw error;
+        }
+        const { document } = fetchResult;
+        try {
+          const obj = await this.#followersOf_fromJsonLd(
+            document,
+            { documentLoader, contextLoader, tracerProvider }
+          );
+          span.setAttribute(\\"activitypub.object.id\\", (obj.id ?? url).href);
+          span.setAttribute(
+            \\"activitypub.object.type\\",
+            // @ts-ignore: obj.constructor always has a typeId.
+            obj.constructor.typeId.href
+          );
+          return obj;
+        } catch (e) {
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to parse {url}: {error}\\",
+              { error: e, url: url.href }
+            );
+            return null;
+          }
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(e),
+          });
+          throw e;
+        } finally {
+          span.end();
+        }
+      });
+    }
+
+    async #followersOf_fromJsonLd(
+      jsonLd: unknown,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        tracerProvider?: TracerProvider,
+      }
+    ): Promise<Object> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+    
+        try {
+          return await Object.fromJsonLd(
+            jsonLd,
+            { documentLoader, contextLoader, tracerProvider },
+          );
+        } catch (e) {
+          if (!(e instanceof TypeError)) throw e;
+        }
+      
+      throw new TypeError(\\"Expected an object of any type of: \\" +
+        [\\"https://www.w3.org/ns/activitystreams#Object\\"].join(\\", \\"));
+    }
+
+    
+      /**
+       * Similar to
+       * {@link Collection.getFollowersOf},
+       * but returns its \`@id\` URL instead of the object itself.
+       */
+       get followersOfId(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf.length < 1) return null;
+        const v = this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf[0];
+        if (v instanceof URL) return v;
+        return v.id;
+      }
+      
+/** Defines an actor for which the collection is the value of the followers property.
+ * 
+ */
+
+       async getFollowersOf(
+        options: {
+          documentLoader?: DocumentLoader,
+          contextLoader?: DocumentLoader,
+          suppressError?: boolean,
+          tracerProvider?: TracerProvider,
+        } = {}
+      ): Promise<Object | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf.length < 1) return null;
+        const v = this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf[0];
+        if (v instanceof URL) {
+          const fetched =
+            await this.#fetchFollowersOf(v, options);
+          if (fetched == null) return null;
+          this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf[0] = fetched;
+          this._cachedJsonLd = undefined;
+          return fetched;
+        }
+      
+        if (
+          this._cachedJsonLd != null &&
+          typeof this._cachedJsonLd === \\"object\\" &&
+          \\"@context\\" in this._cachedJsonLd &&
+          \\"followersOf\\" in this._cachedJsonLd
+        ) {
+          const prop = this._cachedJsonLd[
+            \\"followersOf\\"];
+          const obj = Array.isArray(prop) ? prop[0] : prop;
+          if (obj != null && typeof obj === \\"object\\" && \\"@context\\" in obj) {
+            return await this.#followersOf_fromJsonLd(obj, options);
+          }
+        }
+        
+        return v;
+      }
+      
+    async #fetchFollowingOf(
+      url: URL,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        suppressError?: boolean,
+        tracerProvider?: TracerProvider,
+      } = {}
+    ): Promise<Object | null> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+      const tracer = tracerProvider.getTracer(
+        \\"@fedify/fedify\\",
+        \\"0.0.0\\",
+      );
+      return await tracer.startActiveSpan(\\"activitypub.lookup_object\\", async (span) => {
+        let fetchResult: RemoteDocument;
+        try {
+          fetchResult = await documentLoader(url.href);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.end();
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to fetch {url}: {error}\\",
+              { error, url: url.href }
+            );
+            return null;
+          }
+          throw error;
+        }
+        const { document } = fetchResult;
+        try {
+          const obj = await this.#followingOf_fromJsonLd(
+            document,
+            { documentLoader, contextLoader, tracerProvider }
+          );
+          span.setAttribute(\\"activitypub.object.id\\", (obj.id ?? url).href);
+          span.setAttribute(
+            \\"activitypub.object.type\\",
+            // @ts-ignore: obj.constructor always has a typeId.
+            obj.constructor.typeId.href
+          );
+          return obj;
+        } catch (e) {
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to parse {url}: {error}\\",
+              { error: e, url: url.href }
+            );
+            return null;
+          }
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(e),
+          });
+          throw e;
+        } finally {
+          span.end();
+        }
+      });
+    }
+
+    async #followingOf_fromJsonLd(
+      jsonLd: unknown,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        tracerProvider?: TracerProvider,
+      }
+    ): Promise<Object> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+    
+        try {
+          return await Object.fromJsonLd(
+            jsonLd,
+            { documentLoader, contextLoader, tracerProvider },
+          );
+        } catch (e) {
+          if (!(e instanceof TypeError)) throw e;
+        }
+      
+      throw new TypeError(\\"Expected an object of any type of: \\" +
+        [\\"https://www.w3.org/ns/activitystreams#Object\\"].join(\\", \\"));
+    }
+
+    
+      /**
+       * Similar to
+       * {@link Collection.getFollowingOf},
+       * but returns its \`@id\` URL instead of the object itself.
+       */
+       get followingOfId(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf.length < 1) return null;
+        const v = this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf[0];
+        if (v instanceof URL) return v;
+        return v.id;
+      }
+      
+/** Defines an actor for which the collection is the value of the following property.
+ * 
+ */
+
+       async getFollowingOf(
+        options: {
+          documentLoader?: DocumentLoader,
+          contextLoader?: DocumentLoader,
+          suppressError?: boolean,
+          tracerProvider?: TracerProvider,
+        } = {}
+      ): Promise<Object | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf.length < 1) return null;
+        const v = this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf[0];
+        if (v instanceof URL) {
+          const fetched =
+            await this.#fetchFollowingOf(v, options);
+          if (fetched == null) return null;
+          this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf[0] = fetched;
+          this._cachedJsonLd = undefined;
+          return fetched;
+        }
+      
+        if (
+          this._cachedJsonLd != null &&
+          typeof this._cachedJsonLd === \\"object\\" &&
+          \\"@context\\" in this._cachedJsonLd &&
+          \\"followingOf\\" in this._cachedJsonLd
+        ) {
+          const prop = this._cachedJsonLd[
+            \\"followingOf\\"];
+          const obj = Array.isArray(prop) ? prop[0] : prop;
+          if (obj != null && typeof obj === \\"object\\" && \\"@context\\" in obj) {
+            return await this.#followingOf_fromJsonLd(obj, options);
+          }
+        }
+        
+        return v;
+      }
+      
+    async #fetchLikedOf(
+      url: URL,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        suppressError?: boolean,
+        tracerProvider?: TracerProvider,
+      } = {}
+    ): Promise<Object | null> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+      const tracer = tracerProvider.getTracer(
+        \\"@fedify/fedify\\",
+        \\"0.0.0\\",
+      );
+      return await tracer.startActiveSpan(\\"activitypub.lookup_object\\", async (span) => {
+        let fetchResult: RemoteDocument;
+        try {
+          fetchResult = await documentLoader(url.href);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.end();
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to fetch {url}: {error}\\",
+              { error, url: url.href }
+            );
+            return null;
+          }
+          throw error;
+        }
+        const { document } = fetchResult;
+        try {
+          const obj = await this.#likedOf_fromJsonLd(
+            document,
+            { documentLoader, contextLoader, tracerProvider }
+          );
+          span.setAttribute(\\"activitypub.object.id\\", (obj.id ?? url).href);
+          span.setAttribute(
+            \\"activitypub.object.type\\",
+            // @ts-ignore: obj.constructor always has a typeId.
+            obj.constructor.typeId.href
+          );
+          return obj;
+        } catch (e) {
+          if (options.suppressError) {
+            getLogger([\\"fedify\\", \\"vocab\\"]).error(
+              \\"Failed to parse {url}: {error}\\",
+              { error: e, url: url.href }
+            );
+            return null;
+          }
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(e),
+          });
+          throw e;
+        } finally {
+          span.end();
+        }
+      });
+    }
+
+    async #likedOf_fromJsonLd(
+      jsonLd: unknown,
+      options: {
+        documentLoader?: DocumentLoader,
+        contextLoader?: DocumentLoader,
+        tracerProvider?: TracerProvider,
+      }
+    ): Promise<Object> {
+      const documentLoader =
+        options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
+      const contextLoader =
+        options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
+      const tracerProvider = options.tracerProvider ??
+        this._tracerProvider ?? trace.getTracerProvider();
+    
+        try {
+          return await Object.fromJsonLd(
+            jsonLd,
+            { documentLoader, contextLoader, tracerProvider },
+          );
+        } catch (e) {
+          if (!(e instanceof TypeError)) throw e;
+        }
+      
+      throw new TypeError(\\"Expected an object of any type of: \\" +
+        [\\"https://www.w3.org/ns/activitystreams#Object\\"].join(\\", \\"));
+    }
+
+    
+      /**
+       * Similar to
+       * {@link Collection.getLikedOf},
+       * but returns its \`@id\` URL instead of the object itself.
+       */
+       get likedOfId(): URL | null {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf.length < 1) return null;
+        const v = this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf[0];
+        if (v instanceof URL) return v;
+        return v.id;
+      }
+      
+/** Defines an actor for which the collection is the value of the liked property.
+ * 
+ */
+
+       async getLikedOf(
+        options: {
+          documentLoader?: DocumentLoader,
+          contextLoader?: DocumentLoader,
+          suppressError?: boolean,
+          tracerProvider?: TracerProvider,
+        } = {}
+      ): Promise<Object | null> {
+        if (this._warning != null) {
+          getLogger(this._warning.category).warn(
+            this._warning.message,
+            this._warning.values
+          );
+        }
+        if (this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf.length < 1) return null;
+        const v = this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf[0];
+        if (v instanceof URL) {
+          const fetched =
+            await this.#fetchLikedOf(v, options);
+          if (fetched == null) return null;
+          this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf[0] = fetched;
+          this._cachedJsonLd = undefined;
+          return fetched;
+        }
+      
+        if (
+          this._cachedJsonLd != null &&
+          typeof this._cachedJsonLd === \\"object\\" &&
+          \\"@context\\" in this._cachedJsonLd &&
+          \\"likedOf\\" in this._cachedJsonLd
+        ) {
+          const prop = this._cachedJsonLd[
+            \\"likedOf\\"];
+          const obj = Array.isArray(prop) ? prop[0] : prop;
+          if (obj != null && typeof obj === \\"object\\" && \\"@context\\" in obj) {
+            return await this.#likedOf_fromJsonLd(obj, options);
+          }
+        }
+        
+        return v;
+      }
+      
   /**
    * Converts this object to a JSON-LD structure.
    * @param options The options to use.
@@ -27426,6 +28930,166 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
         
       }
       
+      compactItems = [];
+      for (const v of this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf) {
+        const item = (
+      v instanceof URL ? v.href : await v.toJsonLd({
+           ...(options),
+           format: undefined,
+           context: undefined,
+         })
+        );
+        compactItems.push(item);
+      }
+      if (compactItems.length > 0) {
+      
+        result[\\"likesOf\\"]
+          = compactItems.length > 1
+          ? compactItems
+          : compactItems[0];
+        
+      }
+      
+      compactItems = [];
+      for (const v of this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf) {
+        const item = (
+      v instanceof URL ? v.href : await v.toJsonLd({
+           ...(options),
+           format: undefined,
+           context: undefined,
+         })
+        );
+        compactItems.push(item);
+      }
+      if (compactItems.length > 0) {
+      
+        result[\\"sharesOf\\"]
+          = compactItems.length > 1
+          ? compactItems
+          : compactItems[0];
+        
+      }
+      
+      compactItems = [];
+      for (const v of this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf) {
+        const item = (
+      v instanceof URL ? v.href : await v.toJsonLd({
+           ...(options),
+           format: undefined,
+           context: undefined,
+         })
+        );
+        compactItems.push(item);
+      }
+      if (compactItems.length > 0) {
+      
+        result[\\"repliesOf\\"]
+          = compactItems.length > 1
+          ? compactItems
+          : compactItems[0];
+        
+      }
+      
+      compactItems = [];
+      for (const v of this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf) {
+        const item = (
+      v instanceof URL ? v.href : await v.toJsonLd({
+           ...(options),
+           format: undefined,
+           context: undefined,
+         })
+        );
+        compactItems.push(item);
+      }
+      if (compactItems.length > 0) {
+      
+        result[\\"inboxOf\\"]
+          = compactItems.length > 1
+          ? compactItems
+          : compactItems[0];
+        
+      }
+      
+      compactItems = [];
+      for (const v of this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf) {
+        const item = (
+      v instanceof URL ? v.href : await v.toJsonLd({
+           ...(options),
+           format: undefined,
+           context: undefined,
+         })
+        );
+        compactItems.push(item);
+      }
+      if (compactItems.length > 0) {
+      
+        result[\\"outboxOf\\"]
+          = compactItems.length > 1
+          ? compactItems
+          : compactItems[0];
+        
+      }
+      
+      compactItems = [];
+      for (const v of this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf) {
+        const item = (
+      v instanceof URL ? v.href : await v.toJsonLd({
+           ...(options),
+           format: undefined,
+           context: undefined,
+         })
+        );
+        compactItems.push(item);
+      }
+      if (compactItems.length > 0) {
+      
+        result[\\"followersOf\\"]
+          = compactItems.length > 1
+          ? compactItems
+          : compactItems[0];
+        
+      }
+      
+      compactItems = [];
+      for (const v of this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf) {
+        const item = (
+      v instanceof URL ? v.href : await v.toJsonLd({
+           ...(options),
+           format: undefined,
+           context: undefined,
+         })
+        );
+        compactItems.push(item);
+      }
+      if (compactItems.length > 0) {
+      
+        result[\\"followingOf\\"]
+          = compactItems.length > 1
+          ? compactItems
+          : compactItems[0];
+        
+      }
+      
+      compactItems = [];
+      for (const v of this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf) {
+        const item = (
+      v instanceof URL ? v.href : await v.toJsonLd({
+           ...(options),
+           format: undefined,
+           context: undefined,
+         })
+        );
+        compactItems.push(item);
+      }
+      if (compactItems.length > 0) {
+      
+        result[\\"likedOf\\"]
+          = compactItems.length > 1
+          ? compactItems
+          : compactItems[0];
+        
+      }
+      
       result[\\"type\\"] = \\"Collection\\";
       if (this.id != null) result[\\"id\\"] = this.id.href;
       result[\\"@context\\"] = [\\"https://www.w3.org/ns/activitystreams\\",\\"https://w3id.org/security/data-integrity/v1\\",{\\"toot\\":\\"http://joinmastodon.org/ns#\\",\\"misskey\\":\\"https://misskey-hub.net/ns#\\",\\"fedibird\\":\\"http://fedibird.com/ns#\\",\\"ChatMessage\\":\\"http://litepub.social/ns#ChatMessage\\",\\"sensitive\\":\\"as:sensitive\\",\\"votersCount\\":\\"toot:votersCount\\",\\"Emoji\\":\\"toot:Emoji\\",\\"Hashtag\\":\\"as:Hashtag\\",\\"quoteUrl\\":\\"as:quoteUrl\\",\\"_misskey_quote\\":\\"misskey:_misskey_quote\\",\\"quoteUri\\":\\"fedibird:quoteUri\\",\\"emojiReactions\\":{\\"@id\\":\\"fedibird:emojiReactions\\",\\"@type\\":\\"@id\\"}}];
@@ -27520,6 +29184,126 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
     array
       );
       values[\\"https://www.w3.org/ns/activitystreams#items\\"] = propValue;
+    
+    }
+    
+    array = [];
+    for (const v of this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf) {
+      const element = (
+    v instanceof URL ? { \\"@id\\": v.href } : await v.toJsonLd(options)
+      );
+    array.push(element);;
+    }
+    if (array.length > 0) {
+      const propValue = (
+    array
+      );
+      values[\\"https://w3id.org/fep/5711#likesOf\\"] = propValue;
+    
+    }
+    
+    array = [];
+    for (const v of this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf) {
+      const element = (
+    v instanceof URL ? { \\"@id\\": v.href } : await v.toJsonLd(options)
+      );
+    array.push(element);;
+    }
+    if (array.length > 0) {
+      const propValue = (
+    array
+      );
+      values[\\"https://w3id.org/fep/5711#sharesOf\\"] = propValue;
+    
+    }
+    
+    array = [];
+    for (const v of this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf) {
+      const element = (
+    v instanceof URL ? { \\"@id\\": v.href } : await v.toJsonLd(options)
+      );
+    array.push(element);;
+    }
+    if (array.length > 0) {
+      const propValue = (
+    array
+      );
+      values[\\"https://w3id.org/fep/5711#repliesOf\\"] = propValue;
+    
+    }
+    
+    array = [];
+    for (const v of this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf) {
+      const element = (
+    v instanceof URL ? { \\"@id\\": v.href } : await v.toJsonLd(options)
+      );
+    array.push(element);;
+    }
+    if (array.length > 0) {
+      const propValue = (
+    array
+      );
+      values[\\"https://w3id.org/fep/5711#inboxOf\\"] = propValue;
+    
+    }
+    
+    array = [];
+    for (const v of this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf) {
+      const element = (
+    v instanceof URL ? { \\"@id\\": v.href } : await v.toJsonLd(options)
+      );
+    array.push(element);;
+    }
+    if (array.length > 0) {
+      const propValue = (
+    array
+      );
+      values[\\"https://w3id.org/fep/5711#outboxOf\\"] = propValue;
+    
+    }
+    
+    array = [];
+    for (const v of this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf) {
+      const element = (
+    v instanceof URL ? { \\"@id\\": v.href } : await v.toJsonLd(options)
+      );
+    array.push(element);;
+    }
+    if (array.length > 0) {
+      const propValue = (
+    array
+      );
+      values[\\"https://w3id.org/fep/5711#followersOf\\"] = propValue;
+    
+    }
+    
+    array = [];
+    for (const v of this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf) {
+      const element = (
+    v instanceof URL ? { \\"@id\\": v.href } : await v.toJsonLd(options)
+      );
+    array.push(element);;
+    }
+    if (array.length > 0) {
+      const propValue = (
+    array
+      );
+      values[\\"https://w3id.org/fep/5711#followingOf\\"] = propValue;
+    
+    }
+    
+    array = [];
+    for (const v of this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf) {
+      const element = (
+    v instanceof URL ? { \\"@id\\": v.href } : await v.toJsonLd(options)
+      );
+    array.push(element);;
+    }
+    if (array.length > 0) {
+      const propValue = (
+    array
+      );
+      values[\\"https://w3id.org/fep/5711#likedOf\\"] = propValue;
     
     }
     
@@ -27803,6 +29587,214 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
       
     }
     instance.#_2JPCKWTcfBmTCcW8Tv3TpRaLVaqg_items = _2JPCKWTcfBmTCcW8Tv3TpRaLVaqg_items;
+    const _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf: (Object | URL)[] = [];
+
+    let _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf__array = values[\\"https://w3id.org/fep/5711#likesOf\\"];
+    
+    for (
+      const v of _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf__array == null
+        ? []
+        : _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf__array.length === 1 && \\"@list\\" in _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf__array[0]
+        ? _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf__array[0][\\"@list\\"]
+        : _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf__array
+    ) {
+      if (v == null) continue;
+    
+      if (typeof v === \\"object\\" && \\"@id\\" in v && !(\\"@type\\" in v)
+          && globalThis.Object.keys(v).length === 1) {
+        _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf.push(
+          !URL.canParse(v[\\"@id\\"]) && v[\\"@id\\"].startsWith(\\"at://\\")
+            ? new URL(\\"at://\\" + encodeURIComponent(v[\\"@id\\"].substring(5)))
+            : new URL(v[\\"@id\\"])
+        );
+        continue;
+      }
+      _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf.push(await Object.fromJsonLd(
+      v, options))
+    }
+    instance.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf = _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf;
+    const _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf: (Object | URL)[] = [];
+
+    let _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf__array = values[\\"https://w3id.org/fep/5711#sharesOf\\"];
+    
+    for (
+      const v of _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf__array == null
+        ? []
+        : _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf__array.length === 1 && \\"@list\\" in _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf__array[0]
+        ? _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf__array[0][\\"@list\\"]
+        : _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf__array
+    ) {
+      if (v == null) continue;
+    
+      if (typeof v === \\"object\\" && \\"@id\\" in v && !(\\"@type\\" in v)
+          && globalThis.Object.keys(v).length === 1) {
+        _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf.push(
+          !URL.canParse(v[\\"@id\\"]) && v[\\"@id\\"].startsWith(\\"at://\\")
+            ? new URL(\\"at://\\" + encodeURIComponent(v[\\"@id\\"].substring(5)))
+            : new URL(v[\\"@id\\"])
+        );
+        continue;
+      }
+      _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf.push(await Object.fromJsonLd(
+      v, options))
+    }
+    instance.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf = _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf;
+    const _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf: (Object | URL)[] = [];
+
+    let _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf__array = values[\\"https://w3id.org/fep/5711#repliesOf\\"];
+    
+    for (
+      const v of _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf__array == null
+        ? []
+        : _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf__array.length === 1 && \\"@list\\" in _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf__array[0]
+        ? _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf__array[0][\\"@list\\"]
+        : _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf__array
+    ) {
+      if (v == null) continue;
+    
+      if (typeof v === \\"object\\" && \\"@id\\" in v && !(\\"@type\\" in v)
+          && globalThis.Object.keys(v).length === 1) {
+        _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf.push(
+          !URL.canParse(v[\\"@id\\"]) && v[\\"@id\\"].startsWith(\\"at://\\")
+            ? new URL(\\"at://\\" + encodeURIComponent(v[\\"@id\\"].substring(5)))
+            : new URL(v[\\"@id\\"])
+        );
+        continue;
+      }
+      _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf.push(await Object.fromJsonLd(
+      v, options))
+    }
+    instance.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf = _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf;
+    const _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf: (Object | URL)[] = [];
+
+    let _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf__array = values[\\"https://w3id.org/fep/5711#inboxOf\\"];
+    
+    for (
+      const v of _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf__array == null
+        ? []
+        : _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf__array.length === 1 && \\"@list\\" in _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf__array[0]
+        ? _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf__array[0][\\"@list\\"]
+        : _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf__array
+    ) {
+      if (v == null) continue;
+    
+      if (typeof v === \\"object\\" && \\"@id\\" in v && !(\\"@type\\" in v)
+          && globalThis.Object.keys(v).length === 1) {
+        _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf.push(
+          !URL.canParse(v[\\"@id\\"]) && v[\\"@id\\"].startsWith(\\"at://\\")
+            ? new URL(\\"at://\\" + encodeURIComponent(v[\\"@id\\"].substring(5)))
+            : new URL(v[\\"@id\\"])
+        );
+        continue;
+      }
+      _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf.push(await Object.fromJsonLd(
+      v, options))
+    }
+    instance.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf = _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf;
+    const _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf: (Object | URL)[] = [];
+
+    let _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf__array = values[\\"https://w3id.org/fep/5711#outboxOf\\"];
+    
+    for (
+      const v of _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf__array == null
+        ? []
+        : _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf__array.length === 1 && \\"@list\\" in _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf__array[0]
+        ? _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf__array[0][\\"@list\\"]
+        : _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf__array
+    ) {
+      if (v == null) continue;
+    
+      if (typeof v === \\"object\\" && \\"@id\\" in v && !(\\"@type\\" in v)
+          && globalThis.Object.keys(v).length === 1) {
+        _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf.push(
+          !URL.canParse(v[\\"@id\\"]) && v[\\"@id\\"].startsWith(\\"at://\\")
+            ? new URL(\\"at://\\" + encodeURIComponent(v[\\"@id\\"].substring(5)))
+            : new URL(v[\\"@id\\"])
+        );
+        continue;
+      }
+      _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf.push(await Object.fromJsonLd(
+      v, options))
+    }
+    instance.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf = _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf;
+    const _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf: (Object | URL)[] = [];
+
+    let _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf__array = values[\\"https://w3id.org/fep/5711#followersOf\\"];
+    
+    for (
+      const v of _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf__array == null
+        ? []
+        : _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf__array.length === 1 && \\"@list\\" in _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf__array[0]
+        ? _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf__array[0][\\"@list\\"]
+        : _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf__array
+    ) {
+      if (v == null) continue;
+    
+      if (typeof v === \\"object\\" && \\"@id\\" in v && !(\\"@type\\" in v)
+          && globalThis.Object.keys(v).length === 1) {
+        _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf.push(
+          !URL.canParse(v[\\"@id\\"]) && v[\\"@id\\"].startsWith(\\"at://\\")
+            ? new URL(\\"at://\\" + encodeURIComponent(v[\\"@id\\"].substring(5)))
+            : new URL(v[\\"@id\\"])
+        );
+        continue;
+      }
+      _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf.push(await Object.fromJsonLd(
+      v, options))
+    }
+    instance.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf = _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf;
+    const _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf: (Object | URL)[] = [];
+
+    let _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf__array = values[\\"https://w3id.org/fep/5711#followingOf\\"];
+    
+    for (
+      const v of _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf__array == null
+        ? []
+        : _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf__array.length === 1 && \\"@list\\" in _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf__array[0]
+        ? _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf__array[0][\\"@list\\"]
+        : _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf__array
+    ) {
+      if (v == null) continue;
+    
+      if (typeof v === \\"object\\" && \\"@id\\" in v && !(\\"@type\\" in v)
+          && globalThis.Object.keys(v).length === 1) {
+        _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf.push(
+          !URL.canParse(v[\\"@id\\"]) && v[\\"@id\\"].startsWith(\\"at://\\")
+            ? new URL(\\"at://\\" + encodeURIComponent(v[\\"@id\\"].substring(5)))
+            : new URL(v[\\"@id\\"])
+        );
+        continue;
+      }
+      _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf.push(await Object.fromJsonLd(
+      v, options))
+    }
+    instance.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf = _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf;
+    const _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf: (Object | URL)[] = [];
+
+    let _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf__array = values[\\"https://w3id.org/fep/5711#likedOf\\"];
+    
+    for (
+      const v of _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf__array == null
+        ? []
+        : _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf__array.length === 1 && \\"@list\\" in _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf__array[0]
+        ? _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf__array[0][\\"@list\\"]
+        : _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf__array
+    ) {
+      if (v == null) continue;
+    
+      if (typeof v === \\"object\\" && \\"@id\\" in v && !(\\"@type\\" in v)
+          && globalThis.Object.keys(v).length === 1) {
+        _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf.push(
+          !URL.canParse(v[\\"@id\\"]) && v[\\"@id\\"].startsWith(\\"at://\\")
+            ? new URL(\\"at://\\" + encodeURIComponent(v[\\"@id\\"].substring(5)))
+            : new URL(v[\\"@id\\"])
+        );
+        continue;
+      }
+      _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf.push(await Object.fromJsonLd(
+      v, options))
+    }
+    instance.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf = _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf;
     
     if (!(\\"_fromSubclass\\" in options) || !options._fromSubclass) {
       try {
@@ -27921,6 +29913,166 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
         proxy.items = _2JPCKWTcfBmTCcW8Tv3TpRaLVaqg_items;
       }
       
+      const _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf = this.#_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf
+        // deno-lint-ignore no-explicit-any
+        .map((v: any) => v instanceof URL
+          ? {
+              [Symbol.for(\\"Deno.customInspect\\")]: (
+                inspect: typeof Deno.inspect,
+                options: Deno.InspectOptions,
+              ): string => \\"URL \\" + inspect(v.href, options),
+              [Symbol.for(\\"nodejs.util.inspect.custom\\")]: (
+                _depth: number,
+                options: unknown,
+                inspect: (value: unknown, options: unknown) => string,
+              ): string => \\"URL \\" + inspect(v.href, options),
+            }
+          : v);
+    
+      if (_4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf.length == 1) {
+        proxy.likesOf = _4TB9Qd9ddtcZEpMfzbHhzafE6jaJ_likesOf[0];
+      }
+      
+      const _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf = this.#_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf
+        // deno-lint-ignore no-explicit-any
+        .map((v: any) => v instanceof URL
+          ? {
+              [Symbol.for(\\"Deno.customInspect\\")]: (
+                inspect: typeof Deno.inspect,
+                options: Deno.InspectOptions,
+              ): string => \\"URL \\" + inspect(v.href, options),
+              [Symbol.for(\\"nodejs.util.inspect.custom\\")]: (
+                _depth: number,
+                options: unknown,
+                inspect: (value: unknown, options: unknown) => string,
+              ): string => \\"URL \\" + inspect(v.href, options),
+            }
+          : v);
+    
+      if (_3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf.length == 1) {
+        proxy.sharesOf = _3manzgeKiPsugpztKGiaUUwJ3ito_sharesOf[0];
+      }
+      
+      const _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf = this.#_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf
+        // deno-lint-ignore no-explicit-any
+        .map((v: any) => v instanceof URL
+          ? {
+              [Symbol.for(\\"Deno.customInspect\\")]: (
+                inspect: typeof Deno.inspect,
+                options: Deno.InspectOptions,
+              ): string => \\"URL \\" + inspect(v.href, options),
+              [Symbol.for(\\"nodejs.util.inspect.custom\\")]: (
+                _depth: number,
+                options: unknown,
+                inspect: (value: unknown, options: unknown) => string,
+              ): string => \\"URL \\" + inspect(v.href, options),
+            }
+          : v);
+    
+      if (_3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf.length == 1) {
+        proxy.repliesOf = _3T3oGm3twpcQUcrnMisXQtmDZ32X_repliesOf[0];
+      }
+      
+      const _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf = this.#_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf
+        // deno-lint-ignore no-explicit-any
+        .map((v: any) => v instanceof URL
+          ? {
+              [Symbol.for(\\"Deno.customInspect\\")]: (
+                inspect: typeof Deno.inspect,
+                options: Deno.InspectOptions,
+              ): string => \\"URL \\" + inspect(v.href, options),
+              [Symbol.for(\\"nodejs.util.inspect.custom\\")]: (
+                _depth: number,
+                options: unknown,
+                inspect: (value: unknown, options: unknown) => string,
+              ): string => \\"URL \\" + inspect(v.href, options),
+            }
+          : v);
+    
+      if (_2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf.length == 1) {
+        proxy.inboxOf = _2bvRkAFZjMfVD8jiUWZJr5YokSeN_inboxOf[0];
+      }
+      
+      const _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf = this.#_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf
+        // deno-lint-ignore no-explicit-any
+        .map((v: any) => v instanceof URL
+          ? {
+              [Symbol.for(\\"Deno.customInspect\\")]: (
+                inspect: typeof Deno.inspect,
+                options: Deno.InspectOptions,
+              ): string => \\"URL \\" + inspect(v.href, options),
+              [Symbol.for(\\"nodejs.util.inspect.custom\\")]: (
+                _depth: number,
+                options: unknown,
+                inspect: (value: unknown, options: unknown) => string,
+              ): string => \\"URL \\" + inspect(v.href, options),
+            }
+          : v);
+    
+      if (_4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf.length == 1) {
+        proxy.outboxOf = _4AHzVZDxHjK6uEWa9UiKHGK34yYm_outboxOf[0];
+      }
+      
+      const _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf = this.#_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf
+        // deno-lint-ignore no-explicit-any
+        .map((v: any) => v instanceof URL
+          ? {
+              [Symbol.for(\\"Deno.customInspect\\")]: (
+                inspect: typeof Deno.inspect,
+                options: Deno.InspectOptions,
+              ): string => \\"URL \\" + inspect(v.href, options),
+              [Symbol.for(\\"nodejs.util.inspect.custom\\")]: (
+                _depth: number,
+                options: unknown,
+                inspect: (value: unknown, options: unknown) => string,
+              ): string => \\"URL \\" + inspect(v.href, options),
+            }
+          : v);
+    
+      if (_41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf.length == 1) {
+        proxy.followersOf = _41aoZ5M6yRUHy3Zx8q6iuZQxtopb_followersOf[0];
+      }
+      
+      const _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf = this.#_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf
+        // deno-lint-ignore no-explicit-any
+        .map((v: any) => v instanceof URL
+          ? {
+              [Symbol.for(\\"Deno.customInspect\\")]: (
+                inspect: typeof Deno.inspect,
+                options: Deno.InspectOptions,
+              ): string => \\"URL \\" + inspect(v.href, options),
+              [Symbol.for(\\"nodejs.util.inspect.custom\\")]: (
+                _depth: number,
+                options: unknown,
+                inspect: (value: unknown, options: unknown) => string,
+              ): string => \\"URL \\" + inspect(v.href, options),
+            }
+          : v);
+    
+      if (_2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf.length == 1) {
+        proxy.followingOf = _2nXT2Ah42UjEEQF5oJQ39CbKB1xj_followingOf[0];
+      }
+      
+      const _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf = this.#_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf
+        // deno-lint-ignore no-explicit-any
+        .map((v: any) => v instanceof URL
+          ? {
+              [Symbol.for(\\"Deno.customInspect\\")]: (
+                inspect: typeof Deno.inspect,
+                options: Deno.InspectOptions,
+              ): string => \\"URL \\" + inspect(v.href, options),
+              [Symbol.for(\\"nodejs.util.inspect.custom\\")]: (
+                _depth: number,
+                options: unknown,
+                inspect: (value: unknown, options: unknown) => string,
+              ): string => \\"URL \\" + inspect(v.href, options),
+            }
+          : v);
+    
+      if (_2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf.length == 1) {
+        proxy.likedOf = _2bsySzmT3qEZcrnoe3tZ5xBjXSju_likedOf[0];
+      }
+      
     return proxy;
   }
 
@@ -27986,7 +30138,7 @@ tos?: (Object | URL)[];bto?: Object | URL | null;
 btos?: (Object | URL)[];cc?: Object | URL | null;
 ccs?: (Object | URL)[];bcc?: Object | URL | null;
 bccs?: (Object | URL)[];mediaType?: string | null;duration?: Temporal.Duration | null;sensitive?: boolean | null;source?: Source | null;proof?: DataIntegrityProof | URL | null;
-proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];partOf?: Collection | URL | null;next?: CollectionPage | URL | null;prev?: CollectionPage | URL | null;}
+proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];likesOf?: Object | URL | null;sharesOf?: Object | URL | null;repliesOf?: Object | URL | null;inboxOf?: Object | URL | null;outboxOf?: Object | URL | null;followersOf?: Object | URL | null;followingOf?: Object | URL | null;likedOf?: Object | URL | null;partOf?: Collection | URL | null;next?: CollectionPage | URL | null;prev?: CollectionPage | URL | null;}
 ,
     options: {
       documentLoader?: DocumentLoader,
@@ -28058,7 +30210,7 @@ tos?: (Object | URL)[];bto?: Object | URL | null;
 btos?: (Object | URL)[];cc?: Object | URL | null;
 ccs?: (Object | URL)[];bcc?: Object | URL | null;
 bccs?: (Object | URL)[];mediaType?: string | null;duration?: Temporal.Duration | null;sensitive?: boolean | null;source?: Source | null;proof?: DataIntegrityProof | URL | null;
-proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];partOf?: Collection | URL | null;next?: CollectionPage | URL | null;prev?: CollectionPage | URL | null;}
+proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];likesOf?: Object | URL | null;sharesOf?: Object | URL | null;repliesOf?: Object | URL | null;inboxOf?: Object | URL | null;outboxOf?: Object | URL | null;followersOf?: Object | URL | null;followingOf?: Object | URL | null;likedOf?: Object | URL | null;partOf?: Collection | URL | null;next?: CollectionPage | URL | null;prev?: CollectionPage | URL | null;}
 
     = {},
     options: {
@@ -42878,7 +45030,7 @@ tos?: (Object | URL)[];bto?: Object | URL | null;
 btos?: (Object | URL)[];cc?: Object | URL | null;
 ccs?: (Object | URL)[];bcc?: Object | URL | null;
 bccs?: (Object | URL)[];mediaType?: string | null;duration?: Temporal.Duration | null;sensitive?: boolean | null;source?: Source | null;proof?: DataIntegrityProof | URL | null;
-proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];}
+proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;likesOf?: Object | URL | null;sharesOf?: Object | URL | null;repliesOf?: Object | URL | null;inboxOf?: Object | URL | null;outboxOf?: Object | URL | null;followersOf?: Object | URL | null;followingOf?: Object | URL | null;likedOf?: Object | URL | null;items?: (Object | Link | URL)[];}
 ,
     options: {
       documentLoader?: DocumentLoader,
@@ -42928,7 +45080,7 @@ tos?: (Object | URL)[];bto?: Object | URL | null;
 btos?: (Object | URL)[];cc?: Object | URL | null;
 ccs?: (Object | URL)[];bcc?: Object | URL | null;
 bccs?: (Object | URL)[];mediaType?: string | null;duration?: Temporal.Duration | null;sensitive?: boolean | null;source?: Source | null;proof?: DataIntegrityProof | URL | null;
-proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;items?: (Object | Link | URL)[];}
+proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;likesOf?: Object | URL | null;sharesOf?: Object | URL | null;repliesOf?: Object | URL | null;inboxOf?: Object | URL | null;outboxOf?: Object | URL | null;followersOf?: Object | URL | null;followingOf?: Object | URL | null;likedOf?: Object | URL | null;items?: (Object | Link | URL)[];}
 
     = {},
     options: {
@@ -43511,7 +45663,7 @@ tos?: (Object | URL)[];bto?: Object | URL | null;
 btos?: (Object | URL)[];cc?: Object | URL | null;
 ccs?: (Object | URL)[];bcc?: Object | URL | null;
 bccs?: (Object | URL)[];mediaType?: string | null;duration?: Temporal.Duration | null;sensitive?: boolean | null;source?: Source | null;proof?: DataIntegrityProof | URL | null;
-proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;partOf?: Collection | URL | null;next?: CollectionPage | URL | null;prev?: CollectionPage | URL | null;items?: (Object | Link | URL)[];startIndex?: number | null;}
+proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;likesOf?: Object | URL | null;sharesOf?: Object | URL | null;repliesOf?: Object | URL | null;inboxOf?: Object | URL | null;outboxOf?: Object | URL | null;followersOf?: Object | URL | null;followingOf?: Object | URL | null;likedOf?: Object | URL | null;partOf?: Collection | URL | null;next?: CollectionPage | URL | null;prev?: CollectionPage | URL | null;items?: (Object | Link | URL)[];startIndex?: number | null;}
 ,
     options: {
       documentLoader?: DocumentLoader,
@@ -43573,7 +45725,7 @@ tos?: (Object | URL)[];bto?: Object | URL | null;
 btos?: (Object | URL)[];cc?: Object | URL | null;
 ccs?: (Object | URL)[];bcc?: Object | URL | null;
 bccs?: (Object | URL)[];mediaType?: string | null;duration?: Temporal.Duration | null;sensitive?: boolean | null;source?: Source | null;proof?: DataIntegrityProof | URL | null;
-proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;partOf?: Collection | URL | null;next?: CollectionPage | URL | null;prev?: CollectionPage | URL | null;items?: (Object | Link | URL)[];startIndex?: number | null;}
+proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: CollectionPage | URL | null;first?: CollectionPage | URL | null;last?: CollectionPage | URL | null;likesOf?: Object | URL | null;sharesOf?: Object | URL | null;repliesOf?: Object | URL | null;inboxOf?: Object | URL | null;outboxOf?: Object | URL | null;followersOf?: Object | URL | null;followingOf?: Object | URL | null;likedOf?: Object | URL | null;partOf?: Collection | URL | null;next?: CollectionPage | URL | null;prev?: CollectionPage | URL | null;items?: (Object | Link | URL)[];startIndex?: number | null;}
 
     = {},
     options: {
