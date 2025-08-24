@@ -8,6 +8,17 @@ Version 1.8.6
 
 To be released.
 
+### @fedify/testing
+
+ -  Updated exports to include context creation functions.
+    [[#382] by Colin Mitchell]
+
+     -  Added `createContext()` function.
+     -  Added `createInboxContext()` function.
+     -  Added `createRequestContext()` function.
+
+[#382]: https://github.com/fedify-dev/fedify/pull/382
+
 
 Version 1.8.5
 -------------
