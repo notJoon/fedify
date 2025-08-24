@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.8.6
 -------------
 
-To be released.
+Released on August 24, 2025.
 
 ### @fedify/nestjs
 
