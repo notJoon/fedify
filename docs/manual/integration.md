@@ -393,6 +393,7 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import * as express from 'express';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -439,8 +440,12 @@ export class AppModule implements NestModule {
       },
     );
 
-    // Apply middleware to all routes except auth endpoints
-    consumer.apply(fedifyMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+    // Fedify middleware requires the raw request body for HTTP signature verification
+    // so we apply `express.raw()` before `fedifyMiddleware` to preserve the body.
+    consumer.apply(
+      express.raw({ type: '*/*' }),
+      fedifyMiddleware
+    ).forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
 ~~~~
