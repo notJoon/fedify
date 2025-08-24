@@ -487,7 +487,7 @@ Next.js
 
 > [!TIP]
 > You can see the example in the `examples/next-integration` directory.
-> Or you can just create Fedify–Next.js with following command!:
+> Or you can just create a Fedify–Next.js app with the following command!:
 > ```sh
 > npx create-next-app -e https://github.com/fedify-dev/fedify --example-path examples/next-integration
 > ```
