@@ -297,6 +297,9 @@ importers:
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
+      x-forwarded-fetch:
+        specifier: ^0.2.0
+        version: 0.2.0
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3
