@@ -86,7 +86,7 @@ function fromERequest(req: ERequest): Request {
     headers,
     // @ts-ignore: duplex is not supported in Deno, but it is in Node.js
     duplex: "half",
-    body: req.method === "GET" || req.method === "HEAD" ? undefined : req.body,
+    body: req.method === "GET" || req.method === "HEAD" ? undefined : (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body) ? JSON.stringify(req.body) : req.body),
   });
 }
 
