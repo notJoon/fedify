@@ -15,6 +15,7 @@ packages:
 - examples/cloudflare-workers
 - examples/elysia
 - examples/express
+- examples/next-integration
 - examples/next14-app-router
 - examples/next15-app-router
 

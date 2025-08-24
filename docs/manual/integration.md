@@ -490,6 +490,16 @@ Next.js
 
 *This API is available since Fedify 1.9.0.*
 
+> [!TIP]
+> You can see the example in the `examples/next-integration` directory in
+> the [Fedify repository].
+> Or you can just create a Fedify–Next.js app with the following command:
+> 
+> ~~~~ sh
+> npx create-next-app -e https://github.com/fedify-dev/fedify \
+>   --example-path examples/next-integration
+> ~~~~
+
 [Next.js] is a React framework that enables you to build server-rendered
 and statically generated web applications.  Fedify has the `@fedify/next`
 module that provides a middleware to integrate Fedify with Next.js.  Create
@@ -646,5 +656,6 @@ as [`Request`] and [`Response`] objects.  In that case, you need to convert
 the request and response objects to the appropriate types that the `Federation`
 object can handle.
 
+[Fedify repository]: https://github.com/fedify-dev/fedify
 [`Request`]: https://developer.mozilla.org/en-US/docs/Web/API/Request
 [`Response`]: https://developer.mozilla.org/en-US/docs/Web/API/Response
