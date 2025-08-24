@@ -17,7 +17,7 @@ const federation = createFederation({
 
 federation
   .setActorDispatcher(
-    `/users/{identifier}`,
+    "/users/{identifier}",
     async (context, identifier) => {
       if (identifier != "demo") {
         return null;
@@ -52,7 +52,7 @@ federation
   }) /* .mapAlias() */;
 
 federation
-  .setInboxListeners(`/users/{identifier}/inbox`, "/inbox")
+  .setInboxListeners("/users/{identifier}/inbox", "/inbox")
   .on(Follow, async (context, follow) => {
     if (
       follow.id == null ||
