@@ -6,7 +6,6 @@ packages:
 - packages/denokv
 - packages/elysia
 - packages/express
-- packages/fresh
 - packages/hono
 - packages/nestjs
 - packages/next
