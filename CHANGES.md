@@ -83,6 +83,33 @@ To be released.
 [#368]: https://github.com/fedify-dev/fedify/pull/368
 
 
+Version 1.8.6
+-------------
+
+Released on August 24, 2025.
+
+### @fedify/nestjs
+
+ -  Fixed a critical error that prevented the middleware from processing
+    ActivityPub requests in NestJS applications. The middleware now correctly
+    handles request bodies that have been pre-processed by other NestJS
+    middleware or interceptors.  [[#279], [#386] by Jaeyeol Lee]
+
+[#279]: https://github.com/fedify-dev/fedify/issues/279
+[#386]: https://github.com/fedify-dev/fedify/pull/386
+
+### @fedify/testing
+
+ -  Updated exports to include context creation functions.
+    [[#382] by Colin Mitchell]
+
+     -  Added `createContext()` function.
+     -  Added `createInboxContext()` function.
+     -  Added `createRequestContext()` function.
+
+[#382]: https://github.com/fedify-dev/fedify/pull/382
+
+
 Version 1.8.5
 -------------
 
