@@ -64,6 +64,9 @@ To be released.
     hanging on slow or unresponsive servers.
     [[#258] by Hyunchae Kim]
 
+[#353]: https://github.com/fedify-dev/fedify/issues/353
+[#365]: https://github.com/fedify-dev/fedify/pull/365
+
 ### @fedify/next
 
  -  Created [Next.js] integration as the *@fedify/next* package.
@@ -72,14 +75,12 @@ To be released.
 [Next.js]: https://nextjs.org/
 [#313]: https://github.com/fedify-dev/fedify/issues/313
 
-### examples/next-integration
+### @fedify/redis
 
+ -  Added support for Redis Cluster to the *@fedify/redis* package.
+    [[#368] by Michael Barrett]
 
- -  Created example using *@fedify/next* package.
-    [[#356] by Chanhaeng Lee]
-
-[Next.js]: https://nextjs.org/
-[#356]: https://github.com/fedify-dev/fedify/issues/356
+[#368]: https://github.com/fedify-dev/fedify/pull/368
 
 
 Version 1.8.5
