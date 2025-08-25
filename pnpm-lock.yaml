@@ -636,19 +636,6 @@ importers:
         specifier: ^4.17.0
         version: 4.22.0(@cloudflare/workers-types@4.20250529.0)
 
-  packages/fresh:
-    dependencies:
-      '@fedify/fedify':
-        specifier: 'workspace:'
-        version: link:../fedify
-    devDependencies:
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.12.9(typescript@5.9.2)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.2
-
   packages/h3:
     dependencies:
       '@fedify/fedify':
