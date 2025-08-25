@@ -179,7 +179,8 @@ async function getRemoteDocument(
       contentType === "application/xhtml+xml" ||
       contentType?.startsWith("application/xhtml+xml;"))
   ) {
-    const p = /<(a|link)((\s+[a-z][a-z:_-]*=("[^"]*"|'[^']*'|[^\s>]+))+)\/?>/ig;
+    const p =
+      /<(a|link)((\s+[a-z][a-z:_-]*=("[^"]*"|'[^']*'|[^\s>]+))+)\s*\/?>/ig;
     const p2 = /\s+([a-z][a-z:_-]*)=("([^"]*)"|'([^']*)'|([^\s>]+))/ig;
     const html = await response.text();
     let m: RegExpExecArray | null;
