@@ -10,13 +10,15 @@
  * @module
  * @since 0.5.0
  */
-import { isEqual } from "es-toolkit";
-import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import type {
+  KvKey,
+  KvStore,
+  KvStoreSetOptions,
   MessageQueue,
   MessageQueueEnqueueOptions,
   MessageQueueListenOptions,
-} from "../federation/mq.ts";
+} from "@fedify/fedify/federation";
+import { isEqual } from "es-toolkit";
 
 /**
  * Represents a key–value store implementation using Deno's KV store.

@@ -13,7 +13,7 @@
 import type {
   Federation,
   FederationFetchOptions,
-} from "../federation/federation.ts";
+} from "@fedify/fedify/federation";
 
 type RequestEvent = {
   request: Request;

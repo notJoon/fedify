@@ -13,12 +13,14 @@ import type {
   MessageSendRequest,
   Queue,
 } from "@cloudflare/workers-types/experimental";
-import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import type {
+  KvKey,
+  KvStore,
+  KvStoreSetOptions,
   MessageQueue,
   MessageQueueEnqueueOptions,
   MessageQueueListenOptions,
-} from "../federation/mq.ts";
+} from "@fedify/fedify/federation";
 
 interface KvMetadata {
   expires?: number;
