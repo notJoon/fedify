@@ -188,6 +188,32 @@ test("getDocumentLoader()", async (t) => {
     });
   });
 
+  fetchMock.get("https://example.com/xhtml-link", {
+    body: `<html>
+        <head>
+          <meta charset="utf-8" />
+          <link
+            rel=alternate
+            type="application/activity+json"
+            href="https://example.com/object" />
+        </head>
+      </html>`,
+    headers: { "Content-Type": "application/xhtml+xml; charset=utf-8" },
+  });
+
+  await t.step("XHTML <link>", async () => {
+    assertEquals(await fetchDocumentLoader("https://example.com/xhtml-link"), {
+      contextUrl: null,
+      documentUrl: "https://example.com/object",
+      document: {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        id: "https://example.com/object",
+        name: "Fetched object",
+        type: "Object",
+      },
+    });
+  });
+
   fetchMock.get("https://example.com/html-a", {
     body: `<html>
         <head>
