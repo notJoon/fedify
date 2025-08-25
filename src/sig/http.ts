@@ -365,8 +365,10 @@ async function verifyRequestInternal(
   }
   const sigValues = Object.fromEntries(
     sigHeader.split(",").map((pair) =>
-      pair.match(/^\s*([A-Za-z]+)="([^"]*)"\s*$/)
-    ).filter((m) => m != null).map((m) => m!.slice(1, 3) as [string, string]),
+      pair.match(/^\s*([A-Za-z]+)=(?:"([^"]*)"|(\d+))\s*$/)
+    ).filter((m) => m != null).map((m) =>
+      [m![1], m![2] ?? m![3]] as [string, string]
+    ),
   );
   if (!("keyId" in sigValues)) {
     logger.debug(
@@ -386,6 +388,59 @@ async function verifyRequestInternal(
       { signature: sigHeader },
     );
     return null;
+  }
+  if ("expires" in sigValues) {
+    const expiresSeconds = parseInt(sigValues.expires);
+    if (!Number.isInteger(expiresSeconds)) {
+      logger.debug(
+        "Failed to verify; invalid expires field in the Signature header: {expires}.",
+        { expires: sigValues.expires, signature: sigHeader },
+      );
+      return null;
+    }
+    const expires = Temporal.Instant.fromEpochMilliseconds(
+      expiresSeconds * 1000,
+    );
+    if (Temporal.Instant.compare(now, expires) > 0) {
+      logger.debug(
+        "Failed to verify; signature expired at {expires} (now: {now}).",
+        {
+          expires: expires.toString(),
+          now: now.toString(),
+          signature: sigHeader,
+        },
+      );
+      return null;
+    }
+  }
+  if ("created" in sigValues) {
+    const createdSeconds = parseInt(sigValues.created);
+    if (!Number.isInteger(createdSeconds)) {
+      logger.debug(
+        "Failed to verify; invalid created field in the Signature header: {created}.",
+        { created: sigValues.created, signature: sigHeader },
+      );
+      return null;
+    }
+    if (timeWindow !== false) {
+      const created = Temporal.Instant.fromEpochMilliseconds(
+        createdSeconds * 1000,
+      );
+      const tw: Temporal.DurationLike = timeWindow ?? { minutes: 1 };
+      if (Temporal.Instant.compare(created, now.add(tw)) > 0) {
+        logger.debug(
+          "Failed to verify; created is too far in the future.",
+          { created: created.toString(), now: now.toString() },
+        );
+        return null;
+      } else if (Temporal.Instant.compare(created, now.subtract(tw)) < 0) {
+        logger.debug(
+          "Failed to verify; created is too far in the past.",
+          { created: created.toString(), now: now.toString() },
+        );
+        return null;
+      }
+    }
   }
   const { keyId, headers, signature } = sigValues;
   span?.setAttribute("http_signatures.key_id", keyId);
@@ -420,9 +475,13 @@ async function verifyRequestInternal(
   }
   const message = headerNames.map((name) =>
     `${name}: ` +
-    (name == "(request-target)"
+    (name === "(request-target)"
       ? `${request.method.toLowerCase()} ${new URL(request.url).pathname}`
-      : name == "host"
+      : name === "(created)"
+      ? (sigValues.created ?? "")
+      : name === "(expires)"
+      ? (sigValues.expires ?? "")
+      : name === "host"
       ? request.headers.get("host") ?? new URL(request.url).host
       : request.headers.get(name))
   ).join("\n");

@@ -8,6 +8,13 @@ Version 1.3.22
 
 To be released.
 
+ -  Fixed a bug where `verifyRequest()` function threw a `TypeError` when
+    verifying HTTP Signatures with `created` or `expires` fields in
+    the `Signature` header as defined in draft-cavage-http-signatures-12,
+    causing `500 Internal Server Error` responses in inbox handlers.
+    Now it correctly handles these fields as unquoted integers according
+    to the specification.
+
 
 Version 1.3.21
 --------------
@@ -398,6 +405,19 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.25
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where `verifyRequest()` function threw a `TypeError` when
+    verifying HTTP Signatures with `created` or `expires` fields in
+    the `Signature` header as defined in draft-cavage-http-signatures-12,
+    causing `500 Internal Server Error` responses in inbox handlers.
+    Now it correctly handles these fields as unquoted integers according
+    to the specification.
 
 
 Version 1.2.24
@@ -822,6 +842,19 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.25
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where `verifyRequest()` function threw a `TypeError` when
+    verifying HTTP Signatures with `created` or `expires` fields in
+    the `Signature` header as defined in draft-cavage-http-signatures-12,
+    causing `500 Internal Server Error` responses in inbox handlers.
+    Now it correctly handles these fields as unquoted integers according
+    to the specification.
 
 
 Version 1.1.24
@@ -1287,6 +1320,19 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.28
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where `verifyRequest()` function threw a `TypeError` when
+    verifying HTTP Signatures with `created` or `expires` fields in
+    the `Signature` header as defined in draft-cavage-http-signatures-12,
+    causing `500 Internal Server Error` responses in inbox handlers.
+    Now it correctly handles these fields as unquoted integers according
+    to the specification.
 
 
 Version 1.0.27
