@@ -393,6 +393,7 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import * as express from 'express';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -439,8 +440,12 @@ export class AppModule implements NestModule {
       },
     );
 
-    // Apply middleware to all routes except auth endpoints
-    consumer.apply(fedifyMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+    // Fedify middleware requires the raw request body for HTTP signature verification
+    // so we apply `express.raw()` before `fedifyMiddleware` to preserve the body.
+    consumer.apply(
+      express.raw({ type: '*/*' }),
+      fedifyMiddleware
+    ).forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
 ~~~~
@@ -484,6 +489,16 @@ Next.js
 -------
 
 *This API is available since Fedify 1.9.0.*
+
+> [!TIP]
+> You can see the example in the `examples/next-integration` directory in
+> the [Fedify repository].
+> Or you can just create a Fedify–Next.js app with the following command:
+> 
+> ~~~~ sh
+> npx create-next-app -e https://github.com/fedify-dev/fedify \
+>   --example-path examples/next-integration
+> ~~~~
 
 [Next.js] is a React framework that enables you to build server-rendered
 and statically generated web applications.  Fedify has the `@fedify/next`
@@ -531,16 +546,30 @@ export default fedifyWith(federation)(
 // More details: https://nextjs.org/docs/app/api-reference/file-conventions/middleware#config-object-optional
 export const config = {
   runtime: "nodejs",
-  matcher: [{
-    source: "/:path*",
-    has: [
-      {
-        type: "header",
-        key: "Accept",
-        value: ".*application\\\\/((jrd|activity|ld)\\\\+json|xrd\\\\+xml).*",
-      },
-    ],
-  }],
+  matcher: [
+    {
+      source: "/:path*",
+      has: [
+        {
+          type: "header",
+          key: "Accept",
+          value: ".*application\\/((jrd|activity|ld)\\+json|xrd\\+xml).*",
+        },
+      ],
+    },
+    {
+      source: "/:path*",
+      has: [
+        {
+          type: "header",
+          key: "content-type",
+          value: ".*application\\/((jrd|activity|ld)\\+json|xrd\\+xml).*",
+        },
+      ],
+    },
+    { source: "/.well-known/nodeinfo" },
+    { source: "/.well-known/x-nodeinfo2" },
+  ],
 };
 ~~~~
 
@@ -627,5 +656,6 @@ as [`Request`] and [`Response`] objects.  In that case, you need to convert
 the request and response objects to the appropriate types that the `Federation`
 object can handle.
 
+[Fedify repository]: https://github.com/fedify-dev/fedify
 [`Request`]: https://developer.mozilla.org/en-US/docs/Web/API/Request
 [`Response`]: https://developer.mozilla.org/en-US/docs/Web/API/Response

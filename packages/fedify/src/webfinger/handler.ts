@@ -114,7 +114,10 @@ async function handleWebFingerInternal<TContextData>(
     span,
   }: WebFingerHandlerParameters<TContextData>,
 ): Promise<Response> {
-  if (actorDispatcher == null) return await onNotFound(request);
+  if (actorDispatcher == null) {
+    logger.error("Actor dispatcher is not set.");
+    return await onNotFound(request);
+  }
   const resource = context.url.searchParams.get("resource");
   if (resource == null) {
     return new Response("Missing resource parameter.", { status: 400 });
@@ -133,10 +136,6 @@ async function handleWebFingerInternal<TContextData>(
     "webfinger.resource.scheme",
     resourceUrl.protocol.replace(/:$/, ""),
   );
-  if (actorDispatcher == null) {
-    logger.error("Actor dispatcher is not set.");
-    return await onNotFound(request);
-  }
 
   async function mapUsernameToIdentifier(
     username: string,

@@ -1785,7 +1785,15 @@ snapshot[`Deno.inspect(Collection) [auto] 1`] = `
   current: CollectionPage {},
   first: CollectionPage {},
   last: CollectionPage {},
-  items: [ Object {}, Link {} ]
+  items: [ Object {}, Link {} ],
+  likesOf: Object {},
+  sharesOf: Object {},
+  repliesOf: Object {},
+  inboxOf: Object {},
+  outboxOf: Object {},
+  followersOf: Object {},
+  followingOf: Object {},
+  likedOf: Object {}
 }'
 `;
 
@@ -1828,7 +1836,15 @@ snapshot[`Deno.inspect(Collection) [auto] 2`] = `
   current: URL "https://example.com/",
   first: URL "https://example.com/",
   last: URL "https://example.com/",
-  items: [ URL "https://example.com/" ]
+  items: [ URL "https://example.com/" ],
+  likesOf: URL "https://example.com/",
+  sharesOf: URL "https://example.com/",
+  repliesOf: URL "https://example.com/",
+  inboxOf: URL "https://example.com/",
+  outboxOf: URL "https://example.com/",
+  followersOf: URL "https://example.com/",
+  followingOf: URL "https://example.com/",
+  likedOf: URL "https://example.com/"
 }'
 `;
 
@@ -1871,7 +1887,15 @@ snapshot[`Deno.inspect(Collection) [auto] 3`] = `
   current: CollectionPage {},
   first: CollectionPage {},
   last: CollectionPage {},
-  items: [ Object {}, Object {} ]
+  items: [ Object {}, Object {} ],
+  likesOf: Object {},
+  sharesOf: Object {},
+  repliesOf: Object {},
+  inboxOf: Object {},
+  outboxOf: Object {},
+  followersOf: Object {},
+  followingOf: Object {},
+  likedOf: Object {}
 }'
 `;
 
@@ -1915,6 +1939,14 @@ snapshot[`Deno.inspect(CollectionPage) [auto] 1`] = `
   first: CollectionPage {},
   last: CollectionPage {},
   items: [ Object {}, Link {} ],
+  likesOf: Object {},
+  sharesOf: Object {},
+  repliesOf: Object {},
+  inboxOf: Object {},
+  outboxOf: Object {},
+  followersOf: Object {},
+  followingOf: Object {},
+  likedOf: Object {},
   partOf: Collection {},
   next: CollectionPage {},
   prev: CollectionPage {}
@@ -1961,6 +1993,14 @@ snapshot[`Deno.inspect(CollectionPage) [auto] 2`] = `
   first: URL "https://example.com/",
   last: URL "https://example.com/",
   items: [ URL "https://example.com/" ],
+  likesOf: URL "https://example.com/",
+  sharesOf: URL "https://example.com/",
+  repliesOf: URL "https://example.com/",
+  inboxOf: URL "https://example.com/",
+  outboxOf: URL "https://example.com/",
+  followersOf: URL "https://example.com/",
+  followingOf: URL "https://example.com/",
+  likedOf: URL "https://example.com/",
   partOf: URL "https://example.com/",
   next: URL "https://example.com/",
   prev: URL "https://example.com/"
@@ -2007,6 +2047,14 @@ snapshot[`Deno.inspect(CollectionPage) [auto] 3`] = `
   first: CollectionPage {},
   last: CollectionPage {},
   items: [ Object {}, Object {} ],
+  likesOf: Object {},
+  sharesOf: Object {},
+  repliesOf: Object {},
+  inboxOf: Object {},
+  outboxOf: Object {},
+  followersOf: Object {},
+  followingOf: Object {},
+  likedOf: Object {},
   partOf: Collection {},
   next: CollectionPage {},
   prev: CollectionPage {}
@@ -4881,7 +4929,15 @@ snapshot[`Deno.inspect(OrderedCollection) [auto] 1`] = `
   current: CollectionPage {},
   first: CollectionPage {},
   last: CollectionPage {},
-  items: [ Object {}, Link {} ]
+  items: [ Object {}, Link {} ],
+  likesOf: Object {},
+  sharesOf: Object {},
+  repliesOf: Object {},
+  inboxOf: Object {},
+  outboxOf: Object {},
+  followersOf: Object {},
+  followingOf: Object {},
+  likedOf: Object {}
 }'
 `;
 
@@ -4924,7 +4980,15 @@ snapshot[`Deno.inspect(OrderedCollection) [auto] 2`] = `
   current: URL "https://example.com/",
   first: URL "https://example.com/",
   last: URL "https://example.com/",
-  items: [ URL "https://example.com/" ]
+  items: [ URL "https://example.com/" ],
+  likesOf: URL "https://example.com/",
+  sharesOf: URL "https://example.com/",
+  repliesOf: URL "https://example.com/",
+  inboxOf: URL "https://example.com/",
+  outboxOf: URL "https://example.com/",
+  followersOf: URL "https://example.com/",
+  followingOf: URL "https://example.com/",
+  likedOf: URL "https://example.com/"
 }'
 `;
 
@@ -4967,7 +5031,15 @@ snapshot[`Deno.inspect(OrderedCollection) [auto] 3`] = `
   current: CollectionPage {},
   first: CollectionPage {},
   last: CollectionPage {},
-  items: [ Object {}, Object {} ]
+  items: [ Object {}, Object {} ],
+  likesOf: Object {},
+  sharesOf: Object {},
+  repliesOf: Object {},
+  inboxOf: Object {},
+  outboxOf: Object {},
+  followersOf: Object {},
+  followingOf: Object {},
+  likedOf: Object {}
 }'
 `;
 
@@ -5011,6 +5083,14 @@ snapshot[`Deno.inspect(OrderedCollectionPage) [auto] 1`] = `
   first: CollectionPage {},
   last: CollectionPage {},
   items: [ Object {}, Link {} ],
+  likesOf: Object {},
+  sharesOf: Object {},
+  repliesOf: Object {},
+  inboxOf: Object {},
+  outboxOf: Object {},
+  followersOf: Object {},
+  followingOf: Object {},
+  likedOf: Object {},
   partOf: Collection {},
   next: CollectionPage {},
   prev: CollectionPage {},
@@ -5058,6 +5138,14 @@ snapshot[`Deno.inspect(OrderedCollectionPage) [auto] 2`] = `
   first: URL "https://example.com/",
   last: URL "https://example.com/",
   items: [ URL "https://example.com/" ],
+  likesOf: URL "https://example.com/",
+  sharesOf: URL "https://example.com/",
+  repliesOf: URL "https://example.com/",
+  inboxOf: URL "https://example.com/",
+  outboxOf: URL "https://example.com/",
+  followersOf: URL "https://example.com/",
+  followingOf: URL "https://example.com/",
+  likedOf: URL "https://example.com/",
   partOf: URL "https://example.com/",
   next: URL "https://example.com/",
   prev: URL "https://example.com/",
@@ -5105,6 +5193,14 @@ snapshot[`Deno.inspect(OrderedCollectionPage) [auto] 3`] = `
   first: CollectionPage {},
   last: CollectionPage {},
   items: [ Object {}, Object {} ],
+  likesOf: Object {},
+  sharesOf: Object {},
+  repliesOf: Object {},
+  inboxOf: Object {},
+  outboxOf: Object {},
+  followersOf: Object {},
+  followingOf: Object {},
+  likedOf: Object {},
   partOf: Collection {},
   next: CollectionPage {},
   prev: CollectionPage {},

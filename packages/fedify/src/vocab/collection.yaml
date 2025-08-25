@@ -80,3 +80,75 @@ properties:
   range:
   - "https://www.w3.org/ns/activitystreams#Object"
   - "https://www.w3.org/ns/activitystreams#Link"
+
+- singularName: likesOf
+  functional: true
+  compactName: likesOf
+  uri: "https://w3id.org/fep/5711#likesOf"
+  description: |
+    Defines an object for which the collection is the value of the likes property.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: sharesOf
+  functional: true
+  compactName: sharesOf
+  uri: "https://w3id.org/fep/5711#sharesOf"
+  description: |
+    Defines an object for which the collection is the value of the shares property.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: repliesOf
+  functional: true
+  compactName: repliesOf
+  uri: "https://w3id.org/fep/5711#repliesOf"
+  description: |
+    Defines an object for which the collection is the value of the replies property.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"  
+
+- singularName: inboxOf
+  functional: true
+  compactName: inboxOf
+  uri: "https://w3id.org/fep/5711#inboxOf"
+  description: |
+    Defines an actor for which the collection is the value of the inbox property.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: outboxOf
+  functional: true
+  compactName: outboxOf
+  uri: "https://w3id.org/fep/5711#outboxOf"
+  description: |
+    Defines an actor for which the collection is the value of the outbox property.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: followersOf
+  functional: true
+  compactName: followersOf
+  uri: "https://w3id.org/fep/5711#followersOf"
+  description: |
+    Defines an actor for which the collection is the value of the followers property.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: followingOf
+  functional: true
+  compactName: followingOf
+  uri: "https://w3id.org/fep/5711#followingOf"
+  description: |
+    Defines an actor for which the collection is the value of the following property.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"
+
+- singularName: likedOf
+  functional: true
+  compactName: likedOf
+  uri: "https://w3id.org/fep/5711#likedOf"
+  description: |
+    Defines an actor for which the collection is the value of the liked property.
+  range:
+  - "https://www.w3.org/ns/activitystreams#Object"

@@ -16,8 +16,42 @@ To be released.
 
 ### @fedify/fedify
 
+ -  Added inverse properties for collections to Vocabulary API.
+    [[FEP-5711], [#373], [#381] by Jiwon Kwon]
+
+     -  `new Collection()` constructor now accepts `likesOf` option.
+     -  Added `Collection.likesOfId` property.
+     -  Added `Collection.getLikesOf()` method.
+     -  `new Collection()` constructor now accepts `sharesOf` option.
+     -  Added `Collection.sharedOfId` property.
+     -  Added `Collection.getSharedOf()` method.
+     -  `new Collection()` constructor now accepts `repliesOf` option.
+     -  Added `Collection.repliesOfId` property.
+     -  Added `Collection.getRepliesOf()` method.
+     -  `new Collection()` constructor now accepts `inboxOf` option.
+     -  Added `Collection.inboxOfId` property.
+     -  Added `Collection.getInboxOf()` method.
+     -  `new Collection()` constructor now accepts `outboxOf` option.
+     -  Added `Collection.outboxOfId` property.
+     -  Added `Collection.getOutboxOf()` method.
+     -  `new Collection()` constructor now accepts `followersOf` option.
+     -  Added `Collection.followersOfId` property.
+     -  Added `Collection.getFollowersOf()` method.
+     -  `new Collection()` constructor now accepts `followingOf` option.
+     -  Added `Collection.followingOfId` property.
+     -  Added `Collection.getFollowingOf()` method.
+     -  `new Collection()` constructor now accepts `likedOf` option.
+     -  Added `Collection.likedOfId` property.
+     -  Added `Collection.getLikedOf()` method.
+
  -  Changed how `parseSoftware()` function handles non-Semantic Versioning
     number strings on `tryBestEffort` mode.  [[#353], [#365] by Hyeonseo Kim]]
+
+[FEP-5711]: https://w3id.org/fep/5711
+[#353]: https://github.com/fedify-dev/fedify/issues/353
+[#365]: https://github.com/fedify-dev/fedify/pull/365
+[#373]: https://github.com/fedify-dev/fedify/issues/373
+[#381]: https://github.com/fedify-dev/fedify/pull/381
 
 ### @fedify/cli
 
@@ -36,6 +70,9 @@ To be released.
     hanging on slow or unresponsive servers.
     [[#258] by Hyunchae Kim]
 
+[#353]: https://github.com/fedify-dev/fedify/issues/353
+[#365]: https://github.com/fedify-dev/fedify/pull/365
+
 ### @fedify/next
 
  -  Created [Next.js] integration as the *@fedify/next* package.
@@ -43,8 +80,53 @@ To be released.
 
 [Next.js]: https://nextjs.org/
 [#313]: https://github.com/fedify-dev/fedify/issues/313
-[#353]: https://github.com/fedify-dev/fedify/issues/353
-[#365]: https://github.com/fedify-dev/fedify/pull/365
+
+### @fedify/redis
+
+ -  Added support for Redis Cluster to the *@fedify/redis* package.
+    [[#368] by Michael Barrett]
+
+[#368]: https://github.com/fedify-dev/fedify/pull/368
+
+
+Version 1.8.7
+-------------
+
+Released on August 25, 2025.
+
+### @fedify/fedify
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
+
+
+Version 1.8.6
+-------------
+
+Released on August 24, 2025.
+
+### @fedify/nestjs
+
+ -  Fixed a critical error that prevented the middleware from processing
+    ActivityPub requests in NestJS applications. The middleware now correctly
+    handles request bodies that have been pre-processed by other NestJS
+    middleware or interceptors.  [[#279], [#386] by Jaeyeol Lee]
+
+[#279]: https://github.com/fedify-dev/fedify/issues/279
+[#386]: https://github.com/fedify-dev/fedify/pull/386
+
+### @fedify/testing
+
+ -  Updated exports to include context creation functions.
+    [[#382] by Colin Mitchell]
+
+     -  Added `createContext()` function.
+     -  Added `createInboxContext()` function.
+     -  Added `createRequestContext()` function.
+
+[#382]: https://github.com/fedify-dev/fedify/pull/382
 
 
 Version 1.8.5
@@ -334,6 +416,17 @@ the versioning.
 [iTerm]: https://iterm2.com/
 
 
+Version 1.7.10
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
+
+
 Version 1.7.9
 -------------
 
@@ -470,6 +563,17 @@ Released on June 25, 2025.
 [#250]: https://github.com/fedify-dev/fedify/issues/250
 [#251]: https://github.com/fedify-dev/fedify/pull/251
 [#252]: https://github.com/fedify-dev/fedify/pull/252
+
+
+Version 1.6.9
+-------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.6.8
@@ -611,6 +715,17 @@ the versioning.
 [#237]: https://github.com/fedify-dev/fedify/pull/237
 [#241]: https://github.com/fedify-dev/fedify/issues/241
 [#242]: https://github.com/fedify-dev/fedify/pull/242
+
+
+Version 1.5.6
+-------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.5.5
@@ -798,6 +913,17 @@ Released on March 28, 2025.
 [#223]: https://github.com/fedify-dev/fedify/pull/223
 [FEP-8fcf]: https://w3id.org/fep/8fcf
 [multibase]: https://github.com/multiformats/js-multibase
+
+
+Version 1.4.14
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.4.13
@@ -1060,6 +1186,17 @@ Released on February 5, 2025.
 
 [#3]: https://github.com/fedify-dev/fedify/issues/3
 [#195]: https://github.com/fedify-dev/fedify/issues/195
+
+
+Version 1.3.21
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.3.20
@@ -1440,6 +1577,17 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.24
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.2.23
@@ -1853,6 +2001,17 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.24
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.1.23
@@ -2307,6 +2466,17 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.27
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.0.26
