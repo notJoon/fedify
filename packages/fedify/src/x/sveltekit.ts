@@ -6,6 +6,10 @@
  *
  * [SvelteKit]: https://kit.svelte.dev/
  *
+ * @deprecated This module has been moved to a separate package.
+ *             Install and import from `@fedify/sveltekit` instead.
+ *             This module will be removed in Fedify v2.0.
+ *
  * @module
  * @since 1.3.0
  */
@@ -27,6 +31,10 @@ type HookParams = {
 /**
  * Create a SvelteKit hook handler to integrate with the {@link Federation}
  * object.
+ *
+ * @deprecated This function has been moved to `@fedify/sveltekit` package.
+ *             Import `fedifyHook` from `@fedify/sveltekit` instead.
+ *             This function will be removed in Fedify v2.0.
  *
  * @example hooks.server.ts
  * ``` typescript

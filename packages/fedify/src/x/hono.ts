@@ -6,6 +6,10 @@
  *
  * [Hono]: https://hono.dev/
  *
+ * @deprecated This module has been moved to a separate package.
+ *             Install and import from `@fedify/hono` instead.
+ *             This module will be removed in Fedify v2.0.
+ *
  * @module
  * @since 0.6.0
  */
@@ -32,6 +36,10 @@ type HonoMiddleware<THonoContext extends HonoContext> = (
  * A factory function to create a context data for the {@link Federation}
  * object.
  *
+ * @deprecated This type has been moved to `@fedify/hono` package.
+ *             Import `ContextDataFactory` from `@fedify/hono` instead.
+ *             This type will be removed in Fedify v2.0.
+ *
  * @template TContextData A type of the context data for the {@link Federation}
  *                         object.
  * @template THonoContext A type of the Hono context.
@@ -44,6 +52,10 @@ export type ContextDataFactory<TContextData, THonoContext> = (
 
 /**
  * Create a Hono middleware to integrate with the {@link Federation} object.
+ *
+ * @deprecated This function has been moved to `@fedify/hono` package.
+ *             Import `federation` from `@fedify/hono` instead.
+ *             This function will be removed in Fedify v2.0.
  *
  * @template TContextData A type of the context data for the {@link Federation}
  *                         object.
