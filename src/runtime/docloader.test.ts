@@ -209,6 +209,36 @@ test("fetchDocumentLoader()", async (t) => {
     });
   });
 
+  mf.mock("GET@/xhtml-link", (_req) =>
+    new Response(
+      `<html>
+          <head>
+            <meta charset=utf-8>
+            <link
+              rel=alternate
+              type="application/activity+json"
+              href="https://example.com/object" />
+          </head>
+        </html>`,
+      {
+        status: 200,
+        headers: { "Content-Type": "application/xhtml+xml; charset=utf-8" },
+      },
+    ));
+
+  await t.step("XHTML <link>", async () => {
+    assertEquals(await fetchDocumentLoader("https://example.com/xhtml-link"), {
+      contextUrl: null,
+      documentUrl: "https://example.com/object",
+      document: {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        id: "https://example.com/object",
+        name: "Fetched object",
+        type: "Object",
+      },
+    });
+  });
+
   mf.mock("GET@/html-a", (_req) =>
     new Response(
       `<html>
