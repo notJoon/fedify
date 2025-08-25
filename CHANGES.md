@@ -6,7 +6,9 @@ Fedify changelog
 Version 1.8.7
 -------------
 
-To be released.
+Released on August 25, 2025.
+
+### @fedify/fedify
 
  -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
     self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
