@@ -8,6 +8,11 @@ Version 1.0.27
 
 To be released.
 
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
+
 
 Version 1.0.26
 --------------
