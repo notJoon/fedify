@@ -24,7 +24,7 @@ import type {
 
 /**
  * Represents a key–value store implementation using Deno's KV store.
- * 
+ *
  * @deprecated This class has been moved to `@fedify/denokv` package.
  *             Import `DenoKvStore` from `@fedify/denokv` instead.
  *             This class will be removed in Fedify v2.0.
@@ -101,7 +101,7 @@ export class DenoKvStore implements KvStore {
 
 /**
  * Represents a message queue adapter that uses Deno KV store.
- * 
+ *
  * @deprecated This class has been moved to `@fedify/denokv` package.
  *             Import `DenoKvMessageQueue` from `@fedify/denokv` instead.
  *             This class will be removed in Fedify v2.0.

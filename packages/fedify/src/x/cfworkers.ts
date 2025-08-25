@@ -37,7 +37,7 @@ interface KvMetadata {
  * operation, as Cloudflare Workers KV does not support atomic compare-and-swap
  * operations.  If you need this functionality, consider using a different
  * key–value store that supports atomic operations.
- * 
+ *
  * @deprecated This class has been moved to `@fedify/cfworkers` package.
  *             Import `WorkersKvStore` from `@fedify/cfworkers` instead.
  *             This class will be removed in Fedify v2.0.
@@ -101,7 +101,7 @@ export class WorkersKvStore implements KvStore {
  * way as other message queue systems.  Instead, you should use
  * the {@link Federation.processQueuedTask} method to process messages
  * passed to the queue.
- * 
+ *
  * @deprecated This class has been moved to `@fedify/cfworkers` package.
  *             Import `WorkersMessageQueue` from `@fedify/cfworkers` instead.
  *             This class will be removed in Fedify v2.0.
