@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.7.11
 --------------
 
-To be released.
+Released on August 25, 2025.
 
  -  Fixed a bug where `verifyRequest()` function threw a `TypeError` when
     verifying HTTP Signatures with `created` or `expires` fields in
