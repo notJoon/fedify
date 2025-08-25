@@ -8,6 +8,13 @@ Version 1.0.28
 
 To be released.
 
+ -  Fixed a bug where `verifyRequest()` function threw a `TypeError` when
+    verifying HTTP Signatures with `created` or `expires` fields in
+    the `Signature` header as defined in draft-cavage-http-signatures-12,
+    causing `500 Internal Server Error` responses in inbox handlers.
+    Now it correctly handles these fields as unquoted integers according
+    to the specification.
+
 
 Version 1.0.27
 --------------
