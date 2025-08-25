@@ -61,7 +61,7 @@ const federation = createFederation<void>({
 ### `DenoKvMessageQueue` (Deno only)
 
 > [!WARNING]
-> The `@fedify/fedify/x/deno` module is deprecated and will be removed in
+> The `@fedify/fedify/x/denokv` module is deprecated and will be removed in
 > Fedify 2.0.0.  Please use the `@fedify/denokv` package instead.
 
 `DenoKvMessageQueue` is a message queue implementation for [Deno] runtime that

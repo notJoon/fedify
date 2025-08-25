@@ -61,7 +61,7 @@ The repository is organized as a monorepo with the following packages:
     -  *src/testing/*: Testing utilities
     -  *src/vocab/*: ActivityPub vocabulary implementation
     -  *src/webfinger/*: WebFinger protocol implementation
-    -  ~~src/x/: Framework integrations ~~ **Don't use.** This directory will be removed in version 2.0.0. Use *@fedify/{package name}*(*packages/{package name}*) packages.
+    -  ~~src/x/: Framework integrations~~ **Don't use.** This directory will be removed in version 2.0.0. Use packages from the `@fedify` scope, which are located in the `packages/` directory (e.g., `@fedify/hono` is in `packages/hono/`).
  -  *packages/cli/*: Fedify CLI implementation (@fedify/cli, built with Deno)
  -  *packages/amqp/*: AMQP/RabbitMQ driver (@fedify/amqp)
  -  *packages/cfworkers/*: Cloudflare Workers integration (@fedify/cfworkers)

@@ -134,7 +134,7 @@ const federation = createFederation<void>({
 ### `DenoKvStore` (Deno only)
 
 > [!WARNING]
-> The `@fedify/fedify/x/deno` module is deprecated and will be removed in
+> The `@fedify/fedify/x/denokv` module is deprecated and will be removed in
 > Fedify 2.0.0.  Please use the `@fedify/denokv` package instead.
 
 `DenoKvStore` is a key–value store implementation for [Deno] runtime that uses
