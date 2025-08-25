@@ -8,6 +8,11 @@ Version 1.4.14
 
 To be released.
 
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
+
 
 Version 1.4.13
 --------------
@@ -269,6 +274,17 @@ Released on February 5, 2025.
 
 [#3]: https://github.com/fedify-dev/fedify/issues/3
 [#195]: https://github.com/fedify-dev/fedify/issues/195
+
+
+Version 1.3.21
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.3.20
@@ -649,6 +665,17 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.24
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.2.23
@@ -1062,6 +1089,17 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.24
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.1.23
@@ -1516,6 +1554,17 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.27
+--------------
+
+Released on August 25, 2025.
+
+ -  Fixed a bug where ActivityPub Discovery failed to recognize XHTML
+    self-closing `<link>` tags. The HTML/XHTML parser now correctly handles
+    whitespace before the self-closing slash (`/>`), improving compatibility
+    with XHTML documents that follow the self-closing tag format.
 
 
 Version 1.0.26
