@@ -2,11 +2,11 @@
  * `KvStore` & `MessageQueue` adapters for Cloudflare Workers
  * ==========================================================
  *
- * This module provides `KvStore` and `MessageQueue` implementations that use
+ * This package provides `KvStore` and `MessageQueue` implementations that use
  * Cloudflare Workers' KV and Queues bindings, respectively.
  *
  * @module
- * @since 1.6.0
+ * @since 1.9.0
  */
 import type {
   KVNamespace,
@@ -35,7 +35,7 @@ interface KvMetadata {
  * operation, as Cloudflare Workers KV does not support atomic compare-and-swap
  * operations.  If you need this functionality, consider using a different
  * key–value store that supports atomic operations.
- * @since 1.6.0
+ * @since 1.9.0
  */
 export class WorkersKvStore implements KvStore {
   #namespace: KVNamespace<string>;
@@ -95,7 +95,7 @@ export class WorkersKvStore implements KvStore {
  * way as other message queue systems.  Instead, you should use
  * the {@link Federation.processQueuedTask} method to process messages
  * passed to the queue.
- * @since 1.6.0
+ * @since 1.9.0
  */
 export class WorkersMessageQueue implements MessageQueue {
   #queue: Queue;

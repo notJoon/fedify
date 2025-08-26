@@ -2,13 +2,13 @@
  * `KvStore` & `MessageQueue` adapters for Deno's KV store
  * =======================================================
  *
- * This module provides `KvStore` and `MessageQueue` implementations that use
+ * This package provides `KvStore` and `MessageQueue` implementations that use
  * Deno's KV store.  The `DenoKvStore` class implements the `KvStore` interface
  * using Deno's KV store, and the `DenoKvMessageQueue` class implements the
  * `MessageQueue` interface using Deno's KV store.
  *
  * @module
- * @since 0.5.0
+ * @since 1.9.0
  */
 import type {
   KvKey,
@@ -22,6 +22,8 @@ import { isEqual } from "es-toolkit";
 
 /**
  * Represents a key–value store implementation using Deno's KV store.
+ *
+ * @since 1.9.0
  */
 export class DenoKvStore implements KvStore {
   #kv: Deno.Kv;
@@ -95,6 +97,8 @@ export class DenoKvStore implements KvStore {
 
 /**
  * Represents a message queue adapter that uses Deno KV store.
+ *
+ * @since 1.9.0
  */
 export class DenoKvMessageQueue implements MessageQueue, Disposable {
   #kv: Deno.Kv;

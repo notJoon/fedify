@@ -2,12 +2,12 @@
  * Fedify with Hono
  * ================
  *
- * This module provides a [Hono] middleware to integrate with the Fedify.
+ * This package provides a [Hono] middleware to integrate with the Fedify.
  *
  * [Hono]: https://hono.dev/
  *
  * @module
- * @since 0.6.0
+ * @since 1.9.0
  */
 import type {
   Federation,
@@ -37,6 +37,7 @@ type HonoMiddleware<THonoContext extends HonoContext> = (
  * @template THonoContext A type of the Hono context.
  * @param context A Hono context object.
  * @returns A context data for the {@link Federation} object.
+ * @since 1.9.0
  */
 export type ContextDataFactory<TContextData, THonoContext> = (
   context: THonoContext,
@@ -52,6 +53,7 @@ export type ContextDataFactory<TContextData, THonoContext> = (
  * @param contextDataFactory A function to create a context data for the
  *                           {@link Federation} object.
  * @returns A Hono middleware.
+ * @since 1.9.0
  */
 export function federation<TContextData, THonoContext extends HonoContext>(
   federation: Federation<TContextData>,

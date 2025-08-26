@@ -2,12 +2,12 @@
  * Fedify with SvelteKit
  * =====================
  *
- * This module provides a [SvelteKit] hook to integrate with the Fedify.
+ * This package provides a [SvelteKit] hook to integrate with the Fedify.
  *
  * [SvelteKit]: https://kit.svelte.dev/
  *
  * @module
- * @since 1.3.0
+ * @since 1.9.0
  */
 
 import type {
@@ -41,7 +41,7 @@ type HookParams = {
  * @param createContextData A function to create a context data for the
  *                          {@link Federation} object.
  * @returns A SvelteKit hook handler.
- * @since 1.3.0
+ * @since 1.9.0
  */
 export function fedifyHook<TContextData>(
   federation: Federation<TContextData>,
