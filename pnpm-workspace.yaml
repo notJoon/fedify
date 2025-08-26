@@ -3,7 +3,6 @@ packages:
 - packages/cli
 - packages/amqp
 - packages/cfworkers
-- packages/denokv
 - packages/elysia
 - packages/express
 - packages/hono

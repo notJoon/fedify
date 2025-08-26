@@ -479,22 +479,6 @@ importers:
 
   packages/cli: {}
 
-  packages/denokv:
-    dependencies:
-      '@fedify/fedify':
-        specifier: 'workspace:'
-        version: link:../fedify
-      es-toolkit:
-        specifier: 'catalog:'
-        version: 1.39.5
-    devDependencies:
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.12.9(typescript@5.9.2)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.2
-
   packages/elysia:
     dependencies:
       '@fedify/fedify':
