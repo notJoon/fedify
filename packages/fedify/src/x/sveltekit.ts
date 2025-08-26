@@ -13,7 +13,7 @@
  * @module
  * @since 1.3.0
  */
-
+import { getLogger } from "@logtape/logtape";
 import type {
   Federation,
   FederationFetchOptions,
@@ -57,6 +57,11 @@ export function fedifyHook<TContextData>(
     event: RequestEvent,
   ) => TContextData | Promise<TContextData>,
 ): (params: HookParams) => Promise<Response> {
+  const logger = getLogger(["fedify", "federation", "sveltekit"]);
+  logger.warn(
+    "The `@fedify/fedify/x/sveltekit` module is deprecated; use `fedifyHook` " +
+      "from `@fedify/sveltekit` package instead.",
+  );
   return async ({ event, resolve }: HookParams) => {
     return await federation.fetch(event.request, {
       contextData: await createContextData(event),

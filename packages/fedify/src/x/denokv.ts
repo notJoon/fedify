@@ -14,6 +14,7 @@
  * @module
  * @since 0.5.0
  */
+import { getLogger } from "@logtape/logtape";
 import { isEqual } from "es-toolkit";
 import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import type {
@@ -37,6 +38,11 @@ export class DenoKvStore implements KvStore {
    * @param kv The Deno KV store to use.
    */
   constructor(kv: Deno.Kv) {
+    const logger = getLogger(["fedify", "denokv"]);
+    logger.warn(
+      "The `@fedify/fedify/x/denokv` module is deprecated; use `DenoKvStore` " +
+        "from `@fedify/denokv` package instead.",
+    );
     this.#kv = kv;
   }
 
@@ -121,6 +127,11 @@ export class DenoKvMessageQueue implements MessageQueue, Disposable {
    * @param kv The Deno KV store to use.
    */
   constructor(kv: Deno.Kv) {
+    const logger = getLogger(["fedify", "denokv"]);
+    logger.warn(
+      "The `@fedify/fedify/x/denokv` module is deprecated; use " +
+        "`DenoKvMessageQueue` from `@fedify/denokv` package instead.",
+    );
     this.#kv = kv;
   }
 

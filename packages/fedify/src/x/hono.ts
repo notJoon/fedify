@@ -13,6 +13,7 @@
  * @module
  * @since 0.6.0
  */
+import { getLogger } from "@logtape/logtape";
 import type {
   Federation,
   FederationFetchOptions,
@@ -69,6 +70,11 @@ export function federation<TContextData, THonoContext extends HonoContext>(
   federation: Federation<TContextData>,
   contextDataFactory: ContextDataFactory<TContextData, THonoContext>,
 ): HonoMiddleware<THonoContext> {
+  const logger = getLogger(["fedify", "federation", "hono"]);
+  logger.warn(
+    "The `@fedify/fedify/x/hono` module is deprecated; use `federation` from " +
+      "`@fedify/hono` package instead.",
+  );
   return async (ctx, next) => {
     let contextData = contextDataFactory(ctx);
     if (contextData instanceof Promise) contextData = await contextData;

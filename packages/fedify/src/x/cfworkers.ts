@@ -17,6 +17,7 @@ import type {
   MessageSendRequest,
   Queue,
 } from "@cloudflare/workers-types/experimental";
+import { getLogger } from "@logtape/logtape";
 import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import type {
   MessageQueue,
@@ -47,6 +48,11 @@ export class WorkersKvStore implements KvStore {
   #namespace: KVNamespace<string>;
 
   constructor(namespace: KVNamespace<string>) {
+    const logger = getLogger(["fedify", "cfworkers"]);
+    logger.warn(
+      "The `@fedify/fedify/x/cfworkers` module is deprecated; use " +
+        "`WorkersKvStore` from `@fedify/cfworkers` package instead.",
+    );
     this.#namespace = namespace;
   }
 
@@ -118,6 +124,11 @@ export class WorkersMessageQueue implements MessageQueue {
   readonly nativeRetrial = true;
 
   constructor(queue: Queue) {
+    const logger = getLogger(["fedify", "cfworkers"]);
+    logger.warn(
+      "The `@fedify/fedify/x/cfworkers` module is deprecated; use " +
+        "`WorkersMessageQueue` from `@fedify/cfworkers` package instead.",
+    );
     this.#queue = queue;
   }
 
