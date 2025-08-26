@@ -60,20 +60,23 @@ describe("federation middleware", () => {
   });
 
   test("handles async context data factory", async () => {
-    let capturedContextData: unknown;
+    const ASYNC_CONTEXT = "async-context" as const;
+    const capturedContextData: { contextData?: typeof ASYNC_CONTEXT } = {};
 
-    const mockFederation: MockFederation<string> = {
-      fetch: (_request, options) => {
-        capturedContextData = (options as { contextData: string }).contextData;
+    const mockFederation: MockFederation<typeof ASYNC_CONTEXT> = {
+      fetch: (_request, options: { contextData: typeof ASYNC_CONTEXT }) => {
+        capturedContextData.contextData = options.contextData;
         return Promise.resolve(new Response("OK"));
       },
     };
 
-    const contextDataFactory: ContextDataFactory<string, MockHonoContext> =
-      async () => {
-        await new Promise((resolve) => setTimeout(resolve, 10));
-        return "async-context";
-      };
+    const contextDataFactory: ContextDataFactory<
+      typeof ASYNC_CONTEXT,
+      MockHonoContext
+    > = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      return ASYNC_CONTEXT;
+    };
 
     const middleware = federation(mockFederation as never, contextDataFactory);
 
@@ -86,8 +89,8 @@ describe("federation middleware", () => {
     await middleware(mockContext, () => Promise.resolve());
 
     strictEqual(
-      (capturedContextData as { contextData: string }).contextData,
-      "async-context",
+      capturedContextData.contextData,
+      ASYNC_CONTEXT,
     );
   });
 });
