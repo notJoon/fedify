@@ -1,7 +1,7 @@
 {
   "name": "@fedify/hono",
   "version": "1.9.0",
-  "description": "",
+  "description": "Integrate Fedify with Hono",
   "keywords": [
     "Fedify",
     "ActivityPub",
