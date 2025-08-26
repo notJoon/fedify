@@ -1,4 +1,5 @@
-import { assertEquals } from "@std/assert";
+import { strictEqual } from "node:assert/strict";
+import { describe, test } from "node:test";
 import { type ContextDataFactory, federation } from "./mod.ts";
 
 interface MockHonoContext {
@@ -9,38 +10,38 @@ interface MockHonoContext {
 }
 
 interface MockFederation<T> {
-  fetch(request: Request, options: any): Promise<Response>;
+  fetch(request: Request, options: unknown): Promise<Response>;
 }
 
-Deno.test("federation middleware", async (t) => {
-  await t.step("creates middleware function", () => {
+describe("federation middleware", () => {
+  test("creates middleware function", () => {
     const mockFederation: MockFederation<undefined> = {
-      fetch: async () => new Response("OK"),
+      fetch: () => Promise.resolve(new Response("OK")),
     };
 
     const contextDataFactory: ContextDataFactory<undefined, MockHonoContext> =
       () => undefined;
 
-    const middleware = federation(mockFederation as any, contextDataFactory);
-    assertEquals(typeof middleware, "function");
+    const middleware = federation(mockFederation as never, contextDataFactory);
+    strictEqual(typeof middleware, "function");
   });
 
-  await t.step("calls federation.fetch with correct parameters", async () => {
+  test("calls federation.fetch with correct parameters", async () => {
     let capturedRequest: Request | undefined;
-    let capturedOptions: any;
+    let capturedOptions: unknown;
 
     const mockFederation: MockFederation<string> = {
-      fetch: async (request, options) => {
+      fetch: (request, options) => {
         capturedRequest = request;
         capturedOptions = options;
-        return new Response("Federation response");
+        return Promise.resolve(new Response("Federation response"));
       },
     };
 
     const contextDataFactory: ContextDataFactory<string, MockHonoContext> =
       () => "test-context";
 
-    const middleware = federation(mockFederation as any, contextDataFactory);
+    const middleware = federation(mockFederation as never, contextDataFactory);
 
     const mockRequest = new Request("https://example.com/test");
     const mockContext: MockHonoContext = {
@@ -48,20 +49,23 @@ Deno.test("federation middleware", async (t) => {
       res: new Response("Hono response"),
     };
 
-    const result = await middleware(mockContext, async () => {});
+    const result = await middleware(mockContext, () => Promise.resolve());
 
-    assertEquals(capturedRequest, mockRequest);
-    assertEquals(capturedOptions.contextData, "test-context");
-    assertEquals(result?.status, 200);
+    strictEqual(capturedRequest, mockRequest);
+    strictEqual(
+      (capturedOptions as { contextData: string }).contextData,
+      "test-context",
+    );
+    strictEqual(result?.status, 200);
   });
 
-  await t.step("handles async context data factory", async () => {
-    let capturedContextData: any;
+  test("handles async context data factory", async () => {
+    let capturedContextData: unknown;
 
     const mockFederation: MockFederation<string> = {
-      fetch: async (request, options) => {
-        capturedContextData = options.contextData;
-        return new Response("OK");
+      fetch: (_request, options) => {
+        capturedContextData = (options as { contextData: string }).contextData;
+        return Promise.resolve(new Response("OK"));
       },
     };
 
@@ -71,7 +75,7 @@ Deno.test("federation middleware", async (t) => {
         return "async-context";
       };
 
-    const middleware = federation(mockFederation as any, contextDataFactory);
+    const middleware = federation(mockFederation as never, contextDataFactory);
 
     const mockRequest = new Request("https://example.com/test");
     const mockContext: MockHonoContext = {
@@ -79,8 +83,11 @@ Deno.test("federation middleware", async (t) => {
       res: new Response("Hono response"),
     };
 
-    await middleware(mockContext, async () => {});
+    await middleware(mockContext, () => Promise.resolve());
 
-    assertEquals(capturedContextData, "async-context");
+    strictEqual(
+      (capturedContextData as { contextData: string }).contextData,
+      "async-context",
+    );
   });
 });

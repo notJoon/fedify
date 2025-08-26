@@ -1,4 +1,5 @@
-import { assertEquals } from "@std/assert";
+import { strictEqual } from "node:assert/strict";
+import { describe, test } from "node:test";
 import { fedifyHook } from "./mod.ts";
 
 interface MockRequestEvent {
@@ -11,58 +12,62 @@ interface MockHookParams {
 }
 
 interface MockFederation<T> {
-  fetch(request: Request, options: any): Promise<Response>;
+  fetch(request: Request, options: unknown): Promise<Response>;
 }
 
-Deno.test("fedifyHook", async (t) => {
-  await t.step("creates hook handler function", () => {
+describe("fedifyHook", () => {
+  test("creates hook handler function", () => {
     const mockFederation: MockFederation<undefined> = {
-      fetch: async () => new Response("OK"),
+      fetch: () => Promise.resolve(new Response("OK")),
     };
 
     const createContextData = () => undefined;
 
-    const hookHandler = fedifyHook(mockFederation as any, createContextData);
-    assertEquals(typeof hookHandler, "function");
+    const hookHandler = fedifyHook(mockFederation as never, createContextData);
+    strictEqual(typeof hookHandler, "function");
   });
 
-  await t.step("calls federation.fetch with correct parameters", async () => {
+  test("calls federation.fetch with correct parameters", async () => {
     let capturedRequest: Request | undefined;
-    let capturedOptions: any;
+    let capturedOptions: unknown;
 
     const mockFederation: MockFederation<string> = {
-      fetch: async (request, options) => {
+      fetch: (request, options) => {
         capturedRequest = request;
         capturedOptions = options;
-        return new Response("Federation response");
+        return Promise.resolve(new Response("Federation response"));
       },
     };
 
     const createContextData = () => "test-context";
 
-    const hookHandler = fedifyHook(mockFederation as any, createContextData);
+    const hookHandler = fedifyHook(mockFederation as never, createContextData);
 
     const mockRequest = new Request("https://example.com/test");
     const mockEvent: MockRequestEvent = { request: mockRequest };
-    const mockResolve = async () => new Response("SvelteKit response");
+    const mockResolve = () =>
+      Promise.resolve(new Response("SvelteKit response"));
 
     const result = await hookHandler({
       event: mockEvent,
       resolve: mockResolve,
     });
 
-    assertEquals(capturedRequest, mockRequest);
-    assertEquals(capturedOptions.contextData, "test-context");
-    assertEquals(result.status, 200);
+    strictEqual(capturedRequest, mockRequest);
+    strictEqual(
+      (capturedOptions as { contextData: string }).contextData,
+      "test-context",
+    );
+    strictEqual(result.status, 200);
   });
 
-  await t.step("handles async context data creation", async () => {
-    let capturedContextData: any;
+  test("handles async context data creation", async () => {
+    let capturedContextData: unknown;
 
     const mockFederation: MockFederation<string> = {
-      fetch: async (request, options) => {
-        capturedContextData = options.contextData;
-        return new Response("OK");
+      fetch: (_request, options) => {
+        capturedContextData = (options as { contextData: string }).contextData;
+        return Promise.resolve(new Response("OK"));
       },
     };
 
@@ -71,14 +76,18 @@ Deno.test("fedifyHook", async (t) => {
       return "async-context";
     };
 
-    const hookHandler = fedifyHook(mockFederation as any, createContextData);
+    const hookHandler = fedifyHook(mockFederation as never, createContextData);
 
     const mockRequest = new Request("https://example.com/test");
     const mockEvent: MockRequestEvent = { request: mockRequest };
-    const mockResolve = async () => new Response("SvelteKit response");
+    const mockResolve = () =>
+      Promise.resolve(new Response("SvelteKit response"));
 
     await hookHandler({ event: mockEvent, resolve: mockResolve });
 
-    assertEquals(capturedContextData, "async-context");
+    strictEqual(
+      capturedContextData,
+      "async-context",
+    );
   });
 });
