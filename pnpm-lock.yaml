@@ -96,6 +96,9 @@ importers:
       '@fedify/amqp':
         specifier: 'workspace:'
         version: link:../packages/amqp
+      '@fedify/cfworkers':
+        specifier: 'workspace:'
+        version: link:../packages/cfworkers
       '@fedify/express':
         specifier: 'workspace:'
         version: link:../packages/express
@@ -105,6 +108,9 @@ importers:
       '@fedify/h3':
         specifier: 'workspace:'
         version: link:../packages/h3
+      '@fedify/hono':
+        specifier: 'workspace:'
+        version: link:../packages/hono
       '@fedify/nestjs':
         specifier: 'workspace:'
         version: link:../packages/nestjs
@@ -120,6 +126,9 @@ importers:
       '@fedify/sqlite':
         specifier: 'workspace:'
         version: link:../packages/sqlite
+      '@fedify/sveltekit':
+        specifier: 'workspace:'
+        version: link:../packages/sveltekit
       '@fedify/testing':
         specifier: 'workspace:'
         version: link:../packages/testing
