@@ -51,16 +51,16 @@ testing and development purposes, and the `DenoKvStore` class is Deno KV-backed
 implementation for production use (as you can guess from the name, it is only
 available in Deno runtime).
 
-As separate packages, [@fedify/redis] provides [`RedisKvStore`] class, which is
-a Redis-backed implementation for production use, and [@fedify/postgres]
+As separate packages, [`@fedify/redis`] provides [`RedisKvStore`] class, which
+is a Redis-backed implementation for production use, and [`@fedify/postgres`]
 provides [`PostgresKvStore`] class, which is a PostgreSQL-backed implementation
 for production use.
 
 Further details are explained in the [*Key–value store* section](./kv.md).
 
-[@fedify/redis]: https://github.com/fedify-dev/redis
+[`@fedify/redis`]: https://github.com/fedify-dev/fedify/tree/main/packages/redis
 [`RedisKvStore`]: https://jsr.io/@fedify/redis/doc/kv/~/RedisKvStore
-[@fedify/postgres]: https://github.com/fedify-dev/postgres
+[`@fedify/postgres`]: https://github.com/fedify-dev/fedify/tree/main/packages/postgres
 [`PostgresKvStore`]: https://jsr.io/@fedify/postgres/doc/kv/~/PostgresKvStore
 
 ### `kvPrefixes`
@@ -110,12 +110,12 @@ and the `DenoKvMessageQueue` class is a Deno KV-backed implementation for
 production use (as you can guess from the name, it is only available in Deno
 runtime).
 
-As separate packages, [@fedify/redis] provides [`RedisMessageQueue`] class,
+As separate packages, [`@fedify/redis`] provides [`RedisMessageQueue`] class,
 which is a Redis-backed implementation for production use,
-and [@fedify/postgres] provides [`PostgresMessageQueue`] class, which is a
-PostgreSQL-backed implementation for production use, and [@fedify/amqp] provides
-[`AmqpMessageQueue`] class, which is an AMQP broker-backed implementation for
-production use.
+and [`@fedify/postgres`] provides [`PostgresMessageQueue`] class, which is a
+PostgreSQL-backed implementation for production use, and [`@fedify/amqp`]
+provides [`AmqpMessageQueue`] class, which is an AMQP broker-backed
+implementation for production use.
 
 Further details are explained in the [*Message queue* section](./mq.md).
 
@@ -184,7 +184,7 @@ Further details are explained in the [*Message queue* section](./mq.md).
 
 [`RedisMessageQueue`]: https://jsr.io/@fedify/redis/doc/mq/~/RedisMessageQueue
 [`PostgresMessageQueue`]: https://jsr.io/@fedify/postgres/doc/mq/~/PostgresMessageQueue
-[@fedify/amqp]: https://github.com/fedify-dev/amqp
+[`@fedify/amqp`]: https://github.com/fedify-dev/fedify/tree/main/packages/amqp
 [`AmqpMessageQueue`]: https://jsr.io/@fedify/amqp/doc/mq/~/AmqpMessageQueue
 
 ### `manuallyStartQueue`
@@ -305,8 +305,8 @@ an object for options.
 > [!CAUTION]
 >
 > This settings do not affect the `User-Agent` header of the HTTP requests
-> that `lookupWebFinger()`, `lookupObject()`, and `getNodeInfo()` functions make,
-> since they do not depend on the `Federation` object.
+> that `lookupWebFinger()`, `lookupObject()`, and `getNodeInfo()` functions
+> make, since they do not depend on the `Federation` object.
 >
 > However, `Context.lookupObject()` method is affected by this settings.
 

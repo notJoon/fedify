@@ -381,7 +381,7 @@ duplicate retry mechanisms and leverages the backend's optimized retry features.
 [`DenoKvMessageQueue`]: https://jsr.io/@fedify/denokv/doc/mq/~/DenoKvMessageQueue
 [`@fedify/denokv`]: https://github.com/fedify-dev/fedify/tree/main/packages/denokv
 [`RedisMessageQueue`]: https://jsr.io/@fedify/redis/doc/mq/~/RedisMessageQueue
-[`@fedify/redis`]: https://github.com/fedify-dev/redis
+[`@fedify/redis`]: https://github.com/fedify-dev/fedify/tree/main/packages/redis
 
 
 Error handling
