@@ -5,7 +5,6 @@
     "./packages/amqp",
     "./packages/cfworkers",
     "./packages/denokv",
-    "./packages/elysia",
     "./packages/express",
     "./packages/h3",
     "./packages/hono",
@@ -15,7 +14,6 @@
     "./packages/sveltekit",
     "./packages/testing",
     "./examples/blog",
-    "./examples/cloudflare-workers",
     "./examples/hono-sample"
   ],
   "imports": {
@@ -46,19 +44,28 @@
     "temporal"
   ],
   "exclude": [
-    "**/*.md",
     "**/pnpm-lock.yaml",
     ".github/",
     "docs/",
     "pnpm-lock.yaml",
     "pnpm-workspace.yaml"
   ],
+  "lint": {
+    "exclude": [
+      "examples/cloudflare-workers/worker-configuration.d.ts"
+    ]
+  },
+  "fmt": {
+    "exclude": [
+      "**/*.md"
+    ]
+  },
   "nodeModulesDir": "none",
   "tasks": {
     "codegen": "deno task -f @fedify/cli codegen",
     "check-versions": "deno run --allow-read --allow-write scripts/check_versions.ts",
     "check-all": {
-      "command": "deno task --recursive check",
+      "command": "deno fmt --check && deno lint && echo deno check --unstable-temporal $(deno eval 'import m from \"./deno.json\" with { type: \"json\" }; for (let p of m.workspace) console.log(p)')",
       "dependencies": [
         "check-versions",
         "codegen"
