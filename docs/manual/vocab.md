@@ -480,7 +480,7 @@ corresponding TypeScript types:
 | `rdf:langString`         | `LanguageString`                                  |
 | `w3id:cryptosuiteString` | `"eddsa-jcs-2022"`                                |
 | `w3id:multibase`         | [`Uint8Array`]                                    |
-| Language tag ([BCP 47])  | [`LanguageTag`]                                   |
+| Language tag ([BCP 47])  | [`Intl.Locale`]                                   |
 | Public key PEM           | [`CryptoKey`]                                     |
 | Public key Multibase     | [`CryptoKey`]                                     |
 | Proof purpose            | `"assertionMethod" \| "authentication" \| "capabilityInvocation" \| "capabilityDelegation" \| "keyAgreement"` |
@@ -491,7 +491,7 @@ corresponding TypeScript types:
 [`Temporal.Duration`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration
 [`Uint8Array`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
 [BCP 47]: https://www.rfc-editor.org/info/bcp47
-[`LanguageTag`]: https://phensley.github.io/cldr-engine/docs/en/api-languagetag
+[`Intl.Locale`]: https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale
 [`CryptoKey`]: https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey
 
 

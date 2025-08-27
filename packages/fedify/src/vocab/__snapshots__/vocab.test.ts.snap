@@ -3178,12 +3178,17 @@ snapshot[`Deno.inspect(Hashtag) [auto] 1`] = `
   rel: "hello",
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,
@@ -3198,12 +3203,17 @@ snapshot[`Deno.inspect(Hashtag) [auto] 2`] = `
   rel: "hello",
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,
@@ -3218,12 +3228,17 @@ snapshot[`Deno.inspect(Hashtag) [auto] 3`] = `
   rels: [ "hello", "hello" ],
   mediaType: "hello",
   names: [ "hello", "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,
@@ -4150,12 +4165,17 @@ snapshot[`Deno.inspect(Link) [auto] 1`] = `
   rel: "hello",
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,
@@ -4170,12 +4190,17 @@ snapshot[`Deno.inspect(Link) [auto] 2`] = `
   rel: "hello",
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,
@@ -4190,12 +4215,17 @@ snapshot[`Deno.inspect(Link) [auto] 3`] = `
   rels: [ "hello", "hello" ],
   mediaType: "hello",
   names: [ "hello", "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,
@@ -4342,12 +4372,17 @@ snapshot[`Deno.inspect(Mention) [auto] 1`] = `
   rel: "hello",
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,
@@ -4362,12 +4397,17 @@ snapshot[`Deno.inspect(Mention) [auto] 2`] = `
   rel: "hello",
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,
@@ -4382,12 +4422,17 @@ snapshot[`Deno.inspect(Mention) [auto] 3`] = `
   rels: [ "hello", "hello" ],
   mediaType: "hello",
   names: [ "hello", "hello" ],
-  language: LanguageTag {
-    core: [ "en", undefined, undefined, undefined ],
-    _extensions: {},
-    _privateUse: "",
-    _extlangs: [],
-    _compact: "en"
+  language: Locale [Intl.Locale] {
+    baseName: "en",
+    calendar: undefined,
+    caseFirst: undefined,
+    collation: undefined,
+    hourCycle: undefined,
+    language: "en",
+    numberingSystem: undefined,
+    numeric: false,
+    region: undefined,
+    script: undefined
   },
   height: 123,
   width: 123,

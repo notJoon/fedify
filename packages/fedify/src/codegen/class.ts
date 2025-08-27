@@ -122,8 +122,6 @@ export async function* generateClasses(
   yield 'import { getLogger } from "@logtape/logtape";\n';
   yield `import { type Span, SpanStatusCode, type TracerProvider, trace }
     from "@opentelemetry/api";\n`;
-  yield `import { LanguageTag, parseLanguageTag }
-    from "@phensley/language-tag";\n`;
   yield `import { decode as decodeMultibase, encode as encodeMultibase }
     from "${runtimePath}/multibase/index.ts";`;
   yield `import { type DocumentLoader, getDocumentLoader, type RemoteDocument }

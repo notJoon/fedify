@@ -1,21 +1,19 @@
-import { type LanguageTag, parseLanguageTag } from "@phensley/language-tag";
-
 /**
  * A language-tagged string which corresponds to the `rdf:langString` type.
  */
 export class LanguageString extends String {
-  readonly language: LanguageTag;
+  readonly locale: Intl.Locale;
 
   /**
    * Constructs a new `LanguageString`.
    * @param value A string value written in the given language.
-   * @param language The language of the string.  If a string is given, it will
-   *                 be parsed as a `LanguageTag`.
+   * @param locale The language of the string.  If a string is given, it will
+   *                 be parsed as a Intl.Locale object.
    */
-  constructor(value: string, language: LanguageTag | string) {
+  constructor(value: string, language: Intl.Locale | string) {
     super(value);
-    this.language = typeof language === "string"
-      ? parseLanguageTag(language)
+    this.locale = typeof language === "string"
+      ? new Intl.Locale(language)
       : language;
   }
 
@@ -23,7 +21,7 @@ export class LanguageString extends String {
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
   ): string {
-    return `<${this.language.compact()}> ${inspect(this.toString(), options)}`;
+    return `<${this.locale.language}> ${inspect(this.toString(), options)}`;
   }
 
   [Symbol.for("nodejs.util.inspect.custom")](
@@ -31,6 +29,6 @@ export class LanguageString extends String {
     options: unknown,
     inspect: (value: unknown, options: unknown) => string,
   ): string {
-    return `<${this.language.compact()}> ${inspect(this.toString(), options)}`;
+    return `<${this.locale.language}> ${inspect(this.toString(), options)}`;
   }
 }
