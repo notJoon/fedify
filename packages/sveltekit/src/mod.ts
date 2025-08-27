@@ -2,22 +2,18 @@
  * Fedify with SvelteKit
  * =====================
  *
- * This module provides a [SvelteKit] hook to integrate with the Fedify.
+ * This package provides a [SvelteKit] hook to integrate with the Fedify.
  *
  * [SvelteKit]: https://kit.svelte.dev/
  *
- * @deprecated This module has been moved to a separate package.
- *             Install and import from `@fedify/sveltekit` instead.
- *             This module will be removed in Fedify v2.0.
- *
  * @module
- * @since 1.3.0
+ * @since 1.9.0
  */
-import { getLogger } from "@logtape/logtape";
+
 import type {
   Federation,
   FederationFetchOptions,
-} from "../federation/federation.ts";
+} from "@fedify/fedify/federation";
 
 type RequestEvent = {
   request: Request;
@@ -32,10 +28,6 @@ type HookParams = {
  * Create a SvelteKit hook handler to integrate with the {@link Federation}
  * object.
  *
- * @deprecated This function has been moved to `@fedify/sveltekit` package.
- *             Import `fedifyHook` from `@fedify/sveltekit` instead.
- *             This function will be removed in Fedify v2.0.
- *
  * @example hooks.server.ts
  * ``` typescript
  * import { federation } from "./federation"; // Import the `Federation` object
@@ -49,7 +41,7 @@ type HookParams = {
  * @param createContextData A function to create a context data for the
  *                          {@link Federation} object.
  * @returns A SvelteKit hook handler.
- * @since 1.3.0
+ * @since 1.9.0
  */
 export function fedifyHook<TContextData>(
   federation: Federation<TContextData>,
@@ -57,11 +49,6 @@ export function fedifyHook<TContextData>(
     event: RequestEvent,
   ) => TContextData | Promise<TContextData>,
 ): (params: HookParams) => Promise<Response> {
-  const logger = getLogger(["fedify", "federation", "sveltekit"]);
-  logger.warn(
-    "The `@fedify/fedify/x/sveltekit` module is deprecated; use `fedifyHook` " +
-      "from `@fedify/sveltekit` package instead.",
-  );
   return async ({ event, resolve }: HookParams) => {
     return await federation.fetch(event.request, {
       contextData: await createContextData(event),

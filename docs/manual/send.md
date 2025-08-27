@@ -386,8 +386,8 @@ const federation = createFederation({
 > [!NOTE]
 > The `InProcessMessageQueue` is a simple in-memory message queue that is
 > suitable for development and testing.  For production use, you should
-> consider using a more robust message queue, such as `DenoKvMessageQueue`
-> from `@fedify/fedify/x/deno` module or [`RedisMessageQueue`] from
+> consider using a more robust message queue, such as [`DenoKvMessageQueue`]
+> from [`@fedify/denokv`] package or [`RedisMessageQueue`] from
 > [`@fedify/redis`] package.
 >
 > For further information, see the [*Message queue* section](./mq.md).
@@ -407,8 +407,10 @@ If the `queue` is not set, the `~Context.sendActivity()` method immediately
 sends the activity to the recipient's inbox.  If the delivery fails, it throws
 an error and does not retry the delivery.
 
+[`DenoKvMessageQueue`]: https://jsr.io/@fedify/denokv/doc/mq/~/DenoKvMessageQueue
+[`@fedify/denokv`]: https://github.com/fedify-dev/fedify/tree/main/packages/denokv
 [`RedisMessageQueue`]: https://jsr.io/@fedify/redis/doc/mq/~/RedisMessageQueue
-[`@fedify/redis`]: https://github.com/fedify-dev/redis
+[`@fedify/redis`]: https://github.com/fedify-dev/fedify/tree/main/packages/redis
 
 
 Optimizing activity delivery for large audiences

@@ -2,22 +2,17 @@
  * Fedify with Hono
  * ================
  *
- * This module provides a [Hono] middleware to integrate with the Fedify.
+ * This package provides a [Hono] middleware to integrate with the Fedify.
  *
  * [Hono]: https://hono.dev/
  *
- * @deprecated This module has been moved to a separate package.
- *             Install and import from `@fedify/hono` instead.
- *             This module will be removed in Fedify v2.0.
- *
  * @module
- * @since 0.6.0
+ * @since 1.9.0
  */
-import { getLogger } from "@logtape/logtape";
 import type {
   Federation,
   FederationFetchOptions,
-} from "../federation/federation.ts";
+} from "@fedify/fedify/federation";
 
 interface HonoRequest {
   raw: Request;
@@ -37,15 +32,12 @@ type HonoMiddleware<THonoContext extends HonoContext> = (
  * A factory function to create a context data for the {@link Federation}
  * object.
  *
- * @deprecated This type has been moved to `@fedify/hono` package.
- *             Import `ContextDataFactory` from `@fedify/hono` instead.
- *             This type will be removed in Fedify v2.0.
- *
  * @template TContextData A type of the context data for the {@link Federation}
  *                         object.
  * @template THonoContext A type of the Hono context.
  * @param context A Hono context object.
  * @returns A context data for the {@link Federation} object.
+ * @since 1.9.0
  */
 export type ContextDataFactory<TContextData, THonoContext> = (
   context: THonoContext,
@@ -54,10 +46,6 @@ export type ContextDataFactory<TContextData, THonoContext> = (
 /**
  * Create a Hono middleware to integrate with the {@link Federation} object.
  *
- * @deprecated This function has been moved to `@fedify/hono` package.
- *             Import `federation` from `@fedify/hono` instead.
- *             This function will be removed in Fedify v2.0.
- *
  * @template TContextData A type of the context data for the {@link Federation}
  *                         object.
  * @template THonoContext A type of the Hono context.
@@ -65,16 +53,12 @@ export type ContextDataFactory<TContextData, THonoContext> = (
  * @param contextDataFactory A function to create a context data for the
  *                           {@link Federation} object.
  * @returns A Hono middleware.
+ * @since 1.9.0
  */
 export function federation<TContextData, THonoContext extends HonoContext>(
   federation: Federation<TContextData>,
   contextDataFactory: ContextDataFactory<TContextData, THonoContext>,
 ): HonoMiddleware<THonoContext> {
-  const logger = getLogger(["fedify", "federation", "hono"]);
-  logger.warn(
-    "The `@fedify/fedify/x/hono` module is deprecated; use `federation` from " +
-      "`@fedify/hono` package instead.",
-  );
   return async (ctx, next) => {
     let contextData = contextDataFactory(ctx);
     if (contextData instanceof Promise) contextData = await contextData;

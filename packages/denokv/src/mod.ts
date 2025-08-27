@@ -2,33 +2,28 @@
  * `KvStore` & `MessageQueue` adapters for Deno's KV store
  * =======================================================
  *
- * This module provides `KvStore` and `MessageQueue` implementations that use
+ * This package provides `KvStore` and `MessageQueue` implementations that use
  * Deno's KV store.  The `DenoKvStore` class implements the `KvStore` interface
  * using Deno's KV store, and the `DenoKvMessageQueue` class implements the
  * `MessageQueue` interface using Deno's KV store.
  *
- * @deprecated This module has been moved to a separate package.
- *             Install and import from `@fedify/denokv` instead.
- *             This module will be removed in Fedify v2.0.
- *
  * @module
- * @since 0.5.0
+ * @since 1.9.0
  */
-import { getLogger } from "@logtape/logtape";
-import { isEqual } from "es-toolkit";
-import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import type {
+  KvKey,
+  KvStore,
+  KvStoreSetOptions,
   MessageQueue,
   MessageQueueEnqueueOptions,
   MessageQueueListenOptions,
-} from "../federation/mq.ts";
+} from "@fedify/fedify/federation";
+import { isEqual } from "es-toolkit";
 
 /**
  * Represents a key–value store implementation using Deno's KV store.
  *
- * @deprecated This class has been moved to `@fedify/denokv` package.
- *             Import `DenoKvStore` from `@fedify/denokv` instead.
- *             This class will be removed in Fedify v2.0.
+ * @since 1.9.0
  */
 export class DenoKvStore implements KvStore {
   #kv: Deno.Kv;
@@ -38,11 +33,6 @@ export class DenoKvStore implements KvStore {
    * @param kv The Deno KV store to use.
    */
   constructor(kv: Deno.Kv) {
-    const logger = getLogger(["fedify", "denokv"]);
-    logger.warn(
-      "The `@fedify/fedify/x/denokv` module is deprecated; use `DenoKvStore` " +
-        "from `@fedify/denokv` package instead.",
-    );
     this.#kv = kv;
   }
 
@@ -108,9 +98,7 @@ export class DenoKvStore implements KvStore {
 /**
  * Represents a message queue adapter that uses Deno KV store.
  *
- * @deprecated This class has been moved to `@fedify/denokv` package.
- *             Import `DenoKvMessageQueue` from `@fedify/denokv` instead.
- *             This class will be removed in Fedify v2.0.
+ * @since 1.9.0
  */
 export class DenoKvMessageQueue implements MessageQueue, Disposable {
   #kv: Deno.Kv;
@@ -127,11 +115,6 @@ export class DenoKvMessageQueue implements MessageQueue, Disposable {
    * @param kv The Deno KV store to use.
    */
   constructor(kv: Deno.Kv) {
-    const logger = getLogger(["fedify", "denokv"]);
-    logger.warn(
-      "The `@fedify/fedify/x/denokv` module is deprecated; use " +
-        "`DenoKvMessageQueue` from `@fedify/denokv` package instead.",
-    );
     this.#kv = kv;
   }
 

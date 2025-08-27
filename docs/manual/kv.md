@@ -133,7 +133,22 @@ const federation = createFederation<void>({
 
 ### `DenoKvStore` (Deno only)
 
-`DenoKvStore` is a key–value store implementation for [Deno] runtime that uses
+> [!WARNING]
+> The `@fedify/fedify/x/denokv` module is deprecated and will be removed in
+> Fedify 2.0.0.  Please use the [`@fedify/denokv`] package instead.
+
+To use the [`DenoKvStore`], you need to install the *@fedify/denokv* package
+first:
+
+::: code-group
+
+~~~~ bash [Deno]
+deno add jsr:@fedify/denokv
+~~~~
+
+:::
+
+[`DenoKvStore`] is a key–value store implementation for [Deno] runtime that uses
 Deno's built-in [`Deno.openKv()`] API. It provides persistent storage and good
 performance for Deno environments.  It's suitable for production use in Deno
 applications.
@@ -149,7 +164,7 @@ Cons
 
 ~~~~ typescript
 import { createFederation } from "@fedify/fedify";
-import { DenoKvStore } from "@fedify/fedify/x/deno";
+import { DenoKvStore } from "@fedify/denokv";
 
 const kv = await Deno.openKv();
 const federation = createFederation<void>({
@@ -158,6 +173,8 @@ const federation = createFederation<void>({
 });
 ~~~~
 
+[`@fedify/denokv`]: https://jsr.io/@fedify/denokv
+[`DenoKvStore`]: https://jsr.io/@fedify/denokv/doc/mq/~/DenoKvStore
 [Deno]: https://deno.com/
 [`Deno.openKv()`]: https://docs.deno.com/api/deno/~/Deno.openKv
 
@@ -280,7 +297,38 @@ const federation = createFederation<void>({
 
 *This API is available since Fedify 1.6.0.*
 
-`WorkersKvStore` is a key–value store implementation for [Cloudflare Workers]
+> [!WARNING]
+> The `@fedify/fedify/x/cfworkers` module is deprecated and will be removed in
+> Fedify 2.0.0.  Please use the [`@fedify/cfworkers`] package instead.
+
+To use the [`WorkersKvStore`], you need to install the *@fedify/cfworkers*
+package first:
+
+::: code-group
+
+~~~~ bash [Deno]
+deno add jsr:@fedify/cfworkers
+~~~~
+
+~~~~ bash [npm]
+npm add @fedify/cfworkers
+~~~~
+
+~~~~ bash [pnpm]
+pnpm add @fedify/cfworkers
+~~~~
+
+~~~~ bash [Yarn]
+yarn add @fedify/cfworkers
+~~~~
+
+~~~~ bash [Bun]
+bun add @fedify/cfworkers
+~~~~
+
+:::
+
+[`WorkersKvStore`] is a key–value store implementation for [Cloudflare Workers]
 that uses Cloudflare's built-in [Cloudflare Workers KV] API.  It provides
 persistent storage and good performance for Cloudflare Workers environments.
 It's suitable for production use in Cloudflare Workers applications.
@@ -300,7 +348,7 @@ import type { FederationBuilder } from "@fedify/fedify";
 const builder = undefined as unknown as FederationBuilder<void>;
 // ---cut-before---
 import type { Federation } from "@fedify/fedify";
-import { WorkersKvStore } from "@fedify/fedify/x/cfworkers";
+import { WorkersKvStore } from "@fedify/cfworkers";
 
 export default {
   async fetch(request, env, ctx) {
@@ -323,6 +371,8 @@ export default {
 > object.  See the [*Builder pattern for structuring*
 > section](./federation.md#builder-pattern-for-structuring) for details.
 
+[`@fedify/cfworkers`]: https://github.com/fedify-dev/fedify/tree/main/packages/cfworkers
+[`WorkersKvStore`]: https://jsr.io/@fedify/cfworkers/doc/kv/~/WorkersKvStore
 [Cloudflare Workers]: https://workers.cloudflare.com/
 [Cloudflare Workers KV]: https://developers.cloudflare.com/kv/
 
