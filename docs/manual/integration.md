@@ -130,12 +130,12 @@ Hono
 > Fedify 2.0.0.  Please use the `@fedify/hono` package instead.
 
 [Hono] is a fast, lightweight, and Web standard-compliant server framework for
-TypeScript.  Fedify has the `@fedify/fedify/x/hono` module that provides
-a middleware to integrate Fedify with Hono:
+TypeScript.  Fedify has the `@fedify/hono` module that provides a middleware to
+integrate Fedify with Hono:
 
 ~~~~ typescript
 import { createFederation } from "@fedify/fedify";
-import { federation } from "@fedify/fedify/x/hono";
+import { federation } from "@fedify/hono";
 import { Hono } from "hono";
 
 const fedi = createFederation<string>({
@@ -253,13 +253,13 @@ SvelteKit
 > Fedify 2.0.0.  Please use the `@fedify/sveltekit` package instead.
 
 [SvelteKit] is a framework for building web applications with [Svelte].  Fedify
-has the `@fedify/fedify/x/sveltekit` module that provides a hook handler to
-integrate Fedify with SvelteKit.  Put the following code in your
+has the `@fedify/sveltekit` module that provides a hook handler to integrate
+Fedify with SvelteKit.  Put the following code in your
 *hooks.server.ts* file:
 
 ~~~~ typescript
 import { createFederation } from "@fedify/fedify";
-import { fedifyHook } from "@fedify/fedify/x/sveltekit";
+import { fedifyHook } from "@fedify/sveltekit";
 
 const federation = createFederation<string>({
   // Omitted for brevity; see the related section for details.
