@@ -19,8 +19,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@fedify/fedify": "workspace:^",
-    "@fedify/sveltekit": "workspace:^"
+    "@fedify/fedify": "workspace:",
+    "@fedify/sveltekit": "workspace:",
+    "x-forwarded-fetch": "^0.2.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
