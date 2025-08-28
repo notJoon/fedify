@@ -15,28 +15,25 @@ const federation = createFederation({
 });
 
 federation
-  .setActorDispatcher(
-    "/users/{identifier}",
-    async (context, identifier) => {
-      if (identifier != "demo") {
-        return null;
-      }
-      const keyPairs = await context.getActorKeyPairs(identifier);
-      return new Person({
-        id: context.getActorUri(identifier),
-        name: "Fedify Demo",
-        summary: "This is a Fedify Demo account.",
-        preferredUsername: identifier,
-        url: new URL("/", context.url),
-        inbox: context.getInboxUri(identifier),
-        endpoints: new Endpoints({
-          sharedInbox: context.getInboxUri(),
-        }),
-        publicKey: keyPairs[0].cryptographicKey,
-        assertionMethods: keyPairs.map((keyPair) => keyPair.multikey),
-      });
-    },
-  )
+  .setActorDispatcher("/users/{identifier}", async (context, identifier) => {
+    if (identifier != "demo") {
+      return null;
+    }
+    const keyPairs = await context.getActorKeyPairs(identifier);
+    return new Person({
+      id: context.getActorUri(identifier),
+      name: "Fedify Demo",
+      summary: "This is a Fedify Demo account.",
+      preferredUsername: identifier,
+      url: new URL("/", context.url),
+      inbox: context.getInboxUri(identifier),
+      endpoints: new Endpoints({
+        sharedInbox: context.getInboxUri(),
+      }),
+      publicKey: keyPairs[0].cryptographicKey,
+      assertionMethods: keyPairs.map((keyPair) => keyPair.multikey),
+    });
+  })
   .setKeyPairsDispatcher(async (_, identifier) => {
     if (identifier != "demo") {
       return [];
