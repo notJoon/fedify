@@ -22,14 +22,11 @@ class PostStore {
     return this.#map.get(id.toString());
   }
   get = this.#get.bind(this);
-  async #getAll() {
-    return await Array.fromAsync(
-      this.#timeline.reverse()
-        .map((id) => id.toString())
-        .map((id) => this.#map.get(id)!)
-        .filter((p) => p)
-        .map((p) => p.toJsonLd()),
-    );
+  #getAll() {
+    return this.#timeline.reverse()
+      .map((id) => id.toString())
+      .map((id) => this.#map.get(id)!)
+      .filter((p) => p);
   }
   getAll = this.#getAll.bind(this);
   #delete(id: URL) {
