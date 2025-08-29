@@ -105,7 +105,7 @@ type ErrorHandlers = Omit<FederationFetchOptions<unknown>, "contextData">;
  *          {@link Federation} object.
  *
  * @example
- * ```ts
+ * ```ts ignore
  * import { fedifyWith } from "@fedify/next";
  * import { federation } from "./federation";
  *

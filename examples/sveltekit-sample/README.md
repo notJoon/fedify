@@ -27,16 +27,16 @@ Before you begin, ensure you have the following installed:
 
 ### 1. Clone the Repository
 
-```bash
+~~~~ bash
 git clone https://github.com/fedify-dev/fedify.git
 cd fedify/examples/sveltekit-sample
-```
+~~~~
 
 ### 2. Install Dependencies
 
-```bash
+~~~~ bash
 pnpm install
-```
+~~~~
 
 ### 3. Environment Setup
 
@@ -47,9 +47,9 @@ The application uses in-memory storage by default, so no additional database set
 
 ### Start the Development Server
 
-```bash
+~~~~ bash
 pnpm dev
-```
+~~~~
 
 The development server will start on `http://localhost:5173` by default.
 
@@ -60,11 +60,11 @@ The development server will start on `http://localhost:5173` by default.
 
 The federation setup is configured in `src/lib/federation.ts`:
 
-```typescript
+~~~~ typescript
 const federation = createFederation({
   kv: new MemoryKvStore(), // In-memory storage for development
 });
-```
+~~~~
 
 #### Key Configuration Options:
 
@@ -87,12 +87,12 @@ const federation = createFederation({
 
 The application includes support for proxy headers via `x-forwarded-fetch`. This is configured in `src/lib/handles.ts`:
 
-```typescript
+~~~~ typescript
 export const replaceHost: Handle = async ({ event, resolve }) => {
   event.request = await getXForwardedRequest(event.request);
   return resolve(event);
 };
-```
+~~~~
 
 This is useful when deploying behind reverse proxies or using tunneling services like ngrok.
 
@@ -105,20 +105,20 @@ But if you don't use proxy or tunnel, the handle is unnecessary.
 
 1. Start the development server:
 
-   ```bash
+   ~~~~ bash
    pnpm dev
-   ```
+   ~~~~
 
 2. Access the demo user profile:
 
-   ```
+   ~~~~
    curl http://localhost:5173/users/demo
-   ```
+   ~~~~
 
 3. The ActivityPub actor endpoint is available at:
-   ```
+   ~~~~
    curl -H "Accept: application/activity+json" http://localhost:5173/users/demo
-   ```
+   ~~~~
 
 ### 2. Following from `activitypub.academy`
 
@@ -128,16 +128,16 @@ To test federation with `activitypub.academy`:
 
 1. Deploy the application to a public server or use a tunneling service:
 
-   ```bash
+   ~~~~ bash
    # Using Fedify CLI to tunnel
    fedify tunnel 5173
-   ```
+   ~~~~
 
 2. From your `activitypub.academy` account, search for and follow:
 
-   ```
+   ~~~~
    @demo@6c10b40c63d9e1ce7da55667ef0ef8b4.serveo.net
-   ```
+   ~~~~
 
 3. The application will automatically:
    - Receive the follow request
@@ -148,7 +148,7 @@ To test federation with `activitypub.academy`:
 
 To create additional actors, modify `src/lib/federation.ts`:
 
-```typescript
+~~~~ typescript
 // Add more identifiers
 const IDENTIFIERS = ["demo", "alice", "bob"];
 
@@ -161,7 +161,7 @@ federation.setActorDispatcher(
     // ... actor creation logic
   },
 );
-```
+~~~~
 
 ### 4. Activity Monitoring
 
@@ -175,7 +175,7 @@ The application logs activities to the console. Monitor the development console 
 
 Extend the inbox listeners to handle additional ActivityPub activities:
 
-```typescript
+~~~~ typescript
 federation
   .setInboxListeners("/users/{identifier}/inbox", "/inbox")
   .on(Follow, async (context, follow) => {
@@ -187,12 +187,12 @@ federation
   .on(Like, async (context, like) => {
     // Add custom like handling
   });
-```
+~~~~
 
 🏗️ Project Structure
 --------------------
 
-```
+~~~~
 src/
 ├── app.css              # Global styles
 ├── app.d.ts             # TypeScript app declarations
@@ -224,16 +224,16 @@ src/
                 └── [id]/
                     ├── +page.server.ts  # Individual post server logic
                     └── +page.svelte     # Individual post page
-```
+~~~~
 
 🚀 Deployment
 -------------
 
 ### Production Build
 
-```bash
+~~~~ bash
 pnpm build
-```
+~~~~
 
 pnpm preview
 
@@ -244,7 +244,7 @@ pnpm preview
 
 ### Example Deployment Commands
 
-```bash
+~~~~ bash
 # Build for production
 pnpm build
 
@@ -253,7 +253,7 @@ pnpm preview
 
 # Or deploy to your preferred platform
 # (Vercel, Netlify, Docker, etc.)
-```
+~~~~
 
 🤝 Contributing
 ---------------

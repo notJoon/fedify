@@ -5,7 +5,6 @@ import { getPost, getUser } from "$lib/fetch";
 
 export const load: PageServerLoad = async ({ request, params }) => {
   try {
-    // const req = await getXForwardedRequest(request);
     const ctx = fedi.createContext(request, undefined);
     const { identifier, id } = params;
 
