@@ -9,8 +9,8 @@ import { getPosts, getUser } from "$lib/fetch";
 
 const post: Action = async (event) => {
   const data = await event.request.formData();
-  const content = data.get("content") as string;
-  const identifier = data.get("identifier") as string;
+  const content = data.get("content");
+  const identifier = data.get("identifier");
 
   if (typeof content !== "string" || typeof identifier !== "string") {
     error(400, "Content and identifier are required");

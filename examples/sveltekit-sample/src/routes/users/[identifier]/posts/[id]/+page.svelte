@@ -2,9 +2,8 @@
   import type { PageProps } from "./$types";
 
   let { params, data }: PageProps = $props();
-  const { identifier, id } = params;
+  const { identifier } = params;
   const { user, post } = data;
-  console.log(user, post);
 </script>
 
 <div class="post-detail-container">
@@ -22,7 +21,7 @@
         </p>
         {#if post.published}
           <time class="post-timestamp" datetime={post.published}>
-            {new Date(post.published).toLocaleString("ko-KR", {
+            {new Date(post.published).toLocaleString(undefined, {
               year: "numeric",
               month: "long",
               day: "numeric",

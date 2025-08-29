@@ -12,7 +12,7 @@ import {
   type Recipient,
   Undo,
 } from "@fedify/fedify";
-import { keyPairsStore, relationStore } from "./store";
+import { keyPairsStore, postStore, relationStore } from "./store";
 
 const federation = createFederation({
   kv: new MemoryKvStore(),

@@ -106,7 +106,7 @@ But if you don't use proxy or tunnel, the handle is unnecessary.
 1. Start the development server:
 
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 2. Access the demo user profile:
@@ -195,21 +195,35 @@ federation
 ```
 src/
 ├── app.css              # Global styles
+├── app.d.ts             # TypeScript app declarations
 ├── app.html             # HTML template
 ├── hooks.server.ts      # Server-side hooks
-├── data/
-│   └── store.ts        # In-memory data storage
-├── federation/         # Federation-related modules
 ├── lib/
-│   ├── federation.ts   # Main federation configuration
-│   ├── handles.ts      # Request handlers
-│   └── index.ts        # Library exports
+│   ├── federation.ts    # Main federation configuration
+│   ├── fetch.ts         # Fetch utilities
+│   ├── handles.ts       # Request handlers
+│   ├── index.ts         # Library exports
+│   ├── store.ts         # In-memory data storage
+│   ├── types.ts         # TypeScript type definitions
+│   ├── assets/
+│   │   └── favicon.svg  # Favicon asset
+│   └── components/
+│       ├── Profile.svelte  # Profile component
+│       └── Spinner.svelte  # Loading spinner component
 └── routes/
-    ├── +layout.svelte  # Layout component
-    ├── +page.svelte    # Home page
+    ├── +layout.svelte   # Layout component
+    ├── +page.server.ts  # Home page server logic
+    ├── +page.svelte     # Home page
     └── users/
         └── [identifier]/
-            └── +page.svelte  # User profile page
+            ├── +page.server.ts  # User profile server logic
+            ├── +page.svelte     # User profile page
+            └── posts/
+                ├── +page.server.ts  # User posts server logic
+                ├── +page.svelte     # User posts page
+                └── [id]/
+                    ├── +page.server.ts  # Individual post server logic
+                    └── +page.svelte     # Individual post page
 ```
 
 🚀 Deployment
@@ -221,7 +235,7 @@ src/
 pnpm build
 ```
 
-### Deployment Considerations
+pnpm preview
 
 1. **HTTPS Required**: ActivityPub requires HTTPS in production
 2. **Domain Configuration**: Ensure proper domain setup for federation
@@ -235,7 +249,7 @@ pnpm build
 pnpm build
 
 # Preview the build
-pnpm dev
+pnpm preview
 
 # Or deploy to your preferred platform
 # (Vercel, Netlify, Docker, etc.)
@@ -248,7 +262,7 @@ This is a sample application demonstrating Fedify capabilities. Feel free to:
 
 - Experiment with the code
 - Add new features
-- Submit issues or suggestions
+- [Fedify GitHub Repository](https://github.com/fedify-dev/fedify)
 - Use as a starting point for your own federated applications
 
 📄 License
@@ -262,4 +276,4 @@ This sample application follows the same license as the main Fedify project.
 - [Fedify Documentation](https://fedify.dev)
 - [SvelteKit Documentation](https://kit.svelte.dev/)
 - [ActivityPub Specification](https://www.w3.org/TR/activitypub/)
-- [Fedify GitHub Repository](https://github.com/dahlia/fedify)
+- [Fedify GitHub Repository](https://github.com/fedify-dev/fedify)

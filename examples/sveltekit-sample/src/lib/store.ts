@@ -23,7 +23,7 @@ class PostStore {
   }
   get = this.#get.bind(this);
   #getAll() {
-    return this.#timeline.reverse()
+    return this.#timeline.toReversed()
       .map((id) => id.toString())
       .map((id) => this.#map.get(id)!)
       .filter((p) => p);
