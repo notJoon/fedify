@@ -28,7 +28,8 @@ body {
 
 @layer components {
   .profile-container {
-    @apply mx-auto flex h-svh max-w-4xl flex-col content-center justify-center p-8;
+    @apply mx-auto flex h-svh max-w-4xl flex-col content-center justify-center
+      p-8;
   }
 
   .profile-header {
@@ -148,13 +149,12 @@ body {
   }
 
   .form-textarea {
-    @apply w-full resize-none rounded-lg border p-3 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none;
+    @apply w-full resize-none rounded-lg border p-3 text-base focus:ring-2
+      focus:ring-blue-500 focus:outline-none;
     background: var(--background);
     color: var(--foreground);
     border-color: rgba(0, 0, 0, 0.2);
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   .form-textarea:focus {
@@ -162,7 +162,8 @@ body {
   }
 
   .post-button {
-    @apply rounded-lg px-6 py-2 font-semibold text-white transition-all duration-200;
+    @apply rounded-lg px-6 py-2 font-semibold text-white transition-all
+      duration-200;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
@@ -286,7 +287,9 @@ body {
   }
 
   .back-button {
-    @apply rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none;
+    @apply rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700
+      transition-all duration-200 hover:bg-gray-200 focus:ring-2
+      focus:ring-blue-500 focus:outline-none;
     color: var(--foreground);
     background: color-mix(in srgb, var(--foreground) 10%, transparent);
   }
@@ -356,7 +359,8 @@ body {
   }
 
   .action-button {
-    @apply rounded-lg px-4 py-2 font-medium transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:outline-none;
+    @apply rounded-lg px-4 py-2 font-medium transition-all duration-200
+      focus:ring-2 focus:ring-blue-500 focus:outline-none;
   }
 
   .like-button {
@@ -372,7 +376,8 @@ body {
   }
 
   .error-back-button {
-    @apply mt-4 rounded-lg bg-gray-100 px-6 py-2 font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200;
+    @apply mt-4 rounded-lg bg-gray-100 px-6 py-2 font-medium text-gray-700
+      transition-all duration-200 hover:bg-gray-200;
   }
 
   /* Skeleton styles for post detail */
