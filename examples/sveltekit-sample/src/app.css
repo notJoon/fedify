@@ -275,4 +275,161 @@ body {
       @apply p-4;
     }
   }
+
+  /* Post Detail Page Styles */
+  .post-detail-container {
+    @apply mx-auto max-w-4xl p-8;
+  }
+
+  .post-detail-header {
+    @apply mb-8;
+  }
+
+  .back-button {
+    @apply rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none;
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 10%, transparent);
+  }
+
+  .back-button:hover {
+    background: color-mix(in srgb, var(--foreground) 15%, transparent);
+  }
+
+  .post-detail-card {
+    @apply mb-8 rounded-xl border p-8;
+    background: var(--background);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .post-detail-author {
+    @apply mb-6 flex items-start gap-4 border-b pb-6;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .author-avatar {
+    @apply h-16 w-16 rounded-full border-2 border-gray-200 object-cover;
+  }
+
+  .author-info {
+    @apply flex-1;
+  }
+
+  .author-name {
+    @apply mb-1 text-2xl font-bold;
+    color: var(--foreground);
+  }
+
+  .author-handle {
+    @apply mb-2 text-base font-medium opacity-70;
+    color: var(--foreground);
+  }
+
+  .post-timestamp {
+    @apply text-sm opacity-60;
+    color: var(--foreground);
+  }
+
+  .post-detail-content {
+    @apply py-6 text-lg leading-relaxed;
+    color: var(--foreground);
+  }
+
+  .post-detail-content p {
+    @apply m-0;
+  }
+
+  .post-actions {
+    @apply rounded-xl border p-6;
+    background: var(--background);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .action-group h3 {
+    @apply mb-4 text-lg font-semibold;
+    color: var(--foreground);
+  }
+
+  .action-buttons {
+    @apply flex flex-wrap gap-3;
+  }
+
+  .action-button {
+    @apply rounded-lg px-4 py-2 font-medium transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:outline-none;
+  }
+
+  .like-button {
+    @apply bg-red-100 text-red-700 hover:bg-red-200;
+  }
+
+  .share-button {
+    @apply bg-blue-100 text-blue-700 hover:bg-blue-200;
+  }
+
+  .reply-button {
+    @apply bg-green-100 text-green-700 hover:bg-green-200;
+  }
+
+  .error-back-button {
+    @apply mt-4 rounded-lg bg-gray-100 px-6 py-2 font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200;
+  }
+
+  /* Skeleton styles for post detail */
+  .skeleton-post {
+    @apply rounded-xl border p-8;
+    background: var(--background);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .skeleton-header {
+    @apply mb-6 flex items-start gap-4 border-b pb-6;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .skeleton-content {
+    @apply space-y-3 py-6;
+  }
+
+  .skeleton-text-1 {
+    @apply w-full;
+  }
+
+  .skeleton-text-2 {
+    @apply w-4/5;
+  }
+
+  .skeleton-text-3 {
+    @apply w-3/5;
+  }
+
+  @media (max-width: 768px) {
+    .post-detail-container {
+      @apply p-4;
+    }
+
+    .post-detail-card {
+      @apply p-6;
+    }
+
+    .author-avatar {
+      @apply h-14 w-14;
+    }
+
+    .author-name {
+      @apply text-xl;
+    }
+
+    .post-detail-content {
+      @apply text-base;
+    }
+
+    .action-buttons {
+      @apply flex-col;
+    }
+
+    .action-button {
+      @apply w-full justify-center;
+    }
+  }
 }
