@@ -31,17 +31,12 @@
           alt="Next.js"
           class="inline-block w-24"
         />
-      </a></span
-    >
+      </a>
+    </span>
   </div>
   <p>
     This small federated server app is a demo of
-    <a href="https://fedify.dev" class="text-blue-600">
-      <img
-        src="/fedify-logo.svg"
-        alt="Fedify logo"
-        class="inline w-4 pb-1"
-      />Fedify</a
+    <a href="https://fedify.dev" class="fedify-anchor" target="_blank">Fedify</a
     >. The only one thing it does is to accept follow requests.
   </p>
   <p>
