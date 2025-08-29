@@ -9,7 +9,7 @@ import {
   Person,
   Undo,
 } from "@fedify/fedify";
-import { keyPairsStore, relationStore } from "../data/store";
+import { keyPairsStore, relationStore } from "./store";
 
 const federation = createFederation({
   kv: new MemoryKvStore(),
