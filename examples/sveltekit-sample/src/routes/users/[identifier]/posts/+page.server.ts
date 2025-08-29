@@ -3,6 +3,9 @@ import { error, redirect } from "@sveltejs/kit";
 import { postStore } from "$lib/store";
 import { Create, Note } from "@fedify/fedify";
 import federation from "$lib/federation";
+import type { PageServerLoad } from "./$types";
+import fedi from "$lib/federation";
+import { getPosts, getUser } from "$lib/fetch";
 
 const post: Action = async (event) => {
 	const data = await event.request.formData();
@@ -44,3 +47,17 @@ const post: Action = async (event) => {
 };
 
 export const actions = { post } satisfies Actions;
+
+export const load: PageServerLoad = async ({ request, params }) => {
+	try {
+		const ctx = fedi.createContext(request, undefined);
+		const { identifier } = params;
+
+		const user = await getUser(ctx, identifier);
+		const posts = await getPosts(user);
+
+		return { user, posts };
+	} catch {
+		error(404, { message: "Not Found" });
+	}
+};
