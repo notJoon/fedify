@@ -84,23 +84,17 @@ To be released.
     Separated from `@fedify/fedify/x/cfworkers` to improve modularity and
     reduce bundle size.  [[#375] by Chanhaeng Lee]
 
-[#375]: https://github.com/fedify-dev/fedify/issues/375
-
 ### @fedify/denokv
 
  -  Created Deno KV integration as the *@fedify/denokv* package.
     Separated from `@fedify/fedify/x/denokv` to improve modularity and
     reduce bundle size.  [[#375] by Chanhaeng Lee]
 
-[#375]: https://github.com/fedify-dev/fedify/issues/375
-
 ### @fedify/hono
 
  -  Created Hono integration as the *@fedify/hono* package.
     Separated from `@fedify/fedify/x/hono` to improve modularity and
     reduce bundle size.  [[#375] by Chanhaeng Lee]
-
-[#375]: https://github.com/fedify-dev/fedify/issues/375
 
 ### @fedify/next
 
@@ -123,7 +117,6 @@ To be released.
     Separated from `@fedify/fedify/x/sveltekit` to improve modularity and
     reduce bundle size.  [[#375] by Chanhaeng Lee]
 
-[#375]: https://github.com/fedify-dev/fedify/issues/375
 
 Version 1.8.8
 -------------

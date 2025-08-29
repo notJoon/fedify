@@ -6,7 +6,7 @@ const federation = createFederation<void>({
   kv: new MemoryKvStore(),
 });
 
-federation.setNodeInfoDispatcher("/nodeinfo/2.1", async (ctx) => {
+federation.setNodeInfoDispatcher("/nodeinfo/2.1", (ctx) => {
   return {
     software: {
       name: "fedify-elysia", // Lowercase, digits, and hyphens only.

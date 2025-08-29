@@ -123,7 +123,7 @@ app.use(integrateFederation(federation, (req) => "context data goes here"));  //
 Hono
 ----
 
-*This API is available since Fedify 0.6.0.*
+*This API is available since Fedify 1.9.0.*
 
 > [!WARNING]
 > The `@fedify/fedify/x/hono` module is deprecated and will be removed in
@@ -242,7 +242,7 @@ app.use(router);
 Fresh
 -----
 
-*This API is available since Fedify 0.4.0.*
+*This API is available since Fedify 1.9.0.*
 
 [Fresh] is a full stack modern web framework for Deno.  Fedify has the
 `@fedify/fedify/x/fresh` module that provides a middleware to integrate Fedify
