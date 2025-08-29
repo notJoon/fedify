@@ -1,38 +1,265 @@
-# sv
+SvelteKit Sample
+================
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A comprehensive example of building a federated server application using [Fedify](https://fedify.dev) with [SvelteKit](https://kit.svelte.dev/). This sample demonstrates how to create an ActivityPub-compatible federated social media server that can interact with other federated platforms like Mastodon, Pleroma, and other ActivityPub implementations.
 
-## Creating a project
+🚀 Features
+-----------
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **ActivityPub Protocol Support**: Full implementation of ActivityPub for federated social networking
+- **Actor System**: User profile management with cryptographic key pairs
+- **Follow/Unfollow**: Complete follow relationship handling with Accept/Undo activities
+- **Inbox Processing**: Real-time activity processing from federated instances
+- **Modern UI**: Built with SvelteKit and Tailwind CSS
+- **TypeScript**: Full type safety throughout the application
 
-```sh
-# create a new project in the current directory
-npx sv create
+📋 Prerequisites
+----------------
 
-# create a new project in my-app
-npx sv create my-app
+Before you begin, ensure you have the following installed:
+
+- **Node.js** (version 18 or higher)
+- **npm** or **yarn** package manager
+- **Git** for version control
+
+🛠️ Setup and Installation
+-------------------------
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/fedify-dev/fedify.git
+cd fedify/examples/sveltekit-sample
 ```
 
-## Developing
+### 2. Install Dependencies
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```bash
+pnpm install
 ```
 
-## Building
+### 3. Environment Setup
 
-To create a production version of your app:
+The application uses in-memory storage by default, so no additional database setup is required for development. However, for production deployment, you may want to configure external storage.
 
-```sh
-npm run build
+🏃 Development Server
+---------------------
+
+### Start the Development Server
+
+```bash
+pnpm dev
 ```
 
-You can preview the production build with `npm run preview`.
+The development server will start on `http://localhost:5173` by default.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+⚙️ Configuration Options
+------------------------
+
+### Federation Configuration
+
+The federation setup is configured in `src/lib/federation.ts`:
+
+```typescript
+const federation = createFederation({
+  kv: new MemoryKvStore(), // In-memory storage for development
+});
+```
+
+#### Key Configuration Options:
+
+1. **Storage Backend**:
+   - Development: `MemoryKvStore()` (data lost on restart)
+   - Production: Consider using persistent storage solutions
+
+2. **Actor Identifier**:
+   - Default: `"demo"`
+   - Modify the `IDENTIFIER` constant to change the demo user
+
+3. **Demo Actor Profile**:
+   - Name: "Fedify Demo"
+   - Summary: "This is a Fedify Demo account."
+   - Icon: `/demo-profile.png`
+
+### Server Configuration
+
+#### Proxy/Tunnel Support
+
+The application includes support for proxy headers via `x-forwarded-fetch`. This is configured in `src/lib/handles.ts`:
+
+```typescript
+export const replaceHost: Handle = async ({ event, resolve }) => {
+  event.request = await getXForwardedRequest(event.request);
+  return resolve(event);
+};
+```
+
+This is useful when deploying behind reverse proxies or using tunneling services like ngrok.
+
+But if you don't use proxy or tunnel, the handle is unnecessary.
+
+📚 Example Usage Scenarios
+-------------------------
+
+### 1. Basic Federation Testing
+
+1. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+2. Access the demo user profile:
+
+   ```
+   curl http://localhost:5173/users/demo
+   ```
+
+3. The ActivityPub actor endpoint is available at:
+   ```
+   curl -H "Accept: application/activity+json" http://localhost:5173/users/demo
+   ```
+
+### 2. Following from `activitypub.academy`
+
+[`activitypub.academy`](https://activitypub.academy) is a platform for learning about the ActivityPub protocol and its implementation.
+
+To test federation with `activitypub.academy`:
+
+1. Deploy the application to a public server or use a tunneling service:
+
+   ```bash
+   # Using Fedify CLI to tunnel
+   fedify tunnel 5173
+   ```
+
+2. From your `activitypub.academy` account, search for and follow:
+
+   ```
+   @demo@6c10b40c63d9e1ce7da55667ef0ef8b4.serveo.net
+   ```
+
+3. The application will automatically:
+   - Receive the follow request
+   - Send an Accept activity back
+   - Store the relationship
+
+### 3. Custom Actor Creation
+
+To create additional actors, modify `src/lib/federation.ts`:
+
+```typescript
+// Add more identifiers
+const IDENTIFIERS = ["demo", "alice", "bob"];
+
+federation.setActorDispatcher(
+  "/users/{identifier}",
+  async (context, identifier) => {
+    if (!IDENTIFIERS.includes(identifier)) {
+      return null;
+    }
+    // ... actor creation logic
+  },
+);
+```
+
+### 4. Activity Monitoring
+
+The application logs activities to the console. Monitor the development console to see:
+
+- Incoming follow requests
+- Outgoing accept activities
+- Undo operations
+
+### 5. Custom Activities
+
+Extend the inbox listeners to handle additional ActivityPub activities:
+
+```typescript
+federation
+  .setInboxListeners("/users/{identifier}/inbox", "/inbox")
+  .on(Follow, async (context, follow) => {
+    // Handle follow requests
+  })
+  .on(Undo, async (context, undo) => {
+    // Handle undo operations
+  })
+  .on(Like, async (context, like) => {
+    // Add custom like handling
+  });
+```
+
+🏗️ Project Structure
+--------------------
+
+```
+src/
+├── app.css              # Global styles
+├── app.html             # HTML template
+├── hooks.server.ts      # Server-side hooks
+├── data/
+│   └── store.ts        # In-memory data storage
+├── federation/         # Federation-related modules
+├── lib/
+│   ├── federation.ts   # Main federation configuration
+│   ├── handles.ts      # Request handlers
+│   └── index.ts        # Library exports
+└── routes/
+    ├── +layout.svelte  # Layout component
+    ├── +page.svelte    # Home page
+    └── users/
+        └── [identifier]/
+            └── +page.svelte  # User profile page
+```
+
+🚀 Deployment
+-------------
+
+### Production Build
+
+```bash
+pnpm build
+```
+
+### Deployment Considerations
+
+1. **HTTPS Required**: ActivityPub requires HTTPS in production
+2. **Domain Configuration**: Ensure proper domain setup for federation
+3. **Storage**: Replace `MemoryKvStore` with persistent storage
+4. **Environment Variables**: Configure production-specific settings
+
+### Example Deployment Commands
+
+```bash
+# Build for production
+pnpm build
+
+# Preview the build
+pnpm dev
+
+# Or deploy to your preferred platform
+# (Vercel, Netlify, Docker, etc.)
+```
+
+🤝 Contributing
+---------------
+
+This is a sample application demonstrating Fedify capabilities. Feel free to:
+
+- Experiment with the code
+- Add new features
+- Submit issues or suggestions
+- Use as a starting point for your own federated applications
+
+📄 License
+----------
+
+This sample application follows the same license as the main Fedify project.
+
+🔗 Links
+--------
+
+- [Fedify Documentation](https://fedify.dev)
+- [SvelteKit Documentation](https://kit.svelte.dev/)
+- [ActivityPub Specification](https://www.w3.org/TR/activitypub/)
+- [Fedify GitHub Repository](https://github.com/dahlia/fedify)
