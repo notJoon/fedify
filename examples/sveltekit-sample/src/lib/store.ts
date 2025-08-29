@@ -1,16 +1,52 @@
+import type { Note, Person } from "@fedify/fedify";
+
 declare global {
   var keyPairsStore: Map<string, Array<CryptoKeyPair>>;
-  var relationStore: Map<string, string>;
+  var relationStore: Map<string, Person>;
+  var postStore: PostStore;
 }
 
-export const keyPairsStore: Map<
-  string,
-  Array<CryptoKeyPair>
-> = globalThis.keyPairsStore ?? new Map();
-export const relationStore: Map<string, string> =
-  globalThis.relationStore ?? new Map();
+class PostStore {
+  #map: Map<string, Note> = new Map();
+  #timeline: URL[] = [];
+  constructor() {}
+  #append(posts: Note[]) {
+    posts.filter((p) => p.id && !this.#map.has(p.id.toString()))
+      .forEach((p) => {
+        this.#map.set(p.id!.toString(), p);
+        this.#timeline.push(p.id!);
+      });
+  }
+  append = this.#append.bind(this);
+  #get(id: URL) {
+    return this.#map.get(id.toString());
+  }
+  get = this.#get.bind(this);
+  async #getAll() {
+    return await Array.fromAsync(
+      this.#timeline.reverse()
+        .map((id) => id.toString())
+        .map((id) => this.#map.get(id)!)
+        .filter((p) => p)
+        .map((p) => p.toJsonLd()),
+    );
+  }
+  getAll = this.#getAll.bind(this);
+  #delete(id: URL) {
+    const existed = this.#map.delete(id.toString());
+    if (existed) {
+      this.#timeline = this.#timeline.filter((i) => i !== id);
+    }
+  }
+  delete = this.#delete.bind(this);
+}
 
-// this is just a hack to demo nextjs
+export const keyPairsStore = globalThis.keyPairsStore ?? new Map();
+export const relationStore = globalThis.relationStore ?? new Map();
+export const postStore = globalThis.postStore ?? new PostStore();
+
+// this is just a hack to demo svelte
 // never do this in production, use safe and secure storage
 globalThis.keyPairsStore = keyPairsStore;
 globalThis.relationStore = relationStore;
+globalThis.postStore = postStore;

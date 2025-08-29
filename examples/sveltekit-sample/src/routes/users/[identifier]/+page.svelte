@@ -5,9 +5,6 @@
 
   let { params }: PageProps = $props();
   const { identifier } = params;
-  $effect(() => {
-    console.log(identifier);
-  });
   const data = browser
     ? fetch(`/users/${identifier}`, {
         headers: { Accept: "application/activity+json" },

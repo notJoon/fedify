@@ -6,7 +6,10 @@ import {
   generateCryptoKeyPair,
   Image,
   MemoryKvStore,
+  Note,
   Person,
+  PUBLIC_COLLECTION,
+  type Recipient,
   Undo,
 } from "@fedify/fedify";
 import { keyPairsStore, relationStore } from "./store";
@@ -63,8 +66,8 @@ federation
     if (result?.type !== "actor" || result.identifier !== IDENTIFIER) {
       return;
     }
-    const follower = await follow.getActor(context);
-    if (follower?.id == null) {
+    const follower = await follow.getActor(context) as Person;
+    if (!follower?.id || follower.id === null) {
       throw new Error("follower is null");
     }
     await context.sendActivity(
@@ -79,7 +82,7 @@ federation
         object: follow,
       }),
     );
-    relationStore.set(follower.id.href, follow.objectId.href);
+    relationStore.set(follower.id.href, follower);
   })
   .on(Undo, async (context, undo) => {
     const activity = await undo.getObject(context);
@@ -95,5 +98,39 @@ federation
       console.debug(undo);
     }
   });
+
+federation.setObjectDispatcher(
+  Note,
+  "/users/{identifier}/posts/{id}",
+  (ctx, values) => {
+    const id = ctx.getObjectUri(Note, values);
+    const post = postStore.get(id);
+    if (post == null) return null;
+    return new Note({
+      id,
+      attribution: ctx.getActorUri(values.identifier),
+      to: PUBLIC_COLLECTION,
+      cc: ctx.getFollowersUri(values.identifier),
+      content: post.content,
+      mediaType: "text/html",
+      published: post.published,
+      url: id,
+    });
+  },
+);
+
+federation
+  .setFollowersDispatcher(
+    "/users/{identifier}/followers",
+    () => {
+      const followers = Array.from(relationStore.values());
+      const items: Recipient[] = followers.map((f) => ({
+        id: f.id,
+        inboxId: f.inboxId,
+        endpoints: f.endpoints,
+      }));
+      return { items };
+    },
+  );
 
 export default federation;
