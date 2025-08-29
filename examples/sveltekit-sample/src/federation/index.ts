@@ -4,6 +4,7 @@ import {
   Endpoints,
   Follow,
   generateCryptoKeyPair,
+  Image,
   MemoryKvStore,
   Person,
   Undo,
@@ -14,9 +15,11 @@ const federation = createFederation({
   kv: new MemoryKvStore(),
 });
 
+const IDENTIFIER = "demo";
+
 federation
   .setActorDispatcher("/users/{identifier}", async (context, identifier) => {
-    if (identifier != "demo") {
+    if (identifier != IDENTIFIER) {
       return null;
     }
     const keyPairs = await context.getActorKeyPairs(identifier);
@@ -25,17 +28,16 @@ federation
       name: "Fedify Demo",
       summary: "This is a Fedify Demo account.",
       preferredUsername: identifier,
+      icon: new Image({ url: new URL("/demo-profile.png", context.url) }),
       url: new URL("/", context.url),
       inbox: context.getInboxUri(identifier),
-      endpoints: new Endpoints({
-        sharedInbox: context.getInboxUri(),
-      }),
+      endpoints: new Endpoints({ sharedInbox: context.getInboxUri() }),
       publicKey: keyPairs[0].cryptographicKey,
       assertionMethods: keyPairs.map((keyPair) => keyPair.multikey),
     });
   })
   .setKeyPairsDispatcher(async (_, identifier) => {
-    if (identifier != "demo") {
+    if (identifier != IDENTIFIER) {
       return [];
     }
     const keyPairs = keyPairsStore.get(identifier);
@@ -58,7 +60,7 @@ federation
       return;
     }
     const result = context.parseUri(follow.objectId);
-    if (result?.type !== "actor" || result.identifier !== "demo") {
+    if (result?.type !== "actor" || result.identifier !== IDENTIFIER) {
       return;
     }
     const follower = await follow.getActor(context);
@@ -71,7 +73,7 @@ federation
       new Accept({
         id: new URL(
           `#accepts/${follower.id.href}`,
-          context.getActorUri("demo"),
+          context.getActorUri(IDENTIFIER),
         ),
         actor: follow.objectId,
         object: follow,
