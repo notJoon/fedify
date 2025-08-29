@@ -12,8 +12,8 @@ const post: Action = async (event) => {
 	const content = data.get("content") as string;
 	const identifier = data.get("identifier") as string;
 
-	if (typeof content !== "string" && typeof identifier !== "string") {
-		error(400, "Title and content are required");
+	if (typeof content !== "string" || typeof identifier !== "string") {
+		error(400, "Content and identifier are required");
 	}
 	const ctx = federation.createContext(event.request, undefined);
 	const id = crypto.randomUUID();

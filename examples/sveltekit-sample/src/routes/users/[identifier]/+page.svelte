@@ -22,7 +22,7 @@
             </a>–<a href="https://svelte.dev/">
               <img
                 src="/svelte-horizontal.svg"
-                alt="Next.js"
+                alt="Svelte"
                 class="inline-block h-5"
               />
             </a> integration.

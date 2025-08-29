@@ -28,7 +28,7 @@
       <a href="https://svelte.dev/">
         <img
           src="/svelte-horizontal.svg"
-          alt="Next.js"
+          alt="Svelte"
           class="inline-block w-24"
         />
       </a>

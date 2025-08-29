@@ -1,5 +1,6 @@
 import { Note, type RequestContext } from "@fedify/fedify";
 import type { Post, User } from "./types";
+import { postStore } from "./store";
 
 export const getUser = async (
   ctx: RequestContext<unknown>,
