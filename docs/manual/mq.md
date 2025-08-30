@@ -60,7 +60,22 @@ const federation = createFederation<void>({
 
 ### `DenoKvMessageQueue` (Deno only)
 
-`DenoKvMessageQueue` is a message queue implementation for [Deno] runtime that
+> [!WARNING]
+> The `@fedify/fedify/x/denokv` module is deprecated and will be removed in
+> Fedify 2.0.0.  Please use the [`@fedify/denokv`] package instead.
+
+To use the [`DenoKvMessageQueue`], you need to install the *@fedify/denokv*
+package first:
+
+::: code-group
+
+~~~~ bash [Deno]
+deno add jsr:@fedify/denokv
+~~~~
+
+:::
+
+[`DenoKvMessageQueue`] is a message queue implementation for [Deno] runtime that
 uses Deno's built-in [`Deno.openKv()`] API. It provides persistent storage and
 good performance for Deno environments.  It's suitable for production use in
 Deno applications.
@@ -76,7 +91,7 @@ Cons
 
 ~~~~ typescript
 import { createFederation } from "@fedify/fedify";
-import { DenoKvMessageQueue } from "@fedify/fedify/x/deno";
+import { DenoKvMessageQueue } from "@fedify/denokv";
 
 const kv = await Deno.openKv();
 const federation = createFederation<void>({
@@ -85,6 +100,8 @@ const federation = createFederation<void>({
 });
 ~~~~
 
+[`@fedify/denokv`]: https://jsr.io/@fedify/denokv
+[`DenoKvMessageQueue`]: https://jsr.io/@fedify/denokv/doc/mq/~/DenoKvMessageQueue
 [`Deno.openKv()`]: https://docs.deno.com/api/deno/~/Deno.openKv
 
 ### [`RedisMessageQueue`]
@@ -285,6 +302,37 @@ const federation = createFederation({
 
 *This API is available since Fedify 1.6.0.*
 
+> [!WARNING]
+> The `@fedify/fedify/x/cfworkers` module is deprecated and will be removed in
+> Fedify 2.0.0.  Please use the [`@fedify/cfworkers`] package instead.
+
+To use the [`WorkersMessageQueue`], you need to install the *@fedify/cfworkers*
+package first:
+
+::: code-group
+
+~~~~ bash [Deno]
+deno add jsr:@fedify/cfworkers
+~~~~
+
+~~~~ bash [npm]
+npm add @fedify/cfworkers
+~~~~
+
+~~~~ bash [pnpm]
+pnpm add @fedify/cfworkers
+~~~~
+
+~~~~ bash [Yarn]
+yarn add @fedify/cfworkers
+~~~~
+
+~~~~ bash [Bun]
+bun add @fedify/cfworkers
+~~~~
+
+:::
+
 `WorkersMessageQueue` is a message queue implementation for [Cloudflare Workers]
 that uses Cloudflare's built-in [Cloudflare Queues] API.  It provides
 scalability and high performance, making it suitable for production use in
@@ -307,7 +355,7 @@ import type { FederationBuilder, KvStore } from "@fedify/fedify";
 const builder = undefined as unknown as FederationBuilder<void>;
 // ---cut-before---
 import type { Federation, Message } from "@fedify/fedify";
-import { WorkersMessageQueue } from "@fedify/fedify/x/cfworkers";
+import { WorkersMessageQueue } from "@fedify/cfworkers";
 
 export default {
   async fetch(request, env, ctx) {
@@ -361,6 +409,7 @@ export default {
 > process the messages.  The `queue()` method is the only way to consume
 > messages from the queue in Cloudflare Workers.
 
+[`@fedify/cfworkers`]: https://jsr.io/@fedify/cfworkers
 [Cloudflare Workers]: https://workers.cloudflare.com/
 [Cloudflare Queues]: https://developers.cloudflare.com/queues/
 

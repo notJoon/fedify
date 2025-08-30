@@ -90,30 +90,39 @@ which provides the core functionality of the framework.  Other packages provide
 integrations with various web frameworks, database drivers, and other features.
 Here is the list of packages:
 
-| Package                                 | JSR                         | npm                         | Description                             |
-| --------------------------------------- | --------------------------- | --------------------------- | --------------------------------------- |
-| [@fedify/fedify](/packages/fedify/)     | [JSR]                       | [npm]                       | The core framework of Fedify            |
-| [@fedify/cli](/packages/cli/)           | [JSR][jsr:@fedify/cli]      | [npm][npm:@fedify/cli]      | CLI toolchain for testing and debugging |
-| [@fedify/amqp](/packages/amqp/)         | [JSR][jsr:@fedify/amqp]     | [npm][npm:@fedify/amqp]     | AMQP/RabbitMQ driver                    |
-| [@fedify/elysia](/packages/elysia/)     |                             | [npm][npm:@fedify/elysia]   | Elysia integration                      |
-| [@fedify/express](/packages/express/)   | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  | Express integration                     |
-| [@fedify/h3](/packages/h3/)             | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       | H3 integration                          |
-| [@fedify/nestjs](/packages/nestjs/)     |                             | [npm][npm:@fedify/nestjs]   | NestJS integration                      |
-| [@fedify/next](/packages/next/)         |                             | [npm][npm:@fedify/next]     | Next.js integration                     |
-| [@fedify/postgres](/packages/postgres/) | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] | PostgreSQL driver                       |
-| [@fedify/redis](/packages/redis/)       | [JSR][jsr:@fedify/redis]    | [npm][npm:@fedify/redis]    | Redis driver                            |
-| [@fedify/sqlite](/packages/sqlite/)     | [JSR][jsr:@fedify/sqlite]   | [npm][npm:@fedify/sqlite]   | SQLite driver                           |
-| [@fedify/testing](/packages/testing/)   | [JSR][jsr:@fedify/testing]  | [npm][npm:@fedify/testing]  | Testing utilities                       |
+| Package                                   | JSR                          | npm                          | Description                             |
+| ---------------------------------------   | ---------------------------- | ---------------------------- | --------------------------------------- |
+| [@fedify/fedify](/packages/fedify/)       | [JSR]                        | [npm]                        | The core framework of Fedify            |
+| [@fedify/cli](/packages/cli/)             | [JSR][jsr:@fedify/cli]       | [npm][npm:@fedify/cli]       | CLI toolchain for testing and debugging |
+| [@fedify/amqp](/packages/amqp/)           | [JSR][jsr:@fedify/amqp]      | [npm][npm:@fedify/amqp]      | AMQP/RabbitMQ driver                    |
+| [@fedify/cfworkers](/packages/cfworkers/) | [JSR][jsr:@fedify/cfworkers] | [npm][npm:@fedify/cfworkers] | Cloudflare Workers integration          |
+| [@fedify/denokv](/packages/denokv/)       | [JSR][jsr:@fedify/denokv]    |                              | Deno KV integration                     |
+| [@fedify/elysia](/packages/elysia/)       |                              | [npm][npm:@fedify/elysia]    | Elysia integration                      |
+| [@fedify/express](/packages/express/)     | [JSR][jsr:@fedify/express]   | [npm][npm:@fedify/express]   | Express integration                     |
+| [@fedify/h3](/packages/h3/)               | [JSR][jsr:@fedify/h3]        | [npm][npm:@fedify/h3]        | H3 integration                          |
+| [@fedify/hono](/packages/hono/)           | [JSR][jsr:@fedify/hono]      | [npm][npm:@fedify/hono]      | Hono integration                        |
+| [@fedify/nestjs](/packages/nestjs/)       |                              | [npm][npm:@fedify/nestjs]    | NestJS integration                      |
+| [@fedify/next](/packages/next/)           |                              | [npm][npm:@fedify/next]      | Next.js integration                     |
+| [@fedify/postgres](/packages/postgres/)   | [JSR][jsr:@fedify/postgres]  | [npm][npm:@fedify/postgres]  | PostgreSQL driver                       |
+| [@fedify/redis](/packages/redis/)         | [JSR][jsr:@fedify/redis]     | [npm][npm:@fedify/redis]     | Redis driver                            |
+| [@fedify/sqlite](/packages/sqlite/)       | [JSR][jsr:@fedify/sqlite]    | [npm][npm:@fedify/sqlite]    | SQLite driver                           |
+| [@fedify/sveltekit](/packages/sveltekit/) | [JSR][jsr:@fedify/sveltekit] | [npm][npm:@fedify/sveltekit] | SvelteKit integration                   |
+| [@fedify/testing](/packages/testing/)     | [JSR][jsr:@fedify/testing]   | [npm][npm:@fedify/testing]   | Testing utilities                       |
 
 [jsr:@fedify/cli]: https://jsr.io/@fedify/cli
 [npm:@fedify/cli]: https://www.npmjs.com/package/@fedify/cli
 [jsr:@fedify/amqp]: https://jsr.io/@fedify/amqp
 [npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp
+[jsr:@fedify/cfworkers]: https://jsr.io/@fedify/cfworkers
+[npm:@fedify/cfworkers]: https://www.npmjs.com/package/@fedify/cfworkers
+[jsr:@fedify/denokv]: https://jsr.io/@fedify/denokv
 [npm:@fedify/elysia]: https://www.npmjs.com/package/@fedify/elysia
 [jsr:@fedify/express]: https://jsr.io/@fedify/express
 [npm:@fedify/express]: https://www.npmjs.com/package/@fedify/express
 [jsr:@fedify/h3]: https://jsr.io/@fedify/h3
 [npm:@fedify/h3]: https://www.npmjs.com/package/@fedify/h3
+[jsr:@fedify/hono]: https://jsr.io/@fedify/hono
+[npm:@fedify/hono]: https://www.npmjs.com/package/@fedify/hono
 [npm:@fedify/nestjs]: https://www.npmjs.com/package/@fedify/nestjs
 [npm:@fedify/next]: https://www.npmjs.com/package/@fedify/next
 [jsr:@fedify/postgres]: https://jsr.io/@fedify/postgres
@@ -122,6 +131,8 @@ Here is the list of packages:
 [npm:@fedify/redis]: https://www.npmjs.com/package/@fedify/redis
 [jsr:@fedify/sqlite]: https://jsr.io/@fedify/sqlite
 [npm:@fedify/sqlite]: https://www.npmjs.com/package/@fedify/sqlite
+[jsr:@fedify/sveltekit]: https://jsr.io/@fedify/sveltekit
+[npm:@fedify/sveltekit]: https://www.npmjs.com/package/@fedify/sveltekit
 [jsr:@fedify/testing]: https://jsr.io/@fedify/testing
 [npm:@fedify/testing]: https://www.npmjs.com/package/@fedify/testing
 

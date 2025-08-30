@@ -231,7 +231,7 @@ type Env = {
 import { Person } from "@fedify/fedify";
 // ---cut-before---
 import { createFederationBuilder } from "@fedify/fedify";
-import { WorkersKvStore, WorkersMessageQueue } from "@fedify/fedify/x/cfworkers";
+import { WorkersKvStore, WorkersMessageQueue } from "@fedify/cfworkers";
 
 const builder = createFederationBuilder<Env>();
 
@@ -266,7 +266,7 @@ must manually connect queue handlers:
 ~~~~ typescript twoslash
 // @noErrors: 2345
 import { createFederationBuilder, Person, type Message } from "@fedify/fedify";
-import { WorkersKvStore, WorkersMessageQueue } from "@fedify/fedify/x/cfworkers";
+import { WorkersKvStore, WorkersMessageQueue } from "@fedify/cfworkers";
 
 type Env = {
   KV_NAMESPACE: KVNamespace<string>;
@@ -323,7 +323,7 @@ as well:
 
 ~~~~ typescript
 import { createFederation } from "@fedify/fedify";
-import { DenoKvStore, DenoKvMessageQueue } from "@fedify/fedify/x/deno";
+import { DenoKvStore, DenoKvMessageQueue } from "@fedify/denokv";
 
 // Open Deno KV (automatically available on Deno Deploy)
 const kv = await Deno.openKv();
