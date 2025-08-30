@@ -416,31 +416,40 @@ jobs:
         message: |
           The latest push to this pull request has been published to JSR and npm as a pre-release:
 
-          | Package          | Version                                 | JSR                         | npm                         |
-          | ---------------- | --------------------------------------- | --------------------------- | --------------------------- |
-          | @fedify/fedify   | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/fedify]   | [npm][npm:@fedify/fedify]   |
-          | @fedify/cli      | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/cli]      |                             |
-          | @fedify/amqp     | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/amqp]     | [npm][npm:@fedify/amqp]     |
-          | @fedify/elysia   | ${{ steps.versioning.outputs.version }} |                             | [npm][npm:@fedify/elysia]   |
-          | @fedify/express  | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/express]  | [npm][npm:@fedify/express]  |
-          | @fedify/h3       | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/h3]       | [npm][npm:@fedify/h3]       |
-          | @fedify/nestjs   | ${{ steps.versioning.outputs.version }} |                             | [npm][npm:@fedify/nestjs]   |
-          | @fedify/next     | ${{ steps.versioning.outputs.version }} |                             | [npm][npm:@fedify/next]     |
-          | @fedify/postgres | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/postgres] | [npm][npm:@fedify/postgres] |
-          | @fedify/redis    | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/redis]    | [npm][npm:@fedify/redis]    |
-          | @fedify/sqlite   | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/sqlite]   | [npm][npm:@fedify/sqlite]   |
-          | @fedify/testing  | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/testing]  | [npm][npm:@fedify/testing]  |
+          | Package           | Version                                 | JSR                          | npm                          |
+          | ----------------- | --------------------------------------- | ---------------------------- | ---------------------------- |
+          | @fedify/fedify    | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/fedify]    | [npm][npm:@fedify/fedify]    |
+          | @fedify/cli       | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/cli]       |                              |
+          | @fedify/amqp      | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/amqp]      | [npm][npm:@fedify/amqp]      |
+          | @fedify/cfworkers | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/cfworkers] | [npm][npm:@fedify/cfworkers] |
+          | @fedify/denokv    | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/denokv]    |                              |
+          | @fedify/elysia    | ${{ steps.versioning.outputs.version }} |                              | [npm][npm:@fedify/elysia]    |
+          | @fedify/express   | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/express]   | [npm][npm:@fedify/express]   |
+          | @fedify/h3        | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/h3]        | [npm][npm:@fedify/h3]        |
+          | @fedify/hono      | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/hono]      | [npm][npm:@fedify/hono]      |
+          | @fedify/nestjs    | ${{ steps.versioning.outputs.version }} |                              | [npm][npm:@fedify/nestjs]    |
+          | @fedify/next      | ${{ steps.versioning.outputs.version }} |                              | [npm][npm:@fedify/next]      |
+          | @fedify/postgres  | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/postgres]  | [npm][npm:@fedify/postgres]  |
+          | @fedify/redis     | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/redis]     | [npm][npm:@fedify/redis]     |
+          | @fedify/sqlite    | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/sqlite]    | [npm][npm:@fedify/sqlite]    |
+          | @fedify/sveltekit | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/sveltekit] | [npm][npm:@fedify/sveltekit] |
+          | @fedify/testing   | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/testing]   | [npm][npm:@fedify/testing]   |
 
           [jsr:@fedify/fedify]: https://jsr.io/@fedify/fedify@${{ steps.versioning.outputs.version }}
           [npm:@fedify/fedify]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/cli]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
           [jsr:@fedify/amqp]: https://jsr.io/@fedify/amqp@${{ steps.versioning.outputs.version }}
           [npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/cfworkers]: https://jsr.io/@fedify/cfworkers@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/cfworkers]: https://www.npmjs.com/package/@fedify/cfworkers/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/denokv]: https://jsr.io/@fedify/denokv@${{ steps.versioning.outputs.version }}
           [npm:@fedify/elysia]: https://www.npmjs.com/package/@fedify/elysia/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/express]: https://jsr.io/@fedify/express@${{ steps.versioning.outputs.version }}
           [npm:@fedify/express]: https://www.npmjs.com/package/@fedify/express/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/h3]: https://jsr.io/@fedify/h3@${{ steps.versioning.outputs.version }}
           [npm:@fedify/h3]: https://www.npmjs.com/package/@fedify/h3/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/hono]: https://jsr.io/@fedify/hono@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/hono]: https://www.npmjs.com/package/@fedify/hono/v/${{ steps.versioning.outputs.short_version }}
           [npm:@fedify/nestjs]: https://www.npmjs.com/package/@fedify/nestjs/v/${{ steps.versioning.outputs.short_version }}
           [npm:@fedify/next]: https://www.npmjs.com/package/@fedify/next/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/postgres]: https://jsr.io/@fedify/postgres@${{ steps.versioning.outputs.version }}
@@ -449,6 +458,8 @@ jobs:
           [npm:@fedify/redis]: https://www.npmjs.com/package/@fedify/redis/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/sqlite]: https://jsr.io/@fedify/sqlite@${{ steps.versioning.outputs.version }}
           [npm:@fedify/sqlite]: https://www.npmjs.com/package/@fedify/sqlite/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/sveltekit]: https://jsr.io/@fedify/sveltekit@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/sveltekit]: https://www.npmjs.com/package/@fedify/sveltekit/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/testing]: https://jsr.io/@fedify/testing@${{ steps.versioning.outputs.version }}
           [npm:@fedify/testing]: https://www.npmjs.com/package/@fedify/testing/v/${{ steps.versioning.outputs.short_version }}
         pr-number: ${{ github.event.pull_request.number }}

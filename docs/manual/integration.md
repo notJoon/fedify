@@ -123,15 +123,43 @@ app.use(integrateFederation(federation, (req) => "context data goes here"));  //
 Hono
 ----
 
-*This API is available since Fedify 0.6.0.*
+*This API is available since Fedify 1.9.0.*
+
+> [!WARNING]
+> The `@fedify/fedify/x/hono` module is deprecated and will be removed in
+> Fedify 2.0.0.  Please use the `@fedify/hono` package instead.
 
 [Hono] is a fast, lightweight, and Web standard-compliant server framework for
-TypeScript.  Fedify has the `@fedify/fedify/x/hono` module that provides
-a middleware to integrate Fedify with Hono:
+TypeScript.  The *@fedify/hono* package provides a middleware to integrate
+Fedify with Hono:
+
+::: code-group
+
+~~~~ sh [Deno]
+deno add jsr:@fedify/hono
+~~~~
+
+~~~~ sh [npm]
+npm add @fedify/hono
+~~~~
+
+~~~~ sh [pnpm]
+pnpm add @fedify/hono
+~~~~
+
+~~~~ sh [Yarn]
+yarn add @fedify/hono
+~~~~
+
+~~~~ sh [Bun]
+bun add @fedify/hono
+~~~~
+
+:::
 
 ~~~~ typescript
 import { createFederation } from "@fedify/fedify";
-import { federation } from "@fedify/fedify/x/hono";
+import { federation } from "@fedify/hono";
 import { Hono } from "hono";
 
 const fedi = createFederation<string>({
@@ -214,7 +242,7 @@ app.use(router);
 Fresh
 -----
 
-*This API is available since Fedify 0.4.0.*
+*This API is available since Fedify 1.9.0.*
 
 [Fresh] is a full stack modern web framework for Deno.  Fedify has the
 `@fedify/fedify/x/fresh` module that provides a middleware to integrate Fedify
@@ -244,14 +272,41 @@ SvelteKit
 
 *This API is available since Fedify 1.3.0.*
 
-[SvelteKit] is a framework for building web applications with [Svelte].  Fedify
-has the `@fedify/fedify/x/sveltekit` module that provides a hook handler to
-integrate Fedify with SvelteKit.  Put the following code in your
-*hooks.server.ts* file:
+> [!WARNING]
+> The `@fedify/fedify/x/sveltekit` module is deprecated and will be removed in
+> Fedify 2.0.0.  Please use the `@fedify/sveltekit` package instead.
+
+[SvelteKit] is a framework for building web applications with [Svelte].  The
+*@fedify/sveltekit* package provides a middleware to integrate Fedify with
+SvelteKit:
+
+::: code-group
+
+~~~~ sh [Deno]
+deno add jsr:@fedify/sveltekit
+~~~~
+
+~~~~ sh [npm]
+npm add @fedify/sveltekit
+~~~~
+
+~~~~ sh [pnpm]
+pnpm add @fedify/sveltekit
+~~~~
+
+~~~~ sh [Yarn]
+yarn add @fedify/sveltekit
+~~~~
+
+~~~~ sh [Bun]
+bun add @fedify/sveltekit
+~~~~
+
+:::
 
 ~~~~ typescript
 import { createFederation } from "@fedify/fedify";
-import { fedifyHook } from "@fedify/fedify/x/sveltekit";
+import { fedifyHook } from "@fedify/sveltekit";
 
 const federation = createFederation<string>({
   // Omitted for brevity; see the related section for details.
@@ -492,18 +547,62 @@ Next.js
 
 > [!TIP]
 > You can see the example in the `examples/next-integration` directory in
-> the [Fedify repository].
-> Or you can just create a Fedify–Next.js app with the following command:
-> 
-> ~~~~ sh
+> the [Fedify repository].  You can create a Fedify–Next.js app copying the
+> example with the following command:
+>
+> ::: code-group
+>
+> ~~~~ sh [npm]
 > npx create-next-app -e https://github.com/fedify-dev/fedify \
 >   --example-path examples/next-integration
 > ~~~~
+>
+> ~~~~ sh [pnpm]
+> pnpm create next-app -e https://github.com/fedify-dev/fedify \
+>   --example-path examples/next-integration
+> ~~~~
+>
+> ~~~~ sh [Yarn]
+> yarn create next-app -e https://github.com/fedify-dev/fedify \
+>   --example-path examples/next-integration
+> ~~~~
+>
+> ~~~~ sh [Bun]
+> bun create next-app -e https://github.com/fedify-dev/fedify \
+>   --example-path examples/next-integration
+> ~~~~
+>
+> :::
 
 [Next.js] is a React framework that enables you to build server-rendered
-and statically generated web applications.  Fedify has the `@fedify/next`
-module that provides a middleware to integrate Fedify with Next.js.  Create
-an app with the following command using the Fedify CLI:
+and statically generated web applications.  The *@fedify/next* package provides
+a middleware to integrate Fedify with Next.js:
+
+::: code-group
+
+~~~~ sh [Deno]
+deno add jsr:@fedify/next
+~~~~
+
+~~~~ sh [npm]
+npm add @fedify/next
+~~~~
+
+~~~~ sh [pnpm]
+pnpm add @fedify/next
+~~~~
+
+~~~~ sh [Yarn]
+yarn add @fedify/next
+~~~~
+
+~~~~ sh [Bun]
+bun add @fedify/next
+~~~~
+
+:::
+
+Or create an app with the following command using the Fedify CLI:
 
 ~~~~ sh
 fedify init my-next-app
@@ -520,14 +619,15 @@ fedify init my-next-app
 ~~~~
 
 Then you can see the Next.js boilerplate code in the `my-next-app` directory.
-But if you created a Next.js app with `create-next-app` before, you'll see
+If you have created a Next.js app with `create-next-app` before, you'll see
 some differences in the code. There is a `middleware.ts` file in the
 `my-next-app` directory, which is the entry point to the Fedify middleware
-from the Next.js framework:
+from the Next.js framework. Or, if you just install *@fedify/next* manually,
+put the following code in your `middleware.ts` file:
 
 ~~~~ typescript
 import { fedifyWith } from "@fedify/next";
-import federation from "./federation";
+import federation from "./federation"; // Your `Federation` instance
 
 export default fedifyWith(federation)(
 /*

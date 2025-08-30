@@ -47,10 +47,21 @@ To be released.
  -  Changed how `parseSoftware()` function handles non-Semantic Versioning
     number strings on `tryBestEffort` mode.  [[#353], [#365] by Hyeonseo Kim]]
 
+ -  Separated modules from `@fedify/fedify/x` into dedicated packages to
+    improve modularity and reduce bundle size.  The existing integration
+    functions in `@fedify/fedify/x` are now deprecated and will be removed in
+    version 2.0.0.  [[#375] by Chanhaeng Lee]
+
+     -  Deprecated `@fedify/fedify/x/cfworkers` in favor of `@fedify/cfworkers`.
+     -  Deprecated `@fedify/fedify/x/denokv` in favor of `@fedify/denokv`.
+     -  Deprecated `@fedify/fedify/x/hono` in favor of `@fedify/hono`.
+     -  Deprecated `@fedify/fedify/x/sveltekit` in favor of `@fedify/sveltekit`.
+
 [FEP-5711]: https://w3id.org/fep/5711
 [#353]: https://github.com/fedify-dev/fedify/issues/353
 [#365]: https://github.com/fedify-dev/fedify/pull/365
 [#373]: https://github.com/fedify-dev/fedify/issues/373
+[#375]: https://github.com/fedify-dev/fedify/issues/375
 [#381]: https://github.com/fedify-dev/fedify/pull/381
 
 ### @fedify/cli
@@ -73,6 +84,24 @@ To be released.
 [#353]: https://github.com/fedify-dev/fedify/issues/353
 [#365]: https://github.com/fedify-dev/fedify/pull/365
 
+### @fedify/cfworkers
+
+ -  Created Cloudflare Workers integration as the *@fedify/cfworkers* package.
+    Separated from `@fedify/fedify/x/cfworkers` to improve modularity and
+    reduce bundle size.  [[#375] by Chanhaeng Lee]
+
+### @fedify/denokv
+
+ -  Created Deno KV integration as the *@fedify/denokv* package.
+    Separated from `@fedify/fedify/x/denokv` to improve modularity and
+    reduce bundle size.  [[#375] by Chanhaeng Lee]
+
+### @fedify/hono
+
+ -  Created Hono integration as the *@fedify/hono* package.
+    Separated from `@fedify/fedify/x/hono` to improve modularity and
+    reduce bundle size.  [[#375] by Chanhaeng Lee]
+
 ### @fedify/next
 
  -  Created [Next.js] integration as the *@fedify/next* package.
@@ -87,6 +116,12 @@ To be released.
     [[#368] by Michael Barrett]
 
 [#368]: https://github.com/fedify-dev/fedify/pull/368
+
+### @fedify/sveltekit
+
+ -  Created SvelteKit integration as the *@fedify/sveltekit* package.
+    Separated from `@fedify/fedify/x/sveltekit` to improve modularity and
+    reduce bundle size.  [[#375] by Chanhaeng Lee]
 
 
 Version 1.8.8

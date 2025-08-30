@@ -11,6 +11,7 @@ import {
   Undo,
 } from "@fedify/fedify";
 import { configure, getConsoleSink } from "@logtape/logtape";
+import process from "node:process";
 
 const keyPairsStore = new Map<string, Array<CryptoKeyPair>>();
 const relationStore = new Map<string, string>();
@@ -125,7 +126,7 @@ app.set("trust proxy", true);
 
 app.use(integrateFederation(federation, () => void 0));
 
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
   res.header("Content-Type", "text/plain");
   res.send(`
  _____        _ _  __         ____

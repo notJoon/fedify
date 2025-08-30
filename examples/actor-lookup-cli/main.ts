@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-empty
 import {
   Collection,
   getActorHandle,
@@ -25,15 +26,15 @@ async function lookupActor(handle: string): Promise<Actor> {
   let following: Collection | null = null;
   try {
     following = await actor.getFollowing();
-  } catch (_) {}
+  } catch {}
   let followers: Collection | null = null;
   try {
     followers = await actor.getFollowers();
-  } catch (_) {}
+  } catch {}
   let posts: Collection | null = null;
   try {
     posts = await actor.getOutbox();
-  } catch (_) {}
+  } catch {}
   const properties: Record<string, string> = {};
   for await (const attachment of actor.getAttachments()) {
     if (attachment instanceof PropertyValue && attachment.name != null) {
