@@ -5,8 +5,16 @@ Fedify changelog
 
 Version 2.0.0
 -------------
+### @fedify/fedify
 
-To be released.
+ -  Migrate from `LanguageTag` to `Intl.Locale` for representing language tags
+    [[#280], [#392] by Jang Hanarae]
+    - Renamed the property that holds the language tag from `language` to `locale` and replaced its class from `LanguageTag` to `Intl.Locale`
+    - Updated corresponding ScalarType (`fedify:langTag`)
+    - Removed dependency for `@phensley/language-tag`
+
+[#280]: https://github.com/fedify-dev/fedify/issues/280
+[#392]: https://github.com/fedify-dev/fedify/pull/392
 
 
 Version 1.9.0

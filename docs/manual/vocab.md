@@ -491,7 +491,7 @@ corresponding TypeScript types:
 [`Temporal.Duration`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration
 [`Uint8Array`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
 [BCP 47]: https://www.rfc-editor.org/info/bcp47
-[`Intl.Locale`]: https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale
+[`Intl.Locale`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale
 [`CryptoKey`]: https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey
 
 

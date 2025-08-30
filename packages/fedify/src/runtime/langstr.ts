@@ -1,5 +1,6 @@
 /**
  * A language-tagged string which corresponds to the `rdf:langString` type.
+ * @since 2.0.0 — added `locale` (renamed from `language`)
  */
 export class LanguageString extends String {
   readonly locale: Intl.Locale;
@@ -8,7 +9,7 @@ export class LanguageString extends String {
    * Constructs a new `LanguageString`.
    * @param value A string value written in the given language.
    * @param locale The language of the string.  If a string is given, it will
-   *                 be parsed as a Intl.Locale object.
+   *                 be parsed as a `Intl.Locale` object.
    */
   constructor(value: string, language: Intl.Locale | string) {
     super(value);
