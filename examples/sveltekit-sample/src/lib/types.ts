@@ -8,4 +8,5 @@ export interface User {
 export interface Post {
   published?: string;
   content: string;
+  url: string;
 }

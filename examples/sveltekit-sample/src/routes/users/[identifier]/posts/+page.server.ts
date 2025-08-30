@@ -1,11 +1,9 @@
-import type { Action, Actions } from "./$types";
-import { error, redirect } from "@sveltejs/kit";
+import { default as federation, default as fedi } from "$lib/federation";
+import { getPosts, getUser } from "$lib/fetch";
 import { postStore } from "$lib/store";
 import { Create, Note } from "@fedify/fedify";
-import federation from "$lib/federation";
-import type { PageServerLoad } from "./$types";
-import fedi from "$lib/federation";
-import { getPosts, getUser } from "$lib/fetch";
+import { error, redirect } from "@sveltejs/kit";
+import type { Action, Actions, PageServerLoad } from "./$types";
 
 const post: Action = async (event) => {
   const data = await event.request.formData();
