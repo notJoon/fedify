@@ -12,20 +12,20 @@
   <input name="identifier" type="hidden" value={identifier} />
   <div class="form-group">
     <label class="form-label">
-      새 포스트 작성
+      New post
       <textarea
         name="content"
         class="form-textarea"
-        placeholder="무엇을 생각하고 계신가요?"
+        placeholder="What's up?"
         rows="3"
       ></textarea>
     </label>
   </div>
-  <button type="submit" class="post-button">게시하기</button>
+  <button type="submit" class="post-button">Post</button>
 </form>
 
 <div class="posts-container">
-  <h2 class="posts-title">포스트 목록</h2>
+  <h2 class="posts-title">Posts</h2>
   <div class="posts-grid">
     {#each posts as note}
       <article class="post-card">
