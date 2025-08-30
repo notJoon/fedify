@@ -2,7 +2,6 @@
   "workspace": [
     "./packages/fedify",
     "./packages/cli",
-    "./packages/cli-optique",
     "./packages/amqp",
     "./packages/elysia",
     "./packages/express",
