@@ -6295,7 +6295,7 @@ get urls(): ((URL | Link))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -6338,7 +6338,7 @@ get urls(): ((URL | Link))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -6621,7 +6621,7 @@ get urls(): ((URL | Link))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -6922,7 +6922,7 @@ get urls(): ((URL | Link))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -6955,7 +6955,7 @@ get urls(): ((URL | Link))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -7177,7 +7177,7 @@ get urls(): ((URL | Link))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -13480,7 +13480,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -13499,7 +13499,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -13527,7 +13527,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -13545,7 +13545,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -21711,7 +21711,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -22181,7 +22181,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -37793,7 +37793,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -38263,7 +38263,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -40597,7 +40597,7 @@ get names(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -40614,7 +40614,7 @@ get names(): ((string | LanguageString))[] {
       compactItems = [];
       for (const v of this.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang) {
         const item = (
-      v.language
+      v.baseName
         );
         compactItems.push(item);
       }
@@ -40742,7 +40742,7 @@ get names(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -40758,7 +40758,7 @@ get names(): ((string | LanguageString))[] {
     array = [];
     for (const v of this.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang) {
       const element = (
-    { \\"@value\\": v.language }
+    { \\"@value\\": v.baseName }
       );
     array.push(element);;
     }
@@ -49973,7 +49973,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -50443,7 +50443,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -55901,7 +55901,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -56371,7 +56371,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -66627,7 +66627,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -67097,7 +67097,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -68903,7 +68903,7 @@ get contents(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -68947,7 +68947,7 @@ get contents(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.locale.language,
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;

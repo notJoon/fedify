@@ -3179,7 +3179,7 @@ snapshot[`Deno.inspect(Hashtag) [auto] 1`] = `
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -3187,8 +3187,8 @@ snapshot[`Deno.inspect(Hashtag) [auto] 1`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
@@ -3204,7 +3204,7 @@ snapshot[`Deno.inspect(Hashtag) [auto] 2`] = `
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -3212,8 +3212,8 @@ snapshot[`Deno.inspect(Hashtag) [auto] 2`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
@@ -3229,7 +3229,7 @@ snapshot[`Deno.inspect(Hashtag) [auto] 3`] = `
   mediaType: "hello",
   names: [ "hello", "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -3237,8 +3237,8 @@ snapshot[`Deno.inspect(Hashtag) [auto] 3`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
@@ -4166,7 +4166,7 @@ snapshot[`Deno.inspect(Link) [auto] 1`] = `
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -4174,8 +4174,8 @@ snapshot[`Deno.inspect(Link) [auto] 1`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
@@ -4191,7 +4191,7 @@ snapshot[`Deno.inspect(Link) [auto] 2`] = `
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -4199,8 +4199,8 @@ snapshot[`Deno.inspect(Link) [auto] 2`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
@@ -4216,7 +4216,7 @@ snapshot[`Deno.inspect(Link) [auto] 3`] = `
   mediaType: "hello",
   names: [ "hello", "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -4224,8 +4224,8 @@ snapshot[`Deno.inspect(Link) [auto] 3`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
@@ -4373,7 +4373,7 @@ snapshot[`Deno.inspect(Mention) [auto] 1`] = `
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -4381,8 +4381,8 @@ snapshot[`Deno.inspect(Mention) [auto] 1`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
@@ -4398,7 +4398,7 @@ snapshot[`Deno.inspect(Mention) [auto] 2`] = `
   mediaType: "hello",
   names: [ "hello", <en> "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -4406,8 +4406,8 @@ snapshot[`Deno.inspect(Mention) [auto] 2`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
@@ -4423,7 +4423,7 @@ snapshot[`Deno.inspect(Mention) [auto] 3`] = `
   mediaType: "hello",
   names: [ "hello", "hello" ],
   language: Locale [Intl.Locale] {
-    baseName: "en",
+    baseName: "en-Latn-US",
     calendar: undefined,
     caseFirst: undefined,
     collation: undefined,
@@ -4431,8 +4431,8 @@ snapshot[`Deno.inspect(Mention) [auto] 3`] = `
     language: "en",
     numberingSystem: undefined,
     numeric: false,
-    region: undefined,
-    script: undefined
+    region: "US",
+    script: "Latn"
   },
   height: 123,
   width: 123,
