@@ -183,9 +183,11 @@ export const command = new Command()
     printServerInfo(fedCtx);
   });
 
+const cliDocumentLoader = await getDocumentLoader();
 const federation = createFederation<ContextData>({
   kv: new MemoryKvStore(),
-  documentLoader: await getDocumentLoader(),
+  documentLoaderFactory: () => cliDocumentLoader,
+  contextLoaderFactory: () => cliDocumentLoader,
 });
 
 const time = Temporal.Now.instant();
