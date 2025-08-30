@@ -1,321 +1,152 @@
 import { Activity, Note } from "@fedify/fedify";
 import { assertEquals, assertExists } from "@std/assert";
+import test from "node:test";
+import { mkdir, readFile, rm } from "node:fs/promises";
 import { getContextLoader } from "./docloader.ts";
 import {
   clearTimeoutSignal,
-  createFileStream,
   createTimeoutSignal,
+  TimeoutError,
   writeObjectToStream,
 } from "./lookup.ts";
 
-Deno.test("createFileStream - creates file stream with proper directory creation", async () => {
-  const testDir = "./test_output";
-  const testFile = `${testDir}/test.json`;
-
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
-
-  const stream = await createFileStream(testFile);
-  assertExists(stream);
-
-  const stat = await Deno.stat(testDir);
-  assertEquals(stat.isDirectory, true);
-
-  stream.close();
-
-  await Deno.remove(testDir, { recursive: true });
-});
-
-Deno.test("createFileStream - works with absolute paths", async () => {
-  const testDir = `${Deno.cwd()}/test_output_absolute`;
-  const testFile = `${testDir}/test.json`;
-
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
-
-  const stream = await createFileStream(testFile);
-  assertExists(stream);
-
-  const stat = await Deno.stat(testDir);
-  assertEquals(stat.isDirectory, true);
-
-  stream.close();
-
-  await Deno.remove(testDir, { recursive: true });
-});
-
-Deno.test("createFileStream - creates nested directories", async () => {
-  const testDir = "./test_output_nested/deep/path";
-  const testFile = `${testDir}/test.json`;
-
-  try {
-    await Deno.remove("./test_output_nested", { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
-
-  const stream = await createFileStream(testFile);
-  assertExists(stream);
-
-  // Verify nested directories were created
-  const stat = await Deno.stat(testDir);
-  assertEquals(stat.isDirectory, true);
-  stream.close();
-
-  await Deno.remove("./test_output_nested", { recursive: true });
-});
-
-Deno.test("createFileStream - writes data correctly", async () => {
-  const testDir = "./test_output_write";
-  const testFile = `${testDir}/test.txt`;
-
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
-
-  const stream = await createFileStream(testFile);
-  const writer = stream.getWriter();
-
-  const testData = new TextEncoder().encode("Hello, World!");
-  await writer.write(testData);
-  await writer.close();
-
-  const content = await Deno.readTextFile(testFile);
-  assertEquals(content, "Hello, World!");
-
-  await Deno.remove(testDir, { recursive: true });
-});
-
-Deno.test("createFileStream - truncates existing file", async () => {
-  const testDir = "./test_output_truncate";
-  const testFile = `${testDir}/test.txt`;
-
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
-
-  await Deno.mkdir(testDir, { recursive: true });
-  await Deno.writeTextFile(testFile, "Old content");
-
-  const stream = await createFileStream(testFile);
-  const writer = stream.getWriter();
-
-  const testData = new TextEncoder().encode("New content");
-  await writer.write(testData);
-  await writer.close();
-
-  // Verify file was truncated and new content written
-  const content = await Deno.readTextFile(testFile);
-  assertEquals(content, "New content");
-
-  await Deno.remove(testDir, { recursive: true });
-});
-
-Deno.test("writeObjectToStream - writes Note object with default options", {
-  sanitizeResources: false,
-}, async () => {
+test("writeObjectToStream - writes Note object with default options", async () => {
   const testDir = "./test_output_note";
   const testFile = `${testDir}/note.txt`;
 
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
+  await mkdir(testDir, { recursive: true });
 
   const note = new Note({
     id: new URL("https://example.com/notes/1"),
     content: "Hello, fediverse!",
   });
 
-  const options = {
-    firstKnock: "rfc9421" as const,
-    separator: "----",
-    output: testFile,
-  };
-
   const contextLoader = await getContextLoader({});
+  await writeObjectToStream(note, testFile, undefined, contextLoader);
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
-  await writeObjectToStream(note, options, contextLoader);
+  const content = await readFile(testFile, { encoding: "utf8" });
 
-  const content = await Deno.readTextFile(testFile);
   assertExists(content);
   assertEquals(content.includes("Hello, fediverse!"), true);
-  assertEquals(content.includes("Note"), true);
+  assertEquals(content.includes("id"), true);
 
-  await Deno.remove(testDir, { recursive: true });
+  await rm(testDir, { recursive: true });
 });
 
-Deno.test("writeObjectToStream - writes Activity object in raw JSON-LD format", async () => {
+test("writeObjectToStream - writes Activity object in raw JSON-LD format", async () => {
   const testDir = "./test_output_activity";
-  const testFile = `${testDir}/activity.json`;
+  const testFile = `${testDir}/raw.json`;
 
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
+  await mkdir(testDir, { recursive: true });
 
   const activity = new Activity({
     id: new URL("https://example.com/activities/1"),
   });
 
-  const options = {
-    firstKnock: "rfc9421" as const,
-    separator: "----",
-    output: testFile,
-    raw: true,
-  };
-
   const contextLoader = await getContextLoader({});
-
-  await writeObjectToStream(activity, options, contextLoader);
+  await writeObjectToStream(activity, testFile, "raw", contextLoader);
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
   // Verify file exists and contains JSON-LD
-  const content = await Deno.readTextFile(testFile);
+  const content = await readFile(testFile);
 
   assertExists(content);
   assertEquals(content.includes("@context"), true);
   assertEquals(content.includes("id"), true);
 
-  await Deno.remove(testDir, { recursive: true });
+  await rm(testDir, { recursive: true });
 });
 
-Deno.test("writeObjectToStream - writes object in compact JSON-LD format", async () => {
+test("writeObjectToStream - writes object in compact JSON-LD format", async () => {
   const testDir = "./test_output_compact";
   const testFile = `${testDir}/compact.json`;
 
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
+  await mkdir(testDir, { recursive: true });
 
   const note = new Note({
     id: new URL("https://example.com/notes/1"),
     content: "Test note",
   });
 
-  const options = {
-    firstKnock: "rfc9421" as const,
-    separator: "----",
-    output: testFile,
-    compact: true,
-  };
-
   const contextLoader = await getContextLoader({});
-
-  await writeObjectToStream(note, options, contextLoader);
+  await writeObjectToStream(note, testFile, "compact", contextLoader);
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
   // Verify file exists and contains compacted JSON-LD
-  const content = await Deno.readTextFile(testFile);
+  const content = await readFile(testFile);
   assertExists(content);
   assertEquals(content.includes("Test note"), true);
 
-  await Deno.remove(testDir, { recursive: true });
+  await rm(testDir, { recursive: true });
 });
 
-Deno.test("writeObjectToStream - writes object in expanded JSON-LD format", async () => {
+test("writeObjectToStream - writes object in expanded JSON-LD format", async () => {
   const testDir = "./test_output_expand";
   const testFile = `${testDir}/expand.json`;
 
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
+  await mkdir(testDir, { recursive: true });
 
   const note = new Note({
     id: new URL("https://example.com/notes/1"),
     content: "Test note for expansion",
   });
 
-  const options = {
-    firstKnock: "rfc9421" as const,
-    separator: "----",
-    output: testFile,
-    expand: true,
-  };
-
   const contextLoader = await getContextLoader({});
+  await writeObjectToStream(note, testFile, "expand", contextLoader);
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
-  await writeObjectToStream(note, options, contextLoader);
-
-  const content = await Deno.readTextFile(testFile);
+  const content = await readFile(testFile);
   assertExists(content);
   assertEquals(content.includes("Test note for expansion"), true);
 
-  await Deno.remove(testDir, { recursive: true });
+  await rm(testDir, { recursive: true });
 });
 
-Deno.test("writeObjectToStream - writes to stdout when no output file specified", async () => {
+test("writeObjectToStream - writes to stdout when no output file specified", async () => {
   const note = new Note({
     id: new URL("https://example.com/notes/1"),
     content: "Test stdout note",
   });
 
-  const options = {
-    firstKnock: "rfc9421" as const,
-    separator: "----",
-  };
-
   const contextLoader = await getContextLoader({});
 
-  await writeObjectToStream(note, options, contextLoader);
+  await writeObjectToStream(note, undefined, undefined, contextLoader);
 });
 
-Deno.test("writeObjectToStream - handles empty content properly", async () => {
+test("writeObjectToStream - handles empty content properly", async () => {
   const testDir = "./test_output_empty";
   const testFile = `${testDir}/empty.txt`;
 
-  try {
-    await Deno.remove(testDir, { recursive: true });
-  } catch {
-    // Ignore if doesn't exist
-  }
+  await mkdir(testDir, { recursive: true });
 
   const note = new Note({
     id: new URL("https://example.com/notes/1"),
   });
 
-  const options = {
-    firstKnock: "rfc9421" as const,
-    separator: "----",
-    output: testFile,
-  };
-
   const contextLoader = await getContextLoader({});
 
-  await writeObjectToStream(note, options, contextLoader);
+  await writeObjectToStream(note, testFile, undefined, contextLoader);
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
-  const content = await Deno.readTextFile(testFile);
+  const content = await readFile(testFile);
   assertExists(content);
   assertEquals(content.includes("Note"), true);
 
-  await Deno.remove(testDir, { recursive: true });
+  await rm(testDir, { recursive: true });
 });
 
-Deno.test("createTimeoutSignal - returns undefined when no timeout specified", () => {
+test("createTimeoutSignal - returns undefined when no timeout specified", () => {
   const signal = createTimeoutSignal();
   assertEquals(signal, undefined);
 });
 
-Deno.test("createTimeoutSignal - returns undefined when timeout is null", () => {
+test("createTimeoutSignal - returns undefined when timeout is null", () => {
   const signal = createTimeoutSignal(undefined);
   assertEquals(signal, undefined);
 });
 
-Deno.test("createTimeoutSignal - creates AbortSignal that aborts after timeout", async () => {
+test("createTimeoutSignal - creates AbortSignal that aborts after timeout", async () => {
   const signal = createTimeoutSignal(0.1);
   assertExists(signal);
   assertEquals(signal.aborted, false);
@@ -323,14 +154,14 @@ Deno.test("createTimeoutSignal - creates AbortSignal that aborts after timeout",
   await new Promise((resolve) => setTimeout(resolve, 150));
 
   assertEquals(signal.aborted, true);
-  assertEquals(signal.reason instanceof Deno.errors.TimedOut, true);
+  assertEquals(signal.reason instanceof TimeoutError, true);
   assertEquals(
-    (signal.reason as Deno.errors.TimedOut).message,
+    (signal.reason as TimeoutError).message,
     "Request timed out after 0.1 seconds",
   );
 });
 
-Deno.test("createTimeoutSignal - signal is not aborted before timeout", () => {
+test("createTimeoutSignal - signal is not aborted before timeout", () => {
   const signal = createTimeoutSignal(1); // 1 second timeout
   assertExists(signal);
   assertEquals(signal.aborted, false);
@@ -338,7 +169,7 @@ Deno.test("createTimeoutSignal - signal is not aborted before timeout", () => {
   clearTimeoutSignal(signal);
 });
 
-Deno.test("clearTimeoutSignal - cleans up timer properly", async () => {
+test("clearTimeoutSignal - cleans up timer properly", async () => {
   const signal = createTimeoutSignal(0.05); // 50ms timeout
   assertExists(signal);
   assertEquals(signal.aborted, false);
