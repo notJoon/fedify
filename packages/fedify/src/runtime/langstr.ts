@@ -21,7 +21,7 @@ export class LanguageString extends String {
     inspect: typeof Deno.inspect,
     options: Deno.InspectOptions,
   ): string {
-    return `<${this.locale.language}> ${inspect(this.toString(), options)}`;
+    return `<${this.locale.baseName}> ${inspect(this.toString(), options)}`;
   }
 
   [Symbol.for("nodejs.util.inspect.custom")](
@@ -29,6 +29,6 @@ export class LanguageString extends String {
     options: unknown,
     inspect: (value: unknown, options: unknown) => string,
   ): string {
-    return `<${this.locale.language}> ${inspect(this.toString(), options)}`;
+    return `<${this.locale.baseName}> ${inspect(this.toString(), options)}`;
   }
 }

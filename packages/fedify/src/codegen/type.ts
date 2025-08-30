@@ -155,7 +155,7 @@ const scalarTypes: Record<string, ScalarType> = {
     encoder(v) {
       return `{
         "@value": ${v}.toString(),
-        "@language": ${v}.locale.language,
+        "@language": ${v}.locale.baseName,
       }`;
     },
     dataCheck(v) {
@@ -267,10 +267,10 @@ const scalarTypes: Record<string, ScalarType> = {
       return `${v} instanceof Intl.Locale`;
     },
     encoder(v) {
-      return `{ "@value": ${v}.language }`;
+      return `{ "@value": ${v}.baseName }`;
     },
     compactEncoder(v) {
-      return `${v}.language`;
+      return `${v}.baseName`;
     },
     dataCheck(v) {
       return `typeof ${v} === "object" && "@value" in ${v}
