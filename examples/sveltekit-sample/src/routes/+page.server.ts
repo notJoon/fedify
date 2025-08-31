@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types";
-import { relationStore } from "../lib/store";
+import { relationStore } from "$lib/store";
 
 export const load: PageServerLoad = ({ request, url }) => {
   const forwardedHost = request.headers.get("x-forwarded-host");
