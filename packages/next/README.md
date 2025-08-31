@@ -27,7 +27,7 @@ This package provides a simple way to integrate [Fedify] with [Next.js].
 Usage
 -----
 
-~~~~ typescript
+~~~~ typescript ignore
 // --- middleware.ts ---
 import { fedifyWith } from "@fedify/next";
 import { federation } from "./federation";
