@@ -29,12 +29,12 @@
         "codegen"
       ]
     },
-    "runi": "deno run --allow-all src/mod.ts"
-  },
-  "pack": {
-    "command": "deno run -A scripts/pack.ts",
-    "dependencies": [
-      "codegen"
-    ]
+    "runi": "deno run --allow-all src/mod.ts",
+    "pack": {
+      "command": "deno run -A scripts/pack.ts",
+      "dependencies": [
+        "codegen"
+      ]
+    }
   }
 }
