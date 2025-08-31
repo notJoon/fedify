@@ -140,6 +140,12 @@ To be released.
     Separated from `@fedify/fedify/x/sveltekit` to improve modularity and
     reduce bundle size.  [[#375] by Chanhaeng Lee]
 
+ -  Fixed SvelteKit integration hook types to correctly infer the request
+    and response types in hooks.  [[#271], [#394] by Chanhaeng Lee]
+
+[#271]: https://github.com/fedify-dev/fedify/pull/271
+[#394]: https://github.com/fedify-dev/fedify/pull/394
+
 
 Version 1.8.8
 -------------
