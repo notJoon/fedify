@@ -155,7 +155,7 @@ const scalarTypes: Record<string, ScalarType> = {
     encoder(v) {
       return `{
         "@value": ${v}.toString(),
-        "@language": ${v}.language.compact(),
+        "@language": ${v}.locale.baseName,
       }`;
     },
     dataCheck(v) {
@@ -262,22 +262,22 @@ const scalarTypes: Record<string, ScalarType> = {
     },
   },
   "fedify:langTag": {
-    name: "LanguageTag",
+    name: "Intl.Locale",
     typeGuard(v) {
-      return `${v} instanceof LanguageTag`;
+      return `${v} instanceof Intl.Locale`;
     },
     encoder(v) {
-      return `{ "@value": ${v}.compact() }`;
+      return `{ "@value": ${v}.baseName }`;
     },
     compactEncoder(v) {
-      return `${v}.compact()`;
+      return `${v}.baseName`;
     },
     dataCheck(v) {
       return `typeof ${v} === "object" && "@value" in ${v}
         && typeof ${v}["@value"] === "string" && !("@language" in ${v})`;
     },
     decoder(v) {
-      return `parseLanguageTag(${v}["@value"])`;
+      return `new Intl.Locale(${v}["@value"])`;
     },
   },
   "fedify:url": {

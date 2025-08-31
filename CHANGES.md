@@ -8,6 +8,23 @@ Version 2.0.0
 
 To be released.
 
+### @fedify/fedify
+
+ -  Migrated from *@phensley/language-tag* package and its `LanguageTag` class
+    to the standardized `Intl.Locale` class for representing language tags.
+    [[#280], [#392] by Jang Hanarae]
+
+     -  The `LanguageString.language` property is now `LanguageString.locale` and
+        is of type `Intl.Locale` instead of `LanguageTag`.
+     -  The `LanguageString` constructor now accepts either an `Intl.Locale`
+        object or a string for the language parameter.
+     -  The `Link.language` property is now of type `Intl.Locale` instead
+        of `LanguageTag`.
+     -  Removed the `@phensley/language-tag` dependency.
+
+[#280]: https://github.com/fedify-dev/fedify/issues/280
+[#392]: https://github.com/fedify-dev/fedify/pull/392
+
 
 Version 1.9.0
 -------------

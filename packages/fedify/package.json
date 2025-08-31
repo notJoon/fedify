@@ -101,7 +101,6 @@
     "@multiformats/base-x": "^4.0.1",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/semantic-conventions": "^1.27.0",
-    "@phensley/language-tag": "^1.9.0",
     "asn1js": "^3.0.5",
     "byte-encodings": "^1.0.11",
     "es-toolkit": "^1.39.5",

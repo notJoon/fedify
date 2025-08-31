@@ -1,4 +1,3 @@
-import { parseLanguageTag } from "@phensley/language-tag";
 import { assertEquals } from "@std/assert";
 import util from "node:util";
 import { test } from "../testing/mod.ts";
@@ -7,9 +6,9 @@ import { LanguageString } from "./langstr.ts";
 test("new LanguageString()", () => {
   const langStr = new LanguageString("Hello", "en");
   assertEquals(langStr.toString(), "Hello");
-  assertEquals(langStr.language, parseLanguageTag("en"));
+  assertEquals(langStr.locale, new Intl.Locale("en"));
 
-  assertEquals(new LanguageString("Hello", parseLanguageTag("en")), langStr);
+  assertEquals(new LanguageString("Hello", new Intl.Locale("en")), langStr);
 });
 
 test({

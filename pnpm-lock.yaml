@@ -549,9 +549,6 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: ^1.27.0
         version: 1.34.0
-      '@phensley/language-tag':
-        specifier: ^1.9.0
-        version: 1.12.2
       asn1js:
         specifier: ^3.0.5
         version: 3.0.6
@@ -2504,9 +2501,6 @@ packages:
 
   '@oxc-project/types@0.75.0':
     resolution: {integrity: sha512-QMW+06WOXs7+F301Y3X0VpmWhwuQVc/X/RP2zF9OIwvSMmsif3xURS2wxbakFIABYsytgBcHpUcFepVS0Qnd3A==}
-
-  '@phensley/language-tag@1.12.2':
-    resolution: {integrity: sha512-jCtgmqZ7+32FgPaDB/j/uFTFv/kU+1Xk/QiUxusTPVP1geDCXmrkJgzSipipiBH3Ln8tPOzmbVJEF0HHd03vzg==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -8351,10 +8345,6 @@ snapshots:
   '@oxc-project/runtime@0.75.0': {}
 
   '@oxc-project/types@0.75.0': {}
-
-  '@phensley/language-tag@1.12.2':
-    dependencies:
-      tslib: 2.8.1
 
   '@pkgjs/parseargs@0.11.0':
     optional: true

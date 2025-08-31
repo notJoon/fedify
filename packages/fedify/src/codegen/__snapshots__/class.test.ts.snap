@@ -7,8 +7,6 @@ import jsonld from \\"jsonld\\";
 import { getLogger } from \\"@logtape/logtape\\";
 import { type Span, SpanStatusCode, type TracerProvider, trace }
     from \\"@opentelemetry/api\\";
-import { LanguageTag, parseLanguageTag }
-    from \\"@phensley/language-tag\\";
 import { decode as decodeMultibase, encode as encodeMultibase }
     from \\"../runtime/multibase/index.ts\\";import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
     from \\"../runtime/docloader.ts\\";
@@ -6297,7 +6295,7 @@ get urls(): ((URL | Link))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -6340,7 +6338,7 @@ get urls(): ((URL | Link))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -6623,7 +6621,7 @@ get urls(): ((URL | Link))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -6924,7 +6922,7 @@ get urls(): ((URL | Link))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -6957,7 +6955,7 @@ get urls(): ((URL | Link))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -7179,7 +7177,7 @@ get urls(): ((URL | Link))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -13482,7 +13480,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -13501,7 +13499,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -13529,7 +13527,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -13547,7 +13545,7 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -21713,7 +21711,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -22183,7 +22181,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -37795,7 +37793,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -38265,7 +38263,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -39844,7 +39842,7 @@ export class Link {
 #_2a1c5GkfkQsnyyLybF8UXBQfFuHZ_rel: (string)[] = [];
 #_3BLrzmscsjHCw8TF5BHRW9WkPnX8_mediaType: (string)[] = [];
 #_4ZHbBuK7PrsvGgrjM8wgc6KMWjav_name: ((string | LanguageString))[] = [];
-#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang: (LanguageTag)[] = [];
+#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang: (Intl.Locale)[] = [];
 #_2cGKFeFJMmiNpGZFEF75mCwFQsKb_height: (number)[] = [];
 #_2e9AP7WdHBJYAgXG6GEyq7nSkNMe_width: (number)[] = [];
 #_gCVTegXxWWCw6wWRxa1QF65zusg_preview: (Link | Object | URL)[] = [];
@@ -39860,7 +39858,7 @@ export class Link {
 id?: URL | null;
 href?: URL | null;rel?: string | null;
 rels?: (string)[];mediaType?: string | null;name?: string | LanguageString | null;
-names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
+names?: ((string | LanguageString))[];language?: Intl.Locale | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
 ,
     options: {
       documentLoader?: DocumentLoader,
@@ -39978,13 +39976,13 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
         }
       
         if (\\"language\\" in values &&             values.language != null) {
-          if (values.language instanceof LanguageTag) {
+          if (values.language instanceof Intl.Locale) {
             // @ts-ignore: type is checked above.
             this.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang = [values.language];
           } else {
             throw new TypeError(
               \\"The language must be of type \\" +
-              \\"LanguageTag\\" + \\".\\",
+              \\"Intl.Locale\\" + \\".\\",
             );
           }
         }
@@ -40040,7 +40038,7 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
 id?: URL | null;
 href?: URL | null;rel?: string | null;
 rels?: (string)[];mediaType?: string | null;name?: string | LanguageString | null;
-names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
+names?: ((string | LanguageString))[];language?: Intl.Locale | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
 
     = {},
     options: {
@@ -40156,13 +40154,13 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
         }
       clone.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang = this.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang;
         if (\\"language\\" in values &&             values.language != null) {
-          if (values.language instanceof LanguageTag) {
+          if (values.language instanceof Intl.Locale) {
             // @ts-ignore: type is checked above.
             clone.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang = [values.language];
           } else {
             throw new TypeError(
               \\"The language must be of type \\" +
-              \\"LanguageTag\\" + \\".\\",
+              \\"Intl.Locale\\" + \\".\\",
             );
           }
         }
@@ -40296,7 +40294,7 @@ get names(): ((string | LanguageString))[] {
  * Value MUST be a BCP 47 Language-Tag.
  * 
  */
- get language(): (LanguageTag | null) {
+ get language(): (Intl.Locale | null) {
         if (this._warning != null) {
           getLogger(this._warning.category).warn(
             this._warning.message,
@@ -40599,7 +40597,7 @@ get names(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -40616,7 +40614,7 @@ get names(): ((string | LanguageString))[] {
       compactItems = [];
       for (const v of this.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang) {
         const item = (
-      v.compact()
+      v.baseName
         );
         compactItems.push(item);
       }
@@ -40744,7 +40742,7 @@ get names(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -40760,7 +40758,7 @@ get names(): ((string | LanguageString))[] {
     array = [];
     for (const v of this.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang) {
       const element = (
-    { \\"@value\\": v.compact() }
+    { \\"@value\\": v.baseName }
       );
     array.push(element);;
     }
@@ -41027,7 +41025,7 @@ get names(): ((string | LanguageString))[] {
       
     }
     instance.#_4ZHbBuK7PrsvGgrjM8wgc6KMWjav_name = _4ZHbBuK7PrsvGgrjM8wgc6KMWjav_name;
-    const _f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang: (LanguageTag)[] = [];
+    const _f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang: (Intl.Locale)[] = [];
 
     let _f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang__array = values[\\"https://www.w3.org/ns/activitystreams#hreflang\\"];
     
@@ -41039,7 +41037,7 @@ get names(): ((string | LanguageString))[] {
         : _f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang__array
     ) {
       if (v == null) continue;
-    _f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang.push(parseLanguageTag(v[\\"@value\\"]))
+    _f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang.push(new Intl.Locale(v[\\"@value\\"]))
     }
     instance.#_f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang = _f57HKWCp1YRBbTJE8PF12RbDJGf_hreflang;
     const _2cGKFeFJMmiNpGZFEF75mCwFQsKb_height: (number)[] = [];
@@ -41362,7 +41360,7 @@ export class Hashtag extends Link {
 id?: URL | null;
 href?: URL | null;rel?: string | null;
 rels?: (string)[];mediaType?: string | null;name?: string | LanguageString | null;
-names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
+names?: ((string | LanguageString))[];language?: Intl.Locale | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
 ,
     options: {
       documentLoader?: DocumentLoader,
@@ -41384,7 +41382,7 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
 id?: URL | null;
 href?: URL | null;rel?: string | null;
 rels?: (string)[];mediaType?: string | null;name?: string | LanguageString | null;
-names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
+names?: ((string | LanguageString))[];language?: Intl.Locale | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
 
     = {},
     options: {
@@ -43932,7 +43930,7 @@ export class Mention extends Link {
 id?: URL | null;
 href?: URL | null;rel?: string | null;
 rels?: (string)[];mediaType?: string | null;name?: string | LanguageString | null;
-names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
+names?: ((string | LanguageString))[];language?: Intl.Locale | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
 ,
     options: {
       documentLoader?: DocumentLoader,
@@ -43954,7 +43952,7 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
 id?: URL | null;
 href?: URL | null;rel?: string | null;
 rels?: (string)[];mediaType?: string | null;name?: string | LanguageString | null;
-names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
+names?: ((string | LanguageString))[];language?: Intl.Locale | null;height?: number | null;width?: number | null;previews?: (Link | Object | URL)[];}
 
     = {},
     options: {
@@ -49975,7 +49973,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -50445,7 +50443,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -55903,7 +55901,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -56373,7 +56371,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -66629,7 +66627,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -67099,7 +67097,7 @@ get preferredUsernames(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
@@ -68905,7 +68903,7 @@ get contents(): ((string | LanguageString))[] {
         const item = (
       typeof v === \\"string\\" ? v : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
         );
         compactItems.push(item);
@@ -68949,7 +68947,7 @@ get contents(): ((string | LanguageString))[] {
       const element = (
     typeof v === \\"string\\" ? { \\"@value\\": v } : {
         \\"@value\\": v.toString(),
-        \\"@language\\": v.language.compact(),
+        \\"@language\\": v.locale.baseName,
       }
       );
     array.push(element);;
