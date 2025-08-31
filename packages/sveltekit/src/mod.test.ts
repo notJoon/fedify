@@ -1,29 +1,19 @@
 import { strictEqual } from "node:assert/strict";
 import { describe, test } from "node:test";
 import { fedifyHook } from "./mod.ts";
+import type { RequestEvent } from "@sveltejs/kit";
 
-interface MockRequestEvent {
-  request: Request;
-}
-
-interface MockHookParams {
-  event: MockRequestEvent;
-  resolve: (event: MockRequestEvent) => Promise<Response>;
-}
-
-interface MockFederation<T> {
+interface MockFederation {
   fetch(request: Request, options: unknown): Promise<Response>;
 }
 
 describe("fedifyHook", () => {
   test("creates hook handler function", () => {
-    const mockFederation: MockFederation<undefined> = {
+    const mockFederation = {
       fetch: () => Promise.resolve(new Response("OK")),
     };
 
-    const createContextData = () => undefined;
-
-    const hookHandler = fedifyHook(mockFederation as never, createContextData);
+    const hookHandler = fedifyHook(mockFederation as never);
     strictEqual(typeof hookHandler, "function");
   });
 
@@ -31,7 +21,7 @@ describe("fedifyHook", () => {
     let capturedRequest: Request | undefined;
     let capturedOptions: unknown;
 
-    const mockFederation: MockFederation<string> = {
+    const mockFederation: MockFederation = {
       fetch: (request, options) => {
         capturedRequest = request;
         capturedOptions = options;
@@ -44,7 +34,7 @@ describe("fedifyHook", () => {
     const hookHandler = fedifyHook(mockFederation as never, createContextData);
 
     const mockRequest = new Request("https://example.com/test");
-    const mockEvent: MockRequestEvent = { request: mockRequest };
+    const mockEvent: RequestEvent = { request: mockRequest } as RequestEvent;
     const mockResolve = () =>
       Promise.resolve(new Response("SvelteKit response"));
 
@@ -64,7 +54,7 @@ describe("fedifyHook", () => {
   test("handles async context data creation", async () => {
     let capturedContextData: unknown;
 
-    const mockFederation: MockFederation<string> = {
+    const mockFederation: MockFederation = {
       fetch: (_request, options) => {
         capturedContextData = (options as { contextData: string }).contextData;
         return Promise.resolve(new Response("OK"));
@@ -79,7 +69,7 @@ describe("fedifyHook", () => {
     const hookHandler = fedifyHook(mockFederation as never, createContextData);
 
     const mockRequest = new Request("https://example.com/test");
-    const mockEvent: MockRequestEvent = { request: mockRequest };
+    const mockEvent: RequestEvent = { request: mockRequest } as RequestEvent;
     const mockResolve = () =>
       Promise.resolve(new Response("SvelteKit response"));
 
