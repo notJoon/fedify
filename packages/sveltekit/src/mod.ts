@@ -14,15 +14,7 @@ import type {
   Federation,
   FederationFetchOptions,
 } from "@fedify/fedify/federation";
-
-type RequestEvent = {
-  request: Request;
-};
-
-type HookParams = {
-  event: RequestEvent;
-  resolve: (event: RequestEvent) => Promise<Response>;
-};
+import type { Handle, RequestEvent } from "@sveltejs/kit";
 
 /**
  * Create a SvelteKit hook handler to integrate with the {@link Federation}
@@ -32,7 +24,7 @@ type HookParams = {
  * ``` typescript
  * import { federation } from "./federation"; // Import the `Federation` object
  *
- * export const handle = fedifyHook(federation, () => undefined);
+ * export const handle = fedifyHook(federation);
  * ```
  *
  * @template TContextData A type of the context data for the {@link Federation}
@@ -47,9 +39,9 @@ export function fedifyHook<TContextData>(
   federation: Federation<TContextData>,
   createContextData: (
     event: RequestEvent,
-  ) => TContextData | Promise<TContextData>,
-): (params: HookParams) => Promise<Response> {
-  return async ({ event, resolve }: HookParams) => {
+  ) => TContextData | Promise<TContextData> = () => undefined as TContextData,
+): Handle {
+  return async ({ event, resolve }) => {
     return await federation.fetch(event.request, {
       contextData: await createContextData(event),
       ...integrateFetchOptions({ event, resolve }),
@@ -58,7 +50,7 @@ export function fedifyHook<TContextData>(
 }
 
 function integrateFetchOptions(
-  { event, resolve }: HookParams,
+  { event, resolve }: Parameters<Handle>[0],
 ): Omit<FederationFetchOptions<void>, "contextData"> {
   return {
     async onNotFound(): Promise<Response> {
