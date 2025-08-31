@@ -116,6 +116,8 @@ To be released.
  -  Created SvelteKit integration as the *@fedify/sveltekit* package.
     Separated from `@fedify/fedify/x/sveltekit` to improve modularity and
     reduce bundle size.  [[#375] by Chanhaeng Lee]
+ -  Fixed SvelteKit integration hook types to correctly infer the request
+    and response types in hooks.  [ by Chanhaeng Lee]
 
 
 Version 1.8.8
