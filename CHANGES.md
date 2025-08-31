@@ -10,7 +10,7 @@ To be released.
 
 ### @fedify/fedify
 
-  - Remove documentLoader property from FederationOptions interface.
+ - Remove documentLoader property from FederationOptions interface.
     [[#376],[#393] by Hasang Cho]
 
     - In fedify/src/federation/federation.ts, removed documentLoader property.
