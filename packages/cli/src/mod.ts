@@ -1,15 +1,15 @@
 import { or } from "@optique/core";
 import { run } from "@optique/run";
-import { lookupCommand, runLookup } from "./lookup.ts";
-import { runWebFinger, webFingerCommand } from "./webfinger.ts";
-import { initCommand, runInit } from "./init.ts";
 import { inboxCommand, runInbox } from "./inbox.ts";
+import { initCommand, runInit } from "./init.ts";
+import { lookupCommand, runLookup } from "./lookup.ts";
 import { nodeInfoCommand, runNodeInfo } from "./nodeinfo.ts";
 import { runTunnel, tunnelCommand } from "./tunnel.ts";
+import { runWebFinger, webFingerCommand } from "./webfinger.ts";
 
 const command = or(
   initCommand,
-  lookupCommand,
+  // lookupCommand,
   inboxCommand,
   nodeInfoCommand,
   tunnelCommand,
@@ -24,9 +24,9 @@ async function main() {
   if (result.command === "init") {
     runInit(result);
   }
-  if (result.command === "lookup") {
-    await runLookup(result);
-  }
+  // if (result.command === "lookup") {
+  //   await runLookup(result);
+  // }
   if (result.command === "webfinger") {
     runWebFinger(result);
   }
