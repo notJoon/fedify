@@ -72,7 +72,7 @@ const traverseOption = withDefault(
     }),
     suppressErrors: option("-S", "--suppress-errors", {
       description:
-        message`Suppress partial errors while traversing the collection`,
+        message`Suppress partial errors while traversing the collection.`,
     }),
   }),
   { traverse: false } as const,

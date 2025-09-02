@@ -12,7 +12,7 @@ export const initCommand = command(
   "init",
   object({
     command: constant("init"),
-    resources: argument(path({ metavar: "DIRECTORY" })),
+    resources: argument(path({ metavar: "DIR" })),
   }),
   {
     description: message`Initialize a new Fedify project directory.`,

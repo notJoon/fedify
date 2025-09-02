@@ -495,8 +495,8 @@ importers:
         specifier: 'workspace:'
         version: link:../fedify
       '@hongminhee/localtunnel':
-        specifier: jsr:@hongminhee/localtunnel@^0.2.0
-        version: '@jsr/hongminhee__localtunnel@0.2.0'
+        specifier: ^0.3.0
+        version: 0.3.0
       '@jimp/core':
         specifier: ^1.6.0
         version: 1.6.0
@@ -1613,6 +1613,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  '@hongminhee/localtunnel@0.3.0':
+    resolution: {integrity: sha512-GRn02MyJIal6DjgDiaLDQhaiTvYlqTLq97bpTNqp2qGnwy4c77pHm6kWPBdSOjmLGPCf2bb/USFKQBgUhafbuA==}
+    engines: {bun: '>=1.2.0', deno: '>=2.3.0', node: '>=20.0.0'}
+
   '@hono/node-server@1.14.4':
     resolution: {integrity: sha512-DnxpshhYewr2q9ZN8ez/M5mmc3sucr8CT1sIgIy1bkeUXut9XWDkqHoFHRhWIQgkYnKpVRxunyhK7WzpJeJ6qQ==}
     engines: {node: '>=18.14.1'}
@@ -2088,12 +2092,6 @@ packages:
   '@jsr/david__which@0.4.1':
     resolution: {integrity: sha512-cNHC/eAq33lrp2xIGOjx2OMnK7ad5naUq4HXqIDjSVN8Ak8j8bpfL6WCw4ruacIVe0WqFRFPKLnwrvv7KoLR8Q==, tarball: https://npm.jsr.io/~/11/@jsr/david__which/0.4.1.tgz}
 
-  '@jsr/hongminhee__localtunnel@0.2.0':
-    resolution: {integrity: sha512-u5SNF48X3PSIHl7kCQXRUT97Fa2Fe2dF5EkuQA25v2ZRt/BBotPWFkBlAwmmR/nLvk1RhkVo19SOWbXI7oqAzg==, tarball: https://npm.jsr.io/~/11/@jsr/hongminhee__localtunnel/0.2.0.tgz}
-
-  '@jsr/logtape__logtape@0.2.3':
-    resolution: {integrity: sha512-v2KyRb0Wh9a9z8n0MDJcnMZQzAtJAbNsjCg3ziDmtsaoIpTYQAC3YFcY6qkaa2Sp4XhvsGkXDA07JIMUjIR78w==, tarball: https://npm.jsr.io/~/11/@jsr/logtape__logtape/0.2.3.tgz}
-
   '@jsr/std__assert@0.226.0':
     resolution: {integrity: sha512-xCuUFDfHkIZd96glKgjZbnYFqu6blu8Y53SyvDMlFDJm1Y/j+/FcW6xq7TzGFIaF5B9QecIlDfamfhzA8ZdVbg==, tarball: https://npm.jsr.io/~/11/@jsr/std__assert/0.226.0.tgz}
 
@@ -2140,6 +2138,9 @@ packages:
 
   '@logtape/logtape@1.0.0':
     resolution: {integrity: sha512-GOOiaJcHSJQfFt+khrtoxfQ29klDiG8UxrgC+lPt7K6HhwEMQnB47j7V0GQ6F8bnS7JIZgYQmbXb+yGUF2pKhA==}
+
+  '@logtape/logtape@1.0.4':
+    resolution: {integrity: sha512-YvNVrXIxVpnY528zoiEjX8PqTfr0UCtKXyssvaWL8AE+OByFTCooKuKMdPlm6g65YUI9fPXrHn4UnogSskABnA==}
 
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
@@ -7844,6 +7845,10 @@ snapshots:
       protobufjs: 7.5.3
       yargs: 17.7.2
 
+  '@hongminhee/localtunnel@0.3.0':
+    dependencies:
+      '@logtape/logtape': 1.0.4
+
   '@hono/node-server@1.14.4(hono@4.8.3)':
     dependencies:
       hono: 4.8.3
@@ -8352,12 +8357,6 @@ snapshots:
 
   '@jsr/david__which@0.4.1': {}
 
-  '@jsr/hongminhee__localtunnel@0.2.0':
-    dependencies:
-      '@jsr/logtape__logtape': 0.2.3
-
-  '@jsr/logtape__logtape@0.2.3': {}
-
   '@jsr/std__assert@0.226.0':
     dependencies:
       '@jsr/std__internal': 1.0.8
@@ -8402,6 +8401,8 @@ snapshots:
       '@logtape/logtape': 1.0.0
 
   '@logtape/logtape@1.0.0': {}
+
+  '@logtape/logtape@1.0.4': {}
 
   '@lukeed/csprng@1.1.0': {}
 

@@ -1,9 +1,9 @@
 import {
-  command as OQCommand,
+  command as Command,
   constant,
   type InferValue,
   message,
-  object as OQObject,
+  object as Object,
 } from "@optique/core";
 import { createJimp } from "@jimp/core";
 import webp from "@jimp/wasm-webp";
@@ -16,9 +16,9 @@ export const Jimp = createJimp({
 
 // FIXME: This is placeholder for development for optique
 
-export const nodeInfoCommand = OQCommand(
+export const nodeInfoCommand = Command(
   "nodeinfo",
-  OQObject({
+  Object({
     command: constant("nodeinfo"),
   }),
   {
