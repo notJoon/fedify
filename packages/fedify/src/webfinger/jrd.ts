@@ -61,6 +61,7 @@ export interface Link {
    * A URI template (RFC 6570) that can be used to construct URIs by
    * substituting variables. Used primarily for subscription endpoints
    * where parameters like account URIs need to be dynamically inserted.
+   * @since 1.9.0
    */
   template?: string;
 }
