@@ -13,10 +13,7 @@ To be released.
  - Remove documentLoader property from FederationOptions interface.
     [[#376],[#393] by Hasang Cho]
 
-    - In fedify/src/federation/federation.ts, removed documentLoader property.
-    - In cli/src/inbox.tsx, switched the inbox command to the loader factory API by replacing the deprecated documentLoader with documentLoaderFactory/contextLoaderFactory and reusing a single instance from getDocumentLoader(), with no functional changes.
-    - In fedify/src/federation/middleware.ts, refactored federationImpl to replace the deprecated documentLoader with documentLoaderFactory, drop the documentLoader-related allowPrivateAddress/userAgent guard, and route loader creation through factories with no intended behavior change.
-    - In fedify/src/federation/middleware.test.ts, migrated tests to the loader factory API (documentLoaderFactory), removed the obsolete allowPrivateAddress+documentLoader assertion, fixed ctx.documentLoader expectations, split mocks (/auth-check vs /object) to avoid URL collisions, and used a rejecting loader in the first context to ensure null on lookup.
+    - Replaced `documentLoader` with `documentLoaderFactory` with no user-facing behavior changes.
 
  -  Migrated from *@phensley/language-tag* package and its `LanguageTag` class
     to the standardized `Intl.Locale` class for representing language tags.
