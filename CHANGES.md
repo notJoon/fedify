@@ -39,7 +39,7 @@ To be released.
      -  Added `Collection.getLikedOf()` method.
 
  -  Changed how `parseSoftware()` function handles non-Semantic Versioning
-    number strings on `tryBestEffort` mode.  [[#353], [#365] by Hyeonseo Kim]]
+    number strings on `tryBestEffort` mode.  [[#353], [#365] by Hyeonseo Kim]
 
  -  Separated modules from `@fedify/fedify/x` into dedicated packages to
     improve modularity and reduce bundle size.  The existing integration
@@ -51,12 +51,23 @@ To be released.
      -  Deprecated `@fedify/fedify/x/hono` in favor of `@fedify/hono`.
      -  Deprecated `@fedify/fedify/x/sveltekit` in favor of `@fedify/sveltekit`.
 
+ -  Extended `Link` from `@fedify/fedify/webfinger` to support
+    [OStatus 1.0 Draft 2].  [[#402], [#404] by Hyeonseo Kim]
+
+     -  Added an optional `template` field to the `Link` interface.
+     -  Changed the `href` field optional from the `Link` interface according to
+        [RFC 7033 Section 4.4.4.3].
+
 [FEP-5711]: https://w3id.org/fep/5711
+[OStatus 1.0 Draft 2]: https://www.w3.org/community/ostatus/wiki/images/9/93/OStatus_1.0_Draft_2.pdf
+[RFC 7033 Section 4.4.4.3]: https://datatracker.ietf.org/doc/html/rfc7033#section-4.4.4.3
 [#353]: https://github.com/fedify-dev/fedify/issues/353
 [#365]: https://github.com/fedify-dev/fedify/pull/365
 [#373]: https://github.com/fedify-dev/fedify/issues/373
 [#375]: https://github.com/fedify-dev/fedify/issues/375
 [#381]: https://github.com/fedify-dev/fedify/pull/381
+[#402]: https://github.com/fedify-dev/fedify/issues/402
+[#404]: https://github.com/fedify-dev/fedify/pull/404
 
 ### @fedify/cli
 
