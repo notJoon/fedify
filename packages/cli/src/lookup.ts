@@ -1,6 +1,7 @@
 import {
   argument,
   choice,
+  command,
   constant,
   flag,
   float,
@@ -16,7 +17,7 @@ import {
   string,
   withDefault,
 } from "@optique/core";
-import { path } from "@optique/run/valueparser";
+import { path, print, printError } from "@optique/run";
 import {
   Application,
   Collection,
@@ -40,7 +41,6 @@ import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 import { colorEnabled, formatObject } from "./utils.ts";
 import { renderImages } from "./imagerenderer.ts";
-import { print, printError } from "@optique/run";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
@@ -78,69 +78,76 @@ const traverseOption = withDefault(
   { traverse: false } as const,
 );
 
-export const lookupCommand = merge(
-  traverseOption,
-  authorizedFetchOption,
-  object({
-    command: constant("lookup"),
-    format: withDefault(
-      or(
-        map(
-          option("-r", "--raw", {
-            description: message`Print the fetched JSON-LD document as is.`,
-          }),
-          () => "raw" as const,
+export const lookupCommand = command(
+  "lookup",
+  merge(
+    object({ command: constant("lookup") }),
+    traverseOption,
+    authorizedFetchOption,
+    object("lookup", {
+      format: withDefault(
+        or(
+          map(
+            option("-r", "--raw", {
+              description: message`Print the fetched JSON-LD document as is.`,
+            }),
+            () => "raw" as const,
+          ),
+          map(
+            option("-C", "--compact", {
+              description: message`Compact the fetched JSON-LD document.`,
+            }),
+            () => "compact" as const,
+          ),
+          map(
+            option("-e", "--expand", {
+              description: message`Expand the fetched JSON-LD document.`,
+            }),
+            () => "expand" as const,
+          ),
         ),
-        map(
-          option("-C", "--compact", {
-            description: message`Compact the fetched JSON-LD document.`,
-          }),
-          () => "compact" as const,
-        ),
-        map(
-          option("-e", "--expand", {
-            description: message`Expand the fetched JSON-LD document.`,
-          }),
-          () => "expand" as const,
-        ),
+        "default" as const,
       ),
-      "default" as const,
-    ),
-    userAgent: optional(
-      option("-u", "--user-agent", string({ metavar: "USER_AGENT" }), {
-        description: message`The custom User-Agent header value.`,
-      }),
-    ),
-    separator: withDefault(
-      option("-s", "--separator", string({ metavar: "SEPARATOR" }), {
-        description:
-          message`Specify the separator between adjacent output objects or collection items.`,
-      }),
-      "----",
-    ),
-    output: optional(option(
-      "-o",
-      "--output",
-      path({
-        metavar: "OUTPUT_PATH",
-        type: "file",
-        allowCreate: true,
-      }),
-      { description: message`Specify the output file path.` },
-    )),
-    timeout: optional(option(
-      "-T",
-      "--timeout",
-      float({ min: 0, metavar: "SECONDS" }),
-      { description: message`Set timeout for network requests in seconds.` },
-    )),
-    urls: multiple(
-      argument(string({ metavar: "URL_OR_HANDLE" }), {
-        description: message`One or more URLs or handles to look up.`,
-      }),
-      { min: 1 },
-    ),
-  }),
+      userAgent: optional(
+        option("-u", "--user-agent", string({ metavar: "USER_AGENT" }), {
+          description: message`The custom User-Agent header value.`,
+        }),
+      ),
+      separator: withDefault(
+        option("-s", "--separator", string({ metavar: "SEPARATOR" }), {
+          description:
+            message`Specify the separator between adjacent output objects or collection items.`,
+        }),
+        "----",
+      ),
+      output: optional(option(
+        "-o",
+        "--output",
+        path({
+          metavar: "OUTPUT_PATH",
+          type: "file",
+          allowCreate: true,
+        }),
+        { description: message`Specify the output file path.` },
+      )),
+      timeout: optional(option(
+        "-T",
+        "--timeout",
+        float({ min: 0, metavar: "SECONDS" }),
+        { description: message`Set timeout for network requests in seconds.` },
+      )),
+      urls: multiple(
+        argument(string({ metavar: "URL_OR_HANDLE" }), {
+          description: message`One or more URLs or handles to look up.`,
+        }),
+        { min: 1 },
+      ),
+    }),
+  ),
+  {
+    description:
+      message`Lookup an Activity Streams object by URL or the actor handle. The argument can be either a URL or an actor handle (e.g., @username@domain), and it can be multiple.`,
+  },
 );
 
 export class TimeoutError extends Error {
