@@ -28,7 +28,7 @@ import type {
   ObjectDispatcher,
   OutboxErrorHandler,
   SharedInboxKeyDispatcher,
-  WebFingerLinkDispatcher,
+  WebFingerLinksDispatcher,
 } from "./callback.ts";
 import type { Context, RequestContext } from "./context.ts";
 import type { KvStore } from "./kv.ts";
@@ -84,8 +84,8 @@ export interface Federatable<TContextData> {
    * Registers a links dispatcher to WebFinger
    * @param dispatcher A links dispatcher callback to register.
    */
-  setWebFingerLinkDispatcher(
-    dispatcher: WebFingerLinkDispatcher<TContextData>,
+  setWebFingerLinksDispatcher(
+    dispatcher: WebFingerLinksDispatcher<TContextData>,
   ): void;
 
   /**

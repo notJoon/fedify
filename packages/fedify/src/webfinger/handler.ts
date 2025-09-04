@@ -6,7 +6,7 @@ import type {
   ActorAliasMapper,
   ActorDispatcher,
   ActorHandleMapper,
-  WebFingerLinkDispatcher,
+  WebFingerLinksDispatcher,
 } from "../federation/callback.ts";
 import type { RequestContext } from "../federation/context.ts";
 import { Link as LinkObject } from "../vocab/mod.ts";
@@ -51,7 +51,7 @@ export interface WebFingerHandlerParameters<TContextData> {
   /**
    * The callback for dispatching the Links of webFinger.
    */
-  webFingerLinkDispatcher?: WebFingerLinkDispatcher<TContextData>;
+  webFingerLinksDispatcher?: WebFingerLinksDispatcher<TContextData>;
 
   /**
    * The function to call when the actor is not found.
@@ -118,7 +118,7 @@ async function handleWebFingerInternal<TContextData>(
     actorAliasMapper,
     onNotFound,
     span,
-    webFingerLinkDispatcher,
+    webFingerLinksDispatcher,
   }: WebFingerHandlerParameters<TContextData>,
 ): Promise<Response> {
   if (actorDispatcher == null) {
@@ -231,8 +231,8 @@ async function handleWebFingerInternal<TContextData>(
     links.push(link);
   }
 
-  if (webFingerLinkDispatcher != null) {
-    const customLinks = await webFingerLinkDispatcher(context);
+  if (webFingerLinksDispatcher != null) {
+    const customLinks = await webFingerLinksDispatcher(context, context.url);
     if (customLinks != null) {
       for (const link of customLinks) {
         links.push(link);

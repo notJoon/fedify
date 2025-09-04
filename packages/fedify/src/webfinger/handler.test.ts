@@ -3,7 +3,7 @@ import type {
   ActorAliasMapper,
   ActorDispatcher,
   ActorHandleMapper,
-  WebFingerLinkDispatcher,
+  WebFingerLinksDispatcher,
 } from "../federation/callback.ts";
 import type { RequestContext } from "../federation/context.ts";
 import { MemoryKvStore } from "../federation/kv.ts";
@@ -540,8 +540,8 @@ test("handleWebFinger()", async (t) => {
     assertEquals(await response.json(), expectedForHostnameWithPort);
   });
 
-  await t.step("webFingerLinkDispatcher", async () => {
-    const webFingerLinkDispatcher: WebFingerLinkDispatcher<void> = (_ctx) => {
+  await t.step("webFingerLinksDispatcher", async () => {
+    const webFingerLinksDispatcher: WebFingerLinksDispatcher<void> = (_ctx) => {
       return [
         {
           rel: "http://ostatus.org/schema/1.0/subscribe",
@@ -557,7 +557,7 @@ test("handleWebFinger()", async (t) => {
     const response = await handleWebFinger(request, {
       context,
       actorDispatcher,
-      webFingerLinkDispatcher,
+      webFingerLinksDispatcher,
       onNotFound,
     });
 

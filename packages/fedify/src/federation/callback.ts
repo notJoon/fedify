@@ -21,9 +21,10 @@ export type NodeInfoDispatcher<TContextData> = (
  *
  * @template TContextData The context data to pass to the {@link Context}.
  */
-export type WebFingerLinkDispatcher<TContextData> = (
+export type WebFingerLinksDispatcher<TContextData> = (
   context: RequestContext<TContextData>,
-) => Link[] | Promise<Link[]>;
+  resource: URL,
+) => readonly Link[] | Promise<readonly Link[]>;
 
 /**
  * A callback that dispatches an {@link Actor} object.
