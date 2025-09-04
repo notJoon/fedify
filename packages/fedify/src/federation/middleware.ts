@@ -1280,6 +1280,7 @@ export class FederationImpl<TContextData>
           actorDispatcher: this.actorCallbacks?.dispatcher,
           actorHandleMapper: this.actorCallbacks?.handleMapper,
           actorAliasMapper: this.actorCallbacks?.aliasMapper,
+          webFingerLinkDispatcher: this.webFingerDispatcher,
           onNotFound,
           tracer,
         });
