@@ -6,14 +6,15 @@ import { initCommand, runInit } from "./init.ts";
 import { inboxCommand, runInbox } from "./inbox.ts";
 import { nodeInfoCommand, runNodeInfo } from "./nodeinfo.ts";
 import { runTunnel, tunnelCommand } from "./tunnel.ts";
+import { configureLogging } from "./globals.ts";
 
 const command = or(
   initCommand,
+  webFingerCommand,
   lookupCommand,
   inboxCommand,
   nodeInfoCommand,
   tunnelCommand,
-  webFingerCommand,
 );
 
 async function main() {
@@ -21,6 +22,10 @@ async function main() {
     programName: "fedify",
     help: "both",
   });
+
+  if (result.debug) {
+    await configureLogging();
+  }
   if (result.command === "init") {
     runInit(result);
   }
