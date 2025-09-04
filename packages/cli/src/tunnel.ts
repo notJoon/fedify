@@ -3,10 +3,10 @@ import {
   command,
   constant,
   type InferValue,
+  integer,
   merge,
   message,
   object,
-  string,
 } from "@optique/core";
 import { debugOption } from "./globals.ts";
 
@@ -15,7 +15,7 @@ export const tunnelCommand = command(
   merge(
     object({
       command: constant("tunnel"),
-      resources: argument(string({ metavar: "PORT" })),
+      port: argument(integer({ metavar: "PORT", min: 0, max: 65_535 })),
     }),
     debugOption,
   ),
