@@ -22,6 +22,7 @@ import type {
   ObjectAuthorizePredicate,
   ObjectDispatcher,
   SharedInboxKeyDispatcher,
+  WebFingerLinkDispatcher,
 } from "./callback.ts";
 import type { Context, RequestContext } from "./context.ts";
 import type {
@@ -48,6 +49,7 @@ export class FederationBuilderImpl<TContextData>
   router: Router;
   actorCallbacks?: ActorCallbacks<TContextData>;
   nodeInfoDispatcher?: NodeInfoDispatcher<TContextData>;
+  webFingerDispatcher?: WebFingerLinkDispatcher<TContextData>;
   objectCallbacks: Record<string, ObjectCallbacks<TContextData, string>>;
   objectTypeIds: Record<
     string,
@@ -148,6 +150,7 @@ export class FederationBuilderImpl<TContextData>
       ? undefined
       : { ...this.actorCallbacks };
     f.nodeInfoDispatcher = this.nodeInfoDispatcher;
+    f.webFingerDispatcher = this.webFingerDispatcher;
     f.objectCallbacks = { ...this.objectCallbacks };
     f.objectTypeIds = { ...this.objectTypeIds };
     f.inboxPath = this.inboxPath;
@@ -489,6 +492,12 @@ export class FederationBuilderImpl<TContextData>
       );
     }
     this.nodeInfoDispatcher = dispatcher;
+  }
+
+  setWebFingerLinkDispatcher(
+    dispatcher: WebFingerLinkDispatcher<TContextData>,
+  ): void {
+    this.webFingerDispatcher = dispatcher;
   }
 
   setObjectDispatcher<TObject extends Object, TParam extends string>(
