@@ -41,7 +41,7 @@ import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 import { colorEnabled, formatObject } from "./utils.ts";
 import { renderImages } from "./imagerenderer.ts";
-import { debugOption } from "./globals.ts";
+import { configureLogging, debugOption } from "./globals.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
@@ -86,7 +86,7 @@ export const lookupCommand = command(
     traverseOption,
     authorizedFetchOption,
     debugOption,
-    object("lookup", {
+    object("Looking up options", {
       format: withDefault(
         or(
           map(
@@ -285,6 +285,12 @@ export async function runLookup(command: InferValue<typeof lookupCommand>) {
     );
     process.exit(1);
   }
+
+  // Enable Debug mode if requested
+  if (command.debug) {
+    await configureLogging();
+  }
+
   const spinner = ora({
     text: `Looking up the ${
       command.traverse

@@ -37,7 +37,7 @@ export const recordingSink = getRecordingSink();
 
 export const logFile = process.env["FEDIFY_LOG_FILE"];
 if (logFile != null) {
-  mkdir(dirname(logFile), { recursive: true });
+  await mkdir(dirname(logFile), { recursive: true });
 }
 
 await configure({

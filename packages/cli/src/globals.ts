@@ -5,7 +5,7 @@ import { recordingSink } from "./log.ts";
 import { AsyncLocalStorage } from "node:async_hooks";
 import process from "node:process";
 
-export const debugOption = object("debug", {
+export const debugOption = object("Global options", {
   debug: option("-d", "--debug", {
     description: message`Enable debug mode.`,
   }),
