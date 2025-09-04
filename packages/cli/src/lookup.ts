@@ -41,10 +41,11 @@ import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 import { colorEnabled, formatObject } from "./utils.ts";
 import { renderImages } from "./imagerenderer.ts";
+import { debugOption } from "./globals.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
-const authorizedFetchOption = withDefault(
+export const authorizedFetchOption = withDefault(
   object({
     authorizedFetch: flag("-a", "--authorized-fetch", {
       description: message`Sign the request with an one-time key.`,
@@ -84,6 +85,7 @@ export const lookupCommand = command(
     object({ command: constant("lookup") }),
     traverseOption,
     authorizedFetchOption,
+    debugOption,
     object("lookup", {
       format: withDefault(
         or(
