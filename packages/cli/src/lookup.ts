@@ -82,11 +82,18 @@ const traverseOption = withDefault(
 export const lookupCommand = command(
   "lookup",
   merge(
+    "Looking up options",
     object({ command: constant("lookup") }),
     traverseOption,
     authorizedFetchOption,
     debugOption,
-    object("Looking up options", {
+    object({
+      urls: multiple(
+        argument(string({ metavar: "URL_OR_HANDLE" }), {
+          description: message`One or more URLs or handles to look up.`,
+        }),
+        { min: 1 },
+      ),
       format: withDefault(
         or(
           map(
@@ -138,12 +145,6 @@ export const lookupCommand = command(
         float({ min: 0, metavar: "SECONDS" }),
         { description: message`Set timeout for network requests in seconds.` },
       )),
-      urls: multiple(
-        argument(string({ metavar: "URL_OR_HANDLE" }), {
-          description: message`One or more URLs or handles to look up.`,
-        }),
-        { min: 1 },
-      ),
     }),
   ),
   {
