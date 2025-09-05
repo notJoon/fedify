@@ -5,8 +5,10 @@ import {
   type LogRecord,
   type Sink,
 } from "@logtape/logtape";
-import { dirname } from "@std/path";
+import { dirname } from "node:path";
+import process from "node:process";
 import { AsyncLocalStorage } from "node:async_hooks";
+import { mkdir } from "node:fs/promises";
 
 export interface RecordingSink extends Sink {
   startRecording(): void;
@@ -33,9 +35,9 @@ export function getRecordingSink(): RecordingSink {
 
 export const recordingSink = getRecordingSink();
 
-export const logFile = Deno.env.get("FEDIFY_LOG_FILE");
+export const logFile = process.env["FEDIFY_LOG_FILE"];
 if (logFile != null) {
-  await Deno.mkdir(dirname(logFile), { recursive: true });
+  await mkdir(dirname(logFile), { recursive: true });
 }
 
 await configure({
