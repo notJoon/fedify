@@ -150,7 +150,7 @@ federation.setWebFingerLinksDispatcher(async (ctx, _resource) => {
     return [
       {
         rel: "http://ostatus.org/schema/1.0/subscribe",
-        template: "https://your-domain.com/authorize_interaction?uri={uri}"
+        template: "https://example.com/authorize_interaction?uri={uri}"
       }
     ];
   }
@@ -169,6 +169,14 @@ The WebFinger links dispatcher receives two parameters:
 > The WebFinger endpoint is automatically exposed at `/.well-known/webfinger`
 > by the `Federation.fetch()` method. You don't need to manually handle this
 > route.
+
+> [!NOTE]
+> WebFinger responses can also be customized through 
+> `~Federatable.setActorDispatcher()` without using 
+> `~Federatable.setWebFingerLinksDispatcher()`. When an actor is configured,
+> Fedify automatically includes standard ActivityPub links in the WebFinger 
+> response. See the [WebFinger links section](./actor.md#webfinger-links) 
+> in the Actor manual for details.
 
 WebFinger lookups
 -----------------
