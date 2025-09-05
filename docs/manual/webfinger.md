@@ -9,7 +9,7 @@ description: >-
 WebFinger
 =========
 
-According to [WebFinger Website]:
+According to the [WebFinger website]:
 
  > WebFinger is used to discover information about people or other entities 
  > on the Internet that are identified by a URI using standard 
@@ -26,7 +26,7 @@ rely on WebFinger for account discovery.
 > [!NOTE]
 > Fedify implements WebFinger according to [RFC 7033] specification.
 
-[WebFinger Website]: https://webfinger.net/
+[WebFinger website]: https://webfinger.net/
 [RFC 7033]: https://datatracker.ietf.org/doc/html/rfc7033
 
 WebFinger schema
@@ -129,7 +129,7 @@ Example WebFinger response (including both automatic and custom links):
 [RFC 6570]: https://datatracker.ietf.org/doc/html/rfc6570
 
 Customizing WebFinger endpoint
----------------------------
+------------------------------
 
 *This API is available since Fedify 1.9.0.*
 
