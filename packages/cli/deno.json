@@ -6,7 +6,7 @@
   "imports": {
     "@cross/dir": "jsr:@cross/dir@^1.1.0",
     "@david/dax": "jsr:@david/dax@^0.43.2",
-    "@optique/core": "jsr:@optique/core@^0.3.0",
+    "@optique/core": "jsr:@optique/core@^0.4.0-dev.52+12ee9e92",
     "@optique/run": "jsr:@optique/run@^0.3.0",
     "@std/fmt": "jsr:@std/fmt@^1.0.8",
     "ora": "npm:ora@^8.2.0",
