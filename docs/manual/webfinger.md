@@ -103,21 +103,21 @@ Example WebFinger response (including both automatic and custom links):
 
 ~~~~ json
 {
-  "subject": "acct:alice@example.com",
+  "subject": "acct:alice@your-domain.com",
   "links": [
     {
       "rel": "self",
       "type": "application/activity+json", 
-      "href": "https://example.com/users/alice"
+      "href": "https://your-domain.com/users/alice"
     },
     {
       "rel": "http://webfinger.net/rel/profile-page",
       "type": "text/html",
-      "href": "https://example.com/@alice"
+      "href": "https://your-domain.com/@alice"
     },
     {
       "rel": "http://ostatus.org/schema/1.0/subscribe",
-      "template": "https://example.com/authorize_interaction?uri={uri}"
+      "template": "https://your-domain.com/authorize_interaction?uri={uri}"
     }
   ]
 }
@@ -146,16 +146,41 @@ const federation = createFederation({
   // Omitted for brevity; see the related section for details.
 });
 
-federation.setWebFingerLinksDispatcher(async (ctx, _resource) => {
+federation.setWebFingerLinksDispatcher(async (ctx, resource) => {
     return [
       {
         rel: "http://ostatus.org/schema/1.0/subscribe",
-        template: "https://example.com/authorize_interaction?uri={uri}"
+        template: `https://your-domain.com/@${resource.pathname}/authorize_interaction?uri={uri}`
       }
     ];
   }
 );
 ~~~~
+
+This gives results like below:
+
+~~~~json
+{
+  "subject": "acct:alice@your-domain.com",
+  "links": [
+    {
+      "rel": "self",
+      "type": "application/activity+json", 
+      "href": "https://your-domain.com/users/alice"
+    },
+    {
+      "rel": "http://webfinger.net/rel/profile-page",
+      "type": "text/html",
+      "href": "https://your-domain.com/@alice"
+    },
+    {
+      "rel": "http://ostatus.org/schema/1.0/subscribe",
+      "template": "https://your-domain.com/@alice@your-domain.com/authorize_interaction?uri={uri}"
+    }
+  ]
+}
+~~~~
+
 
 The WebFinger links dispatcher receives two parameters:
 
