@@ -9,11 +9,11 @@ import { runTunnel, tunnelCommand } from "./tunnel.ts";
 
 const command = or(
   initCommand,
+  webFingerCommand,
   lookupCommand,
   inboxCommand,
   nodeInfoCommand,
   tunnelCommand,
-  webFingerCommand,
 );
 
 async function main() {

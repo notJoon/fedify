@@ -11,6 +11,7 @@ import {
   flag,
   type InferValue,
   integer,
+  merge,
   message,
   multiple,
   object,
@@ -21,6 +22,7 @@ import {
 } from "@optique/core";
 import ora from "ora";
 import { formatObject } from "./utils.ts";
+import { debugOption } from "./globals.ts";
 
 const logger = getLogger(["fedify", "cli", "webfinger"]);
 
@@ -48,15 +50,18 @@ const maxRedirection = withDefault(
 
 export const webFingerCommand = command(
   "webfinger",
-  object({
-    command: constant("webfinger"),
-    resources: multiple(argument(string({ metavar: "RESOURCE" }), {
-      description: message`WebFinger resource(s) to look up.`,
-    })),
-    userAgent,
-    allowPrivateAddresses,
-    maxRedirection,
-  }),
+  merge(
+    object({
+      command: constant("webfinger"),
+      resources: multiple(argument(string({ metavar: "RESOURCE" }), {
+        description: message`WebFinger resource(s) to look up.`,
+      })),
+      userAgent,
+      allowPrivateAddresses,
+      maxRedirection,
+    }),
+    debugOption,
+  ),
   {
     description:
       message`Look up WebFinger resources. The argument can be multiple.`,
