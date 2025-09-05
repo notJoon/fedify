@@ -1,4 +1,4 @@
-import { toAcctUrl } from "@fedify/fedify";
+import { type ResourceDescriptor, toAcctUrl } from "@fedify/fedify";
 import {
   lookupWebFinger,
   type LookupWebFingerOptions,
@@ -21,8 +21,8 @@ import {
   withDefault,
 } from "@optique/core";
 import ora from "ora";
-import { formatObject } from "./utils.ts";
 import { debugOption } from "./globals.ts";
+import { formatObject } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "webfinger"]);
 
@@ -68,41 +68,50 @@ export const webFingerCommand = command(
   },
 );
 
-export function runWebFinger(
+export async function runWebFinger(
   { command: _, resources, ...options }: InferValue<typeof webFingerCommand>,
 ) {
-  lookupWebFingers(options, resources);
+  await Array.fromAsync(
+    resources.map((resource) => ({ resource, ...options })),
+    spinnerWrapper(lookupSingleWebFinger),
+  );
 }
 
-const lookupWebFingers = async (
-  options: LookupWebFingerOptions,
-  resources: readonly string[],
-) => {
-  for (const resource of resources) {
-    const spinner = ora({ // Create a spinner for the lookup process
-      text: `Looking up WebFinger for ${resource}`,
+async function lookupSingleWebFinger<
+  T extends LookupWebFingerOptions & { resource: string },
+>({ resource, ...options }: T): Promise<ResourceDescriptor> {
+  const url = convertUrlIfHandle(resource);
+  const webFinger = await lookupWebFinger(url, options) ??
+    new NotFoundError(resource).throw();
+  return webFinger;
+}
+
+function spinnerWrapper<F extends typeof lookupSingleWebFinger>(
+  func: (...args: Parameters<F>) => ReturnType<F>,
+) {
+  return async (...args: Parameters<F>) => {
+    const spinner = ora({
+      text: `Looking up WebFinger for ${args[0]}`,
       discardStdin: false,
     }).start();
     try {
-      const url = convertUrlIfHandle(resource); // Convert resource to URL
-      const webFinger = await lookupWebFinger(url, options) ?? // Look up WebFinger
-        new NotFoundError(resource).throw(); // throw NotFoundError if not found
-
-      spinner.succeed(`WebFinger found for ${resource}:`); // Succeed the spinner
-      console.log(formatObject(webFinger, undefined, true)); // Print the WebFinger
+      const result = await func(...args);
+      spinner.succeed(`WebFinger found for ${args[0]}:`);
+      console.log(formatObject(result, undefined, true));
     } catch (error) {
-      if (error instanceof InvalidHandleError) { // If the handle format is invalid,
-        spinner.fail(`Invalid handle format: ${error.handle}`); // log error message with handle
-      } else if (error instanceof NotFoundError) { // If the resource is not found,
-        spinner.fail(`Resource not found: ${error.resource}`); // log not found message
-      } else if (error instanceof Error) {
-        spinner.fail( // For other errors, log the error message
-          `Error looking up WebFinger for ${resource}: ${error}`,
-        );
-      }
+      spinner.fail(getErrorMessage(args[0].resource, error));
     }
-  }
-};
+  };
+}
+
+const getErrorMessage = (resource: string, error: unknown): string =>
+  error instanceof InvalidHandleError
+    ? `Invalid handle format: ${error.handle}`
+    : error instanceof NotFoundError
+    ? `Resource not found: ${error.resource}`
+    : error instanceof Error
+    ? `Error looking up WebFinger for ${resource}: ${error.message}`
+    : `Error looking up WebFinger for ${resource}: ${error}`;
 
 /**
  * Converts a handle or URL to a URL object.
