@@ -232,7 +232,7 @@ async function handleWebFingerInternal<TContextData>(
   }
 
   if (webFingerLinksDispatcher != null) {
-    const customLinks = await webFingerLinksDispatcher(context, context.url);
+    const customLinks = await webFingerLinksDispatcher(context, resourceUrl);
     if (customLinks != null) {
       for (const link of customLinks) {
         links.push(link);
