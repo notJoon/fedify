@@ -159,8 +159,11 @@ federation.setWebFingerLinksDispatcher(async (ctx, _resource) => {
 
 The WebFinger links dispatcher receives two parameters:
 
-- `ctx`: The federation context
-- `resource`: The resource The URL that provide additional info to dispatcher
+`ctx`
+:   The federation context
+
+`resource`
+:   The URL queried via WebFinger
 
 > [!TIP]
 > The WebFinger endpoint is automatically exposed at `/.well-known/webfinger`

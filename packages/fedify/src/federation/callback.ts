@@ -20,7 +20,8 @@ export type NodeInfoDispatcher<TContextData> = (
  * A callback that dispatches a array of {@link Link}.
  *
  * @template TContextData The context data to pass to the {@link Context}.
- * @param resource The URL that provide additional info to dispatcher
+ * @param resource The URL queried via WebFinger.
+ * @returns Links related to the queried resource. 
  */
 export type WebFingerLinksDispatcher<TContextData> = (
   context: RequestContext<TContextData>,
