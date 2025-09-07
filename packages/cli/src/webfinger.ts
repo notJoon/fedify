@@ -24,7 +24,7 @@ import ora from "ora";
 import { debugOption } from "./globals.ts";
 import { formatObject } from "./utils.ts";
 
-const logger = getLogger(["fedify", "cli", "webfinger"]);
+const _logger = getLogger(["fedify", "cli", "webfinger"]);
 
 const userAgent = optional(option(
   "-u",
