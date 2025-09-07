@@ -595,8 +595,8 @@ importers:
         specifier: ^0.6.5
         version: 0.6.5
       hono:
-        specifier: jsr:@hono/hono@^4.8.3
-        version: '@jsr/hono__hono@4.9.6'
+        specifier: ^4.8.3
+        version: 4.8.3
       jimp:
         specifier: ^1.6.0
         version: 1.6.0
@@ -2189,9 +2189,6 @@ packages:
 
   '@jsr/david__which@0.4.1':
     resolution: {integrity: sha512-cNHC/eAq33lrp2xIGOjx2OMnK7ad5naUq4HXqIDjSVN8Ak8j8bpfL6WCw4ruacIVe0WqFRFPKLnwrvv7KoLR8Q==, tarball: https://npm.jsr.io/~/11/@jsr/david__which/0.4.1.tgz}
-
-  '@jsr/hono__hono@4.9.6':
-    resolution: {integrity: sha512-2DlwR2FvoU4fwhmvLZ6r31azzeevW/MFl6mW3JpWj/k7l+4JeAu8IW960i7z8GyVPmejdQII0JfVymxkupDxLw==, tarball: https://npm.jsr.io/~/11/@jsr/hono__hono/4.9.6.tgz}
 
   '@jsr/std__assert@0.226.0':
     resolution: {integrity: sha512-xCuUFDfHkIZd96glKgjZbnYFqu6blu8Y53SyvDMlFDJm1Y/j+/FcW6xq7TzGFIaF5B9QecIlDfamfhzA8ZdVbg==, tarball: https://npm.jsr.io/~/11/@jsr/std__assert/0.226.0.tgz}
@@ -8832,8 +8829,6 @@ snapshots:
       '@jsr/std__path': 1.1.0
 
   '@jsr/david__which@0.4.1': {}
-
-  '@jsr/hono__hono@4.9.6': {}
 
   '@jsr/std__assert@0.226.0':
     dependencies:
