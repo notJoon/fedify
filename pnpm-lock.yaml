@@ -585,9 +585,6 @@ importers:
       '@std/fmt/colors':
         specifier: jsr:@std/fmt@^0.224.0/colors
         version: link:jsr:@std/fmt@^0.224.0/colors
-      '@std/semver':
-        specifier: jsr:@std/semver@^1.0.5
-        version: '@jsr/std__semver@1.0.5'
       cli-highlight:
         specifier: ^2.1.11
         version: 2.1.11
@@ -2225,9 +2222,6 @@ packages:
 
   '@jsr/std__path@1.1.2':
     resolution: {integrity: sha512-5hkOR1s5M7am02Bn9KS+SNMNwUSivz7t7/w2HBhFIfO7Eh8+mWilaZ+1tdanV9aaSHr4c99Zo4Da+cCSuzUOdA==, tarball: https://npm.jsr.io/~/11/@jsr/std__path/1.1.2.tgz}
-
-  '@jsr/std__semver@1.0.5':
-    resolution: {integrity: sha512-jPLb9UZN4H61JvQWZfUajE9BXCBHTnZ4G7zuNrSP07kSnsVNlIakZwvt2unEc6MkPSqGy91HinA1H0OKbFVGDw==, tarball: https://npm.jsr.io/~/11/@jsr/std__semver/1.0.5.tgz}
 
   '@jsr/std__url@1.0.0-rc.3':
     resolution: {integrity: sha512-LdgttuY43p/yqvnwN6U5OZsnG4uTpu+xH4mzuH2qrHW6Jn1L+ToRL7WlCHSK2cp4of3Oit8QIwGyx1k1ay1LJQ==, tarball: https://npm.jsr.io/~/11/@jsr/std__url/1.0.0-rc.3.tgz}
@@ -8873,8 +8867,6 @@ snapshots:
   '@jsr/std__path@1.1.2':
     dependencies:
       '@jsr/std__internal': 1.0.10
-
-  '@jsr/std__semver@1.0.5': {}
 
   '@jsr/std__url@1.0.0-rc.3':
     dependencies:

@@ -34,7 +34,6 @@ import {
 } from "@fedify/fedify";
 import { getLogger } from "@logtape/logtape";
 import * as colors from "@std/fmt/colors";
-import { parse } from "@std/semver";
 import process from "node:process";
 import { type Context as HonoContext, Hono } from "hono";
 import type { BlankEnv, BlankInput } from "hono/types";
@@ -48,6 +47,7 @@ import { recordingSink } from "./log.ts";
 import { tableStyle } from "./table.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 import { configureLogging, debugOption } from "./globals.ts";
+import { parseSemVer } from "@fedify/fedify/nodeinfo";
 
 /**
  * Context data for the ephemeral ActivityPub inbox server.
@@ -382,7 +382,7 @@ federation.setNodeInfoDispatcher("/nodeinfo/2.1", (_ctx) => {
   return {
     software: {
       name: "fedify-cli",
-      version: parse(metadata.version),
+      version: parseSemVer(metadata.version),
       repository: new URL("https://github.com/fedify-dev/fedify"),
     },
     protocols: ["activitypub"],
