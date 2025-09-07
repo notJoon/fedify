@@ -18,7 +18,8 @@
     "hono": "jsr:@hono/hono@^4.8.3",
     "@std/semver": "jsr:@std/semver@^1.0.5",
     "@poppanator/http-constants": "npm:@poppanator/http-constants@^1.1.1",
-    "shiki": "npm:shiki@^1.6.4"
+    "shiki": "npm:shiki@^1.6.4",
+    "srvx": "npm:srvx@^0.8.7"
   },
   "exclude": [
     "fedify-cli-*.tar.xz",
