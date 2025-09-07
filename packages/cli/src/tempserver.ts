@@ -14,7 +14,7 @@ export type TemporaryServer = {
 };
 
 export async function spawnTemporaryServer(
-  fetch: (request: Request) => Promise<Response>,
+  fetch: (request: Request) => Promise<Response> | Response,
   options: SpawnTemporaryServerOptions = {},
 ): Promise<TemporaryServer> {
   if (options.noTunnel) {
