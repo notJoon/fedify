@@ -21,8 +21,8 @@ import {
   withDefault,
 } from "@optique/core";
 import ora from "ora";
-import { debugOption } from "./globals.ts";
-import { formatObject } from "./utils.ts";
+import { debugOption } from "../globals.ts";
+import { formatObject } from "../utils.ts";
 
 const _logger = getLogger(["fedify", "cli", "webfinger"]);
 
