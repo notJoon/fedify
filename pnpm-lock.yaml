@@ -574,8 +574,8 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0
       '@optique/core':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.4.0-dev.52+12ee9e92
+        version: 0.4.0-dev.52
       '@optique/run':
         specifier: ^0.3.0
         version: 0.3.0
@@ -2800,6 +2800,10 @@ packages:
 
   '@optique/core@0.3.0':
     resolution: {integrity: sha512-URh4/zzVpjRbS/5D6ryBeW5sdQf4pAJbqo3dC6BAwpFRX4aEsQhngCLMWS19ily0YCdbEW7YPvwEoRFEAX8U8g==}
+    engines: {bun: '>=1.2.0', deno: '>=2.3.0', node: '>=20.0.0'}
+
+  '@optique/core@0.4.0-dev.52':
+    resolution: {integrity: sha512-dzLrX32MnWsRNobyy/nUChFRA/M6TG6fOM7z1jH7Znc32+XDQDvkPoPjLioYQPBGE/4ra4Zsi5g7yzBMmSdNHg==}
     engines: {bun: '>=1.2.0', deno: '>=2.3.0', node: '>=20.0.0'}
 
   '@optique/run@0.3.0':
@@ -9510,6 +9514,8 @@ snapshots:
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
 
   '@optique/core@0.3.0': {}
+
+  '@optique/core@0.4.0-dev.52': {}
 
   '@optique/run@0.3.0':
     dependencies:
