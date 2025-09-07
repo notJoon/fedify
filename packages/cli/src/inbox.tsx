@@ -47,7 +47,7 @@ import { ActivityEntryPage, ActivityListPage } from "./inbox/view.tsx";
 import { recordingSink } from "./log.ts";
 import { tableStyle } from "./table.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
-import { debugOption } from "./globals.ts";
+import { configureLogging, debugOption } from "./globals.ts";
 
 /**
  * Context data for the ephemeral ActivityPub inbox server.
@@ -124,6 +124,11 @@ export async function runInbox(
     actorName: command.actorName,
     actorSummary: command.actorSummary,
   });
+
+  // Enable Debug mode if requested
+  if (command.debug) {
+    await configureLogging();
+  }
 
   const spinner = ora({
     text: "Spinning up an ephemeral ActivityPub server...",
