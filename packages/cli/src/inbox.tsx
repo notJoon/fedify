@@ -202,9 +202,13 @@ export async function runInbox(
   printServerInfo(fedCtx);
 }
 
+const federationDocumentLoader = await getDocumentLoader();
+
 const federation = createFederation<ContextData>({
   kv: new MemoryKvStore(),
-  documentLoader: await getDocumentLoader(),
+  documentLoaderFactory: () => {
+    return federationDocumentLoader;
+  },
 });
 
 const time = Temporal.Now.instant();
