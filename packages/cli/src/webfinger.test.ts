@@ -20,6 +20,7 @@ test("webFingerCommand", () => {
       args: argsWithResourcesOnly,
     }),
     {
+      debug: false,
       command: COMMAND,
       resources: RESOURCES,
       allowPrivateAddresses: undefined,
