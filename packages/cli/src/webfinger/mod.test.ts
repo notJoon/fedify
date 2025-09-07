@@ -1,7 +1,8 @@
 import { parse } from "@optique/core/parser";
 import { assertEquals, assertObjectMatch } from "@std/assert";
 import test from "node:test";
-import { lookupSingleWebFinger, webFingerCommand } from "./mod.ts";
+import { lookupSingleWebFinger } from "./action.ts";
+import { webFingerCommand } from "./command.ts";
 
 const COMMAND = "webfinger";
 const USER_AGENT = "MyUserAgent/1.0";
