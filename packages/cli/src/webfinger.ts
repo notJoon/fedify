@@ -30,9 +30,7 @@ const userAgent = optional(option(
   "-u",
   "--user-agent",
   string({ metavar: "USER_AGENT" }),
-  {
-    description: message`The custom User-Agent header value.`,
-  },
+  { description: message`The custom User-Agent header value.` },
 ));
 
 const allowPrivateAddresses = optional(flag("-p", "--allow-private-address", {
@@ -77,7 +75,7 @@ export async function runWebFinger(
   );
 }
 
-async function lookupSingleWebFinger<
+export async function lookupSingleWebFinger<
   T extends LookupWebFingerOptions & { resource: string },
 >({ resource, ...options }: T): Promise<ResourceDescriptor> {
   const url = convertUrlIfHandle(resource);
