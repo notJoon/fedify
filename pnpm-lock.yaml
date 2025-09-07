@@ -80,7 +80,11 @@ patchedDependencies:
 
 importers:
 
-  .: {}
+  .:
+    dependencies:
+      hono:
+        specifier: ^4.9.6
+        version: 4.9.6
 
   docs:
     devDependencies:
@@ -5328,6 +5332,10 @@ packages:
 
   hono@4.8.3:
     resolution: {integrity: sha512-jYZ6ZtfWjzBdh8H/0CIFfCBHaFL75k+KMzaM177hrWWm2TWL39YMYaJgB74uK/niRc866NMlH9B8uCvIo284WQ==}
+    engines: {node: '>=16.9.0'}
+
+  hono@4.9.6:
+    resolution: {integrity: sha512-doVjXhSFvYZ7y0dNokjwwSahcrAfdz+/BCLvAMa/vHLzjj8+CFyV5xteThGUsKdkaasgN+gF2mUxao+SGLpUeA==}
     engines: {node: '>=16.9.0'}
 
   hookable@5.5.3:
@@ -12569,6 +12577,8 @@ snapshots:
   highlight.js@10.7.3: {}
 
   hono@4.8.3: {}
+
+  hono@4.9.6: {}
 
   hookable@5.5.3: {}
 
