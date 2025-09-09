@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.8.9
 -------------
 
-To be released.
+Released on September 10, 2025.
 
  -  Integration and database adapter packages (*@fedify/amqp*, *@fedify/elysia*,
     *@fedify/express*, *@fedify/h3*, *@fedify/nestjs*, *@fedify/postgres*,
