@@ -3,6 +3,8 @@ import {
   lookupWebFinger,
   type LookupWebFingerOptions,
 } from "@fedify/fedify/webfinger";
+import { formatMessage, message } from "@optique/core/message";
+import { print } from "@optique/run";
 import ora from "ora";
 import { formatObject } from "../utils.ts";
 import type { WebFingerCommand } from "./command.ts";
@@ -37,10 +39,12 @@ function spinnerWrapper<F extends typeof lookupSingleWebFinger>(
     }).start();
     try {
       const result = await func(...args);
-      spinner.succeed(`WebFinger found for ${args[0]}:`);
-      console.log(formatObject(result, undefined, true));
+      spinner.succeed(
+        formatMessage(message`WebFinger found for ${args[0].resource}:`),
+      );
+      print([{ type: "text", text: formatObject(result) }]);
     } catch (error) {
-      spinner.fail(getErrorMessage(args[0].resource, error));
+      spinner.fail(formatMessage(getErrorMessage(args[0].resource, error)));
     }
   };
 }

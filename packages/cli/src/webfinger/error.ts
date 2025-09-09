@@ -1,11 +1,20 @@
-export const getErrorMessage = (resource: string, error: unknown): string =>
+import { type Message, message } from "@optique/core";
+
+/**
+ * Generates a user-friendly error message based on the type of error
+ * encountered during WebFinger lookup.
+ * @param {string} resource The resource being looked up.
+ * @param {unknown} error The error encountered.
+ * @returns {string} A descriptive error message.
+ */
+export const getErrorMessage = (resource: string, error: unknown): Message =>
   error instanceof InvalidHandleError
-    ? `Invalid handle format: ${error.handle}`
+    ? message`Invalid handle format: ${error.handle}`
     : error instanceof NotFoundError
-    ? `Resource not found: ${error.resource}`
+    ? message`Resource not found: ${error.resource}`
     : error instanceof Error
-    ? `Error looking up WebFinger for ${resource}: ${error.message}`
-    : `Error looking up WebFinger for ${resource}: ${error}`;
+    ? message`Error looking up WebFinger for ${resource}: ${error.message}`
+    : message`Error looking up WebFinger for ${resource}: ${String(error)}`;
 
 /**
  * Custom error class for invalid handle formats.
