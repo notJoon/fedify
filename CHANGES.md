@@ -8,6 +8,12 @@ Version 1.8.9
 
 To be released.
 
+ -  Integration and database adapter packages (*@fedify/amqp*, *@fedify/elysia*,
+    *@fedify/express*, *@fedify/h3*, *@fedify/nestjs*, *@fedify/postgres*,
+    *@fedify/redis*, *@fedify/sqlite*, *@fedify/testing*) now specify explicit
+    version ranges for the *@fedify/fedify* peer dependency instead of
+    accepting any version, improving compatibility guarantees.
+
 
 Version 1.8.8
 -------------

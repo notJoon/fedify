@@ -369,7 +369,7 @@ importers:
   packages/amqp:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       amqplib:
         specifier: 'catalog:'
@@ -402,7 +402,7 @@ importers:
   packages/elysia:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       elysia:
         specifier: ^1.3.6
@@ -421,7 +421,7 @@ importers:
   packages/express:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       express:
         specifier: 'catalog:'
@@ -543,7 +543,7 @@ importers:
   packages/h3:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       h3:
         specifier: 'catalog:'
@@ -559,7 +559,7 @@ importers:
   packages/nestjs:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       '@nestjs/common':
         specifier: 'catalog:'
@@ -584,7 +584,7 @@ importers:
   packages/postgres:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       '@js-temporal/polyfill':
         specifier: 'catalog:'
@@ -609,7 +609,7 @@ importers:
   packages/redis:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       '@js-temporal/polyfill':
         specifier: 'catalog:'
@@ -637,7 +637,7 @@ importers:
   packages/sqlite:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       '@logtape/logtape':
         specifier: 'catalog:'
@@ -662,7 +662,7 @@ importers:
   packages/testing:
     dependencies:
       '@fedify/fedify':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../fedify
       '@opentelemetry/api':
         specifier: ^1.9.0
