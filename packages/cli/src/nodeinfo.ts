@@ -80,7 +80,6 @@ export const nodeInfoCommand = Command(
 export async function runNodeInfo(
   command: InferValue<typeof nodeInfoCommand>,
 ) {
-
   const spinner = ora({
     text: "Fetching a NodeInfo document...",
     discardStdin: false,
@@ -102,7 +101,8 @@ export async function runNodeInfo(
       Deno.exit(1);
     }
     spinner.succeed("NodeInfo document fetched.");
-    print(message`${formatObject(nodeInfo, undefined, true)}`);
+
+    console.log(formatObject(nodeInfo, undefined, true));
     return;
   }
   const nodeInfo = await getNodeInfo(url, {
@@ -264,7 +264,7 @@ export async function runNodeInfo(
       }`;
     }
   }
-  
+
   console.log(layout.join("\n"));
 }
 
