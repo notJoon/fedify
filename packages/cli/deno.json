@@ -20,6 +20,8 @@
     "shiki": "npm:shiki@^1.6.4",
     "srvx": "npm:srvx@^0.8.7",
     "fetch-mock": "npm:fetch-mock@^12.5.4"
+    "fetch-mock": "npm:fetch-mock@^12.5.4",
+    "icojs": "npm:icojs@^0.19.5"
   },
   "exclude": [
     "fedify-cli-*.tar.xz",
