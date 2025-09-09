@@ -13,8 +13,8 @@ export const getErrorMessage = (resource: string, error: unknown): Message =>
     : error instanceof NotFoundError
     ? message`Resource not found: ${error.resource}`
     : error instanceof Error
-    ? message`Error looking up WebFinger for ${resource}: ${error.message}`
-    : message`Error looking up WebFinger for ${resource}: ${String(error)}`;
+    ? message`Failed to look up WebFinger for ${resource}: ${error.message}`
+    : message`Failed to look up WebFinger for ${resource}: ${String(error)}`;
 
 /**
  * Custom error class for invalid handle formats.
