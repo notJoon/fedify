@@ -1,6 +1,7 @@
-import { getNodeInfo, getUserAgent } from "@fedify/fedify";
+import { formatSemVer, getNodeInfo, getUserAgent } from "@fedify/fedify";
 import { createJimp } from "@jimp/core";
 import webp from "@jimp/wasm-webp";
+import { getLogger } from "@logtape/logtape";
 import {
   argument,
   command as Command,
@@ -15,11 +16,15 @@ import {
   or,
   string,
 } from "@optique/core";
+import { print, printError } from "@optique/run";
 import * as colors from "@std/fmt/colors";
+import { isICO, parseICO } from "icojs";
 import { defaultFormats, defaultPlugins, intToRGBA } from "jimp";
 import ora from "ora";
 import { debugOption } from "./globals.ts";
 import { formatObject } from "./utils.ts";
+
+const logger = getLogger(["fedify", "cli", "nodeinfo"]);
 
 export const Jimp = createJimp({
   formats: [...defaultFormats, webp],
@@ -75,7 +80,6 @@ export const nodeInfoCommand = Command(
 export async function runNodeInfo(
   command: InferValue<typeof nodeInfoCommand>,
 ) {
-  console.debug(command);
 
   const spinner = ora({
     text: "Fetching a NodeInfo document...",
@@ -94,13 +98,174 @@ export async function runNodeInfo(
 
     if (nodeInfo === undefined) {
       spinner.fail("No NodeInfo document found.");
-      console.error("No NodeInfo document found.");
+      printError(message`No NodeInfo document found.`);
       Deno.exit(1);
     }
     spinner.succeed("NodeInfo document fetched.");
-    console.log(formatObject(nodeInfo, undefined, true));
+    print(message`${formatObject(nodeInfo, undefined, true)}`);
     return;
   }
+  const nodeInfo = await getNodeInfo(url, {
+    parse: "bestEffort" in command && command.bestEffort
+      ? "best-effort"
+      : "strict",
+    userAgent: command.userAgent,
+  });
+  logger.debug("NodeInfo document: {nodeInfo}", { nodeInfo });
+  if (nodeInfo == undefined) {
+    spinner.fail("No NodeInfo document found or it is invalid.");
+    printError(message`No NodeInfo document found or it is invalid.`);
+    if (!("bestEffort" in command && command.bestEffort)) {
+      printError(
+        message`Use the -b/--best-effort option to try to parse the document anyway.`,
+      );
+    }
+    Deno.exit(1);
+  }
+
+  let layout: string[];
+  let defaultWidth = 0;
+
+  if (!("noFavicon" in command && command.noFavicon)) {
+    spinner.text = "Fetching the favicon...";
+    try {
+      const faviconUrl = await getFaviconUrl(url, command.userAgent);
+      const response = await fetch(faviconUrl, {
+        headers: {
+          "User-Agent": command.userAgent == null
+            ? getUserAgent()
+            : command.userAgent,
+        },
+      });
+      if (response.ok) {
+        const contentType = response.headers.get("Content-Type");
+        let buffer: ArrayBuffer = await response.arrayBuffer();
+        if (
+          contentType === "image/vnd.microsoft.icon" ||
+          contentType === "image/x-icon" ||
+          isICO(buffer)
+        ) {
+          const images = await parseICO(buffer);
+          if (images.length < 1) {
+            throw new Error("No images found in the ICO file.");
+          }
+          buffer = images[0].buffer;
+        }
+        const image = await Jimp.read(buffer);
+        const colorSupport = checkTerminalColorSupport();
+        layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, colorSupport)
+          .split("\n").map((line) => ` ${line}  `);
+        defaultWidth = 41;
+      } else {
+        logger.error(
+          "Failed to fetch the favicon: {status} {statusText}",
+          { status: response.status, statusText: response.statusText },
+        );
+        layout = [""];
+      }
+    } catch (error) {
+      logger.error(
+        "Failed to fetch or render the favicon: {error}",
+        { error },
+      );
+      layout = [""];
+    }
+  } else {
+    layout = [""];
+  }
+  spinner.succeed("NodeInfo document fetched.");
+  print(message``);
+
+  let i = 0;
+  const next = () => {
+    i++;
+    if (i >= layout.length) layout.push(" ".repeat(defaultWidth));
+    return i;
+  };
+  layout[i] += colors.bold(url.host);
+  layout[next()] += colors.dim("=".repeat(url.host.length));
+  layout[next()] += colors.bold(colors.dim("Software:"));
+  layout[next()] += `  ${nodeInfo.software.name} v${
+    formatSemVer(nodeInfo.software.version)
+  }`;
+  if (nodeInfo.software.homepage != null) {
+    layout[next()] += `  ${nodeInfo.software.homepage.href}`;
+  }
+  if (nodeInfo.software.repository != null) {
+    layout[next()] += "  " +
+      colors.dim(nodeInfo.software.repository.href);
+  }
+  if (nodeInfo.protocols.length > 0) {
+    layout[next()] += colors.bold(colors.dim("Protocols:"));
+    for (const protocol of nodeInfo.protocols) {
+      layout[next()] += `  ${protocol}`;
+    }
+  }
+  if (nodeInfo.services?.inbound?.length ?? 0 > 0) {
+    layout[next()] += colors.bold(colors.dim("Inbound services:"));
+    for (const service of nodeInfo.services?.inbound ?? []) {
+      layout[next()] += `  ${service}`;
+    }
+  }
+  if (nodeInfo.services?.outbound?.length ?? 0 > 0) {
+    layout[next()] += colors.bold(colors.dim("Outbound services:"));
+    for (const service of nodeInfo.services?.outbound ?? []) {
+      layout[next()] += `  ${service}`;
+    }
+  }
+  if (
+    nodeInfo.usage?.users != null && (nodeInfo.usage.users.total != null ||
+      nodeInfo.usage.users.activeHalfyear != null ||
+      nodeInfo.usage.users.activeMonth != null)
+  ) {
+    layout[next()] += colors.bold(colors.dim("Users:"));
+    if (nodeInfo.usage.users.total != null) {
+      layout[next()] +=
+        `  ${nodeInfo.usage.users.total.toLocaleString("en-US")} ` +
+        colors.dim("(total)");
+    }
+    if (nodeInfo.usage.users.activeHalfyear != null) {
+      layout[next()] +=
+        `  ${nodeInfo.usage.users.activeHalfyear.toLocaleString("en-US")} ` +
+        colors.dim("(active half year)");
+    }
+    if (nodeInfo.usage.users.activeMonth != null) {
+      layout[next()] +=
+        `  ${nodeInfo.usage.users.activeMonth.toLocaleString("en-US")} ` +
+        colors.dim("(active month)");
+    }
+  }
+  if (nodeInfo.usage?.localPosts != null) {
+    layout[next()] += colors.bold(colors.dim("Local posts: "));
+    layout[next()] += "  " +
+      nodeInfo.usage.localPosts.toLocaleString("en-US");
+  }
+  if (nodeInfo.usage?.localComments != null) {
+    layout[next()] += colors.bold(colors.dim("Local comments:"));
+    layout[next()] += "  " +
+      nodeInfo.usage.localComments.toLocaleString("en-US");
+  }
+  if (nodeInfo.openRegistrations != null) {
+    layout[next()] += colors.bold(colors.dim("Open registrations:"));
+    layout[next()] += "  " + (nodeInfo.openRegistrations ? "Yes" : "No");
+  }
+
+  if (
+    "metadata" in command && command.metadata && nodeInfo.metadata != null &&
+    Object.keys(nodeInfo.metadata).length > 0
+  ) {
+    layout[next()] += colors.bold(colors.dim("Metadata:"));
+    for (const [key, value] of Object.entries(nodeInfo.metadata)) {
+      layout[next()] += `  ${colors.dim(key + ":")} ${
+        indent(
+          typeof value === "string" ? value : formatObject(value),
+          defaultWidth + 4 + key.length,
+        )
+      }`;
+    }
+  }
+  
+  console.log(layout.join("\n"));
 }
 
 function indent(text: string, depth: number) {
