@@ -35,7 +35,7 @@
     "denp": ">=2.0.0"
   },
   "dependencies": {
-    "@fedify/fedify": "workspace:",
+    "@fedify/fedify": "workspace:*",
     "@optique/core": "^0.4.0-dev.52+12ee9e92",
     "@optique/run": "^0.3.0",
     "cli-highlight": "^2.1.11",
