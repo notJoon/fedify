@@ -76,6 +76,31 @@ export async function runNodeInfo(
   command: InferValue<typeof nodeInfoCommand>,
 ) {
   console.debug(command);
+
+  const spinner = ora({
+    text: "Fetching a NodeInfo document...",
+    discardStdin: false,
+  }).start();
+
+  const url = new URL(
+    URL.canParse(command.host) ? command.host : `https://${command.host}`,
+  );
+
+  if ("raw" in command && command.raw) {
+    const nodeInfo = await getNodeInfo(url, {
+      parse: "none",
+      userAgent: command.userAgent,
+    });
+
+    if (nodeInfo === undefined) {
+      spinner.fail("No NodeInfo document found.");
+      console.error("No NodeInfo document found.");
+      Deno.exit(1);
+    }
+    spinner.succeed("NodeInfo document fetched.");
+    console.log(formatObject(nodeInfo, undefined, true));
+    return;
+  }
 }
 
 function indent(text: string, depth: number) {
