@@ -3,7 +3,7 @@ import { run } from "@optique/run";
 import { lookupCommand, runLookup } from "./lookup.ts";
 import { runWebFinger, webFingerCommand } from "./webfinger.ts";
 import { initCommand, runInit } from "./init.ts";
-import { inboxCommand, runInbox } from "./inbox.ts";
+import { inboxCommand, runInbox } from "./inbox.tsx";
 import { nodeInfoCommand, runNodeInfo } from "./nodeinfo.ts";
 import { runTunnel, tunnelCommand } from "./tunnel.ts";
 
