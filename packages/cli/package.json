@@ -39,6 +39,8 @@
     "@optique/core": "^0.4.0-dev.52+12ee9e92",
     "@optique/run": "^0.3.0",
     "cli-highlight": "^2.1.11",
+    "fetch-mock": "^12.5.4",
+    "icojs": "^0.19.5",
     "jimp": "^1.6.0",
     "@jimp/core": "^1.6.0",
     "@jimp/wasm-webp": "^1.6.0",
