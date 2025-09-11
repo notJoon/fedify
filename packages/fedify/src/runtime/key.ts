@@ -33,7 +33,8 @@ export async function importSpki(pem: string): Promise<CryptoKey> {
   } catch (_) {
     throw new TypeError("Invalid PEM-SPKI format.");
   }
-  const pki = PublicKeyInfo.fromBER(spki);
+  const spkiArrayBuffer = spki.slice().buffer;
+  const pki = PublicKeyInfo.fromBER(spkiArrayBuffer);
   const oid = pki.algorithm.algorithmId;
   const algorithm = algorithms[oid];
   if (algorithm == null) {
@@ -41,7 +42,7 @@ export async function importSpki(pem: string): Promise<CryptoKey> {
   }
   return await crypto.subtle.importKey(
     "spki",
-    spki,
+    spkiArrayBuffer,
     algorithm,
     true,
     ["verify"],
@@ -110,7 +111,11 @@ export async function importMultibaseKey(key: string): Promise<CryptoKey> {
       format: "der",
       type: "pkcs1",
     });
-    const spki = keyObject.export({ type: "spki", format: "der" }).buffer;
+    const exported = keyObject.export({ type: "spki", format: "der" });
+    const spki = exported instanceof Uint8Array
+      ? exported
+      : new Uint8Array(exported);
+
     return await crypto.subtle.importKey(
       "spki",
       new Uint8Array(spki),
@@ -121,7 +126,7 @@ export async function importMultibaseKey(key: string): Promise<CryptoKey> {
   } else if (code === 0xed) { // ed25519-pub
     return await crypto.subtle.importKey(
       "raw",
-      content,
+      content.slice(),
       "Ed25519",
       true,
       ["verify"],
