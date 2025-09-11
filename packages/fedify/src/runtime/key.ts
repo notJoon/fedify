@@ -27,14 +27,13 @@ const algorithms: Record<
  */
 export async function importSpki(pem: string): Promise<CryptoKey> {
   pem = pem.replace(/(?:-----(?:BEGIN|END) PUBLIC KEY-----|\s)/g, "");
-  let spki: Uint8Array;
+  let spki: Uint8Array<ArrayBuffer>;
   try {
     spki = decodeBase64(pem);
   } catch (_) {
     throw new TypeError("Invalid PEM-SPKI format.");
   }
-  const spkiArrayBuffer = spki.slice().buffer;
-  const pki = PublicKeyInfo.fromBER(spkiArrayBuffer);
+  const pki = PublicKeyInfo.fromBER(spki);
   const oid = pki.algorithm.algorithmId;
   const algorithm = algorithms[oid];
   if (algorithm == null) {
@@ -42,7 +41,7 @@ export async function importSpki(pem: string): Promise<CryptoKey> {
   }
   return await crypto.subtle.importKey(
     "spki",
-    spkiArrayBuffer,
+    spki,
     algorithm,
     true,
     ["verify"],
