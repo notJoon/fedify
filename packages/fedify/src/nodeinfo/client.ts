@@ -266,13 +266,7 @@ export function parseSoftware(
   }
   let version: string;
   if ("version" in data) {
-    try {
-      version = String(data.version);
-    } catch {
-      if (!options.tryBestEffort) return null;
-
-      version = "0.0.0";
-    }
+    version = String(data.version);
   } else {
     if (!options.tryBestEffort) return null;
     version = "0.0.0";
