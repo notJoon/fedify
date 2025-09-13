@@ -30,8 +30,9 @@ To be released.
     to properly handle non-SemVer version strings in accordance with the
     NodeInfo specification.  [[#366], [#433] by Hyeonseo Kim]
 
-     -  The `parseNodeInfo()` function now returns version as string instead
+     -  The `parseNodeInfo()` function now returns version as `string` instead
         of `SemVer` object.
+     -  The `Software.version` field is now of `string` (was of `SemVer`).
      -  Removed `parseSemVer()` and `formatSemVer()` functions.
      -  Updated related CLI tools and documentation.
 
