@@ -845,7 +845,9 @@ test({
         kv,
         documentLoaderFactory: () => mockDocumentLoader,
       });
-      const req = new Request("https://example.com/");
+      const req = new Request("https://example.com/", {
+        headers: { "accept": "application/ld+json" },
+      });
       const ctx = federation.createContext(req, 123);
       assertEquals(ctx.request, req);
       assertEquals(ctx.url, new URL("https://example.com/"));
@@ -873,7 +875,9 @@ test({
       );
 
       const signedReq = await signRequest(
-        new Request("https://example.com/"),
+        new Request("https://example.com/", {
+          headers: { "accept": "application/ld+json" },
+        }),
         rsaPrivateKey2,
         rsaPublicKey2.id!,
       );
@@ -888,7 +892,9 @@ test({
       assertEquals(await signedCtx.getSignedKeyOwner(), null);
 
       const signedReq2 = await signRequest(
-        new Request("https://example.com/"),
+        new Request("https://example.com/", {
+          headers: { "accept": "application/ld+json" },
+        }),
         rsaPrivateKey3,
         rsaPublicKey3.id!,
       );
@@ -945,7 +951,9 @@ test({
       const federation = createFederation<number>({
         kv,
       });
-      const req = new Request("https://example.com/");
+      const req = new Request("https://example.com/", {
+        headers: { "accept": "application/ld+json" },
+      });
       const ctx = federation.createContext(req, 123);
       const clone = ctx.clone(456);
       assertStrictEquals(clone.request, ctx.request);
@@ -1049,7 +1057,10 @@ test("Federation.setInboxListeners()", async (t) => {
       });
 
     let response = await federation.fetch(
-      new Request("https://example.com/inbox", { method: "POST" }),
+      new Request("https://example.com/inbox", {
+        method: "POST",
+        headers: { "accept": "application/ld+json" },
+      }),
       { contextData: undefined },
     );
     assertEquals(inbox, []);
@@ -1079,6 +1090,10 @@ test("Federation.setInboxListeners()", async (t) => {
         {
           method: "POST",
           body: JSON.stringify(await activity().toJsonLd(options)),
+          headers: {
+            "accept": "application/ld+json",
+            "content-type": "application/ld+json",
+          },
         },
       ),
       { contextData: undefined },
@@ -1087,7 +1102,10 @@ test("Federation.setInboxListeners()", async (t) => {
     assertEquals(response.status, 401);
 
     response = await federation.fetch(
-      new Request("https://example.com/users/no-one/inbox", { method: "POST" }),
+      new Request("https://example.com/users/no-one/inbox", {
+        method: "POST",
+        headers: { "accept": "application/ld+json" },
+      }),
       { contextData: undefined },
     );
     assertEquals(inbox, []);
@@ -1099,6 +1117,10 @@ test("Federation.setInboxListeners()", async (t) => {
         {
           method: "POST",
           body: JSON.stringify(await activity().toJsonLd(options)),
+          headers: {
+            "accept": "application/ld+json",
+            "content-type": "application/ld+json",
+          },
         },
       ),
       { contextData: undefined },
@@ -1110,7 +1132,10 @@ test("Federation.setInboxListeners()", async (t) => {
     const activityPayload = await activity().toJsonLd(options);
     let request = new Request("https://example.com/users/john/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        accept: "application/ld+json",
+      },
       body: JSON.stringify(activityPayload),
     });
     request = await signRequest(
@@ -1138,7 +1163,10 @@ test("Federation.setInboxListeners()", async (t) => {
     inbox.shift();
     request = new Request("https://another.host/users/john/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        "accept": "application/ld+json",
+      },
       body: JSON.stringify(activityPayload),
     });
     request = await signRequest(
@@ -1165,7 +1193,10 @@ test("Federation.setInboxListeners()", async (t) => {
     inbox.shift();
     request = new Request("https://example.com/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        "accept": "application/ld+json",
+      },
       body: JSON.stringify(await activity().toJsonLd(options)),
     });
     request = await signRequest(
@@ -1187,7 +1218,10 @@ test("Federation.setInboxListeners()", async (t) => {
     inbox.shift();
     request = new Request("https://example.com/users/john/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        "accept": "application/ld+json",
+      },
       body: JSON.stringify(
         await (await signObject(
           activity(),
@@ -1247,7 +1281,10 @@ test("Federation.setInboxListeners()", async (t) => {
     });
     let request = new Request("https://example.com/users/john/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        "Accept": "application/activity+json",
+      },
       body: JSON.stringify(
         await activity.toJsonLd({ contextLoader: mockDocumentLoader }),
       ),
@@ -1677,7 +1714,7 @@ test("ContextImpl.sendActivity()", async (t) => {
     const options = {
       async documentLoader(url: string) {
         const response = await federation.fetch(
-          new Request(url),
+          new Request(url, { headers: { "accept": "application/ld+json" } }),
           { contextData: undefined },
         );
         if (response.ok) {
