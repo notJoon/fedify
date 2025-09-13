@@ -1,4 +1,9 @@
 {
+  "test": {
+    "include": [
+      "./packages"
+    ]
+  },
   "workspace": [
     "./packages/fedify",
     "./packages/cli",
