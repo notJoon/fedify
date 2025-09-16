@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.5.8
 -------------
 
-To be released.
+Released on September 17, 2025.
 
  -  Added a temporary workaround for invalid AT Protocol URIs from BridgyFed.
     URIs like `at://did:plc:...` that violate RFC 3986 URI syntax are now
