@@ -144,7 +144,9 @@ const scalarTypes: Record<string, ScalarType> = {
         && ${v}["@id"] !== "" && ${v}["@id"] !== "/"`;
     },
     decoder(v) {
-      return `new URL(${v}["@id"])`;
+      return `${v}["@id"].startsWith("at://did:plc:")
+        ? new URL("at://did%3Aplc%3A" + ${v}["@id"].slice(13))
+        : new URL(${v}["@id"])`;
     },
   },
   "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString": {
