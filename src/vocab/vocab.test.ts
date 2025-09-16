@@ -32,6 +32,7 @@ import {
   type DataIntegrityProof,
   Follow,
   Hashtag,
+  Link,
   Note,
   Object,
   OrderedCollectionPage,
@@ -780,6 +781,23 @@ test("Actor.getOutbox()", async () => {
   const outbox = await person.getOutbox({ documentLoader: mockDocumentLoader });
   assertInstanceOf(outbox, OrderedCollectionPage);
   assertEquals(outbox.totalItems, 1);
+});
+
+test("Link.fromJsonLd()", async () => {
+  const link = await Link.fromJsonLd({
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "type": "Link",
+    "rel": "canonical",
+    "href":
+      "at://did:plc:ia76kvnndjutgedggx2ibrem/app.bsky.feed.post/3lyxjjs27jkqg",
+  });
+  assertEquals(link.rel, "canonical");
+  assertEquals(
+    link.href,
+    new URL(
+      "at://did%3Aplc%3Aia76kvnndjutgedggx2ibrem/app.bsky.feed.post/3lyxjjs27jkqg",
+    ),
+  );
 });
 
 function getAllProperties(

@@ -8,6 +8,13 @@ Version 1.0.29
 
 To be released.
 
+ -  Added a temporary workaround for invalid AT Protocol URIs from BridgyFed.
+    URIs like `at://did:plc:...` that violate RFC 3986 URI syntax are now
+    automatically URL-encoded to `at://did%3Aplc%3A...` to prevent parsing
+    failures when processing bridged Bluesky content.  [[#436]]
+
+[#436]: https://github.com/fedify-dev/fedify/issues/436
+
 
 Version 1.0.28
 --------------
