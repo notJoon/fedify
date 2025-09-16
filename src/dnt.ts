@@ -119,6 +119,11 @@ await build({
       diagnostic.file?.fileName.endsWith("2KNRVU.ts")
     ) {
       return false; // ignore all diagnostics in this file
+    } else if (
+      diagnostic.code === 2315 &&
+      diagnostic.messageText === "Type 'Uint8Array' is not generic."
+    ) {
+      return false;
     }
     // etc... more checks here
     return true;
