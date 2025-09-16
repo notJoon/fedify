@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-import-prefix
 import { which } from "jsr:@david/which@0.4.1";
 import { dirname, join } from "jsr:@std/path@1.0.0";
 import denoJson from "../deno.json" with { type: "json" };
