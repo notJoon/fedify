@@ -1,4 +1,4 @@
 [tools]
 bun = "latest"
-deno = "2"
+deno = "1.46.3"
 node = "20"
