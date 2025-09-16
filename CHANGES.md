@@ -8,6 +8,11 @@ Version 1.1.26
 
 To be released.
 
+ -  Added a temporary workaround for invalid AT Protocol URIs from BridgyFed.
+    URIs like `at://did:plc:...` that violate RFC 3986 URI syntax are now
+    automatically URL-encoded to `at://did%3Aplc%3A...` to prevent parsing
+    failures when processing bridged Bluesky content.  [[#436]]
+
 
 Version 1.1.25
 --------------
@@ -485,6 +490,19 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.29
+--------------
+
+Released on September 17, 2025.
+
+ -  Added a temporary workaround for invalid AT Protocol URIs from BridgyFed.
+    URIs like `at://did:plc:...` that violate RFC 3986 URI syntax are now
+    automatically URL-encoded to `at://did%3Aplc%3A...` to prevent parsing
+    failures when processing bridged Bluesky content.  [[#436]]
+
+[#436]: https://github.com/fedify-dev/fedify/issues/436
 
 
 Version 1.0.28
