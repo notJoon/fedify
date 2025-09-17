@@ -802,6 +802,26 @@ test("Link.fromJsonLd()", async () => {
       "at://did%3Aplc%3Aia76kvnndjutgedggx2ibrem/app.bsky.feed.post/3lyxjjs27jkqg",
     ),
   );
+
+  const link2 = await Link.fromJsonLd({
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "type": "Link",
+    "href": "at://bnewbold.bsky.team/app.bsky.feed.post/3jwdwj2ctlk26",
+  });
+  assertEquals(
+    link2.href,
+    new URL("at://bnewbold.bsky.team/app.bsky.feed.post/3jwdwj2ctlk26"),
+  );
+
+  const link3 = await Link.fromJsonLd({
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "type": "Link",
+    "href": "at://did:plc:ia76kvnndjutgedggx2ibrem",
+  });
+  assertEquals(
+    link3.href,
+    new URL("at://did%3Aplc%3Aia76kvnndjutgedggx2ibrem"),
+  );
 });
 
 function getAllProperties(

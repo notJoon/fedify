@@ -8,6 +8,12 @@ Version 1.1.27
 
 To be released.
 
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
+
 
 Version 1.1.26
 --------------
@@ -496,6 +502,18 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/dahlia/fedify/issues/146
 [#150]: https://github.com/dahlia/fedify/issues/150
+
+
+Version 1.0.30
+--------------
+
+Released on September 17, 2025.
+
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
 
 
 Version 1.0.29
