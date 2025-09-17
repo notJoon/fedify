@@ -144,8 +144,19 @@ const scalarTypes: Record<string, ScalarType> = {
         && ${v}["@id"] !== "" && ${v}["@id"] !== "/"`;
     },
     decoder(v) {
-      return `${v}["@id"].startsWith("at://did:plc:")
-        ? new URL("at://did%3Aplc%3A" + ${v}["@id"].slice(13))
+      return `${v}["@id"].startsWith("at://")
+        ? new URL("at://" +
+          encodeURIComponent(
+            ${v}["@id"].includes("/", 5)
+              ? ${v}["@id"].slice(5, ${v}["@id"].indexOf("/", 5))
+              : ${v}["@id"].slice(5)
+          ) +
+          (
+            ${v}["@id"].includes("/", 5)
+              ? ${v}["@id"].slice(${v}["@id"].indexOf("/", 5))
+              : ""
+          )
+        )
         : new URL(${v}["@id"])`;
     },
   },
