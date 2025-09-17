@@ -8,6 +8,12 @@ Version 1.5.9
 
 To be released.
 
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
+
 
 Version 1.5.8
 -------------
@@ -229,6 +235,18 @@ Released on March 28, 2025.
 [#223]: https://github.com/fedify-dev/fedify/pull/223
 [FEP-8fcf]: https://w3id.org/fep/8fcf
 [multibase]: https://github.com/multiformats/js-multibase
+
+
+Version 1.4.17
+--------------
+
+Released on September 17, 2025.
+
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
 
 
 Version 1.4.16
@@ -526,6 +544,18 @@ Released on February 5, 2025.
 
 [#3]: https://github.com/fedify-dev/fedify/issues/3
 [#195]: https://github.com/fedify-dev/fedify/issues/195
+
+
+Version 1.3.24
+--------------
+
+Released on September 17, 2025.
+
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
 
 
 Version 1.3.23
@@ -941,6 +971,18 @@ Released on November 30, 2024.
 [#186]: https://github.com/fedify-dev/fedify/pull/186
 [#192]: https://github.com/fedify-dev/fedify/issues/192
 [#193]: https://github.com/fedify-dev/fedify/issues/193
+
+
+Version 1.2.27
+--------------
+
+Released on September 17, 2025.
+
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
 
 
 Version 1.2.26
@@ -1389,6 +1431,18 @@ Released on October 31, 2024.
 
 [implicit contexts]: https://logtape.org/manual/contexts#implicit-contexts
 [#118]: https://github.com/fedify-dev/fedify/issues/118
+
+
+Version 1.1.27
+--------------
+
+Released on September 17, 2025.
+
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
 
 
 Version 1.1.26
@@ -1878,6 +1932,18 @@ Released on October 20, 2024.
 [ActivityPub and HTTP Signatures]: https://swicg.github.io/activitypub-http-signature/
 [#146]: https://github.com/fedify-dev/fedify/issues/146
 [#150]: https://github.com/fedify-dev/fedify/issues/150
+
+
+Version 1.0.30
+--------------
+
+Released on September 17, 2025.
+
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
 
 
 Version 1.0.29

@@ -8395,8 +8395,19 @@ get urls(): ((URL | Link))[] {
       const decoded =
       typeof v === \\"object\\" && \\"@id\\" in v
         && typeof v[\\"@id\\"] === \\"string\\"
-        && v[\\"@id\\"] !== \\"\\" && v[\\"@id\\"] !== \\"/\\" ? v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+        && v[\\"@id\\"] !== \\"\\" && v[\\"@id\\"] !== \\"/\\" ? v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]) : typeof v === \\"object\\" && \\"@type\\" in v
       && Array.isArray(v[\\"@type\\"])&& [\\"https://www.w3.org/ns/activitystreams#Link\\",\\"https://www.w3.org/ns/activitystreams#Hashtag\\",\\"https://www.w3.org/ns/activitystreams#Mention\\"].some(
             t => v[\\"@type\\"].includes(t)) ? await Link.fromJsonLd(
@@ -14240,8 +14251,19 @@ get endpoints(): (URL)[] {
         : _2KM4fetG6FTJ1cphj76rzJ8Dyv7p_serviceEndpoint__array
     ) {
       if (v == null) continue;
-    _2KM4fetG6FTJ1cphj76rzJ8Dyv7p_serviceEndpoint.push(v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+    _2KM4fetG6FTJ1cphj76rzJ8Dyv7p_serviceEndpoint.push(v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]))
     }
     instance.#_2KM4fetG6FTJ1cphj76rzJ8Dyv7p_serviceEndpoint = _2KM4fetG6FTJ1cphj76rzJ8Dyv7p_serviceEndpoint;
@@ -30806,8 +30828,19 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
         : _2JCYDbSxEHCCLdBYed33cCETfGyR_proxyUrl__array
     ) {
       if (v == null) continue;
-    _2JCYDbSxEHCCLdBYed33cCETfGyR_proxyUrl.push(v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+    _2JCYDbSxEHCCLdBYed33cCETfGyR_proxyUrl.push(v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]))
     }
     instance.#_2JCYDbSxEHCCLdBYed33cCETfGyR_proxyUrl = _2JCYDbSxEHCCLdBYed33cCETfGyR_proxyUrl;
@@ -30823,8 +30856,19 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
         : _25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint__array
     ) {
       if (v == null) continue;
-    _25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint.push(v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+    _25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint.push(v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]))
     }
     instance.#_25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint = _25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint;
@@ -30840,8 +30884,19 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
         : _iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint__array
     ) {
       if (v == null) continue;
-    _iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint.push(v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+    _iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint.push(v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]))
     }
     instance.#_iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint = _iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint;
@@ -30857,8 +30912,19 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
         : _8Bx9qN8oU7Bpt2xi6khaxWp1gMr_provideClientKey__array
     ) {
       if (v == null) continue;
-    _8Bx9qN8oU7Bpt2xi6khaxWp1gMr_provideClientKey.push(v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+    _8Bx9qN8oU7Bpt2xi6khaxWp1gMr_provideClientKey.push(v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]))
     }
     instance.#_8Bx9qN8oU7Bpt2xi6khaxWp1gMr_provideClientKey = _8Bx9qN8oU7Bpt2xi6khaxWp1gMr_provideClientKey;
@@ -30874,8 +30940,19 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
         : _3dU7PMVQZJpsCpo2F4RQXxBXdPmS_signClientKey__array
     ) {
       if (v == null) continue;
-    _3dU7PMVQZJpsCpo2F4RQXxBXdPmS_signClientKey.push(v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+    _3dU7PMVQZJpsCpo2F4RQXxBXdPmS_signClientKey.push(v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]))
     }
     instance.#_3dU7PMVQZJpsCpo2F4RQXxBXdPmS_signClientKey = _3dU7PMVQZJpsCpo2F4RQXxBXdPmS_signClientKey;
@@ -30891,8 +30968,19 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
         : _3JprUSDLVqqX4dwHRi37qGZZCRCc_sharedInbox__array
     ) {
       if (v == null) continue;
-    _3JprUSDLVqqX4dwHRi37qGZZCRCc_sharedInbox.push(v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+    _3JprUSDLVqqX4dwHRi37qGZZCRCc_sharedInbox.push(v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]))
     }
     instance.#_3JprUSDLVqqX4dwHRi37qGZZCRCc_sharedInbox = _3JprUSDLVqqX4dwHRi37qGZZCRCc_sharedInbox;
@@ -38838,8 +38926,19 @@ get names(): ((string | LanguageString))[] {
         : _pVjLsybKQdmkjuU7MHjiVmNnuj7_href__array
     ) {
       if (v == null) continue;
-    _pVjLsybKQdmkjuU7MHjiVmNnuj7_href.push(v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+    _pVjLsybKQdmkjuU7MHjiVmNnuj7_href.push(v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]))
     }
     instance.#_pVjLsybKQdmkjuU7MHjiVmNnuj7_href = _pVjLsybKQdmkjuU7MHjiVmNnuj7_href;
@@ -56586,8 +56685,19 @@ proofs?: (DataIntegrityProof | URL)[];accuracy?: number | null;altitude?: number
       typeof v === \\"object\\" && \\"@value\\" in v
       && (v[\\"@value\\"] == \\"cm\\" || v[\\"@value\\"] == \\"feet\\" || v[\\"@value\\"] == \\"inches\\" || v[\\"@value\\"] == \\"km\\" || v[\\"@value\\"] == \\"m\\" || v[\\"@value\\"] == \\"miles\\") ? v[\\"@value\\"] : typeof v === \\"object\\" && \\"@id\\" in v
         && typeof v[\\"@id\\"] === \\"string\\"
-        && v[\\"@id\\"] !== \\"\\" && v[\\"@id\\"] !== \\"/\\" ? v[\\"@id\\"].startsWith(\\"at://did:plc:\\")
-        ? new URL(\\"at://did%3Aplc%3A\\" + v[\\"@id\\"].slice(13))
+        && v[\\"@id\\"] !== \\"\\" && v[\\"@id\\"] !== \\"/\\" ? v[\\"@id\\"].startsWith(\\"at://\\")
+        ? new URL(\\"at://\\" +
+          encodeURIComponent(
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(5, v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : v[\\"@id\\"].slice(5)
+          ) +
+          (
+            v[\\"@id\\"].includes(\\"/\\", 5)
+              ? v[\\"@id\\"].slice(v[\\"@id\\"].indexOf(\\"/\\", 5))
+              : \\"\\"
+          )
+        )
         : new URL(v[\\"@id\\"]) : undefined
       ;
       if (typeof decoded === \\"undefined\\") continue;
