@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.1.27
 --------------
 
-To be released.
+Released on September 17, 2025.
 
  -  Improved the AT Protocol URI workaround to handle all DID methods and
     edge cases. The fix now properly percent-encodes any authority component
