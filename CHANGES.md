@@ -8,6 +8,12 @@ Version 1.0.30
 
 To be released.
 
+ -  Improved the AT Protocol URI workaround to handle all DID methods and
+    edge cases. The fix now properly percent-encodes any authority component
+    in `at://` URIs, supporting `did:web`, `did:key`, and other DID methods
+    beyond just `did:plc`. Also handles URIs without path components
+    correctly.  [[#436]]
+
 
 Version 1.0.29
 --------------
