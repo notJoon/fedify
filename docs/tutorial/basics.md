@@ -490,7 +490,7 @@ Now, open a new terminal session and run the following command to query the
 actor:[^3]
 
 ~~~~ sh
-curl http://localhost:8000/.well-known/webfinger?resource=acct:me@localhost:8000
+curl "http://localhost:8000/.well-known/webfinger?resource=acct:me@localhost:8000"
 ~~~~
 
 The response should look like this (formatted for readability):
@@ -699,7 +699,7 @@ Let's query the actor *me* again, but this time with the public URL (change
 the domain name to the one `fedify tunnel` provides you):[^3]
 
 ~~~~ sh
-curl https://e875a03fc2a35b.lhr.life/.well-known/webfinger?resource=acct:me@e875a03fc2a35b.lhr.life
+curl "https://e875a03fc2a35b.lhr.life/.well-known/webfinger?resource=acct:me@e875a03fc2a35b.lhr.life"
 curl -H"Accept: application/activity+json" https://e875a03fc2a35b.lhr.life/users/me
 ~~~~
 
