@@ -47,6 +47,7 @@
     }
   },
   "dependencies": {
+    "@js-temporal/polyfill": "catalog:",
     "@logtape/logtape": "catalog:",
     "es-toolkit": "^1.31.0"
   },
@@ -54,7 +55,6 @@
     "@fedify/fedify": "workspace:^"
   },
   "devDependencies": {
-    "@js-temporal/polyfill": "catalog:",
     "@std/async": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
