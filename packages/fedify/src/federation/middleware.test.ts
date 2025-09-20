@@ -14,9 +14,12 @@ import { fetchDocumentLoader } from "../runtime/docloader.ts";
 import { signRequest, verifyRequest } from "../sig/http.ts";
 import type { KeyCache } from "../sig/key.ts";
 import { detachSignature, signJsonLd, verifyJsonLd } from "../sig/ld.ts";
-import { doesActorOwnKey } from "../sig/owner.ts";
+import { doesActorOwnKey, generateCryptoKeyPair } from "../sig/owner.ts";
 import { signObject, verifyObject } from "../sig/proof.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
+import createFixture from "../testing/fixtures/example.com/create.json" with {
+  type: "json",
+};
 import personFixture from "../testing/fixtures/example.com/person.json" with {
   type: "json",
 };
@@ -969,6 +972,222 @@ test({
 
     fetchMock.hardReset();
   },
+});
+
+test("Federation.fetch()", async (t) => {
+  const kv = new MemoryKvStore();
+  const federation = createFederation<void>({
+    kv,
+    documentLoaderFactory: () => mockDocumentLoader,
+    authenticatedDocumentLoaderFactory(identity) {
+      const docLoader = getAuthenticatedDocumentLoader(identity);
+      return (url: string) => {
+        const urlObj = new URL(url);
+        if (urlObj.host === "example.com") return docLoader(url);
+        return mockDocumentLoader(url);
+      };
+    },
+  });
+  let inbox: [Context<void>, Activity][] = [];
+  let dispatches: [Context<void>, string][] = [];
+  federation.setActorDispatcher(
+    "/users/{identifier}",
+    (ctx, identifier) => {
+      dispatches.push([ctx, identifier]);
+      return new Person({
+        id: ctx.getActorUri(identifier),
+        preferredUsername: identifier,
+        inbox: ctx.getInboxUri(identifier),
+      });
+    },
+  )
+    .setKeyPairsDispatcher(() => {
+      return [
+        { privateKey: rsaPrivateKey2, publicKey: rsaPublicKey2.publicKey! },
+      ];
+    })
+    .authorize(() => true);
+
+  federation.setInboxDispatcher("/users/{identifier}/inbox", () => {
+    return { items: [] };
+  })
+    .authorize(() => true);
+
+  federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
+    .on(Activity, (ctx, activity) => {
+      inbox.push([ctx, activity]);
+      return;
+    })
+    .onError((ctx, err) => {
+      console.error({ ctx, err });
+    });
+
+  await t.step("without accepts header", async () => {
+    // Should not call inbox handler on POST
+    let response = await federation.fetch(
+      new Request("https://example.com/inbox", {
+        method: "POST",
+      }),
+      { contextData: undefined },
+    );
+
+    assertEquals(inbox, []);
+    assertEquals(response.status, 406);
+    inbox = [];
+
+    // Should not call dispatcher on GET:
+    response = await federation.fetch(
+      new Request("https://example.com/users/test", {
+        method: "GET",
+      }),
+      { contextData: undefined },
+    );
+
+    assertEquals(dispatches, []);
+    assertEquals(response.status, 406);
+  });
+
+  await t.step("with accept header of application/ld+json", async () => {
+    const request = await signRequest(
+      new Request("https://example.com/users/test/inbox", {
+        method: "POST",
+        headers: {
+          "accept": "application/ld+json",
+          "content-type": "application/ld+json",
+        },
+        body: JSON.stringify(createFixture),
+      }),
+      rsaPrivateKey2,
+      rsaPublicKey2.id!,
+    );
+
+    let response = await federation.fetch(
+      request,
+      { contextData: undefined },
+    );
+
+    console.log({ response, inbox });
+
+    assertEquals(inbox, []);
+    assertEquals(response.status, 406);
+    inbox = [];
+
+    // Should call dispatcher on GET:
+    response = await federation.fetch(
+      new Request("https://example.com/users/test", {
+        method: "GET",
+      }),
+      { contextData: undefined },
+    );
+
+    console.log({ response, dispatches });
+
+    assertEquals(dispatches, []);
+    assertEquals(response.status, 406);
+    dispatches = [];
+  });
+
+  await t.step(
+    "with accept header of application/activity+json",
+    async () => {
+      const request = await signRequest(
+        new Request("https://example.com/users/test/inbox", {
+          method: "POST",
+          headers: {
+            "accept": "application/activity+json",
+            "content-type": "application/activity+json",
+          },
+          body: JSON.stringify(createFixture),
+        }),
+        rsaPrivateKey2,
+        rsaPublicKey2.id!,
+      );
+
+      let response = await federation.fetch(
+        request,
+        { contextData: undefined },
+      );
+
+      console.log({ response, inbox });
+
+      assertEquals(inbox, []);
+      assertEquals(response.status, 404);
+      inbox = [];
+
+      // Should call dispatcher on GET:
+      response = await federation.fetch(
+        new Request("https://example.com/users/test", {
+          method: "GET",
+        }),
+        { contextData: undefined },
+      );
+
+      console.log({ response, dispatches });
+      assertEquals(dispatches, []);
+      assertEquals(response.status, 406);
+      dispatches = [];
+    },
+  );
+
+  await t.step("with accept header of application/json", async () => {
+    const request = await signRequest(
+      new Request("https://example.com/users/test/inbox", {
+        method: "POST",
+        headers: {
+          "accept": "application/json",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(createFixture),
+      }),
+      rsaPrivateKey2,
+      rsaPublicKey2.id!,
+    );
+
+    let response = await federation.fetch(
+      request,
+      { contextData: undefined },
+    );
+
+    console.log({ response, inbox });
+
+    assertEquals(inbox, []);
+    assertEquals(response.status, 404);
+    inbox = [];
+
+    // Should call dispatcher on GET:
+    response = await federation.fetch(
+      new Request("https://example.com/users/test", {
+        method: "GET",
+      }),
+      { contextData: undefined },
+    );
+
+    console.log({ response, dispatches });
+    assertEquals(dispatches, []);
+    assertEquals(response.status, 406);
+    dispatches = [];
+  });
+
+  await t.step("onNotAcceptable", async () => {
+    let notAcceptableCalled = false;
+    const response = await federation.fetch(
+      new Request("https://example.com/users/test/inbox", {
+        method: "POST",
+        headers: { "accept": "text/html" },
+      }),
+      {
+        contextData: undefined,
+        onNotAcceptable: () => {
+          notAcceptableCalled = true;
+          return new Response("handled by onNotAcceptable", { status: 200 });
+        },
+      },
+    );
+
+    assertEquals(notAcceptableCalled, true);
+    assertEquals(response.status, 200);
+    assertEquals(await response.text(), "handled by onNotAcceptable");
+  });
 });
 
 test("Federation.setInboxListeners()", async (t) => {
