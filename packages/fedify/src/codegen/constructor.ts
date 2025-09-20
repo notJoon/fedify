@@ -89,6 +89,7 @@ export async function* generateConstructor(
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
+      baseUrl?: URL,
     } = {},
   ) {
   `;
@@ -97,6 +98,7 @@ export async function* generateConstructor(
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
+    this._baseUrl = options.baseUrl;
     if ("$warning" in options) {
       this.#warning = options.$warning as unknown as {
         category: string[];

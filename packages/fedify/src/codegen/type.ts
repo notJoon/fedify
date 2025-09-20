@@ -141,7 +141,7 @@ const scalarTypes: Record<string, ScalarType> = {
     dataCheck(v) {
       return `typeof ${v} === "object" && "@id" in ${v}
         && typeof ${v}["@id"] === "string"
-        && ${v}["@id"] !== "" && ${v}["@id"] !== "/"`;
+        && ${v}["@id"] !== ""`;
     },
     decoder(v) {
       return `${v}["@id"].startsWith("at://")
@@ -157,7 +157,9 @@ const scalarTypes: Record<string, ScalarType> = {
               : ""
           )
         )
-        : new URL(${v}["@id"])`;
+        : ${v}["@id"].startsWith("/") && options.baseUrl
+          ? new URL(options.baseUrl + ${v}["@id"])
+          : new URL(${v}["@id"])`;
     },
   },
   "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString": {
@@ -307,10 +309,10 @@ const scalarTypes: Record<string, ScalarType> = {
     dataCheck(v) {
       return `typeof ${v} === "object" && "@value" in ${v}
         && typeof ${v}["@value"] === "string"
-        && ${v}["@value"] !== "" && ${v}["@value"] !== "/"`;
+        && ${v}["@value"] !== ""`;
     },
     decoder(v) {
-      return `new URL(${v}["@value"])`;
+      return `${v}["@value"].startsWith("/") && options.baseUrl ? new URL(options.baseUrl + ${v}["@value"]) : new URL(${v}["@value"])`;
     },
   },
   "fedify:publicKey": {

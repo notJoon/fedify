@@ -51,6 +51,7 @@ async function* generateClass(
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
+    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -94,6 +95,13 @@ async function* generateClass(
      */
     static ${emitOverride(typeUri, types)} get typeId(): URL {
       return new URL(${JSON.stringify(typeUri)});
+    }
+
+    /**
+     * The base URL used for resolving relative URLs in this object.
+     */
+    ${emitOverride(typeUri, types)} get baseUrl(): URL | undefined {
+      return this._baseUrl;
     }
   `;
   for await (const code of generateFields(typeUri, types)) yield code;
