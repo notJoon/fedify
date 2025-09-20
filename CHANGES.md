@@ -193,6 +193,19 @@ To be released.
     CommonJS-based Node.js applications.  [[#429], [#431]]
 
 
+Version 1.8.12
+--------------
+
+Released on September 20, 2025.
+
+### @fedify/sqlite
+
+ -  Fixed bundling issues where incorrect import paths to *node\_modules* were
+    included in the bundled output.  The *@js-temporal/polyfill* dependency
+    was moved from `devDependencies` to `dependencies` to ensure proper
+    bundling.
+
+
 Version 1.8.11
 --------------
 
