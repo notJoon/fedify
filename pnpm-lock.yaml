@@ -879,6 +879,9 @@ importers:
       '@fedify/fedify':
         specifier: workspace:^
         version: link:../fedify
+      '@js-temporal/polyfill':
+        specifier: 'catalog:'
+        version: 0.5.1
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 1.0.4
@@ -886,9 +889,6 @@ importers:
         specifier: ^1.31.0
         version: 1.39.5
     devDependencies:
-      '@js-temporal/polyfill':
-        specifier: 'catalog:'
-        version: 0.5.1
       '@std/async':
         specifier: 'catalog:'
         version: '@jsr/std__async@1.0.13'
