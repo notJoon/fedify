@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.8.12
 --------------
 
-To be released.
+Released on September 20, 2025.
 
 ### @fedify/sqlite
 
