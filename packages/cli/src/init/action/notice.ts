@@ -1,4 +1,3 @@
-import { pipeLazy } from "@fxts/core/index.js";
 import { message } from "@optique/core";
 import { print, printError } from "@optique/run";
 import * as colors from "@std/fmt/colors";
@@ -8,8 +7,8 @@ import type { InitCommand } from "../command.ts";
 import type { InitCommandData } from "../types.ts";
 
 type PrintMessage = (...args: Parameters<typeof message>) => void;
-const printMessage: PrintMessage = pipeLazy(message, print);
-const printErrorMessage: PrintMessage = pipeLazy(message, printError);
+const printMessage: PrintMessage = flow(message, print);
+const printErrorMessage: PrintMessage = flow(message, printError);
 
 export function drawDinosaur() {
   const d = flow(colors.bgBlue, colors.black);
@@ -34,9 +33,9 @@ export const noticeOptions: (options: RequiredNotNull<InitCommand>) => void = (
 ) =>
   printMessage`
   Package manager: ${packageManager};
-  web framework: ${webFramework};
-  key–value store: ${kvStore};
-  message queue: ${messageQueue};
+  Web framework: ${webFramework};
+  Key–value store: ${kvStore};
+  Message queue: ${messageQueue};
 `;
 
 export const noticeDry = () =>
