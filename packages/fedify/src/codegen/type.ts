@@ -309,10 +309,10 @@ const scalarTypes: Record<string, ScalarType> = {
     dataCheck(v) {
       return `typeof ${v} === "object" && "@value" in ${v}
         && typeof ${v}["@value"] === "string"
-        && ${v}["@value"] !== ""`;
+        && ${v}["@value"] !== "" && ${v}["@value"] !== "/"`;
     },
     decoder(v) {
-      return `${v}["@value"].startsWith("/") && options.baseUrl ? new URL(options.baseUrl + ${v}["@value"]) : new URL(${v}["@value"])`;
+      return `new URL(${v}["@value"])`;
     },
   },
   "fedify:publicKey": {
