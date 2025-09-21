@@ -22,12 +22,8 @@ export function formatObject(
   return formatted;
 }
 
-export function isPromise<T>(a: unknown): a is Promise<T> {
-  return !!a &&
-    typeof a === "object" &&
-    "then" in a &&
-    typeof a.then === "function";
-}
+export const isPromise = <T>(a: unknown): a is Promise<T> =>
+  a instanceof Promise;
 
 export function set<K extends PropertyKey, T extends object, S>(
   key: K,
