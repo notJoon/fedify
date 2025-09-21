@@ -71,7 +71,7 @@
         "codegen"
       ]
     },
-    "install": "pnpm install",
+    "install": "pnpm install --silent",
     "test": {
       "command": "deno test --check --doc --allow-all --unstable-kv --trace-leaks --parallel",
       "dependencies": [
