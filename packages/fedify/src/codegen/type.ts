@@ -157,9 +157,9 @@ const scalarTypes: Record<string, ScalarType> = {
               : ""
           )
         )
-        : ${v}["@id"].startsWith("/") && options.baseUrl
-          ? new URL(options.baseUrl + ${v}["@id"])
-          : new URL(${v}["@id"])`;
+        : URL.canParse(${v}["@id"]) && options.baseUrl
+          ? new URL(${v}["@id"])
+          : new URL(${v}["@id"], options.baseUrl)`;
     },
   },
   "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString": {
