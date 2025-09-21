@@ -9,7 +9,6 @@ import {
   assertThrows,
 } from "@std/assert";
 import fetchMock from "fetch-mock";
-import { url } from "node:inspector";
 import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
 import { fetchDocumentLoader } from "../runtime/docloader.ts";
 import { signRequest, verifyRequest } from "../sig/http.ts";
