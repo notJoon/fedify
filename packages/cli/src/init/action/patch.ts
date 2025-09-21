@@ -1,13 +1,4 @@
-import {
-  apply,
-  entries,
-  forEach,
-  map,
-  peek,
-  pipe,
-  pipeLazy,
-  tap,
-} from "@fxts/core";
+import { apply, entries, forEach, pipe, pipeLazy, tap } from "@fxts/core";
 import { stringify } from "@std/dotenv";
 import { toMerged } from "es-toolkit";
 import { readFile } from "node:fs/promises";

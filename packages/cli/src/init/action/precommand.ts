@@ -13,11 +13,9 @@ const runPrecommand = ({
 }: InitCommandData) =>
   runSubCommand(command!, {
     cwd: dir,
-    stdin: "inherit",
-    stdout: "inherit",
-    stderr: "inherit",
-  }).catch(() => {
-    console.error("Failed to initialize the project.");
+    stdio: "inherit",
+  }).catch((e) => {
+    console.error("Failed to run the precommand:", e);
     exit(1);
   });
 

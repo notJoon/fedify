@@ -79,7 +79,9 @@ export const joinDepsVer = <
   );
 
 const getPackageName = (pm: PackageManager, name: string) =>
-  pm !== "deno" && name.startsWith("npm:")
+  pm !== "deno"
+    ? name
+    : name.startsWith("npm:")
     ? name.substring(4)
     : !name.startsWith("npm:")
     ? `jsr:${name}`

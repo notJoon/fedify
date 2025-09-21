@@ -72,23 +72,23 @@ export function displayFile(
   emoji: string = "📄",
 ) {
   printMessage`${emoji} ${path}`;
-  printErrorMessage`${"─".repeat(60)}`;
+  printMessage`${"─".repeat(60)}`;
   printMessage`${content}`;
-  printErrorMessage`${"─".repeat(60)}\n`;
+  printMessage`${"─".repeat(60)}\n`;
 }
 
 export const noticeConfigEnv = () =>
-  printErrorMessage`Note that you probably want to edit the ${".env"} file.
+  printMessage`Note that you probably want to edit the ${".env"} file.
 It currently contains the following values:\n`;
 
 export const noticeEnvKeyValue = ([key, value]: [string, string]) =>
-  printErrorMessage`  ${key}=${value}`;
+  printMessage`  ${key}=${value}`;
 
 export function noticeHowToRun(
   { initializer: { instruction, federationFile } }: InitCommandData,
 ) {
-  printErrorMessage`${instruction}`;
-  printErrorMessage`Start by editing the ${federationFile} file to define your federation!
+  printMessage`${instruction}`;
+  printMessage`Start by editing the ${federationFile} file to define your federation!
 `;
 }
 

@@ -189,6 +189,7 @@ export const getNextInitCommand = (
   ".",
   "--ts",
   "--app",
+  "--biome",
   "--skip-install",
 ];
 
