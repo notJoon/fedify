@@ -36,7 +36,7 @@ export const getDevDependencies = (
 ): Deps =>
   pipe(
     {
-      "@biomejs/biome": "^1.8.3",
+      "@biomejs/biome": "^2.2.4",
     },
     merge(initializer.devDependencies),
     merge(kv.devDependencies),
