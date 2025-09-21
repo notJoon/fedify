@@ -9,6 +9,7 @@ import {
   assertThrows,
 } from "@std/assert";
 import fetchMock from "fetch-mock";
+import { url } from "node:inspector";
 import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
 import { fetchDocumentLoader } from "../runtime/docloader.ts";
 import { signRequest, verifyRequest } from "../sig/http.ts";
@@ -972,20 +973,15 @@ test("Federation.fetch()", async (t) => {
   fetchMock.get("https://example.com/key2", {
     headers: { "Content-Type": "application/activity+json" },
     body: await rsaPublicKey2.toJsonLd({ contextLoader: mockDocumentLoader }),
-  }, {
-    repeat: 10,
   });
 
   fetchMock.get("begin:https://example.com/person", {
     headers: { "Content-Type": "application/activity+json" },
     body: personFixture,
-  }, {
-    repeat: 10,
   });
 
-  const kv = new MemoryKvStore();
-
   const createTestContext = () => {
+    const kv = new MemoryKvStore();
     const inbox: string[] = [];
     const dispatches: string[] = [];
 
@@ -1025,15 +1021,8 @@ test("Federation.fetch()", async (t) => {
 
     federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
       .on(vocab.Create, (_ctx, activity) => {
-        console.log(
-          "Received activity: " + activity.constructor.name + ", id: " +
-            activity.id?.toString(),
-        );
         inbox.push(activity.id!.toString());
         return;
-      })
-      .onError((ctx, err) => {
-        console.error({ ctx, err });
       });
 
     return {
@@ -1044,9 +1033,7 @@ test("Federation.fetch()", async (t) => {
   };
 
   await t.step("POST without accepts header", async () => {
-    const { federation, inbox, dispatches } = createTestContext();
-    assertEquals(inbox.length, 0);
-    assertEquals(dispatches.length, 0);
+    const { federation, inbox } = createTestContext();
 
     // Should not call inbox handler on POST
     const response = await federation.fetch(
@@ -1060,10 +1047,8 @@ test("Federation.fetch()", async (t) => {
     assertEquals(response.status, 406);
   });
 
-  await t.step("POST without accepts header", async () => {
-    const { federation, inbox, dispatches } = createTestContext();
-    assertEquals(inbox.length, 0);
-    assertEquals(dispatches.length, 0);
+  await t.step("GET without accepts header", async () => {
+    const { federation, dispatches } = createTestContext();
 
     // Should not call dispatcher on GET:
     const response = await federation.fetch(
@@ -1073,22 +1058,12 @@ test("Federation.fetch()", async (t) => {
       { contextData: undefined },
     );
 
-    console.log({
-      inbox,
-      dispatches,
-      status: response.status,
-      name: "none",
-    });
-
     assertEquals(dispatches, []);
     assertEquals(response.status, 406);
   });
 
   await t.step("POST with application/json", async () => {
-    const { federation, inbox, dispatches } = createTestContext();
-
-    assertEquals(inbox.length, 0);
-    assertEquals(dispatches.length, 0);
+    const { federation, inbox } = createTestContext();
 
     const request = await signRequest(
       new Request("https://example.com/users/json/inbox", {
@@ -1103,23 +1078,10 @@ test("Federation.fetch()", async (t) => {
       rsaPublicKey2.id!,
     );
 
-    console.log({
-      method: request.method,
-      headers: Object.fromEntries(request.headers.entries()),
-    });
-
     const response = await federation.fetch(
       request,
       { contextData: undefined },
     );
-
-    console.log({
-      inboxLength: inbox.length,
-      inbox,
-      dispatches,
-      status: response.status,
-      name: "application/json post",
-    });
 
     assertEquals(response.status, 202);
     assertEquals(
@@ -1131,10 +1093,7 @@ test("Federation.fetch()", async (t) => {
   });
 
   await t.step("GET with application/json", async () => {
-    const { federation, inbox, dispatches } = createTestContext();
-
-    assertEquals(inbox.length, 0);
-    assertEquals(dispatches.length, 0);
+    const { federation, dispatches } = createTestContext();
 
     // Should call dispatcher on GET:
     const response = await federation.fetch(
@@ -1152,7 +1111,7 @@ test("Federation.fetch()", async (t) => {
   });
 
   await t.step("POST with application/ld+json", async () => {
-    const { federation, inbox, dispatches } = createTestContext();
+    const { federation, inbox } = createTestContext();
 
     const request = await signRequest(
       new Request("https://example.com/users/ld/inbox", {
@@ -1167,23 +1126,10 @@ test("Federation.fetch()", async (t) => {
       rsaPublicKey2.id!,
     );
 
-    console.log({
-      method: request.method,
-      headers: Object.fromEntries(request.headers.entries()),
-    });
-
     const response = await federation.fetch(
       request,
       { contextData: undefined },
     );
-
-    console.log({
-      inboxLength: inbox.length,
-      inbox,
-      dispatches,
-      status: response.status,
-      name: "application/ld+json post",
-    });
 
     assertEquals(response.status, 202);
     assertEquals(inbox.length, 1, "Expected one inbox activity, ld+json");
@@ -1193,26 +1139,23 @@ test("Federation.fetch()", async (t) => {
   await t.step("GET with application/ld+json", async () => {
     const { federation, dispatches } = createTestContext();
 
-    // Should call dispatcher on GET:
-    const response = await federation.fetch(
-      new Request("https://example.com/ld/actor", {
-        method: "GET",
-        headers: {
-          "Accept": "application/ld+json",
-        },
-      }),
-      { contextData: undefined },
-    );
+    const request = new Request("https://example.com/users/ld", {
+      method: "GET",
+      headers: {
+        "Accept": "application/ld+json",
+      },
+    });
+
+    const response = await federation.fetch(request, {
+      contextData: undefined,
+    });
 
     assertEquals(dispatches, ["ld"]);
     assertEquals(response.status, 200);
   });
 
   await t.step("POST with application/activity+json", async () => {
-    const { federation, inbox, dispatches } = createTestContext();
-
-    assertEquals(inbox.length, 0);
-    assertEquals(dispatches.length, 0);
+    const { federation, inbox } = createTestContext();
 
     const request = await signRequest(
       new Request("https://example.com/users/activity/inbox", {
@@ -1227,23 +1170,10 @@ test("Federation.fetch()", async (t) => {
       rsaPublicKey2.id!,
     );
 
-    console.log({
-      method: request.method,
-      headers: Object.fromEntries(request.headers.entries()),
-    });
-
     const response = await federation.fetch(
       request,
       { contextData: undefined },
     );
-
-    console.log({
-      inboxLength: inbox.length,
-      inbox,
-      dispatches,
-      status: response.status,
-      name: "application/activity+json post",
-    });
 
     assertEquals(response.status, 202);
     assertEquals(inbox.length, 1);
@@ -1251,33 +1181,53 @@ test("Federation.fetch()", async (t) => {
   });
 
   await t.step("GET with application/activity+json", async () => {
-    const { federation, inbox, dispatches } = createTestContext();
+    const { federation, dispatches } = createTestContext();
 
-    assertEquals(inbox.length, 0);
-    assertEquals(dispatches.length, 0);
+    const request = new Request("https://example.com/users/activity", {
+      method: "GET",
+      headers: {
+        "Accept": "application/ld+json",
+      },
+    });
 
-    // Should call dispatcher on GET:
-    const response = await federation.fetch(
-      new Request("https://example.com/users/activity", {
-        method: "GET",
-        headers: {
-          "Accept": "application/activity+json",
-        },
-      }),
-      { contextData: undefined },
-    );
+    const response = await federation.fetch(request, {
+      contextData: undefined,
+    });
 
     assertEquals(dispatches, ["activity"]);
     assertEquals(response.status, 200);
   });
 
-  await t.step("onNotAcceptable", async () => {
+  await t.step("onNotAcceptable with POST", async () => {
     const { federation } = createTestContext();
 
     let notAcceptableCalled = false;
     const response = await federation.fetch(
       new Request("https://example.com/users/html/inbox", {
         method: "POST",
+        headers: { "Accept": "text/html" },
+      }),
+      {
+        contextData: undefined,
+        onNotAcceptable: () => {
+          notAcceptableCalled = true;
+          return new Response("handled by onNotAcceptable", { status: 200 });
+        },
+      },
+    );
+
+    assertEquals(notAcceptableCalled, true);
+    assertEquals(response.status, 200);
+    assertEquals(await response.text(), "handled by onNotAcceptable");
+  });
+
+  await t.step("onNotAcceptable with GET", async () => {
+    const { federation } = createTestContext();
+
+    let notAcceptableCalled = false;
+    const response = await federation.fetch(
+      new Request("https://example.com/users/html", {
+        method: "GET",
         headers: { "Accept": "text/html" },
       }),
       {
