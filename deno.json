@@ -112,10 +112,5 @@
         "check-all"
       ]
     }
-  },
-  "test": {
-    "include": [
-      "./packages"
-    ]
   }
 }
