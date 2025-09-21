@@ -36,12 +36,26 @@ To be released.
      -  Removed `parseSemVer()` and `formatSemVer()` functions.
      -  Updated related CLI tools and documentation.
 
+ -  Federation dispatchers are now only triggered when the request accepts
+    ActivityPub-compatible content types.  This improves compatibility with
+    applications that serve both HTML and ActivityPub content from the same
+    URLs.  [[#434] by Emelia Smith]
+
+     -  Actor, object, and collection dispatchers will no longer be called for
+        requests with `Accept: text/html` or other non-ActivityPub content
+        types.
+     -  The `notAcceptable` callback is now triggered at the middleware level
+        before dispatchers are invoked.
+     -  If your application relies on dispatchers being called regardless of
+        `Accept` header, you may need to adjust your routing logic.
+
 [#280]: https://github.com/fedify-dev/fedify/issues/280
 [#366]: https://github.com/fedify-dev/fedify/issues/366
 [#376]: https://github.com/fedify-dev/fedify/issues/376
 [#392]: https://github.com/fedify-dev/fedify/pull/392
 [#393]: https://github.com/fedify-dev/fedify/pulls/393
 [#433]: https://github.com/fedify-dev/fedify/pull/433
+[#434]: https://github.com/fedify-dev/fedify/pull/434
 
 
 Version 1.9.0

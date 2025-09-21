@@ -17,6 +17,9 @@ import { detachSignature, signJsonLd, verifyJsonLd } from "../sig/ld.ts";
 import { doesActorOwnKey } from "../sig/owner.ts";
 import { signObject, verifyObject } from "../sig/proof.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
+import createFixture from "../testing/fixtures/example.com/create.json" with {
+  type: "json",
+};
 import personFixture from "../testing/fixtures/example.com/person.json" with {
   type: "json",
 };
@@ -35,18 +38,7 @@ import {
 import { test } from "../testing/mod.ts";
 import { lookupObject } from "../vocab/lookup.ts";
 import { getTypeId } from "../vocab/type.ts";
-import {
-  Activity,
-  Announce,
-  Create,
-  type CryptographicKey,
-  Invite,
-  Multikey,
-  Note,
-  Object,
-  Offer,
-  Person,
-} from "../vocab/vocab.ts";
+import * as vocab from "../vocab/vocab.ts";
 import type { Context } from "./context.ts";
 import { MemoryKvStore } from "./kv.ts";
 import {
@@ -241,7 +233,7 @@ test({
       assertThrows(() => ctx.getNodeInfoUri(), RouterError);
       assertThrows(() => ctx.getActorUri("handle"), RouterError);
       assertThrows(
-        () => ctx.getObjectUri(Note, { handle: "handle", id: "id" }),
+        () => ctx.getObjectUri(vocab.Note, { handle: "handle", id: "id" }),
         RouterError,
       );
       assertThrows(() => ctx.getInboxUri(), RouterError);
@@ -265,7 +257,8 @@ test({
         "No actor key pairs dispatcher registered",
       );
       await assertRejects(
-        () => ctx.sendActivity({ identifier: "handle" }, [], new Create({})),
+        () =>
+          ctx.sendActivity({ identifier: "handle" }, [], new vocab.Create({})),
         Error,
         "No actor key pairs dispatcher registered",
       );
@@ -289,7 +282,7 @@ test({
       );
 
       federation
-        .setActorDispatcher("/users/{identifier}", () => new Person({}))
+        .setActorDispatcher("/users/{identifier}", () => new vocab.Person({}))
         .setKeyPairsDispatcher(() => [
           {
             privateKey: rsaPrivateKey2,
@@ -323,7 +316,7 @@ test({
               id: new URL("https://example.com/users/handle#main-key"),
               owner: new URL("https://example.com/users/handle"),
             }),
-            multikey: new Multikey({
+            multikey: new vocab.Multikey({
               id: new URL("https://example.com/users/handle#main-key"),
               controller: new URL("https://example.com/users/handle"),
               publicKey: rsaPublicKey2.publicKey!,
@@ -337,7 +330,7 @@ test({
               id: new URL("https://example.com/users/handle#key-2"),
               owner: new URL("https://example.com/users/handle"),
             }),
-            multikey: new Multikey({
+            multikey: new vocab.Multikey({
               id: new URL("https://example.com/users/handle#key-2"),
               controller: new URL("https://example.com/users/handle"),
               publicKey: ed25519PublicKey.publicKey!,
@@ -368,14 +361,15 @@ test({
       });
       assertEquals(await ctx.lookupObject("https://example.com/object"), null);
       await assertRejects(
-        () => ctx.sendActivity({ identifier: "handle" }, [], new Create({})),
+        () =>
+          ctx.sendActivity({ identifier: "handle" }, [], new vocab.Create({})),
         TypeError,
         "The activity to send must have at least one actor property.",
       );
       await ctx.sendActivity(
         { identifier: "handle" },
         [],
-        new Create({
+        new vocab.Create({
           actor: new URL("https://example.com/users/handle"),
         }),
       );
@@ -405,31 +399,31 @@ test({
       );
       assertEquals(
         await ctx2.lookupObject("https://example.com/object"),
-        new Object({
+        new vocab.Object({
           id: new URL("https://example.com/object"),
           name: "Fetched object",
         }),
       );
 
       federation.setObjectDispatcher(
-        Note,
+        vocab.Note,
         "/users/{identifier}/notes/{id}",
         (_ctx, values) => {
-          return new Note({
+          return new vocab.Note({
             summary: `Note ${values.id} by ${values.identifier}`,
           });
         },
       );
       ctx = federation.createContext(new URL("https://example.com/"), 123);
       assertEquals(
-        ctx.getObjectUri(Note, { identifier: "john", id: "123" }),
+        ctx.getObjectUri(vocab.Note, { identifier: "john", id: "123" }),
         new URL("https://example.com/users/john/notes/123"),
       );
       assertEquals(
         ctx.parseUri(new URL("https://example.com/users/john/notes/123")),
         {
           type: "object",
-          class: Note,
+          class: vocab.Note,
           typeId: new URL("https://www.w3.org/ns/activitystreams#Note"),
           values: { identifier: "john", id: "123" },
         },
@@ -578,7 +572,7 @@ test({
 
       federation.setActorDispatcher(
         "/users/{identifier}",
-        () => new Person({}),
+        () => new vocab.Person({}),
       );
       assertEquals(
         ctx.getActorUri("handle"),
@@ -594,23 +588,23 @@ test({
       );
 
       federation.setObjectDispatcher(
-        Note,
+        vocab.Note,
         "/users/{identifier}/notes/{id}",
         (_ctx, values) => {
-          return new Note({
+          return new vocab.Note({
             summary: `Note ${values.id} by ${values.identifier}`,
           });
         },
       );
       assertEquals(
-        ctx.getObjectUri(Note, { identifier: "john", id: "123" }),
+        ctx.getObjectUri(vocab.Note, { identifier: "john", id: "123" }),
         new URL("https://ap.example.com/users/john/notes/123"),
       );
       assertEquals(
         ctx.parseUri(new URL("https://ap.example.com/users/john/notes/123")),
         {
           type: "object",
-          class: Note,
+          class: vocab.Note,
           typeId: new URL("https://www.w3.org/ns/activitystreams#Note"),
           values: { identifier: "john", id: "123" },
         },
@@ -619,7 +613,7 @@ test({
         ctx.parseUri(new URL("https://example.com:1234/users/john/notes/123")),
         {
           type: "object",
-          class: Note,
+          class: vocab.Note,
           typeId: new URL("https://www.w3.org/ns/activitystreams#Note"),
           values: { identifier: "john", id: "123" },
         },
@@ -845,7 +839,9 @@ test({
         kv,
         documentLoaderFactory: () => mockDocumentLoader,
       });
-      const req = new Request("https://example.com/");
+      const req = new Request("https://example.com/", {
+        headers: { "accept": "application/ld+json" },
+      });
       const ctx = federation.createContext(req, 123);
       assertEquals(ctx.request, req);
       assertEquals(ctx.url, new URL("https://example.com/"));
@@ -858,7 +854,7 @@ test({
         Error,
       );
       await assertRejects(
-        () => ctx.getObject(Note, { handle: "someone", id: "123" }),
+        () => ctx.getObject(vocab.Note, { handle: "someone", id: "123" }),
         Error,
       );
       assertEquals(await ctx.getSignedKey(), null);
@@ -873,7 +869,9 @@ test({
       );
 
       const signedReq = await signRequest(
-        new Request("https://example.com/"),
+        new Request("https://example.com/", {
+          headers: { "accept": "application/ld+json" },
+        }),
         rsaPrivateKey2,
         rsaPublicKey2.id!,
       );
@@ -888,7 +886,9 @@ test({
       assertEquals(await signedCtx.getSignedKeyOwner(), null);
 
       const signedReq2 = await signRequest(
-        new Request("https://example.com/"),
+        new Request("https://example.com/", {
+          headers: { "accept": "application/ld+json" },
+        }),
         rsaPrivateKey3,
         rsaPublicKey3.id!,
       );
@@ -911,7 +911,8 @@ test({
 
       federation.setActorDispatcher(
         "/users/{identifier}",
-        (_ctx, identifier) => new Person({ preferredUsername: identifier }),
+        (_ctx, identifier) =>
+          new vocab.Person({ preferredUsername: identifier }),
       );
       const ctx2 = federation.createContext(req, 789);
       assertEquals(ctx2.request, req);
@@ -919,14 +920,14 @@ test({
       assertEquals(ctx2.data, 789);
       assertEquals(
         await ctx2.getActor("john"),
-        new Person({ preferredUsername: "john" }),
+        new vocab.Person({ preferredUsername: "john" }),
       );
 
       federation.setObjectDispatcher(
-        Note,
+        vocab.Note,
         "/users/{identifier}/notes/{id}",
         (_ctx, values) => {
-          return new Note({
+          return new vocab.Note({
             summary: `Note ${values.id} by ${values.identifier}`,
           });
         },
@@ -936,8 +937,8 @@ test({
       assertEquals(ctx3.url, new URL("https://example.com/"));
       assertEquals(ctx3.data, 123);
       assertEquals(
-        await ctx2.getObject(Note, { identifier: "john", id: "123" }),
-        new Note({ summary: "Note 123 by john" }),
+        await ctx2.getObject(vocab.Note, { identifier: "john", id: "123" }),
+        new vocab.Note({ summary: "Note 123 by john" }),
       );
     });
 
@@ -945,7 +946,9 @@ test({
       const federation = createFederation<number>({
         kv,
       });
-      const req = new Request("https://example.com/");
+      const req = new Request("https://example.com/", {
+        headers: { "accept": "application/ld+json" },
+      });
       const ctx = federation.createContext(req, 123);
       const clone = ctx.clone(456);
       assertStrictEquals(clone.request, ctx.request);
@@ -961,6 +964,286 @@ test({
 
     fetchMock.hardReset();
   },
+});
+
+test("Federation.fetch()", async (t) => {
+  fetchMock.spyGlobal();
+
+  fetchMock.get("https://example.com/key2", {
+    headers: { "Content-Type": "application/activity+json" },
+    body: await rsaPublicKey2.toJsonLd({ contextLoader: mockDocumentLoader }),
+  });
+
+  fetchMock.get("begin:https://example.com/person", {
+    headers: { "Content-Type": "application/activity+json" },
+    body: personFixture,
+  });
+
+  const createTestContext = () => {
+    const kv = new MemoryKvStore();
+    const inbox: string[] = [];
+    const dispatches: string[] = [];
+
+    const federation = createFederation<void>({
+      kv,
+      documentLoaderFactory: () => mockDocumentLoader,
+      authenticatedDocumentLoaderFactory(identity) {
+        const docLoader = getAuthenticatedDocumentLoader(identity);
+        return (url: string) => {
+          const urlObj = new URL(url);
+          if (urlObj.host === "example.com") return docLoader(url);
+          return mockDocumentLoader(url);
+        };
+      },
+    });
+
+    federation.setActorDispatcher(
+      "/users/{identifier}",
+      (ctx, identifier) => {
+        dispatches.push(identifier);
+        return new vocab.Person({
+          id: ctx.getActorUri(identifier),
+          inbox: ctx.getInboxUri(identifier),
+          preferredUsername: identifier,
+        });
+      },
+    )
+      .setKeyPairsDispatcher(() => {
+        return [
+          { privateKey: rsaPrivateKey2, publicKey: rsaPublicKey2.publicKey! },
+        ];
+      });
+
+    federation.setInboxDispatcher("/users/{identifier}/inbox", () => {
+      return { items: [] };
+    });
+
+    federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
+      .on(vocab.Create, (_ctx, activity) => {
+        inbox.push(activity.id!.toString());
+        return;
+      });
+
+    return {
+      federation,
+      inbox,
+      dispatches,
+    };
+  };
+
+  await t.step("POST without accepts header", async () => {
+    const { federation, inbox } = createTestContext();
+
+    // Should not call inbox handler on POST
+    const response = await federation.fetch(
+      new Request("https://example.com/inbox", {
+        method: "POST",
+      }),
+      { contextData: undefined },
+    );
+
+    assertEquals(inbox, []);
+    assertEquals(response.status, 406);
+  });
+
+  await t.step("GET without accepts header", async () => {
+    const { federation, dispatches } = createTestContext();
+
+    // Should not call dispatcher on GET:
+    const response = await federation.fetch(
+      new Request("https://example.com/users/actor", {
+        method: "GET",
+      }),
+      { contextData: undefined },
+    );
+
+    assertEquals(dispatches, []);
+    assertEquals(response.status, 406);
+  });
+
+  await t.step("POST with application/json", async () => {
+    const { federation, inbox } = createTestContext();
+
+    const request = await signRequest(
+      new Request("https://example.com/users/json/inbox", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(createFixture),
+      }),
+      rsaPrivateKey2,
+      rsaPublicKey2.id!,
+    );
+
+    const response = await federation.fetch(
+      request,
+      { contextData: undefined },
+    );
+
+    assertEquals(response.status, 202);
+    assertEquals(
+      inbox.length,
+      1,
+      "Expected one item in the inbox, json",
+    );
+    assertEquals(inbox[0], createFixture.id);
+  });
+
+  await t.step("GET with application/json", async () => {
+    const { federation, dispatches } = createTestContext();
+
+    // Should call dispatcher on GET:
+    const response = await federation.fetch(
+      new Request("https://example.com/users/json", {
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+        },
+      }),
+      { contextData: undefined },
+    );
+
+    assertEquals(dispatches, ["json"]);
+    assertEquals(response.status, 200);
+  });
+
+  await t.step("POST with application/ld+json", async () => {
+    const { federation, inbox } = createTestContext();
+
+    const request = await signRequest(
+      new Request("https://example.com/users/ld/inbox", {
+        method: "POST",
+        headers: {
+          "Accept": "application/ld+json",
+          "Content-Type": "application/activity+json",
+        },
+        body: JSON.stringify(createFixture),
+      }),
+      rsaPrivateKey2,
+      rsaPublicKey2.id!,
+    );
+
+    const response = await federation.fetch(
+      request,
+      { contextData: undefined },
+    );
+
+    assertEquals(response.status, 202);
+    assertEquals(inbox.length, 1, "Expected one inbox activity, ld+json");
+    assertEquals(inbox[0], createFixture.id);
+  });
+
+  await t.step("GET with application/ld+json", async () => {
+    const { federation, dispatches } = createTestContext();
+
+    const request = new Request("https://example.com/users/ld", {
+      method: "GET",
+      headers: {
+        "Accept": "application/ld+json",
+      },
+    });
+
+    const response = await federation.fetch(request, {
+      contextData: undefined,
+    });
+
+    assertEquals(dispatches, ["ld"]);
+    assertEquals(response.status, 200);
+  });
+
+  await t.step("POST with application/activity+json", async () => {
+    const { federation, inbox } = createTestContext();
+
+    const request = await signRequest(
+      new Request("https://example.com/users/activity/inbox", {
+        method: "POST",
+        headers: {
+          "Accept": "application/activity+json",
+          "Content-Type": "application/activity+json",
+        },
+        body: JSON.stringify(createFixture),
+      }),
+      rsaPrivateKey2,
+      rsaPublicKey2.id!,
+    );
+
+    const response = await federation.fetch(
+      request,
+      { contextData: undefined },
+    );
+
+    assertEquals(response.status, 202);
+    assertEquals(inbox.length, 1);
+    assertEquals(inbox[0], createFixture.id);
+  });
+
+  await t.step("GET with application/activity+json", async () => {
+    const { federation, dispatches } = createTestContext();
+
+    const request = new Request("https://example.com/users/activity", {
+      method: "GET",
+      headers: {
+        "Accept": "application/ld+json",
+      },
+    });
+
+    const response = await federation.fetch(request, {
+      contextData: undefined,
+    });
+
+    assertEquals(dispatches, ["activity"]);
+    assertEquals(response.status, 200);
+  });
+
+  await t.step("onNotAcceptable with POST", async () => {
+    const { federation } = createTestContext();
+
+    let notAcceptableCalled = false;
+    const response = await federation.fetch(
+      new Request("https://example.com/users/html/inbox", {
+        method: "POST",
+        headers: { "Accept": "text/html" },
+      }),
+      {
+        contextData: undefined,
+        onNotAcceptable: () => {
+          notAcceptableCalled = true;
+          return new Response("handled by onNotAcceptable", { status: 200 });
+        },
+      },
+    );
+
+    assertEquals(notAcceptableCalled, true);
+    assertEquals(response.status, 200);
+    assertEquals(await response.text(), "handled by onNotAcceptable");
+  });
+
+  await t.step("onNotAcceptable with GET", async () => {
+    const { federation } = createTestContext();
+
+    let notAcceptableCalled = false;
+    const response = await federation.fetch(
+      new Request("https://example.com/users/html", {
+        method: "GET",
+        headers: { "Accept": "text/html" },
+      }),
+      {
+        contextData: undefined,
+        onNotAcceptable: () => {
+          notAcceptableCalled = true;
+          return new Response("handled by onNotAcceptable", { status: 200 });
+        },
+      },
+    );
+
+    assertEquals(notAcceptableCalled, true);
+    assertEquals(response.status, 200);
+    assertEquals(await response.text(), "handled by onNotAcceptable");
+  });
+
+  fetchMock.hardReset();
 });
 
 test("Federation.setInboxListeners()", async (t) => {
@@ -1042,14 +1325,17 @@ test("Federation.setInboxListeners()", async (t) => {
         };
       },
     });
-    const inbox: [Context<void>, Create][] = [];
+    const inbox: [Context<void>, vocab.Create][] = [];
     federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
-      .on(Create, (ctx, create) => {
+      .on(vocab.Create, (ctx, create) => {
         inbox.push([ctx, create]);
       });
 
     let response = await federation.fetch(
-      new Request("https://example.com/inbox", { method: "POST" }),
+      new Request("https://example.com/inbox", {
+        method: "POST",
+        headers: { "accept": "application/ld+json" },
+      }),
       { contextData: undefined },
     );
     assertEquals(inbox, []);
@@ -1058,7 +1344,7 @@ test("Federation.setInboxListeners()", async (t) => {
     federation
       .setActorDispatcher(
         "/users/{identifier}",
-        (_, identifier) => identifier === "john" ? new Person({}) : null,
+        (_, identifier) => identifier === "john" ? new vocab.Person({}) : null,
       )
       .setKeyPairsDispatcher(() => [{
         privateKey: rsaPrivateKey2,
@@ -1069,7 +1355,7 @@ test("Federation.setInboxListeners()", async (t) => {
       contextLoader: mockDocumentLoader,
     };
     const activity = () =>
-      new Create({
+      new vocab.Create({
         id: new URL("https://example.com/activities/" + crypto.randomUUID()),
         actor: new URL("https://example.com/person2"),
       });
@@ -1079,6 +1365,10 @@ test("Federation.setInboxListeners()", async (t) => {
         {
           method: "POST",
           body: JSON.stringify(await activity().toJsonLd(options)),
+          headers: {
+            "accept": "application/ld+json",
+            "content-type": "application/ld+json",
+          },
         },
       ),
       { contextData: undefined },
@@ -1087,7 +1377,10 @@ test("Federation.setInboxListeners()", async (t) => {
     assertEquals(response.status, 401);
 
     response = await federation.fetch(
-      new Request("https://example.com/users/no-one/inbox", { method: "POST" }),
+      new Request("https://example.com/users/no-one/inbox", {
+        method: "POST",
+        headers: { "accept": "application/ld+json" },
+      }),
       { contextData: undefined },
     );
     assertEquals(inbox, []);
@@ -1099,6 +1392,10 @@ test("Federation.setInboxListeners()", async (t) => {
         {
           method: "POST",
           body: JSON.stringify(await activity().toJsonLd(options)),
+          headers: {
+            "accept": "application/ld+json",
+            "content-type": "application/ld+json",
+          },
         },
       ),
       { contextData: undefined },
@@ -1110,7 +1407,10 @@ test("Federation.setInboxListeners()", async (t) => {
     const activityPayload = await activity().toJsonLd(options);
     let request = new Request("https://example.com/users/john/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        accept: "application/ld+json",
+      },
       body: JSON.stringify(activityPayload),
     });
     request = await signRequest(
@@ -1138,7 +1438,10 @@ test("Federation.setInboxListeners()", async (t) => {
     inbox.shift();
     request = new Request("https://another.host/users/john/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        "accept": "application/ld+json",
+      },
       body: JSON.stringify(activityPayload),
     });
     request = await signRequest(
@@ -1165,7 +1468,10 @@ test("Federation.setInboxListeners()", async (t) => {
     inbox.shift();
     request = new Request("https://example.com/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        "accept": "application/ld+json",
+      },
       body: JSON.stringify(await activity().toJsonLd(options)),
     });
     request = await signRequest(
@@ -1187,7 +1493,10 @@ test("Federation.setInboxListeners()", async (t) => {
     inbox.shift();
     request = new Request("https://example.com/users/john/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        "accept": "application/ld+json",
+      },
       body: JSON.stringify(
         await (await signObject(
           activity(),
@@ -1226,7 +1535,7 @@ test("Federation.setInboxListeners()", async (t) => {
     federation
       .setActorDispatcher(
         "/users/{identifier}",
-        (_, identifier) => identifier === "john" ? new Person({}) : null,
+        (_, identifier) => identifier === "john" ? new vocab.Person({}) : null,
       )
       .setKeyPairsDispatcher(() => [{
         privateKey: rsaPrivateKey2,
@@ -1235,19 +1544,22 @@ test("Federation.setInboxListeners()", async (t) => {
     const error = new Error("test");
     const errors: unknown[] = [];
     federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
-      .on(Create, () => {
+      .on(vocab.Create, () => {
         throw error;
       })
       .onError((_, e) => {
         errors.push(e);
       });
 
-    const activity = new Create({
+    const activity = new vocab.Create({
       actor: new URL("https://example.com/person"),
     });
     let request = new Request("https://example.com/users/john/inbox", {
       method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
+      headers: {
+        "Content-Type": "application/activity+json",
+        "Accept": "application/activity+json",
+      },
       body: JSON.stringify(
         await activity.toJsonLd({ contextLoader: mockDocumentLoader }),
       ),
@@ -1346,9 +1658,9 @@ test("FederationImpl.sendActivity()", async (t) => {
     let json = await cl.request!.json();
     if (await verifyJsonLd(json, options)) verified.push("ld");
     json = detachSignature(json);
-    let activity = await verifyObject(Activity, json, options);
+    let activity = await verifyObject(vocab.Activity, json, options);
     if (activity == null) {
-      activity = await Activity.fromJsonLd(json, options);
+      activity = await vocab.Activity.fromJsonLd(json, options);
     } else {
       verified.push("proof");
     }
@@ -1368,7 +1680,7 @@ test("FederationImpl.sendActivity()", async (t) => {
   const context = federation.createContext(new URL("https://example.com/"));
 
   await t.step("success", async () => {
-    const activity = new Create({
+    const activity = new vocab.Create({
       id: new URL("https://example.com/activity/1"),
       actor: new URL("https://example.com/person"),
     });
@@ -1475,7 +1787,7 @@ test("FederationImpl.processQueuedTask()", async (t) => {
       queue,
     });
     federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
-      .on(Create, () => {
+      .on(vocab.Create, () => {
         throw new Error("Intended error for testing");
       });
 
@@ -1554,7 +1866,7 @@ test("FederationImpl.processQueuedTask()", async (t) => {
       queue,
     });
     federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
-      .on(Create, () => {
+      .on(vocab.Create, () => {
         throw new Error("Intended error for testing");
       });
 
@@ -1644,7 +1956,7 @@ test("ContextImpl.lookupObject()", async (t) => {
     });
     const ctx = federation.createContext(new URL("https://example.com/"));
     const result = await ctx.lookupObject("@test@localhost");
-    assertInstanceOf(result, Person);
+    assertInstanceOf(result, vocab.Person);
     assertEquals(result.id, new URL("https://localhost/actor"));
     assertEquals(result.preferredUsername, "test");
   });
@@ -1677,7 +1989,7 @@ test("ContextImpl.sendActivity()", async (t) => {
     const options = {
       async documentLoader(url: string) {
         const response = await federation.fetch(
-          new Request(url),
+          new Request(url, { headers: { "accept": "application/ld+json" } }),
           { contextData: undefined },
         );
         if (response.ok) {
@@ -1706,16 +2018,19 @@ test("ContextImpl.sendActivity()", async (t) => {
           }
           return undefined;
         },
-        async set(_keyId: URL, _key: CryptographicKey | Multikey | null) {
+        async set(
+          _keyId: URL,
+          _key: vocab.CryptographicKey | vocab.Multikey | null,
+        ) {
         },
       } satisfies KeyCache,
     };
     let json = await cl.request!.json();
     if (await verifyJsonLd(json, options)) verified.push("ld");
     json = detachSignature(json);
-    let activity = await verifyObject(Activity, json, options);
+    let activity = await verifyObject(vocab.Activity, json, options);
     if (activity == null) {
-      activity = await Activity.fromJsonLd(json, options);
+      activity = await vocab.Activity.fromJsonLd(json, options);
     } else {
       verified.push("proof");
     }
@@ -1737,7 +2052,7 @@ test("ContextImpl.sendActivity()", async (t) => {
     .setActorDispatcher("/{identifier}", async (ctx, identifier) => {
       if (identifier !== "1") return null;
       const keys = await ctx.getActorKeyPairs(identifier);
-      return new Person({
+      return new vocab.Person({
         id: ctx.getActorUri(identifier),
         preferredUsername: "john",
         publicKey: keys[0].cryptographicKey,
@@ -1769,7 +2084,7 @@ test("ContextImpl.sendActivity()", async (t) => {
   );
 
   await t.step("success", async () => {
-    const activity = new Create({
+    const activity = new vocab.Create({
       actor: new URL("https://example.com/person"),
     });
     const ctx = new ContextImpl({
@@ -1896,7 +2211,7 @@ test("ContextImpl.sendActivity()", async (t) => {
     .setActorDispatcher("/{identifier}", async (ctx, identifier) => {
       if (identifier !== "john") return null;
       const keys = await ctx.getActorKeyPairs(identifier);
-      return new Person({
+      return new vocab.Person({
         id: ctx.getActorUri(identifier),
         preferredUsername: "john",
         publicKey: keys[0].cryptographicKey,
@@ -1922,7 +2237,7 @@ test("ContextImpl.sendActivity()", async (t) => {
   });
 
   await t.step('fanout: "force"', async () => {
-    const activity = new Create({
+    const activity = new vocab.Create({
       id: new URL("https://example.com/activity/1"),
       actor: new URL("https://example.com/person"),
     });
@@ -1964,7 +2279,7 @@ test("ContextImpl.sendActivity()", async (t) => {
   queue.clear();
 
   await t.step('fanout: "skip"', async () => {
-    const activity = new Create({
+    const activity = new vocab.Create({
       id: new URL("https://example.com/activity/1"),
       actor: new URL("https://example.com/person"),
     });
@@ -1988,7 +2303,7 @@ test("ContextImpl.sendActivity()", async (t) => {
   queue.clear();
 
   await t.step('fanout: "auto"', async () => {
-    const activity = new Create({
+    const activity = new vocab.Create({
       id: new URL("https://example.com/activity/1"),
       actor: new URL("https://example.com/person"),
     });
@@ -2055,7 +2370,7 @@ test("ContextImpl.sendActivity()", async (t) => {
       contextLoader: fetchDocumentLoader,
     });
 
-    const activity = new Create({
+    const activity = new vocab.Create({
       id: new URL("https://example.com/activity/1"),
       actor: ctx.getActorUri("1"),
       to: ctx.getFollowersUri("1"),
@@ -2077,7 +2392,7 @@ test("ContextImpl.sendActivity()", async (t) => {
       contextLoader: fetchDocumentLoader,
     });
 
-    const activity = new Create({
+    const activity = new vocab.Create({
       id: new URL("https://example.com/activity/2"),
       actor: ctx.getActorUri("1"),
       to: ctx.getFollowersUri("1"),
@@ -2104,10 +2419,10 @@ test({
       kv: new MemoryKvStore(),
     });
 
-    const activities: [string | null, Activity][] = [];
+    const activities: [string | null, vocab.Activity][] = [];
     federation
       .setInboxListeners("/u/{identifier}/i", "/i")
-      .on(Offer, (ctx, offer) => {
+      .on(vocab.Offer, (ctx, offer) => {
         activities.push([ctx.recipient, offer]);
       });
 
@@ -2123,7 +2438,7 @@ test({
     assertFalse(
       await ctx.routeActivity(
         null,
-        new Offer({
+        new vocab.Offer({
           actor: new URL("https://example.com/person"),
         }),
       ),
@@ -2132,7 +2447,7 @@ test({
 
     // Signed activity without recipient (shared inbox)
     const signedOffer = await signObject(
-      new Offer({
+      new vocab.Offer({
         actor: new URL("https://example.com/person2"),
       }),
       ed25519PrivateKey,
@@ -2143,7 +2458,7 @@ test({
 
     // Signed activity with recipient (personal inbox)
     const signedInvite = await signObject(
-      new Invite({
+      new vocab.Invite({
         actor: new URL("https://example.com/person2"),
       }),
       ed25519PrivateKey,
@@ -2156,7 +2471,7 @@ test({
     assertFalse(
       await ctx.routeActivity(
         null,
-        new Create({
+        new vocab.Create({
           id: new URL("https://example.com/not-found"),
           actor: new URL("https://example.com/person"),
         }),
@@ -2168,7 +2483,7 @@ test({
     assertFalse(
       await ctx.routeActivity(
         null,
-        new Create({
+        new vocab.Create({
           id: new URL("https://example.com/person"),
           actor: new URL("https://example.com/person"),
         }),
@@ -2180,7 +2495,7 @@ test({
     assertFalse(
       await ctx.routeActivity(
         null,
-        new Announce({
+        new vocab.Announce({
           id: new URL("https://example.com/announce#diffrent-id"),
           actor: new URL("https://example.com/person"),
         }),
@@ -2192,7 +2507,7 @@ test({
     assertFalse(
       await ctx.routeActivity(
         null,
-        new Announce({
+        new vocab.Announce({
           id: new URL("https://example.com/announce"),
           // Although the actor is set here, the fetched document has no actor.
           // See also fedify/testing/fixtures/example.com/announce
@@ -2206,7 +2521,7 @@ test({
     assertFalse(
       await ctx.routeActivity(
         null,
-        new Create({
+        new vocab.Create({
           id: new URL("https://example.com/cross-origin-actor"),
           actor: new URL("https://cross-origin.com/actor"),
         }),
@@ -2218,7 +2533,7 @@ test({
     assert(
       await ctx.routeActivity(
         null,
-        new Create({
+        new vocab.Create({
           id: new URL("https://example.com/create"),
           actor: new URL("https://example.com/person"),
         }),
@@ -2230,7 +2545,7 @@ test({
     assert(
       await ctx.routeActivity(
         null,
-        new Invite({
+        new vocab.Invite({
           id: new URL("https://example.com/invite"),
           actor: new URL("https://example.com/person"),
         }),
@@ -2243,7 +2558,7 @@ test({
         ["id", signedInvite],
         [
           null,
-          new Invite({
+          new vocab.Invite({
             id: new URL("https://example.com/invite"),
             actor: new URL("https://example.com/person"),
             object: new URL("https://example.com/object"),
@@ -2276,7 +2591,7 @@ test("ContextImpl.getCollectionUri()", () => {
 
   federation.setCollectionDispatcher(
     strName,
-    Object,
+    vocab.Object,
     "/string-route/{id}",
     dispatcher,
   );
@@ -2287,7 +2602,7 @@ test("ContextImpl.getCollectionUri()", () => {
   const unnamedSymName = Symbol(strName);
   federation.setCollectionDispatcher(
     unnamedSymName,
-    Object,
+    vocab.Object,
     "/symbol-route/{id}",
     dispatcher,
   );
@@ -2298,7 +2613,7 @@ test("ContextImpl.getCollectionUri()", () => {
   const namedSymName = Symbol.for(strName);
   federation.setCollectionDispatcher(
     namedSymName,
-    Object,
+    vocab.Object,
     "/named-symbol-route/{id}",
     dispatcher,
   );
@@ -2327,9 +2642,9 @@ test("InboxContextImpl.forwardActivity()", async (t) => {
     let json = await cl.request!.json();
     if (await verifyJsonLd(json, options)) verified.push("ld");
     json = detachSignature(json);
-    let activity = await verifyObject(Activity, json, options);
+    let activity = await verifyObject(vocab.Activity, json, options);
     if (activity == null) {
-      activity = await Activity.fromJsonLd(json, options);
+      activity = await vocab.Activity.fromJsonLd(json, options);
     } else {
       verified.push("proof");
     }
@@ -2412,7 +2727,7 @@ test("InboxContextImpl.forwardActivity()", async (t) => {
 
   await t.step("Object Integrity Proofs", async () => {
     const activity = await signObject(
-      new Create({
+      new vocab.Create({
         id: new URL("https://example.com/activity"),
         actor: new URL("https://example.com/person2"),
       }),
