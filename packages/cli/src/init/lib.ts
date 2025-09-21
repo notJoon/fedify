@@ -99,7 +99,11 @@ export const readTemplate: (templatePath: string) => string = (
   templatePath,
 ) =>
   readFileSync(
-    joinPath(import.meta.dirname!, "templates", ...templatePath.split("/")),
+    joinPath(
+      import.meta.dirname!,
+      "templates",
+      ...(templatePath + ".tpl").split("/"),
+    ),
     "utf8",
   );
 
