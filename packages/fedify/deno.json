@@ -99,7 +99,7 @@
         "codegen"
       ]
     },
-    "pnpm:install": "pnpm install",
+    "pnpm:install": "pnpm install --silent",
     "pnpm:build": {
       "command": "pnpm exec tsdown",
       "dependencies": [
