@@ -76,7 +76,7 @@
         "codegen"
       ]
     },
-    "install": "pnpm install",
+    "install": "pnpm install --loglevel warn",
     "test": {
       "command": "deno test --check --doc --allow-all --unstable-kv --trace-leaks --parallel",
       "dependencies": [
