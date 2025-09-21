@@ -1,4 +1,13 @@
-import { apply, entries, map, pipe, tap } from "@fxts/core";
+import {
+  apply,
+  entries,
+  forEach,
+  map,
+  peek,
+  pipe,
+  pipeLazy,
+  tap,
+} from "@fxts/core";
 import { stringify } from "@std/dotenv";
 import { toMerged } from "es-toolkit";
 import { readFile } from "node:fs/promises";
@@ -141,13 +150,12 @@ const processAllFiles = (
   pipe(
     files,
     entries,
-    map((i) =>
-      pipe(
-        i,
+    forEach(
+      pipeLazy(
         joinDir(dir),
         apply(patchContent),
         apply(process),
-      )
+      ),
     ),
   );
 
