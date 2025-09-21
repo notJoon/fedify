@@ -22,11 +22,11 @@ export const joinDir =
  *
  * @example Usage
  * ```ts
- * import { stringify } from "./utils.ts";
+ * import { stringifyEnvs } from "./utils.ts";
  * import { assertEquals } from "@std/assert";
  *
  * const object = { GREETING: "hello world" };
- * assertEquals(stringify(object), "GREETING='hello world'");
+ * assertEquals(stringifyEnvs(object), "GREETING='hello world'");
  * ```
  *
  * @param object object to be stringified
