@@ -1,9 +1,9 @@
 import { join as joinPath } from "@std/path";
-import biome from "../templates/json/biome.json" with { type: "json" };
-import vscodeSettingsForDeno from "../templates/json/vscode-settings-for-deno.json" with {
+import biome from "../json/biome.json" with { type: "json" };
+import vscodeSettingsForDeno from "../json/vscode-settings-for-deno.json" with {
   type: "json",
 };
-import vscodeSettings from "../templates/json/vscode-settings.json" with {
+import vscodeSettings from "../json/vscode-settings.json" with {
   type: "json",
 };
 import type { InitCommandData } from "../types.ts";

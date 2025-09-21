@@ -18,10 +18,10 @@ import { mkdir, readdir, writeFile } from "node:fs/promises";
 import process from "node:process";
 import metadata from "../../deno.json" with { type: "json" };
 import { isNotFoundError, runSubCommand } from "../utils.ts";
-import kv from "./templates/json/kv.json" with { type: "json" };
-import mq from "./templates/json/mq.json" with { type: "json" };
-import pm from "./templates/json/pm.json" with { type: "json" };
-import rt from "./templates/json/rt.json" with { type: "json" };
+import kv from "./json/kv.json" with { type: "json" };
+import mq from "./json/mq.json" with { type: "json" };
+import pm from "./json/pm.json" with { type: "json" };
+import rt from "./json/rt.json" with { type: "json" };
 import type {
   KvStores,
   MessageQueues,
