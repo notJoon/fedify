@@ -1,5 +1,4 @@
 import { apply, entries, forEach, pipe, pipeLazy, tap } from "@fxts/core";
-import { stringify } from "@std/dotenv";
 import { toMerged } from "es-toolkit";
 import { readFile } from "node:fs/promises";
 import { formatJson, merge, set } from "../../utils.ts";
@@ -17,7 +16,7 @@ import {
   noticeFilesToInsert,
 } from "./notice.ts";
 import { getImports, loadFederation, loadLogging } from "./templates.ts";
-import { joinDir } from "./utils.ts";
+import { joinDir, stringifyEnvs } from "./utils.ts";
 
 /**
  * Main function that initializes the project by creating necessary files and configurations.
@@ -59,7 +58,7 @@ const getFiles = <
     ...data,
   }),
   [data.initializer.loggingFile]: loadLogging(data),
-  ".env": stringify(data.env),
+  ".env": stringifyEnvs(data.env),
   ...data.initializer.files,
 });
 
