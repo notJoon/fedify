@@ -28,6 +28,7 @@ export default fillDir;
 
 const askDir = (cwd: string) =>
   input({ message: "Project directory:", default: cwd });
+
 const askIfNonEmpty = async (dir: string) => {
   if (await isDirectoryEmpty(dir)) return true;
   if (await askNonEmpty(dir)) return await moveDirToTrash(dir);

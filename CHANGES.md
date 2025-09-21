@@ -43,6 +43,19 @@ To be released.
 [#393]: https://github.com/fedify-dev/fedify/pulls/393
 [#433]: https://github.com/fedify-dev/fedify/pull/433
 
+### @fedify/cli
+
+ -  Updated `fedify init` command for better DX.
+    [[#397], [#435] by Chanhaeng Lee]
+
+     - If the directory is not empty, prompts the user for confirmation
+       before proceeding. If the user agrees, it moves the remaining directory
+       to trash and continue the initialization from new created directory.
+     - Ask again if some options is not specified or invalid.
+
+[#397]: https://github.com/fedify-dev/fedify/issues/397
+[#435]: https://github.com/fedify-dev/fedify/issues/435
+
 Version 1.9.0
 -------------
 
