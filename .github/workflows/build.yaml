@@ -54,7 +54,7 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: 2.5.0  # Keep in sync with mise.toml
-        cache-hash: ${{ hashFiles('**/deno.json') }}
+        cache-hash: ${{ hashFiles('**/deno.json', '**/pnpm-lock.yaml') }}
     - run: deno task test --coverage=.cov --junit-path=.test-report.xml
       env:
         RUST_BACKTRACE: ${{ runner.debug }}
@@ -232,7 +232,7 @@ jobs:
     - uses: denoland/setup-deno@v2
       with:
         deno-version: 2.5.0  # Keep in sync with mise.toml
-        cache-hash: ${{ hashFiles('**/deno.json') }}
+        cache-hash: ${{ hashFiles('**/deno.json', '**/pnpm-lock.yaml') }}
     - run: deno task hooks:pre-commit
 
   release-test:
