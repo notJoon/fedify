@@ -10,6 +10,12 @@ To be released.
 
 ### @fedify/fedify
 
+ -  Fixed handling of ActivityPub objects containing relative URLs.  The
+    Activity Vocabulary classes now properly resolve relative URLs when
+    a `baseUrl` option is provided to `fromJsonLd()` method, improving
+    interoperability with ActivityPub servers that emit relative URLs in
+    properties like `icon.url` and `image.url`.  [[#411], [#443] by Jiwon Kwon]
+
  -  Added inverse properties for collections to Vocabulary API.
     [[FEP-5711], [#373], [#381] by Jiwon Kwon]
 
@@ -78,7 +84,10 @@ To be released.
 [#402]: https://github.com/fedify-dev/fedify/issues/402
 [#404]: https://github.com/fedify-dev/fedify/pull/404
 [#407]: https://github.com/fedify-dev/fedify/pull/407
+[#411]: https://github.com/fedify-dev/fedify/issues/411
 [#429]: https://github.com/fedify-dev/fedify/issues/429
+[#431]: https://github.com/fedify-dev/fedify/pull/431
+[#443]: https://github.com/fedify-dev/fedify/pull/443
 
 ### @fedify/cli
 

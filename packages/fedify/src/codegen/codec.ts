@@ -287,6 +287,7 @@ export async function* generateDecoder(
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
+      baseUrl?: URL,
     } = {},
   ): Promise<${type.name}> {
     const tracerProvider = options.tracerProvider ?? trace.getTracerProvider();
@@ -324,6 +325,7 @@ export async function* generateDecoder(
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
+      baseUrl?: URL,
     } = {},
   ): Promise<${type.name}> {
     if (typeof json === "undefined") {

@@ -64,7 +64,8 @@ async function* generateProperty(
         contextLoader?: DocumentLoader,
         suppressError?: boolean,
         tracerProvider?: TracerProvider,
-      } = {}
+        baseUrl?: URL
+      } = {},
     ): Promise<${getTypeNames(property.range, types)} | null> {
       const documentLoader =
         options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
@@ -76,6 +77,7 @@ async function* generateProperty(
         ${JSON.stringify(metadata.name)},
         ${JSON.stringify(metadata.version)},
       );
+      const baseUrl = options.baseUrl;
       return await tracer.startActiveSpan("activitypub.lookup_object", async (span) => {
         let fetchResult: RemoteDocument;
         try {
@@ -99,7 +101,7 @@ async function* generateProperty(
         try {
           const obj = await this.#${property.singularName}_fromJsonLd(
             document,
-            { documentLoader, contextLoader, tracerProvider }
+            { documentLoader, contextLoader, tracerProvider, baseUrl }
           );
           span.setAttribute("activitypub.object.id", (obj.id ?? url).href);
           span.setAttribute(
@@ -133,6 +135,7 @@ async function* generateProperty(
         documentLoader?: DocumentLoader,
         contextLoader?: DocumentLoader,
         tracerProvider?: TracerProvider,
+        baseUrl?: URL
       }
     ): Promise<${getTypeNames(property.range, types)}> {
       const documentLoader =
@@ -141,6 +144,7 @@ async function* generateProperty(
         options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
       const tracerProvider = options.tracerProvider ??
         this._tracerProvider ?? trace.getTracerProvider();
+      const baseUrl = options.baseUrl;
     `;
     for (const range of property.range) {
       if (!(range in types)) continue;
@@ -149,7 +153,7 @@ async function* generateProperty(
         try {
           return await ${rangeType.name}.fromJsonLd(
             jsonLd,
-            { documentLoader, contextLoader, tracerProvider },
+            { documentLoader, contextLoader, tracerProvider, baseUrl },
           );
         } catch (e) {
           if (!(e instanceof TypeError)) throw e;
@@ -190,6 +194,7 @@ async function* generateProperty(
           contextLoader?: DocumentLoader,
           suppressError?: boolean,
           tracerProvider?: TracerProvider,
+          baseUrl?: URL
         } = {}
       ): Promise<${getTypeNames(property.range, types)} | null> {
         if (this._warning != null) {
@@ -221,7 +226,7 @@ async function* generateProperty(
             ${JSON.stringify(property.compactName)}];
           const obj = Array.isArray(prop) ? prop[0] : prop;
           if (obj != null && typeof obj === "object" && "@context" in obj) {
-            return await this.#${property.singularName}_fromJsonLd(obj, options);
+            return await this.#${property.singularName}_fromJsonLd(obj, {...options, baseUrl: options.baseUrl});
           }
         }
         `;
@@ -258,6 +263,7 @@ async function* generateProperty(
           contextLoader?: DocumentLoader,
           suppressError?: boolean,
           tracerProvider?: TracerProvider,
+          baseUrl?: URL
         } = {}
       ): AsyncIterable<${getTypeNames(property.range, types)}> {
         if (this._warning != null) {
@@ -272,7 +278,7 @@ async function* generateProperty(
           if (v instanceof URL) {
             const fetched =
               await this.#fetch${pascalCase(property.singularName)}(
-                v, options);
+                v, {...options, baseUrl: options.baseUrl});
             if (fetched == null) continue;
             vs[i] = fetched;
             this._cachedJsonLd = undefined;
@@ -292,7 +298,8 @@ async function* generateProperty(
               ${JSON.stringify(property.compactName)}];
             const obj = Array.isArray(prop) ? prop[i] : prop;
             if (obj != null && typeof obj === "object" && "@context" in obj) {
-              yield await this.#${property.singularName}_fromJsonLd(obj, options);
+              yield await this.#${property.singularName}_fromJsonLd(obj, {...options, baseUrl: options.baseUrl
+              });
               continue;
             }
           }
