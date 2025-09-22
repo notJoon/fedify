@@ -1358,7 +1358,6 @@ for (const typeUri in types) {
       icon?.url,
       new URL("https://example.com/avatars/test-avatar.jpg"),
     );
-    assertEquals(personWithBase.baseUrl, new URL("https://example.com"));
   });
 
   if ("Deno" in globalThis) {

@@ -16,7 +16,7 @@ interface ScalarType {
   encoder(variable: string): string;
   compactEncoder?: (variable: string) => string;
   dataCheck(variable: string): string;
-  decoder(variable: string): string;
+  decoder(variable: string, baseUrlVar: string): string;
 }
 
 const scalarTypes: Record<string, ScalarType> = {
@@ -143,7 +143,7 @@ const scalarTypes: Record<string, ScalarType> = {
         && typeof ${v}["@id"] === "string"
         && ${v}["@id"] !== ""`;
     },
-    decoder(v) {
+    decoder(v, baseUrlVar) {
       return `${v}["@id"].startsWith("at://")
         ? new URL("at://" +
           encodeURIComponent(
@@ -157,9 +157,9 @@ const scalarTypes: Record<string, ScalarType> = {
               : ""
           )
         )
-        : URL.canParse(${v}["@id"]) && options.baseUrl
+        : URL.canParse(${v}["@id"]) && ${baseUrlVar}
           ? new URL(${v}["@id"])
-          : new URL(${v}["@id"], options.baseUrl)`;
+          : new URL(${v}["@id"], ${baseUrlVar})`;
     },
   },
   "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString": {
@@ -578,7 +578,12 @@ export function getDecoder(
   variable: string,
   optionsVariable: string,
 ): string {
-  if (typeUri in scalarTypes) return scalarTypes[typeUri].decoder(variable);
+  if (typeUri in scalarTypes) {
+    return scalarTypes[typeUri].decoder(
+      variable,
+      `${optionsVariable}?.baseUrl`,
+    );
+  }
   if (typeUri in types) {
     return `await ${types[typeUri].name}.fromJsonLd(
       ${variable}, ${optionsVariable})`;

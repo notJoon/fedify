@@ -33,7 +33,6 @@ export class Object {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -75,13 +74,6 @@ export class Object {
      */
     static  get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Object\\");
-    }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
     }
   #_49BipA5dq9eoH8LX8xdsVumveTca_attachment: (Object | Link | PropertyValue | URL)[] = [];
 #_42CGqJ94zgQ3ZBbfHwD8Hrr2L5Py_attributedTo: (Application | Group | Organization | Person | Service | URL)[] = [];
@@ -147,14 +139,12 @@ proofs?: (DataIntegrityProof | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -8548,9 +8538,9 @@ get urls(): ((URL | Link))[] {
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl) : typeof v === \\"object\\" && \\"@type\\" in v
+          : new URL(v[\\"@id\\"], options?.baseUrl) : typeof v === \\"object\\" && \\"@type\\" in v
       && Array.isArray(v[\\"@type\\"])&& [\\"https://www.w3.org/ns/activitystreams#Link\\",\\"https://www.w3.org/ns/activitystreams#Hashtag\\",\\"https://www.w3.org/ns/activitystreams#Mention\\"].some(
             t => v[\\"@type\\"].includes(t)) ? await Link.fromJsonLd(
       v, options) : undefined
@@ -9559,13 +9549,6 @@ export class Emoji extends Object {
     static override get typeId(): URL {
       return new URL(\\"http://joinmastodon.org/ns#Emoji\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Emoji with the given values.
@@ -9598,7 +9581,6 @@ proofs?: (DataIntegrityProof | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -9902,13 +9884,6 @@ export class ChatMessage extends Object {
     static override get typeId(): URL {
       return new URL(\\"http://litepub.social/ns#ChatMessage\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_K1zrMQkQjmciFAmGdGLfaDbG925_quoteUrl: (URL)[] = [];
 
   /**
@@ -9942,7 +9917,6 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -10381,13 +10355,6 @@ export class Activity extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Activity\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2DjTTboo3CNHU2a2JQqUSE2dbv9D_actor: (Application | Group | Organization | Person | Service | URL)[] = [];
 #_2MH19yxjn1wnHsNfa5n4JBhJzxyc_object: (Object | URL)[] = [];
 #_3JQCmF2Ww56Ag9EWRYoSZRDNCYtF_target: (Object | URL)[] = [];
@@ -10432,7 +10399,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -13160,13 +13126,6 @@ export class EmojiReact extends Activity {
     static override get typeId(): URL {
       return new URL(\\"http://litepub.social/ns#EmojiReact\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of EmojiReact with the given values.
@@ -13205,7 +13164,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -13490,7 +13448,6 @@ export class PropertyValue {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -13533,13 +13490,6 @@ export class PropertyValue {
     static  get typeId(): URL {
       return new URL(\\"http://schema.org#PropertyValue\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_4ZHbBuK7PrsvGgrjM8wgc6KMWjav_name: ((string | LanguageString))[] = [];
 #_2cSy2magg4iZ7zLaG8U7DiJMoCkx_value: ((string | LanguageString))[] = [];
 
@@ -13558,14 +13508,12 @@ name?: string | LanguageString | null;value?: string | LanguageString | null;}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -14094,7 +14042,6 @@ export class DidService {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -14137,13 +14084,6 @@ export class DidService {
     static  get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/did#Service\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2KM4fetG6FTJ1cphj76rzJ8Dyv7p_serviceEndpoint: (URL)[] = [];
 
   /**
@@ -14162,14 +14102,12 @@ endpoints?: (URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -14512,9 +14450,9 @@ get endpoints(): (URL)[] {
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl))
+          : new URL(v[\\"@id\\"], options?.baseUrl))
     }
     instance.#_2KM4fetG6FTJ1cphj76rzJ8Dyv7p_serviceEndpoint = _2KM4fetG6FTJ1cphj76rzJ8Dyv7p_serviceEndpoint;
     
@@ -14608,13 +14546,6 @@ export class Export extends DidService {
     static override get typeId(): URL {
       return new URL(\\"https://w3id.org/fep/9091#Export\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Export with the given values.
@@ -14632,7 +14563,6 @@ endpoints?: (URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -14887,7 +14817,6 @@ export class DataIntegrityProof {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -14930,13 +14859,6 @@ export class DataIntegrityProof {
     static  get typeId(): URL {
       return new URL(\\"https://w3id.org/security#DataIntegrityProof\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_3RurJsa7tnptyqMFR5hDGcP9pMs5_cryptosuite: (\\"eddsa-jcs-2022\\")[] = [];
 #_2mHVKxqA7zncjveJrDEo3pWpMZqg_verificationMethod: (Multikey | URL)[] = [];
 #_2AeEnPcAvVrPEuKbpmn9ZKNmWHKb_proofPurpose: (\\"assertionMethod\\" | \\"authentication\\" | \\"capabilityInvocation\\" | \\"capabilityDelegation\\" | \\"keyAgreement\\")[] = [];
@@ -14958,14 +14880,12 @@ cryptosuite?: \\"eddsa-jcs-2022\\" | null;verificationMethod?: Multikey | URL | 
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -15847,7 +15767,6 @@ export class CryptographicKey {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -15890,13 +15809,6 @@ export class CryptographicKey {
     static  get typeId(): URL {
       return new URL(\\"https://w3id.org/security#Key\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_5UJq9NDh3ZHgswFwwdVxQvJxdx2_owner: (Application | Group | Organization | Person | Service | URL)[] = [];
 #_2fE2QMDdg6KFGqa4NEC3TmjApSAD_publicKeyPem: (CryptoKey)[] = [];
 
@@ -15915,14 +15827,12 @@ owner?: Application | Group | Organization | Person | Service | URL | null;publi
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -16653,7 +16563,6 @@ export class Multikey {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -16696,13 +16605,6 @@ export class Multikey {
     static  get typeId(): URL {
       return new URL(\\"https://w3id.org/security#Multikey\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2yr3eUBTP6cNcyaxKzAXWjFsnGzN_controller: (Application | Group | Organization | Person | Service | URL)[] = [];
 #_4XLHbsR2gLVWU3NpEqKt9wANzn4F_publicKeyMultibase: (CryptoKey)[] = [];
 
@@ -16721,14 +16623,12 @@ controller?: Application | Group | Organization | Person | Service | URL | null;
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -17468,13 +17368,6 @@ export class Accept extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Accept\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Accept with the given values.
@@ -17513,7 +17406,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -17809,13 +17701,6 @@ export class Add extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Add\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Add with the given values.
@@ -17854,7 +17739,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -18145,13 +18029,6 @@ export class Announce extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Announce\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Announce with the given values.
@@ -18190,7 +18067,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -18478,13 +18354,6 @@ export class Application extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Application\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_3isuDgRAKSntq9XdbjiNxjwyPZAf_preferredUsername: ((string | LanguageString))[] = [];
 #_axq166E2eZADq34V4MYUc8KMZdC_publicKey: (CryptographicKey | URL)[] = [];
 #_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod: (Multikey | URL)[] = [];
@@ -18544,7 +18413,6 @@ services?: (DidService | URL)[];followedMessage?: string | null;cat?: boolean | 
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -24165,13 +24033,6 @@ export class IntransitiveActivity extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#IntransitiveActivity\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of IntransitiveActivity with the given values.
@@ -24210,7 +24071,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -24513,13 +24373,6 @@ export class Arrive extends IntransitiveActivity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Arrive\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Arrive with the given values.
@@ -24558,7 +24411,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -24846,13 +24698,6 @@ export class Article extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Article\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_K1zrMQkQjmciFAmGdGLfaDbG925_quoteUrl: (URL)[] = [];
 
   /**
@@ -24886,7 +24731,6 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -25320,13 +25164,6 @@ export class Document extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Document\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2e9AP7WdHBJYAgXG6GEyq7nSkNMe_width: (number)[] = [];
 #_2cGKFeFJMmiNpGZFEF75mCwFQsKb_height: (number)[] = [];
 
@@ -25361,7 +25198,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -25892,13 +25728,6 @@ export class Audio extends Document {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Audio\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Audio with the given values.
@@ -25931,7 +25760,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -26232,13 +26060,6 @@ export class Ignore extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Ignore\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Ignore with the given values.
@@ -26277,7 +26098,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -26573,13 +26393,6 @@ export class Block extends Ignore {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Block\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Block with the given values.
@@ -26618,7 +26431,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -26911,13 +26723,6 @@ export class Collection extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Collection\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_XDbmNDuWHmrhqH712zqtecdbv1V_totalItems: (number)[] = [];
 #_3UyUdxnyn6cDn53QKrh4MBiearma_current: (CollectionPage | URL)[] = [];
 #_J52RqweMe6hhv7RnLJMC8BExTE5_first: (CollectionPage | URL)[] = [];
@@ -26963,7 +26768,6 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -30701,13 +30505,6 @@ export class CollectionPage extends Collection {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#CollectionPage\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2kWgBhQKjEauxx8C6qF3ZQamK4Le_partOf: (Collection | URL)[] = [];
 #_3BT4kQLcXhHx7TAWaNDKh8nFn9eY_next: (CollectionPage | URL)[] = [];
 #_3b8yG8tDNzQFFEnWhCc13G8eHooA_prev: (CollectionPage | URL)[] = [];
@@ -30743,7 +30540,6 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -31865,13 +31661,6 @@ export class Create extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Create\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Create with the given values.
@@ -31910,7 +31699,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -32200,13 +31988,6 @@ export class Delete extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Delete\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Delete with the given values.
@@ -32245,7 +32026,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -32533,13 +32313,6 @@ export class Dislike extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Dislike\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Dislike with the given values.
@@ -32578,7 +32351,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -32863,7 +32635,6 @@ export class Endpoints {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -32906,13 +32677,6 @@ export class Endpoints {
     static  get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Endpoints\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2JCYDbSxEHCCLdBYed33cCETfGyR_proxyUrl: (URL)[] = [];
 #_25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint: (URL)[] = [];
 #_iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint: (URL)[] = [];
@@ -32935,14 +32699,12 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -33622,9 +33384,9 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl))
+          : new URL(v[\\"@id\\"], options?.baseUrl))
     }
     instance.#_2JCYDbSxEHCCLdBYed33cCETfGyR_proxyUrl = _2JCYDbSxEHCCLdBYed33cCETfGyR_proxyUrl;
     const _25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint: (URL)[] = [];
@@ -33652,9 +33414,9 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl))
+          : new URL(v[\\"@id\\"], options?.baseUrl))
     }
     instance.#_25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint = _25S6UmgzDead8hxL5sQFezZTAusd_oauthAuthorizationEndpoint;
     const _iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint: (URL)[] = [];
@@ -33682,9 +33444,9 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl))
+          : new URL(v[\\"@id\\"], options?.baseUrl))
     }
     instance.#_iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint = _iAMxqrSba7yBCRB1FZ5kEVdKEZ3_oauthTokenEndpoint;
     const _8Bx9qN8oU7Bpt2xi6khaxWp1gMr_provideClientKey: (URL)[] = [];
@@ -33712,9 +33474,9 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl))
+          : new URL(v[\\"@id\\"], options?.baseUrl))
     }
     instance.#_8Bx9qN8oU7Bpt2xi6khaxWp1gMr_provideClientKey = _8Bx9qN8oU7Bpt2xi6khaxWp1gMr_provideClientKey;
     const _3dU7PMVQZJpsCpo2F4RQXxBXdPmS_signClientKey: (URL)[] = [];
@@ -33742,9 +33504,9 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl))
+          : new URL(v[\\"@id\\"], options?.baseUrl))
     }
     instance.#_3dU7PMVQZJpsCpo2F4RQXxBXdPmS_signClientKey = _3dU7PMVQZJpsCpo2F4RQXxBXdPmS_signClientKey;
     const _3JprUSDLVqqX4dwHRi37qGZZCRCc_sharedInbox: (URL)[] = [];
@@ -33772,9 +33534,9 @@ proxyUrl?: URL | null;oauthAuthorizationEndpoint?: URL | null;oauthTokenEndpoint
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl))
+          : new URL(v[\\"@id\\"], options?.baseUrl))
     }
     instance.#_3JprUSDLVqqX4dwHRi37qGZZCRCc_sharedInbox = _3JprUSDLVqqX4dwHRi37qGZZCRCc_sharedInbox;
     
@@ -33961,13 +33723,6 @@ export class Event extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Event\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Event with the given values.
@@ -34000,7 +33755,6 @@ proofs?: (DataIntegrityProof | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -34302,13 +34056,6 @@ export class Flag extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Flag\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Flag with the given values.
@@ -34347,7 +34094,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -34639,13 +34385,6 @@ export class Follow extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Follow\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Follow with the given values.
@@ -34684,7 +34423,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -34972,13 +34710,6 @@ export class Group extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Group\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_3isuDgRAKSntq9XdbjiNxjwyPZAf_preferredUsername: ((string | LanguageString))[] = [];
 #_axq166E2eZADq34V4MYUc8KMZdC_publicKey: (CryptographicKey | URL)[] = [];
 #_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod: (Multikey | URL)[] = [];
@@ -35038,7 +34769,6 @@ services?: (DidService | URL)[];followedMessage?: string | null;cat?: boolean | 
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -40661,7 +40391,6 @@ export class Link {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -40704,13 +40433,6 @@ export class Link {
     static  get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Link\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_pVjLsybKQdmkjuU7MHjiVmNnuj7_href: (URL)[] = [];
 #_2a1c5GkfkQsnyyLybF8UXBQfFuHZ_rel: (string)[] = [];
 #_3BLrzmscsjHCw8TF5BHRW9WkPnX8_mediaType: (string)[] = [];
@@ -40737,14 +40459,12 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -41864,9 +41584,9 @@ get names(): ((string | LanguageString))[] {
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl))
+          : new URL(v[\\"@id\\"], options?.baseUrl))
     }
     instance.#_pVjLsybKQdmkjuU7MHjiVmNnuj7_href = _pVjLsybKQdmkjuU7MHjiVmNnuj7_href;
     const _2a1c5GkfkQsnyyLybF8UXBQfFuHZ_rel: (string)[] = [];
@@ -42246,13 +41966,6 @@ export class Hashtag extends Link {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Hashtag\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Hashtag with the given values.
@@ -42271,7 +41984,6 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -42545,13 +42257,6 @@ export class Image extends Document {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Image\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Image with the given values.
@@ -42584,7 +42289,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -42886,13 +42590,6 @@ export class Offer extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Offer\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Offer with the given values.
@@ -42931,7 +42628,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -43225,13 +42921,6 @@ export class Invite extends Offer {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Invite\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Invite with the given values.
@@ -43270,7 +42959,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -43560,13 +43248,6 @@ export class Join extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Join\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Join with the given values.
@@ -43605,7 +43286,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -43895,13 +43575,6 @@ export class Leave extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Leave\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Leave with the given values.
@@ -43940,7 +43613,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -44230,13 +43902,6 @@ export class Like extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Like\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Like with the given values.
@@ -44275,7 +43940,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -44563,13 +44227,6 @@ export class Listen extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Listen\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Listen with the given values.
@@ -44608,7 +44265,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -44896,13 +44552,6 @@ export class Mention extends Link {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Mention\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Mention with the given values.
@@ -44921,7 +44570,6 @@ names?: ((string | LanguageString))[];language?: LanguageTag | null;height?: num
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -45198,13 +44846,6 @@ export class Move extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Move\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Move with the given values.
@@ -45243,7 +44884,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -45533,13 +45173,6 @@ export class Note extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Note\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_K1zrMQkQjmciFAmGdGLfaDbG925_quoteUrl: (URL)[] = [];
 
   /**
@@ -45573,7 +45206,6 @@ proofs?: (DataIntegrityProof | URL)[];quoteUrl?: URL | null;}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -46009,13 +45641,6 @@ export class OrderedCollection extends Collection {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#OrderedCollection\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2JPCKWTcfBmTCcW8Tv3TpRaLVaqg_items: (Object | Link | URL)[] = [];
 
   /**
@@ -46049,7 +45674,6 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -46657,13 +46281,6 @@ export class OrderedCollectionPage extends CollectionPage {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#OrderedCollectionPage\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2JPCKWTcfBmTCcW8Tv3TpRaLVaqg_items: (Object | Link | URL)[] = [];
 #_2W4yinFwqmpneu2h4m1mZ3pcLADd_startIndex: (number)[] = [];
 
@@ -46698,7 +46315,6 @@ proofs?: (DataIntegrityProof | URL)[];totalItems?: number | null;current?: Colle
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -47411,13 +47027,6 @@ export class Organization extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Organization\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_3isuDgRAKSntq9XdbjiNxjwyPZAf_preferredUsername: ((string | LanguageString))[] = [];
 #_axq166E2eZADq34V4MYUc8KMZdC_publicKey: (CryptographicKey | URL)[] = [];
 #_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod: (Multikey | URL)[] = [];
@@ -47477,7 +47086,6 @@ services?: (DidService | URL)[];followedMessage?: string | null;cat?: boolean | 
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -53095,13 +52703,6 @@ export class Page extends Document {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Page\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Page with the given values.
@@ -53134,7 +52735,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -53433,13 +53033,6 @@ export class Person extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Person\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_3isuDgRAKSntq9XdbjiNxjwyPZAf_preferredUsername: ((string | LanguageString))[] = [];
 #_axq166E2eZADq34V4MYUc8KMZdC_publicKey: (CryptographicKey | URL)[] = [];
 #_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod: (Multikey | URL)[] = [];
@@ -53499,7 +53092,6 @@ services?: (DidService | URL)[];followedMessage?: string | null;cat?: boolean | 
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -59120,13 +58712,6 @@ export class Place extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Place\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_3UCsHnBHvDAXJnBuzw3zw1VVs3Ne_accuracy: (number)[] = [];
 #_3Q6KDcFQUJRRaBux1BL2yp5QWiBi_altitude: (number)[] = [];
 #_3g85RoKRnaNjP7DFyLSvsWDg7HGM_latitude: (number)[] = [];
@@ -59165,7 +58750,6 @@ proofs?: (DataIntegrityProof | URL)[];accuracy?: number | null;altitude?: number
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -59955,9 +59539,9 @@ proofs?: (DataIntegrityProof | URL)[];accuracy?: number | null;altitude?: number
               : \\"\\"
           )
         )
-        : URL.canParse(v[\\"@id\\"]) && options.baseUrl
+        : URL.canParse(v[\\"@id\\"]) && options?.baseUrl
           ? new URL(v[\\"@id\\"])
-          : new URL(v[\\"@id\\"], options.baseUrl) : undefined
+          : new URL(v[\\"@id\\"], options?.baseUrl) : undefined
       ;
       if (typeof decoded === \\"undefined\\") continue;
       _oKrwxU4V8wiKhMW1QEYQibcJh8c_units.push(decoded);
@@ -60138,13 +59722,6 @@ export class Profile extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Profile\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_3CLQ1PLSXrhSQbTGGHuxNyaEFKM1_describes: (Object | URL)[] = [];
 
   /**
@@ -60178,7 +59755,6 @@ proofs?: (DataIntegrityProof | URL)[];describes?: Object | URL | null;}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -60759,13 +60335,6 @@ export class Question extends IntransitiveActivity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Question\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2N5scKaVEcdYHFmfKYYacAwUhUgQ_oneOf: (Object | URL)[] = [];
 #_2mV6isMTPRKbWdLCjcpiEysq5dAY_anyOf: (Object | URL)[] = [];
 #_3KronwL8DiiKBRcJFKQPiEHm8xb6_closed: ((Temporal.Instant | boolean))[] = [];
@@ -60809,7 +60378,6 @@ instruments?: (Object | URL)[];exclusiveOptions?: (Object | URL)[];inclusiveOpti
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -61939,13 +61507,6 @@ export class Read extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Read\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Read with the given values.
@@ -61984,7 +61545,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -62274,13 +61834,6 @@ export class Reject extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Reject\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Reject with the given values.
@@ -62319,7 +61872,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -62618,13 +62170,6 @@ export class Relationship extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Relationship\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_2Zqdmi46ZnDQsECS6mzwhrv3rUKq_subject: (Object | URL)[] = [];
 #_2MH19yxjn1wnHsNfa5n4JBhJzxyc_object: (Object | URL)[] = [];
 #_4Lzz89F9qipAQSGkWyX9DGWiUojG_relationship: (Object | URL)[] = [];
@@ -62662,7 +62207,6 @@ relationships?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -64031,13 +63575,6 @@ export class Remove extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Remove\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Remove with the given values.
@@ -64076,7 +63613,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -64364,13 +63900,6 @@ export class Service extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Service\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_3isuDgRAKSntq9XdbjiNxjwyPZAf_preferredUsername: ((string | LanguageString))[] = [];
 #_axq166E2eZADq34V4MYUc8KMZdC_publicKey: (CryptographicKey | URL)[] = [];
 #_4EHQFWZSz1k1d4LmPrQiMba2GbP3_assertionMethod: (Multikey | URL)[] = [];
@@ -64430,7 +63959,6 @@ services?: (DidService | URL)[];followedMessage?: string | null;cat?: boolean | 
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -70045,7 +69573,6 @@ export class Source {
     readonly #documentLoader?: DocumentLoader;
     readonly #contextLoader?: DocumentLoader;
     readonly #tracerProvider?: TracerProvider;
-    protected readonly _baseUrl?: URL;
     readonly #warning?: {
       category: string[];
       message: string;
@@ -70088,13 +69615,6 @@ export class Source {
     static  get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Source\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-     get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_4HuuRSdSrXq8Jj2J9gcdYfoCzeuz_content: ((string | LanguageString))[] = [];
 #_3BLrzmscsjHCw8TF5BHRW9WkPnX8_mediaType: (string)[] = [];
 
@@ -70114,14 +69634,12 @@ contents?: ((string | LanguageString))[];mediaType?: string | null;}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   
     this.#documentLoader = options.documentLoader;
     this.#contextLoader = options.contextLoader;
     this.#tracerProvider = options.tracerProvider;
-    this._baseUrl = options.baseUrl;
     if (\\"\$warning\\" in options) {
       this.#warning = options.\$warning as unknown as {
         category: string[];
@@ -70688,13 +70206,6 @@ export class TentativeAccept extends Accept {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#TentativeAccept\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of TentativeAccept with the given values.
@@ -70733,7 +70244,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -71023,13 +70533,6 @@ export class TentativeReject extends Reject {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#TentativeReject\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of TentativeReject with the given values.
@@ -71068,7 +70571,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -71359,13 +70861,6 @@ export class Tombstone extends Object {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Tombstone\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   #_8g8g4LiVMhFTXskuDEqx4ascxUr_deleted: (Temporal.Instant)[] = [];
 
   /**
@@ -71399,7 +70894,6 @@ proofs?: (DataIntegrityProof | URL)[];deleted?: Temporal.Instant | null;}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);
@@ -71814,13 +71308,6 @@ export class Travel extends IntransitiveActivity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Travel\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Travel with the given values.
@@ -71859,7 +71346,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -72154,13 +71640,6 @@ export class Undo extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Undo\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Undo with the given values.
@@ -72199,7 +71678,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -72492,13 +71970,6 @@ export class Update extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Update\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Update with the given values.
@@ -72537,7 +72008,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -72825,13 +72295,6 @@ export class Video extends Document {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#Video\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of Video with the given values.
@@ -72864,7 +72327,6 @@ proofs?: (DataIntegrityProof | URL)[];width?: number | null;height?: number | nu
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
@@ -73164,13 +72626,6 @@ export class View extends Activity {
     static override get typeId(): URL {
       return new URL(\\"https://www.w3.org/ns/activitystreams#View\\");
     }
-
-    /**
-     * The base URL used for resolving relative URLs in this object.
-     */
-    override get baseUrl(): URL | undefined {
-      return this._baseUrl;
-    }
   
   /**
    * Constructs a new instance of View with the given values.
@@ -73209,7 +72664,6 @@ instruments?: (Object | URL)[];}
       documentLoader?: DocumentLoader,
       contextLoader?: DocumentLoader,
       tracerProvider?: TracerProvider,
-      baseUrl?: URL,
     } = {},
   ) {
   super(values, options);}
