@@ -1333,6 +1333,34 @@ for (const typeUri in types) {
     );
   });
 
+  test("Person.fromJsonLd() with relative URLs and baseUrl", async () => {
+    const json = {
+      "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+      ],
+      "id":
+        "https://hackers.pub/ap/actors/019382d3-63d7-7cf7-86e8-91e2551c306c",
+      "type": "Person",
+      "name": "Test User",
+      "icon": {
+        "type": "Image",
+        "url": "/avatars/test-avatar.jpg",
+      },
+    };
+
+    const personWithBase = await Person.fromJsonLd(json, {
+      baseUrl: new URL("https://example.com"),
+    });
+
+    const icon = await personWithBase.getIcon();
+    assertEquals(
+      icon?.url,
+      new URL("https://example.com/avatars/test-avatar.jpg"),
+    );
+    assertEquals(personWithBase.baseUrl, new URL("https://example.com"));
+  });
+
   if ("Deno" in globalThis) {
     const { assertSnapshot } = await import("@std/testing/snapshot").catch(
       () => ({ assertSnapshot: () => Promise.resolve() }),
