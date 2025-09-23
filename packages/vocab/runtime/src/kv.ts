@@ -67,20 +67,21 @@ export interface KvStore {
  */
 export class MockKvStore implements KvStore {
   #values: Record<string, unknown> = {};
-  async get<T = unknown>(key: KvKey): Promise<T | undefined> {
-    return this.#values[JSON.stringify(key)] as T | undefined;
+  get<T = unknown>(key: KvKey): Promise<T | undefined> {
+    return Promise.resolve(this.#values[JSON.stringify(key)] as T | undefined);
   }
-  async set(
+  set(
     key: KvKey,
     value: unknown,
     _options?: KvStoreSetOptions,
   ): Promise<void> {
     this.#values[JSON.stringify(key)] = value;
+    return Promise.resolve();
   }
   async delete(_: KvKey): Promise<void> {}
-  async cas(
+  cas(
     ..._: [KvKey, unknown, unknown]
   ): Promise<boolean> {
-    return false;
+    return Promise.resolve(false);
   }
 }
