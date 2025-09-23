@@ -61,3 +61,26 @@ export interface KvStore {
     options?: KvStoreSetOptions,
   ) => Promise<boolean>;
 }
+
+/**
+ * A mock implementation of a key–value store for testing purposes.
+ */
+export class MockKvStore implements KvStore {
+  #values: Record<string, unknown> = {};
+  async get<T = unknown>(key: KvKey): Promise<T | undefined> {
+    return this.#values[JSON.stringify(key)] as T | undefined;
+  }
+  async set(
+    key: KvKey,
+    value: unknown,
+    _options?: KvStoreSetOptions,
+  ): Promise<void> {
+    this.#values[JSON.stringify(key)] = value;
+  }
+  async delete(_: KvKey): Promise<void> {}
+  async cas(
+    ..._: [KvKey, unknown, unknown]
+  ): Promise<boolean> {
+    return false;
+  }
+}

@@ -1,9 +1,9 @@
-import { decode, encode } from "./index.ts";
+import { deepStrictEqual } from "node:assert";
+import { test } from "node:test";
 import * as constants from "./constants.ts";
-import { decodeText, encodeText } from "./util.ts";
-import { assertEquals } from "@std/assert";
-import { test } from "../../testing/mod.ts";
+import { decode, encode } from "./index.ts";
 import type { BaseName } from "./types.d.ts";
+import { decodeText, encodeText } from "./util.ts";
 
 test("multibase.encode and decode", async (t) => {
   const testCases: Array<[BaseName, string, string]> = [
@@ -76,19 +76,19 @@ test("multibase.encode and decode", async (t) => {
   ];
 
   for (const [name, input, expectedOutput] of testCases) {
-    await t.step(`Encoding/Decoding ${name} with ${input}`, () => {
+    await t.test(`Encoding/Decoding ${name} with ${input}`, () => {
       const encoded = encode(name, encodeText(input));
-      assertEquals(
+      deepStrictEqual(
         decodeText(encoded),
         expectedOutput,
         `Encoding ${name} failed`,
       );
 
       const decoded = decode(expectedOutput);
-      assertEquals(decoded, encodeText(input), `Decoding ${name} failed`);
+      deepStrictEqual(decoded, encodeText(input), `Decoding ${name} failed`);
 
       const decodedFromBuffer = decode(encodeText(expectedOutput));
-      assertEquals(
+      deepStrictEqual(
         decodedFromBuffer,
         encodeText(input),
         `Decoding buffer of ${name} failed`,
@@ -96,22 +96,22 @@ test("multibase.encode and decode", async (t) => {
     });
   }
 
-  await t.step("should allow base32pad full alphabet", () => {
+  await t.test("should allow base32pad full alphabet", () => {
     const encodedStr = "ctimaq4ygg2iegci7";
     const decoded = decode(encodedStr);
     const encoded = encode("c", decoded);
-    assertEquals(decode(encoded), decoded);
+    deepStrictEqual(decode(encoded), decoded);
   });
 });
 
 test("constants", async (t) => {
-  await t.step("constants indexed by name", () => {
+  await t.test("constants indexed by name", () => {
     const names = constants.names;
-    assertEquals(Object.keys(names).length, 23);
+    deepStrictEqual(Object.keys(names).length, 23);
   });
 
-  await t.step("constants indexed by code", () => {
+  await t.test("constants indexed by code", () => {
     const codes = constants.codes;
-    assertEquals(Object.keys(codes).length, 23);
+    deepStrictEqual(Object.keys(codes).length, 23);
   });
 });

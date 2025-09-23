@@ -29,3 +29,42 @@ export function validateCryptoKey(
     }
   }
 }
+
+export async function exportJwk(key: CryptoKey): Promise<JsonWebKey> {
+  validateCryptoKey(key);
+  const jwk = await crypto.subtle.exportKey("jwk", key);
+  if (jwk.crv === "Ed25519") jwk.alg = "Ed25519";
+  return jwk;
+}
+
+export async function importJwk(
+  jwk: JsonWebKey,
+  type: "public" | "private",
+): Promise<CryptoKey> {
+  let key: CryptoKey;
+  if (jwk.kty === "RSA" && jwk.alg === "RS256") {
+    key = await crypto.subtle.importKey(
+      "jwk",
+      jwk,
+      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+      true,
+      type === "public" ? ["verify"] : ["sign"],
+    );
+  } else if (jwk.kty === "OKP" && jwk.crv === "Ed25519") {
+    if (navigator?.userAgent === "Cloudflare-Workers") {
+      jwk = { ...jwk };
+      delete jwk.alg;
+    }
+    key = await crypto.subtle.importKey(
+      "jwk",
+      jwk,
+      "Ed25519",
+      true,
+      type === "public" ? ["verify"] : ["sign"],
+    );
+  } else {
+    throw new TypeError("Unsupported JWK format.");
+  }
+  validateCryptoKey(key, type);
+  return key;
+}
