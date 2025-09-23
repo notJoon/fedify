@@ -64,7 +64,7 @@ async function* generateProperty(
         contextLoader?: DocumentLoader,
         suppressError?: boolean,
         tracerProvider?: TracerProvider,
-      } = {}
+      } = {},
     ): Promise<${getTypeNames(property.range, types)} | null> {
       const documentLoader =
         options.documentLoader ?? this._documentLoader ?? getDocumentLoader();
@@ -95,11 +95,12 @@ async function* generateProperty(
           }
           throw error;
         }
-        const { document } = fetchResult;
+        const { document, documentUrl } = fetchResult;
+        const baseUrl = new URL(documentUrl);
         try {
           const obj = await this.#${property.singularName}_fromJsonLd(
             document,
-            { documentLoader, contextLoader, tracerProvider }
+            { documentLoader, contextLoader, tracerProvider, baseUrl }
           );
           span.setAttribute("activitypub.object.id", (obj.id ?? url).href);
           span.setAttribute(
@@ -133,6 +134,7 @@ async function* generateProperty(
         documentLoader?: DocumentLoader,
         contextLoader?: DocumentLoader,
         tracerProvider?: TracerProvider,
+        baseUrl?: URL
       }
     ): Promise<${getTypeNames(property.range, types)}> {
       const documentLoader =
@@ -141,6 +143,7 @@ async function* generateProperty(
         options.contextLoader ?? this._contextLoader ?? getDocumentLoader();
       const tracerProvider = options.tracerProvider ??
         this._tracerProvider ?? trace.getTracerProvider();
+      const baseUrl = options.baseUrl;
     `;
     for (const range of property.range) {
       if (!(range in types)) continue;
@@ -149,7 +152,7 @@ async function* generateProperty(
         try {
           return await ${rangeType.name}.fromJsonLd(
             jsonLd,
-            { documentLoader, contextLoader, tracerProvider },
+            { documentLoader, contextLoader, tracerProvider, baseUrl },
           );
         } catch (e) {
           if (!(e instanceof TypeError)) throw e;
@@ -271,8 +274,7 @@ async function* generateProperty(
           const v = vs[i];
           if (v instanceof URL) {
             const fetched =
-              await this.#fetch${pascalCase(property.singularName)}(
-                v, options);
+              await this.#fetch${pascalCase(property.singularName)}(v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
             this._cachedJsonLd = undefined;
