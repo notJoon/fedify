@@ -5,7 +5,7 @@ import { decodeHex } from "byte-encodings/hex";
 import { addPrefix, getCodeFromData, rmPrefix } from "multicodec";
 import { createPublicKey } from "node:crypto";
 import { PublicKeyInfo } from "pkijs";
-import { decode, encode } from "../runtime/multibase/index.ts";
+import { decode, encode } from "./multibase/index.ts";
 
 const algorithms: Record<
   string,
