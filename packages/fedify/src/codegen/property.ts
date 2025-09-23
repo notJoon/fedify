@@ -64,7 +64,6 @@ async function* generateProperty(
         contextLoader?: DocumentLoader,
         suppressError?: boolean,
         tracerProvider?: TracerProvider,
-        baseUrl?: URL
       } = {},
     ): Promise<${getTypeNames(property.range, types)} | null> {
       const documentLoader =
@@ -77,7 +76,6 @@ async function* generateProperty(
         ${JSON.stringify(metadata.name)},
         ${JSON.stringify(metadata.version)},
       );
-      const baseUrl = options.baseUrl;
       return await tracer.startActiveSpan("activitypub.lookup_object", async (span) => {
         let fetchResult: RemoteDocument;
         try {
@@ -97,7 +95,8 @@ async function* generateProperty(
           }
           throw error;
         }
-        const { document } = fetchResult;
+        const { document, documentUrl } = fetchResult;
+        const baseUrl = new URL(documentUrl);
         try {
           const obj = await this.#${property.singularName}_fromJsonLd(
             document,
@@ -194,7 +193,6 @@ async function* generateProperty(
           contextLoader?: DocumentLoader,
           suppressError?: boolean,
           tracerProvider?: TracerProvider,
-          baseUrl?: URL
         } = {}
       ): Promise<${getTypeNames(property.range, types)} | null> {
         if (this._warning != null) {
@@ -226,7 +224,7 @@ async function* generateProperty(
             ${JSON.stringify(property.compactName)}];
           const obj = Array.isArray(prop) ? prop[0] : prop;
           if (obj != null && typeof obj === "object" && "@context" in obj) {
-            return await this.#${property.singularName}_fromJsonLd(obj, {...options, baseUrl: options.baseUrl});
+            return await this.#${property.singularName}_fromJsonLd(obj, options);
           }
         }
         `;
@@ -263,7 +261,6 @@ async function* generateProperty(
           contextLoader?: DocumentLoader,
           suppressError?: boolean,
           tracerProvider?: TracerProvider,
-          baseUrl?: URL
         } = {}
       ): AsyncIterable<${getTypeNames(property.range, types)}> {
         if (this._warning != null) {
@@ -277,8 +274,7 @@ async function* generateProperty(
           const v = vs[i];
           if (v instanceof URL) {
             const fetched =
-              await this.#fetch${pascalCase(property.singularName)}(
-                v, {...options, baseUrl: options.baseUrl});
+              await this.#fetch${pascalCase(property.singularName)}(v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
             this._cachedJsonLd = undefined;
@@ -298,8 +294,7 @@ async function* generateProperty(
               ${JSON.stringify(property.compactName)}];
             const obj = Array.isArray(prop) ? prop[i] : prop;
             if (obj != null && typeof obj === "object" && "@context" in obj) {
-              yield await this.#${property.singularName}_fromJsonLd(obj, {...options, baseUrl: options.baseUrl
-              });
+              yield await this.#${property.singularName}_fromJsonLd(obj, options);
               continue;
             }
           }

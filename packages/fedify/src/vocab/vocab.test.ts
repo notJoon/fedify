@@ -1333,6 +1333,55 @@ for (const typeUri in types) {
     );
   });
 
+  test("Person.fromJsonLd() with relative URLs", async () => {
+    const json = {
+      "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+      ],
+      "id":
+        "https://example.com/ap/actors/019382d3-63d7-7cf7-86e8-91e2551c306c",
+      "type": "Person",
+      "name": "Test User",
+      "icon": {
+        "type": "Image",
+        "url": "/avatars/test-avatar.jpg",
+      },
+    };
+
+    const person = await Person.fromJsonLd(json);
+
+    const icon = await person.getIcon();
+    assertEquals(
+      icon?.url,
+      new URL("https://example.com/avatars/test-avatar.jpg"),
+    );
+
+    const json2 = {
+      "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+      ],
+      "id":
+        "https://example.com/ap/actors/019382d3-63d7-7cf7-86e8-91e2551c306c",
+      "type": "Person",
+      "name": "Test User",
+      "icon": {
+        "id": "https://media.example.com/avatars/test-avatar.jpg",
+        "type": "Image",
+        "url": "/avatars/test-avatar.jpg",
+      },
+    };
+
+    const person2 = await Person.fromJsonLd(json2);
+
+    const icon2 = await person2.getIcon();
+    assertEquals(
+      icon2?.url,
+      new URL("https://media.example.com/avatars/test-avatar.jpg"),
+    );
+  });
+
   test("Person.fromJsonLd() with relative URLs and baseUrl", async () => {
     const json = {
       "@context": [
@@ -1340,7 +1389,7 @@ for (const typeUri in types) {
         "https://w3id.org/security/v1",
       ],
       "id":
-        "https://hackers.pub/ap/actors/019382d3-63d7-7cf7-86e8-91e2551c306c",
+        "https://example.com/ap/actors/019382d3-63d7-7cf7-86e8-91e2551c306c",
       "type": "Person",
       "name": "Test User",
       "icon": {

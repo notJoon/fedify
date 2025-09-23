@@ -11,8 +11,9 @@ To be released.
 ### @fedify/fedify
 
  -  Fixed handling of ActivityPub objects containing relative URLs.  The
-    Activity Vocabulary classes now properly resolve relative URLs when
-    a `baseUrl` option is provided to `fromJsonLd()` method, improving
+    Activity Vocabulary classes now automatically resolve relative URLs by
+    inferring the base URL from the object's `@id` or document URL, eliminating
+    the need for manual `baseUrl` specification in most cases.  This improves
     interoperability with ActivityPub servers that emit relative URLs in
     properties like `icon.url` and `image.url`.  [[#411], [#443] by Jiwon Kwon]
 
