@@ -5,6 +5,7 @@ import { decodeHex } from "byte-encodings/hex";
 import { addPrefix, getCodeFromData, rmPrefix } from "multicodec";
 import { createPublicKey } from "node:crypto";
 import { PublicKeyInfo } from "pkijs";
+import { validateCryptoKey } from "./jwk.ts";
 import { decode, encode } from "./multibase/index.ts";
 
 const algorithms: Record<
@@ -56,7 +57,6 @@ export async function importSpki(pem: string): Promise<CryptoKey> {
  * @since 0.5.0
  */
 export async function exportSpki(key: CryptoKey): Promise<string> {
-  const { validateCryptoKey } = await import("../sig/key.ts");
   validateCryptoKey(key);
   const spki = await crypto.subtle.exportKey("spki", key);
   let pem = encodeBase64(spki);

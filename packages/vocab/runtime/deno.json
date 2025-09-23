@@ -1,0 +1,12 @@
+{
+  "name": "@fedify/vocab-runtime",
+  "version": "2.0.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/mod.ts"
+  },
+  "imports": {},
+  "exclude": [
+    "dist/"
+  ]
+}

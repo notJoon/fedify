@@ -1,8 +1,8 @@
 import { getLogger } from "@logtape/logtape";
 import process from "node:process";
-import metadata from "../../deno.json" with { type: "json" };
-import type { KvKey, KvStore } from "../federation/kv.ts";
+import metadata from "../deno.json" with { type: "json" };
 import preloadedContexts from "./contexts.ts";
+import type { KvKey, KvStore } from "./kv.ts";
 import { HttpHeaderLink } from "./link.ts";
 import { UrlError, validatePublicUrl } from "./url.ts";
 
