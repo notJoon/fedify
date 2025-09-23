@@ -477,7 +477,7 @@ export interface Federatable<TContextData> {
   >(
     name: string | symbol,
     itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams>,
+    path: ParamsKeyPath<TParams> | ParamKeyPathInter<TParams>,
     dispatcher: CustomCollectionDispatcher<
       TObject,
       TParams,
@@ -510,7 +510,7 @@ export interface Federatable<TContextData> {
   >(
     name: string | symbol,
     itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams>,
+    path: ParamsKeyPath<TParams> | ParamKeyPathInter<TParams>,
     dispatcher: CustomCollectionDispatcher<
       TObject,
       TParams,
@@ -1140,6 +1140,9 @@ export type ParamsKeyPath<Params extends Record<string, string>> =
   & ParamPath<Extract<keyof Params, string>>
   & string;
 
+export type ParamKeyPathInter<Params extends Record<string, string>> =
+  & ParamsPath<Extract<keyof Params, string>>
+  & string;
 /**
  * Represents a path with multiple parameters.
  * All permutations of the parameters are included in the union type.

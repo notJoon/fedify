@@ -35,6 +35,7 @@ import type {
   FederationOptions,
   InboxListenerSetters,
   ObjectCallbackSetters,
+  ParamKeyPathInter,
   ParamsKeyPath,
 } from "./federation.ts";
 import type {
@@ -1213,7 +1214,7 @@ export class FederationBuilderImpl<TContextData>
     name: string | symbol,
     ...args: [
       ConstructorWithTypeId<TObject>,
-      ParamsKeyPath<TParams>,
+      ParamsKeyPath<TParams> | ParamKeyPathInter<TParams>,
       CustomCollectionDispatcher<
         TObject,
         TParams,
@@ -1240,7 +1241,7 @@ export class FederationBuilderImpl<TContextData>
     name: string | symbol,
     ...args: [
       ConstructorWithTypeId<TObject>,
-      ParamsKeyPath<TParams>,
+      ParamsKeyPath<TParams> | ParamKeyPathInter<TParams>,
       CustomCollectionDispatcher<
         TObject,
         TParams,
@@ -1266,7 +1267,7 @@ export class FederationBuilderImpl<TContextData>
     name: string | symbol,
     collectionType: "collection" | "orderedCollection",
     itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams>,
+    path: ParamsKeyPath<TParams> | ParamKeyPathInter<TParams>,
     dispatcher: CustomCollectionDispatcher<
       TObject,
       TParams,
