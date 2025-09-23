@@ -1137,7 +1137,7 @@ export type ConstructorWithTypeId<TObject extends Object> =
  * ```
  */
 export type ParamsKeyPath<Params extends Record<string, string>> =
-  & ParamsPath<Extract<keyof Params, string>>
+  & ParamPath<Extract<keyof Params, string>>
   & string;
 
 /**
@@ -1162,6 +1162,43 @@ export type ParamsKeyPath<Params extends Record<string, string>> =
  */
 type ParamsPath<Params extends string> = UnionToIntersection<ParamPath<Params>>;
 /**
+ * Defines a union of all valid RFC 6570 URI Template expressions for a given
+ * parameter name.
+ *
+ * RFC 6570 specifies a syntax for URI templates, allowing for variable
+ * expansion. This type captures all Level 1-4 operator expressions for a
+ * single, named variable.
+ *
+ * The supported expression types are:
+ * - `{Param}`: Simple string expansion
+ * - `+{Param}`: Reserved string expansion
+ * - `#{Param}`: Fragment expansion
+ * - `{.Param}`: Label expansion with a dot-prefix
+ * - `{/Param}`: Path segment expansion
+ * - `{;Param}`: Path-style parameter expansion
+ * - `{?Param}`: Query component expansion
+ * - `{&Param}`: Query continuation expansion
+ *
+ * @template Param The name of the parameter to be used in the expressions.
+ * @example
+ * ```ts
+ * type UserIdExpression = Rfc6570Expression<"userId">;
+ *
+ * // The variable `userPath` can be assigned any of the valid expressions.
+ * const userPath: UserIdExpression = "{/userId}";
+ * ```
+ * @see {@link https://tools.ietf.org/html/rfc6570} for the full specification.
+ */
+type Rfc6570Expression<Param extends string> =
+  | `{${Param}}`
+  | `{+${Param}}`
+  | `{#${Param}}`
+  | `{.${Param}}`
+  | `{/${Param}}`
+  | `{;${Param}}`
+  | `{?${Param}}`
+  | `{&${Param}}`;
+/**
  * Represents a path with a single parameter.
  * The path must have at least one of the parameters in the form of `{paramName}`.
  * @param Param - The name of the parameter.
@@ -1177,7 +1214,9 @@ type ParamsPath<Params extends string> = UnionToIntersection<ParamPath<Params>>;
  * userPostPath = "/users/{userId}/posts/{postId}"; // ✅ valid
  * userPostPath = "/posts/{postId}/users/{userId}"; // ✅ valid
  */
-type ParamPath<Param extends string> = `${string}{${Param}}${string}`;
+type ParamPath<Param extends string> = `${string}${Rfc6570Expression<
+  Param
+>}${string}`;
 /**
  * Converts union types to intersection types.
  *
