@@ -19,9 +19,7 @@
     },
     "./package.json": "./package.json"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "keywords": [
     "Fedify",
     "ActivityPub",
@@ -41,6 +39,7 @@
     "typescript": "catalog:"
   },
   "dependencies": {
+    "@multiformats/base-x": "^4.0.1",
     "asn1js": "^3.0.6",
     "byte-encodings": "^1.0.11",
     "multicodec": "^3.2.1",

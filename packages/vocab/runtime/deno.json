@@ -5,7 +5,19 @@
   "exports": {
     ".": "./src/mod.ts"
   },
-  "imports": {},
+  "description": "Runtime library for @fedify/vocab",
+  "author": {
+    "name": "Hong Minhee",
+    "email": "hong@minhee.org",
+    "url": "https://hongminhee.org/"
+  },
+  "imports": {
+    "asn1js": "npm:asn1js@^3.0.6",
+    "byte-encodings": "npm:byte-encodings@^1.0.11",
+    "fetch-mock": "npm:fetch-mock@^12.5.4",
+    "multicodec": "npm:multicodec@^3.2.1",
+    "pkijs": "npm:pkijs@^3.2.5"
+  },
   "exclude": [
     "dist/"
   ]
