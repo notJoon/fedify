@@ -28,7 +28,7 @@ export async function main() {
   using file = await Deno.open(outputPath, { write: true, create: true });
   const writer = file.writable.getWriter();
 
-  for await (const code of generateClasses(types, runtimePath)) {
+  for await (const code of generateClasses(types)) {
     await writer.write(encoder.encode(code));
   }
 }

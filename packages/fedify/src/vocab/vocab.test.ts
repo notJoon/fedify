@@ -1,3 +1,4 @@
+import { decode, LanguageString } from "@fedify/vocab-runtime";
 import {
   assert,
   assertEquals,
@@ -14,8 +15,6 @@ import {
   type TypeSchema,
 } from "../codegen/schema.ts";
 import { areAllScalarTypes } from "../codegen/type.ts";
-import { LanguageString } from "../runtime/langstr.ts";
-import { decode } from "../runtime/multibase/index.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import { ed25519PublicKey, rsaPublicKey1 } from "../testing/keys.ts";
 import { test } from "../testing/mod.ts";

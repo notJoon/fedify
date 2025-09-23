@@ -113,9 +113,7 @@ async function* generateClass(
  */
 export async function* generateClasses(
   types: Record<string, TypeSchema>,
-  runtimePath: string,
 ): AsyncIterable<string> {
-  runtimePath = runtimePath.replace(/\/+$/, "");
   yield "// deno-lint-ignore-file ban-unused-ignore prefer-const\n";
   yield "// @ts-ignore TS7016\n";
   yield 'import jsonld from "jsonld";\n';
@@ -123,16 +121,16 @@ export async function* generateClasses(
   yield `import { type Span, SpanStatusCode, type TracerProvider, trace }
     from "@opentelemetry/api";\n`;
   yield `import { decode as decodeMultibase, encode as encodeMultibase }
-    from "${runtimePath}/multibase/index.ts";`;
+    from "@fedify/vocab-runtime";\n`;
   yield `import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
-    from "${runtimePath}/docloader.ts";\n`;
+    from "@fedify/vocab-runtime";\n`;
   yield `import {
     exportSpki,
     exportMultibaseKey,
     importPem,
     importMultibaseKey,
-  } from "${runtimePath}/key.ts";\n`;
-  yield `import { LanguageString } from "${runtimePath}/langstr.ts";\n`;
+  } from "@fedify/vocab-runtime";\n`;
+  yield `import { LanguageString } from "@fedify/vocab-runtime";\n`;
   yield "\n\n";
   const sorted = sortTopologically(types);
   for (const typeUri of sorted) {

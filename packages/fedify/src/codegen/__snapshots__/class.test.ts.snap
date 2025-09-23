@@ -8,15 +8,16 @@ import { getLogger } from \\"@logtape/logtape\\";
 import { type Span, SpanStatusCode, type TracerProvider, trace }
     from \\"@opentelemetry/api\\";
 import { decode as decodeMultibase, encode as encodeMultibase }
-    from \\"../runtime/multibase/index.ts\\";import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
-    from \\"../runtime/docloader.ts\\";
+    from \\"@fedify/vocab-runtime\\";
+import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
+    from \\"@fedify/vocab-runtime\\";
 import {
     exportSpki,
     exportMultibaseKey,
     importPem,
     importMultibaseKey,
-  } from \\"../runtime/key.ts\\";
-import { LanguageString } from \\"../runtime/langstr.ts\\";
+  } from \\"@fedify/vocab-runtime\\";
+import { LanguageString } from \\"@fedify/vocab-runtime\\";
 
 
 /** Describes an object of any kind. The Object type serves as the base type for
