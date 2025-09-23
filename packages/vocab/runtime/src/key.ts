@@ -6,7 +6,7 @@ import { addPrefix, getCodeFromData, rmPrefix } from "multicodec";
 import { createPublicKey } from "node:crypto";
 import { PublicKeyInfo } from "pkijs";
 import { validateCryptoKey } from "./jwk.ts";
-import { decode, encode } from "./multibase/index.ts";
+import { decode, encode } from "./multibase/mod.ts";
 
 const algorithms: Record<
   string,

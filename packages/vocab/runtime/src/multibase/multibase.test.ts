@@ -1,7 +1,7 @@
 import { deepStrictEqual } from "node:assert";
 import { test } from "node:test";
 import * as constants from "./constants.ts";
-import { decode, encode } from "./index.ts";
+import { decode, encode } from "./mod.ts";
 import type { BaseName } from "./types.d.ts";
 import { decodeText, encodeText } from "./util.ts";
 

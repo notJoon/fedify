@@ -19,5 +19,13 @@ export {
   type KvCacheParameters,
   type RemoteDocument,
 } from "./docloader.ts";
-export * from "./key.ts";
-export * from "./langstr.ts";
+export {
+  exportMultibaseKey,
+  exportSpki,
+  importMultibaseKey,
+  importPem,
+  importPkcs1,
+  importSpki,
+} from "./key.ts";
+export { LanguageString } from "./langstr.ts";
+export { decode, encode, encodingFromData } from "./multibase/mod.ts";
