@@ -10,6 +10,27 @@ To be released.
 
 ### @fedify/fedify
 
+ -  Implemented [FEP-fe34] origin-based security model to protect against
+    content spoofing attacks and ensure secure federation practices.  The
+    security model enforces same-origin policy for ActivityPub objects and
+    their properties, preventing malicious actors from impersonating content
+    from other servers.  [[#440]]
+
+     -  Added `crossOrigin` option to Activity Vocabulary property accessors
+        (`get*()` methods) with three security levels: `"ignore"` (default,
+        logs warning and returns `null`), `"throw"` (throws error), and
+        `"trust"` (bypasses checks).
+     -  Added `LookupObjectOptions.crossOrigin` option to `lookupObject()`
+        function and `Context.lookupObject()` method for controlling
+        cross-origin validation.
+     -  Embedded objects are now validated against their parent object's origin
+        and only trusted when they share the same origin or are explicitly
+        marked as trusted.
+     -  Property hydration now respects origin-based security, automatically
+        performing remote fetches when embedded objects have different origins.
+     -  Internal trust tracking system maintains security context throughout
+        object lifecycles (construction, cloning, and property access).
+
  -  Fixed handling of ActivityPub objects containing relative URLs.  The
     Activity Vocabulary classes now automatically resolve relative URLs by
     inferring the base URL from the object's `@id` or document URL, eliminating
@@ -73,6 +94,7 @@ To be released.
     Node.js's `--experimental-require-module` flag and resolves dual package
     hazard issues.  [[#429], [#431]]
 
+[FEP-fe34]: https://w3id.org/fep/fe34
 [FEP-5711]: https://w3id.org/fep/5711
 [OStatus 1.0 Draft 2]: https://www.w3.org/community/ostatus/wiki/images/9/93/OStatus_1.0_Draft_2.pdf
 [RFC 7033 Section 4.4.4.3]: https://datatracker.ietf.org/doc/html/rfc7033#section-4.4.4.3
@@ -88,6 +110,7 @@ To be released.
 [#411]: https://github.com/fedify-dev/fedify/issues/411
 [#429]: https://github.com/fedify-dev/fedify/issues/429
 [#431]: https://github.com/fedify-dev/fedify/pull/431
+[#440]: https://github.com/fedify-dev/fedify/issues/440
 [#443]: https://github.com/fedify-dev/fedify/pull/443
 
 ### @fedify/cli
