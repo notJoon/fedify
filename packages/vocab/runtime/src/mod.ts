@@ -9,14 +9,10 @@ export {
   type DocumentLoader,
   type DocumentLoaderFactory,
   type DocumentLoaderFactoryOptions,
-  fetchDocumentLoader,
-  FetchError,
+  type DocumentLoaderOptions,
   getDocumentLoader,
   type GetDocumentLoaderOptions,
-  getUserAgent,
-  type GetUserAgentOptions,
-  kvCache,
-  type KvCacheParameters,
+  getRemoteDocument,
   type RemoteDocument,
 } from "./docloader.ts";
 export {

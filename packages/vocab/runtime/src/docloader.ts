@@ -1,9 +1,12 @@
 import { getLogger } from "@logtape/logtape";
-import process from "node:process";
-import metadata from "../deno.json" with { type: "json" };
 import preloadedContexts from "./contexts.ts";
-import type { KvKey, KvStore } from "./kv.ts";
 import { HttpHeaderLink } from "./link.ts";
+import {
+  createRequest,
+  FetchError,
+  type GetUserAgentOptions,
+  logRequest,
+} from "./request.ts";
 import { UrlError, validatePublicUrl } from "./url.ts";
 
 const logger = getLogger(["fedify", "runtime", "docloader"]);
@@ -98,74 +101,6 @@ export type AuthenticatedDocumentLoaderFactory = (
   identity: { keyId: URL; privateKey: CryptoKey },
   options?: DocumentLoaderFactoryOptions,
 ) => DocumentLoader;
-
-/**
- * Error thrown when fetching a JSON-LD document failed.
- */
-export class FetchError extends Error {
-  /**
-   * The URL that failed to fetch.
-   */
-  url: URL;
-
-  /**
-   * Constructs a new `FetchError`.
-   *
-   * @param url The URL that failed to fetch.
-   * @param message Error message.
-   */
-  constructor(url: URL | string, message?: string) {
-    super(message == null ? url.toString() : `${url}: ${message}`);
-    this.name = "FetchError";
-    this.url = typeof url === "string" ? new URL(url) : url;
-  }
-}
-
-/**
- * Options for creating a request.
- * @internal
- */
-export interface CreateRequestOptions {
-  userAgent?: GetUserAgentOptions | string;
-}
-
-/**
- * Creates a request for the given URL.
- * @param url The URL to create the request for.
- * @param options The options for the request.
- * @returns The created request.
- * @internal
- */
-export function createRequest(
-  url: string,
-  options: CreateRequestOptions = {},
-): Request {
-  return new Request(url, {
-    headers: {
-      Accept: "application/activity+json, application/ld+json",
-      "User-Agent": typeof options.userAgent === "string"
-        ? options.userAgent
-        : getUserAgent(options.userAgent),
-    },
-    redirect: "manual",
-  });
-}
-
-/**
- * Logs the request.
- * @param request The request to log.
- * @internal
- */
-export function logRequest(request: Request) {
-  logger.debug(
-    "Fetching document: {method} {url} {headers}",
-    {
-      method: request.method,
-      url: request.url,
-      headers: Object.fromEntries(request.headers.entries()),
-    },
-  );
-}
 
 /**
  * Gets a {@link RemoteDocument} from the given response.
@@ -355,7 +290,7 @@ export function getDocumentLoader(
       }
     }
     const request = createRequest(url, { userAgent });
-    logRequest(request);
+    logRequest(logger, request);
     const response = await fetch(request, {
       // Since Bun has a bug that ignores the `Request.redirect` option,
       // to work around it we specify `redirect: "manual"` here too:
@@ -373,209 +308,4 @@ export function getDocumentLoader(
     return getRemoteDocument(url, response, load);
   }
   return load;
-}
-
-const _fetchDocumentLoader = getDocumentLoader();
-const _fetchDocumentLoader_allowPrivateAddress = getDocumentLoader({
-  allowPrivateAddress: true,
-});
-
-/**
- * A JSON-LD document loader that utilizes the browser's `fetch` API.
- *
- * This loader preloads the below frequently used contexts:
- *
- * - <https://www.w3.org/ns/activitystreams>
- * - <https://w3id.org/security/v1>
- * - <https://w3id.org/security/data-integrity/v1>
- * - <https://www.w3.org/ns/did/v1>
- * - <https://w3id.org/security/multikey/v1>
- * - <https://purl.archive.org/socialweb/webfinger>
- * - <http://schema.org/>
- * @param url The URL of the document to load.
- * @param allowPrivateAddress Whether to allow fetching private network
- *                            addresses.  Turned off by default.
- * @returns The remote document.
- * @deprecated Use {@link getDocumentLoader} instead.
- */
-export function fetchDocumentLoader(
-  url: string,
-  allowPrivateAddress?: boolean,
-): Promise<RemoteDocument>;
-export function fetchDocumentLoader(
-  url: string,
-  options?: DocumentLoaderOptions,
-): Promise<RemoteDocument>;
-export function fetchDocumentLoader(
-  url: string,
-  arg: boolean | DocumentLoaderOptions = false,
-): Promise<RemoteDocument> {
-  const allowPrivateAddress = typeof arg === "boolean" ? arg : false;
-  logger.warn(
-    "fetchDocumentLoader() function is deprecated.  " +
-      "Use getDocumentLoader() function instead.",
-  );
-  const loader = allowPrivateAddress
-    ? _fetchDocumentLoader_allowPrivateAddress
-    : _fetchDocumentLoader;
-  return loader(url);
-}
-
-/**
- * The parameters for {@link kvCache} function.
- */
-export interface KvCacheParameters {
-  /**
-   * The document loader to decorate with a cache.
-   */
-  loader: DocumentLoader;
-
-  /**
-   * The key–value store to use for backing the cache.
-   */
-  kv: KvStore;
-
-  /**
-   * The key prefix to use for namespacing the cache.
-   * `["_fedify", "remoteDocument"]` by default.
-   */
-  prefix?: KvKey;
-
-  /**
-   * The per-URL cache rules in the array of `[urlPattern, duration]` pairs
-   * where `urlPattern` is either a string, a {@link URL}, or
-   * a {@link URLPattern} and `duration` is a {@link Temporal.Duration}.
-   * The `duration` is allowed to be at most 30 days.
-   *
-   * By default, 5 minutes for all URLs.
-   */
-  rules?: [string | URL | URLPattern, Temporal.Duration][];
-}
-
-/**
- * Decorates a {@link DocumentLoader} with a cache backed by a {@link Deno.Kv}.
- * @param parameters The parameters for the cache.
- * @returns The decorated document loader which is cache-enabled.
- */
-export function kvCache(
-  { loader, kv, prefix, rules }: KvCacheParameters,
-): DocumentLoader {
-  const keyPrefix = prefix ?? ["_fedify", "remoteDocument"];
-  rules ??= [
-    [new URLPattern({}), Temporal.Duration.from({ minutes: 5 })],
-  ];
-  for (const [p, duration] of rules) {
-    if (Temporal.Duration.compare(duration, { days: 30 }) > 0) {
-      throw new TypeError(
-        "The maximum cache duration is 30 days: " +
-          (p instanceof URLPattern
-            ? `${p.protocol}://${p.username}:${p.password}@${p.hostname}:${p.port}/${p.pathname}?${p.search}#${p.hash}`
-            : p.toString()),
-      );
-    }
-  }
-
-  function matchRule(url: string): Temporal.Duration | null {
-    for (const [pattern, duration] of rules!) {
-      if (typeof pattern === "string") {
-        if (url === pattern) return duration;
-        continue;
-      }
-      if (pattern instanceof URL) {
-        if (pattern.href == url) return duration;
-        continue;
-      }
-      if (pattern.test(url)) return duration;
-    }
-    return null;
-  }
-
-  return async (
-    url: string,
-    options?: DocumentLoaderOptions,
-  ): Promise<RemoteDocument> => {
-    if (url in preloadedContexts) {
-      logger.debug("Using preloaded context: {url}.", { url });
-      return {
-        contextUrl: null,
-        document: preloadedContexts[url],
-        documentUrl: url,
-      };
-    }
-    const match = matchRule(url);
-    if (match == null) return await loader(url, options);
-    const key: KvKey = [...keyPrefix, url];
-    let cache: RemoteDocument | undefined = undefined;
-    try {
-      cache = await kv.get<RemoteDocument>(key);
-    } catch (error) {
-      if (error instanceof Error) {
-        logger.warn(
-          "Failed to get the document of {url} from the KV cache: {error}",
-          { url, error },
-        );
-      }
-    }
-    if (cache == null) {
-      const remoteDoc = await loader(url, options);
-      try {
-        await kv.set(key, remoteDoc, { ttl: match });
-      } catch (error) {
-        logger.warn(
-          "Failed to save the document of {url} to the KV cache: {error}",
-          { url, error },
-        );
-      }
-      return remoteDoc;
-    }
-    return cache;
-  };
-}
-
-/**
- * Options for making `User-Agent` string.
- * @see {@link getUserAgent}
- * @since 1.3.0
- */
-export interface GetUserAgentOptions {
-  /**
-   * An optional software name and version, e.g., `"Hollo/1.0.0"`.
-   */
-  software?: string | null;
-  /**
-   * An optional URL to append to the user agent string.
-   * Usually the URL of the ActivityPub instance.
-   */
-  url?: string | URL | null;
-}
-
-/**
- * Gets the user agent string for the given application and URL.
- * @param options The options for making the user agent string.
- * @returns The user agent string.
- * @since 1.3.0
- */
-export function getUserAgent(
-  { software, url }: GetUserAgentOptions = {},
-): string {
-  const fedify = `Fedify/${metadata.version}`;
-  const runtime =
-    // deno-lint-ignore no-explicit-any
-    (globalThis as any).Deno?.version?.deno != null
-      ? `Deno/${Deno.version.deno}`
-      // deno-lint-ignore no-explicit-any
-      : (globalThis as any).process?.versions?.bun != null
-      ? `Bun/${process.versions.bun}`
-      : "navigator" in globalThis &&
-          navigator.userAgent === "Cloudflare-Workers"
-      ? navigator.userAgent
-      // deno-lint-ignore no-explicit-any
-      : (globalThis as any).process?.versions?.node != null
-      ? `Node.js/${process.versions.node}`
-      : null;
-  const userAgent = software == null ? [fedify] : [software, fedify];
-  if (runtime != null) userAgent.push(runtime);
-  if (url != null) userAgent.push(`+${url.toString()}`);
-  const first = userAgent.shift();
-  return `${first} (${userAgent.join("; ")})`;
 }
