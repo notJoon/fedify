@@ -39,7 +39,11 @@ import type {
 } from "./callback.ts";
 import type { PageItems } from "./collection.ts";
 import type { Context, InboxContext, RequestContext } from "./context.ts";
-import type { ConstructorWithTypeId } from "./federation.ts";
+import type {
+  ConstructorWithTypeId,
+  IdempotencyKeyCallback,
+  IdempotencyStrategy,
+} from "./federation.ts";
 import { type InboxListenerSet, routeActivity } from "./inbox.ts";
 import { KvKeyCache } from "./keycache.ts";
 import type { KvKey, KvStore } from "./kv.ts";
@@ -551,6 +555,9 @@ export interface InboxHandlerParameters<TContextData> {
   onNotFound(request: Request): Response | Promise<Response>;
   signatureTimeWindow: Temporal.Duration | Temporal.DurationLike | false;
   skipSignatureVerification: boolean;
+  idempotencyStrategy?:
+    | IdempotencyStrategy
+    | IdempotencyKeyCallback<TContextData>;
   tracerProvider?: TracerProvider;
 }
 
@@ -599,7 +606,10 @@ export async function handleInbox<TContextData>(
  */
 async function handleInboxInternal<TContextData>(
   request: Request,
-  {
+  parameters: InboxHandlerParameters<TContextData>,
+  span: Span,
+): Promise<Response> {
+  const {
     recipient,
     context: ctx,
     inboxContextFactory,
@@ -613,9 +623,7 @@ async function handleInboxInternal<TContextData>(
     signatureTimeWindow,
     skipSignatureVerification,
     tracerProvider,
-  }: InboxHandlerParameters<TContextData>,
-  span: Span,
-): Promise<Response> {
+  } = parameters;
   const logger = getLogger(["fedify", "federation", "inbox"]);
   if (actorDispatcher == null) {
     logger.error("Actor dispatcher is not set.", { recipient });
@@ -822,6 +830,7 @@ async function handleInboxInternal<TContextData>(
     queue,
     span,
     tracerProvider,
+    idempotencyStrategy: parameters.idempotencyStrategy,
   });
   if (routeResult === "alreadyProcessed") {
     return new Response(
