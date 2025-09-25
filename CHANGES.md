@@ -49,6 +49,18 @@ To be released.
      -  If your application relies on dispatchers being called regardless of
         `Accept` header, you may need to adjust your routing logic.
 
+ -  Changed the default activity idempotency strategy from `"per-origin"` to
+    `"per-inbox"` to align with standard ActivityPub behavior.  [[#441]]
+
+     -  Activities are now deduplicated per inbox by default, allowing the same
+        activity ID to be processed once per inbox independently.
+     -  The previous `"per-origin"` strategy (deduplicate per receiving server)
+        can still be explicitly configured using
+        `.withIdempotency("per-origin")`.
+     -  This change ensures proper delivery of activities to multiple inboxes
+        on the same server, fixing issues where activities were incorrectly
+        deduplicated globally.
+
 [#280]: https://github.com/fedify-dev/fedify/issues/280
 [#366]: https://github.com/fedify-dev/fedify/issues/366
 [#376]: https://github.com/fedify-dev/fedify/issues/376

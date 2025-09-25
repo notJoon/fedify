@@ -399,17 +399,17 @@ activities.
 
 Fedify supports three built-in idempotency strategies:
 
-`"per-inbox"`
+`"per-inbox"` (default)
 :   Activities are deduplicated per inbox.  The same activity ID can be
     processed once per inbox, allowing the same activity to be delivered to
     multiple inboxes independently.  This follows standard ActivityPub behavior
-    and will be the default in Fedify 2.0.
+    and is the default strategy since Fedify 2.0.0.
 
 `"per-origin"`
 :   Activities are deduplicated per receiving server's origin.  The same
     activity ID will be processed only once on each receiving server,
     but can be processed separately on different receiving servers.
-    This was the default behavior in Fedify 1.x versions.
+    This had been the default behavior in Fedify 1.x versions.
 
 `"global"`
 :   Activities are deduplicated globally across all inboxes and origins.
@@ -430,12 +430,6 @@ federation
     // Handle the follow activity
   });
 ~~~~
-
-> [!WARNING]
-> If you don't explicitly configure an idempotency strategy, Fedify currently
-> uses `"per-origin"` as the default for backward compatibility.  However, this
-> default will change to `"per-inbox"` in Fedify 2.0.  We recommend explicitly
-> setting the strategy to avoid unexpected behavior changes.
 
 ### Custom idempotency strategy
 

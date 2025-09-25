@@ -16,7 +16,7 @@ const kv = new MemoryKvStore();
 
 const federationOptions: FederationOptions<void> = {
   kv,
-  documentLoader: mockDocumentLoader,
+  documentLoaderFactory: () => mockDocumentLoader,
   authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
 };
 

@@ -113,8 +113,6 @@ export type RouteActivityResult =
   | "error"
   | "success";
 
-let warnedAboutDefaultIdempotency = false;
-
 export async function routeActivity<TContextData>(
   {
     context: ctx,
@@ -144,18 +142,9 @@ export async function routeActivity<TContextData>(
       getTypeId(activity).href,
     );
 
-    // Default to "per-origin" for backward compatibility if not specified
-    const strategy = idempotencyStrategy ?? "per-origin";
-
-    // Log deprecation warning if using default without explicit configuration
-    if (idempotencyStrategy === undefined && !warnedAboutDefaultIdempotency) {
-      logger.warn(
-        "Using default idempotency strategy 'per-origin'. " +
-          "This default will change to 'per-inbox' in Fedify 2.0. " +
-          "Please explicitly set the idempotency strategy using .withIdempotency().",
-      );
-      warnedAboutDefaultIdempotency = true;
-    }
+    // Default to "per-inbox" strategy since Fedify 2.0.0.
+    // (It had been "per-origin" in Fedify 1.x for backward compatibility.)
+    const strategy = idempotencyStrategy ?? "per-inbox";
 
     let keyString: string | null;
     if (typeof strategy === "function") {

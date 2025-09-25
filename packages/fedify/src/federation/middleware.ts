@@ -1281,7 +1281,9 @@ export class FederationImpl<TContextData>
     }
 
     // Routes that require JSON-LD Accepts header:
-    if (!acceptsJsonLd(request)) return await onNotAcceptable(request);
+    if (request.method !== "POST" && !acceptsJsonLd(request)) {
+      return await onNotAcceptable(request);
+    }
     switch (routeName) {
       case "actor":
         context = this.#createContext(request, contextData, {

@@ -1031,21 +1031,6 @@ test("Federation.fetch()", async (t) => {
     };
   };
 
-  await t.step("POST without accepts header", async () => {
-    const { federation, inbox } = createTestContext();
-
-    // Should not call inbox handler on POST
-    const response = await federation.fetch(
-      new Request("https://example.com/inbox", {
-        method: "POST",
-      }),
-      { contextData: undefined },
-    );
-
-    assertEquals(inbox, []);
-    assertEquals(response.status, 406);
-  });
-
   await t.step("GET without accepts header", async () => {
     const { federation, dispatches } = createTestContext();
 
@@ -1195,29 +1180,6 @@ test("Federation.fetch()", async (t) => {
 
     assertEquals(dispatches, ["activity"]);
     assertEquals(response.status, 200);
-  });
-
-  await t.step("onNotAcceptable with POST", async () => {
-    const { federation } = createTestContext();
-
-    let notAcceptableCalled = false;
-    const response = await federation.fetch(
-      new Request("https://example.com/users/html/inbox", {
-        method: "POST",
-        headers: { "Accept": "text/html" },
-      }),
-      {
-        contextData: undefined,
-        onNotAcceptable: () => {
-          notAcceptableCalled = true;
-          return new Response("handled by onNotAcceptable", { status: 200 });
-        },
-      },
-    );
-
-    assertEquals(notAcceptableCalled, true);
-    assertEquals(response.status, 200);
-    assertEquals(await response.text(), "handled by onNotAcceptable");
   });
 
   await t.step("onNotAcceptable with GET", async () => {
