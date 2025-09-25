@@ -12,7 +12,7 @@ import {
   optional,
 } from "@optique/core";
 import { choice } from "@optique/core/valueparser";
-import { print } from "@optique/run";
+import { print, printError } from "@optique/run";
 import process from "node:process";
 import ora from "ora";
 import { configureLogging, debugOption } from "./globals.ts";
@@ -49,20 +49,35 @@ export const tunnelCommand = command(
 
 export async function runTunnel(
   command: InferValue<typeof tunnelCommand>,
+  deps: {
+    openTunnel: typeof openTunnel;
+    ora: typeof ora;
+    exit: typeof process.exit;
+  } = {
+    openTunnel,
+    ora,
+    exit: process.exit,
+  },
 ) {
   if (command.debug) {
     await configureLogging();
   }
-  const spinner = ora({
+  const spinner = deps.ora({
     text: "Creating a secure tunnel...",
     discardStdin: false,
   }).start();
   let tunnel: Tunnel;
   try {
-    tunnel = await openTunnel({ port: command.port, service: command.service });
-  } catch {
+    tunnel = await deps.openTunnel({
+      port: command.port,
+      service: command.service,
+    });
+  } catch (error) {
+    if (command.debug) {
+      printError(message`${String(error)}`);
+    }
     spinner.fail("Failed to create a secure tunnel.");
-    process.exit(1);
+    deps.exit(1);
   }
   spinner.succeed(
     `Your local server at ${command.port} is now publicly accessible:\n`,
