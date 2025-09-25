@@ -1371,6 +1371,7 @@ export class FederationImpl<TContextData>
           signatureTimeWindow: this.signatureTimeWindow,
           skipSignatureVerification: this.skipSignatureVerification,
           tracerProvider: this.tracerProvider,
+          idempotencyStrategy: this.idempotencyStrategy,
         });
       case "following":
         return await handleCollection(request, {
@@ -2532,6 +2533,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
       queue: this.federation.inboxQueue,
       span,
       tracerProvider: options.tracerProvider ?? this.tracerProvider,
+      idempotencyStrategy: this.federation.idempotencyStrategy,
     });
     return routeResult === "alreadyProcessed" || routeResult === "enqueued" ||
       routeResult === "unsupportedActivity" || routeResult === "success";

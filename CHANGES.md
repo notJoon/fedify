@@ -99,6 +99,18 @@ To be released.
      -  Internal trust tracking system maintains security context throughout
         object lifecycles (construction, cloning, and property access).
 
+ -  Added `withIdempotency()` method to configure activity idempotency
+    strategies for inbox processing.  This addresses issue [#441] where
+    activities with the same ID sent to different inboxes were incorrectly
+    deduplicated globally instead of per-inbox.  [[#441]]
+
+     -  Added `IdempotencyStrategy` type.
+     -  Added `IdempotencyKeyCallback` type.
+     -  Added `InboxListenerSetters.withIdempotency()` method.
+     -  By default, `"per-origin"` strategy is used for backward compatibility.
+        This will change to `"per-inbox"` in Fedify 2.0.  We recommend
+        explicitly setting the strategy to avoid unexpected behavior changes.
+
  -  Fixed handling of ActivityPub objects containing relative URLs.  The
     Activity Vocabulary classes now automatically resolve relative URLs by
     inferring the base URL from the object's `@id` or document URL, eliminating
@@ -179,6 +191,7 @@ To be released.
 [#429]: https://github.com/fedify-dev/fedify/issues/429
 [#431]: https://github.com/fedify-dev/fedify/pull/431
 [#440]: https://github.com/fedify-dev/fedify/issues/440
+[#441]: https://github.com/fedify-dev/fedify/issues/441
 [#443]: https://github.com/fedify-dev/fedify/pull/443
 
 ### @fedify/cli
@@ -322,7 +335,7 @@ Released on September 17, 2025.
 Version 1.8.10
 --------------
 
-Released on Steptember 17, 2025.
+Released on September 17, 2025.
 
 ### @fedify/fedify
 
@@ -5289,4 +5302,7 @@ Version 0.1.0
 Initial release.  Released on March 8, 2024.
 
 <!-- cSpell: ignore Dogeon Fabien Wressell Emelia Fróði Karlsson -->
-<!-- cSpell: ignore Hana Heesun Kyunghee Jiyu Revath Kumar -->
+<!-- cSpell: ignore Hana Heesun Kyunghee Jiyu Revath Kumar Jaeyeol -->
+<!-- cSpell: ignore Jiwon Kwon Hyeonseo Chanhaeng Hasang Hyunchae KeunHyeong -->
+<!-- cSpell: ignore Jang Hanarae ByeongJun Subin -->
+<!-- cSpell: ignore Wayst Konsole Ghostty Aplc -->
