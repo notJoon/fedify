@@ -74,8 +74,6 @@ To be released.
 [#434]: https://github.com/fedify-dev/fedify/pull/434
 [#444]: https://github.com/fedify-dev/fedify/pull/444
 
-
-
 ### @fedify/cli
 
  -  Updated `fedify init` command for better DX.
