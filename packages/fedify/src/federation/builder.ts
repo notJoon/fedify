@@ -524,20 +524,23 @@ export class FederationBuilderImpl<TContextData>
   setObjectDispatcher<TObject extends Object, TParam extends string>(
     // deno-lint-ignore no-explicit-any
     cls: (new (...args: any[]) => TObject) & { typeId: URL },
-    path:
-      `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
     // deno-lint-ignore no-explicit-any
     cls: (new (...args: any[]) => TObject) & { typeId: URL },
-    path: `${string}{${TParam}}${string}{${TParam}}${string}`,
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
     // deno-lint-ignore no-explicit-any
     cls: (new (...args: any[]) => TObject) & { typeId: URL },
-    path: `${string}{${TParam}}${string}`,
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
