@@ -457,7 +457,152 @@ export interface Federatable<TContextData> {
     inboxPath: `${string}{identifier}${string}` | `${string}{handle}${string}`,
     sharedInboxPath?: string,
   ): InboxListenerSetters<TContextData>;
-  /** ß
+
+  /**
+   * Registers a collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setCollectionDispatcher<TObject extends Object, TParam extends string>(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers a collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setCollectionDispatcher<TObject extends Object, TParam extends string>(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers a collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setCollectionDispatcher<TObject extends Object, TParam extends string>(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers a collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setCollectionDispatcher<TObject extends Object, TParam extends string>(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
    * Registers a collection of objects dispatcher.
    *
    * @template TContextData The context data to pass to the {@link Context}.
@@ -476,6 +621,154 @@ export interface Federatable<TContextData> {
     // deno-lint-ignore no-explicit-any
     itemType: (new (...args: any[]) => TObject) & { typeId: URL },
     path: `${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers an ordered collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers an ordered collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers an ordered collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers an ordered collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
       TParam,

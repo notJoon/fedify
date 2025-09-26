@@ -1211,17 +1211,130 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    ...args: [
-      // deno-lint-ignore no-explicit-any
-      (new (...args: any[]) => TObject) & { typeId: URL },
-      `${string}${Rfc6570Expression<TParam>}${string}`,
-      CustomCollectionDispatcher<
-        TObject,
-        TParam,
-        RequestContext<TContextData>,
-        TContextData
-      >,
-    ]
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: string,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
   ): CustomCollectionCallbackSetters<
     TParam,
     RequestContext<TContextData>,
@@ -1230,7 +1343,9 @@ export class FederationBuilderImpl<TContextData>
     return this.#setCustomCollectionDispatcher(
       name,
       "collection",
-      ...args,
+      itemType,
+      path as `${string}${Rfc6570Expression<TParam>}${string}`,
+      dispatcher,
     );
   }
 
@@ -1239,17 +1354,122 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    ...args: [
-      // deno-lint-ignore no-explicit-any
-      (new (...args: any[]) => TObject) & { typeId: URL },
-      `${string}${Rfc6570Expression<TParam>}${string}`,
-      CustomCollectionDispatcher<
-        TObject,
-        TParam,
-        RequestContext<TContextData>,
-        TContextData
-      >,
-    ]
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: string,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
   ): CustomCollectionCallbackSetters<
     TParam,
     RequestContext<TContextData>,
@@ -1258,7 +1478,9 @@ export class FederationBuilderImpl<TContextData>
     return this.#setCustomCollectionDispatcher(
       name,
       "orderedCollection",
-      ...args,
+      itemType,
+      path as `${string}${Rfc6570Expression<TParam>}${string}`,
+      dispatcher,
     );
   }
 
