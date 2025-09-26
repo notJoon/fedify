@@ -30,7 +30,7 @@ import type {
   SharedInboxKeyDispatcher,
   WebFingerLinksDispatcher,
 } from "./callback.ts";
-import type { Context, RequestContext } from "./context.ts";
+import type { Context, InboxContext, RequestContext } from "./context.ts";
 import type { KvStore } from "./kv.ts";
 import type {
   FederationKvPrefixes,
@@ -1174,6 +1174,41 @@ export interface CollectionCallbackSetters<
 }
 
 /**
+ * The strategy for handling activity idempotency in inbox processing.
+ *
+ *  -  `"global"`: Activities are deduplicated globally across all inboxes and
+ *     origins.  The same activity ID will be processed only once, regardless
+ *     of which inbox receives it or which server sent it.
+ *
+ *  -  `"per-origin"`: Activities are deduplicated per receiving server's origin.
+ *     The same activity ID will be processed only once on each receiving server,
+ *     but can be processed separately on different receiving servers. This was
+ *     the default behavior in Fedify 1.x versions.
+ *
+ *  -  `"per-inbox"`: Activities are deduplicated per inbox. The same activity
+ *     ID can be processed once per inbox, allowing the same activity to be
+ *     delivered to multiple inboxes independently.  This follows standard
+ *     ActivityPub behavior and will be the default in Fedify 2.0.
+ *
+ * @since 1.9.0
+ */
+export type IdempotencyStrategy = "global" | "per-origin" | "per-inbox";
+
+/**
+ * A callback to generate a custom idempotency key for an activity.
+ * Returns the cache key to use, or null to skip idempotency checking.
+ * @template TContextData The context data to pass to the {@link InboxContext}.
+ * @param ctx The inbox context.
+ * @param activity The activity being processed.
+ * @returns The idempotency key to use for caching, or null to skip caching.
+ * @since 1.9.0
+ */
+export type IdempotencyKeyCallback<TContextData> = (
+  ctx: InboxContext<TContextData>,
+  activity: Activity,
+) => string | null | Promise<string | null>;
+
+/**
  * Registry for inbox listeners for different activity types.
  */
 export interface InboxListenerSetters<TContextData> {
@@ -1212,6 +1247,39 @@ export interface InboxListenerSetters<TContextData> {
    */
   setSharedKeyDispatcher(
     dispatcher: SharedInboxKeyDispatcher<TContextData>,
+  ): InboxListenerSetters<TContextData>;
+
+  /**
+   * Configures the strategy for handling activity idempotency in inbox processing.
+   *
+   * @example
+   * Use per-inbox strategy (standard ActivityPub behavior):
+   * ```
+   * federation
+   *   .setInboxListeners("/users/{identifier}/inbox", "/inbox")
+   *   .withIdempotency("per-inbox");
+   * ```
+   *
+   * Use custom strategy:
+   * ```
+   * federation
+   *   .setInboxListeners("/users/{identifier}/inbox", "/inbox")
+   *   .withIdempotency((ctx, activity) => {
+   *     // Return null to skip idempotency
+   *     return `${ctx.origin}:${activity.id?.href}:${ctx.recipient}`;
+   *   });
+   * ```
+   *
+   * @param strategy The idempotency strategy to use. Can be:
+   *   - `"global"`: Activities are deduplicated across all inboxes and origins
+   *   - `"per-origin"`: Activities are deduplicated per inbox origin
+   *   - `"per-inbox"`: Activities are deduplicated per inbox
+   *   - A custom callback function that returns the cache key to use
+   * @returns The setters object so that settings can be chained.
+   * @since 1.9.0
+   */
+  withIdempotency(
+    strategy: IdempotencyStrategy | IdempotencyKeyCallback<TContextData>,
   ): InboxListenerSetters<TContextData>;
 }
 
