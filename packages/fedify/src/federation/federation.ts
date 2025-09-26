@@ -474,7 +474,6 @@ export interface Federatable<TContextData> {
    */
   setCollectionDispatcher<TObject extends Object, TParam extends string>(
     name: string | symbol,
-<<<<<<< HEAD
     // deno-lint-ignore no-explicit-any
     itemType: (new (...args: any[]) => TObject) & { typeId: URL },
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
@@ -482,10 +481,6 @@ export interface Federatable<TContextData> {
     >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}`,
-=======
-    itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams> | ParamKeyPathInter<TParams>,
->>>>>>> ae3dfba6531fb174accfa35f2f0d0ecebf79931b
     dispatcher: CustomCollectionDispatcher<
       TObject,
       TParam,
@@ -657,7 +652,6 @@ export interface Federatable<TContextData> {
     TParam extends string,
   >(
     name: string | symbol,
-<<<<<<< HEAD
     // deno-lint-ignore no-explicit-any
     itemType: (new (...args: any[]) => TObject) & { typeId: URL },
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
@@ -665,10 +659,6 @@ export interface Federatable<TContextData> {
     >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<TParam>}${string}`,
-=======
-    itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams> | ParamKeyPathInter<TParams>,
->>>>>>> ae3dfba6531fb174accfa35f2f0d0ecebf79931b
     dispatcher: CustomCollectionDispatcher<
       TObject,
       TParam,
@@ -1422,53 +1412,7 @@ export interface CustomCollectionCallbackSetters<
 export type ConstructorWithTypeId<TObject extends Object> =
   // deno-lint-ignore no-explicit-any
   (new (...args: any[]) => TObject) & { typeId: URL };
-<<<<<<< HEAD
-=======
 
-/**
- * Represents a path from the key of parameter objects.
- * @param Params - A record of parameters where keys are parameter names and
- *                 values are their string representations.
- * @returns A string representing the path with all parameters.
- * @example
- * ```ts
- * type UserPostPath = ParamsKeyPath<{ userId: string; postId: string }>;
- * let userPostPath: UserPostPath;
- * // userPostPath = "/posts/{postId}"; // invalid - does not contain `{userId}`
- * // userPostPath = "/users/{userId}"; // invalid - does not contain `{postId}`
- * userPostPath = "/users/{userId}/posts/{postId}"; // valid
- * userPostPath = "/posts/{postId}/users/{userId}"; // valid
- * ```
- */
-export type ParamsKeyPath<Params extends Record<string, string>> =
-  & ParamPath<Extract<keyof Params, string>>
-  & string;
-
-export type ParamKeyPathInter<Params extends Record<string, string>> =
-  & ParamsPath<Extract<keyof Params, string>>
-  & string;
-/**
- * Represents a path with multiple parameters.
- * All permutations of the parameters are included in the union type.
- * The path must have all parameters in the form of `{paramName}`.
- * @param Params - A union of parameter names.
- * @returns A string representing the path with all parameters.
- * @example
- * ```ts
- * type UserPostPath = ParamsPath<"userId" | "postId">;
- * // = `${string}{userId}${string}` & `${string}{postId}${string}`
- * // =
- * //  | `${string}{userId}${string}{postId}${string}`
- * //  | `${string}{postId}${string}{userId}${string}`
- * let userPostPath: UserPostPath;
- * userPostPath = "/users/posts"; // ❌ invalid
- * userPostPath = "/users/{userId}"; // ❌ invalid
- * userPostPath = "/posts/{postId}"; // ❌ invalid
- * userPostPath = "/users/{userId}/posts/{postId}"; // ✅ valid
- * userPostPath = "/posts/{postId}/users/{userId}"; // ✅ valid
- */
-type ParamsPath<Params extends string> = UnionToIntersection<ParamPath<Params>>;
->>>>>>> ae3dfba6531fb174accfa35f2f0d0ecebf79931b
 /**
  * Defines a union of all valid RFC 6570 URI Template expressions for a given
  * parameter name.
