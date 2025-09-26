@@ -1213,29 +1213,6 @@ export class FederationBuilderImpl<TContextData>
     name: string | symbol,
     // deno-lint-ignore no-explicit-any
     itemType: (new (...args: any[]) => TObject) & { typeId: URL },
-    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
-      TParam
-    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
-      TParam
-    >}${string}`,
-    dispatcher: CustomCollectionDispatcher<
-      TObject,
-      TParam,
-      RequestContext<TContextData>,
-      TContextData
-    >,
-  ): CustomCollectionCallbackSetters<
-    TParam,
-    RequestContext<TContextData>,
-    TContextData
-  >;
-  setCollectionDispatcher<
-    TObject extends Object,
-    TParam extends string,
-  >(
-    name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
     path: `${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<
@@ -1349,52 +1326,6 @@ export class FederationBuilderImpl<TContextData>
     );
   }
 
-  setOrderedCollectionDispatcher<
-    TObject extends Object,
-    TParam extends string,
-  >(
-    name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
-    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
-      TParam
-    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
-      TParam
-    >}${string}${Rfc6570Expression<TParam>}${string}`,
-    dispatcher: CustomCollectionDispatcher<
-      TObject,
-      TParam,
-      RequestContext<TContextData>,
-      TContextData
-    >,
-  ): CustomCollectionCallbackSetters<
-    TParam,
-    RequestContext<TContextData>,
-    TContextData
-  >;
-  setOrderedCollectionDispatcher<
-    TObject extends Object,
-    TParam extends string,
-  >(
-    name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
-    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
-      TParam
-    >}${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
-      TParam
-    >}${string}`,
-    dispatcher: CustomCollectionDispatcher<
-      TObject,
-      TParam,
-      RequestContext<TContextData>,
-      TContextData
-    >,
-  ): CustomCollectionCallbackSetters<
-    TParam,
-    RequestContext<TContextData>,
-    TContextData
-  >;
   setOrderedCollectionDispatcher<
     TObject extends Object,
     TParam extends string,
