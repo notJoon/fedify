@@ -351,6 +351,9 @@ export async function* generateDecoder(
         // deno-lint-ignore no-explicit-any
         (expanded[0] ?? {}) as (Record<string, any[]> & { "@id"?: string });
     }
+    if (options.baseUrl == null && values["@id"] != null) {
+      options = { ...options, baseUrl: new URL(values["@id"]) };
+    }
   `;
   const subtypes = getSubtypes(typeUri, types, true);
   yield `
@@ -434,15 +437,26 @@ export async function* generateDecoder(
     }
     if (property.range.length == 1) {
       yield `${variable}.push(${
-        getDecoder(property.range[0], types, "v", "options")
+        getDecoder(
+          property.range[0],
+          types,
+          "v",
+          "options",
+          `(values["@id"] == null ? options.baseUrl : new URL(values["@id"]))`,
+        )
       })`;
     } else {
       yield `
       const decoded =
       `;
-      for (const code of getDecoders(property.range, types, "v", "options")) {
-        yield code;
-      }
+      const decoders = getDecoders(
+        property.range,
+        types,
+        "v",
+        "options",
+        `(values["@id"] == null ? options.baseUrl : new URL(values["@id"]))`,
+      );
+      for (const code of decoders) yield code;
       yield `
       ;
       if (typeof decoded === "undefined") continue;

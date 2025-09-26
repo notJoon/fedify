@@ -64,7 +64,7 @@ async function* generateProperty(
         contextLoader?: DocumentLoader,
         suppressError?: boolean,
         tracerProvider?: TracerProvider,
-        baseUrl?: URL
+        crossOrigin?: "ignore" | "throw" | "trust";
       } = {},
     ): Promise<${getTypeNames(property.range, types)} | null> {
       const documentLoader =
@@ -77,7 +77,6 @@ async function* generateProperty(
         ${JSON.stringify(metadata.name)},
         ${JSON.stringify(metadata.version)},
       );
-      const baseUrl = options.baseUrl;
       return await tracer.startActiveSpan("activitypub.lookup_object", async (span) => {
         let fetchResult: RemoteDocument;
         try {
@@ -97,12 +96,32 @@ async function* generateProperty(
           }
           throw error;
         }
-        const { document } = fetchResult;
+        const { document, documentUrl } = fetchResult;
+        const baseUrl = new URL(documentUrl);
         try {
           const obj = await this.#${property.singularName}_fromJsonLd(
             document,
             { documentLoader, contextLoader, tracerProvider, baseUrl }
           );
+          if (options.crossOrigin !== "trust" && obj?.id != null &&
+              obj.id.origin !== baseUrl.origin) {
+            if (options.crossOrigin === "throw") {
+              throw new Error(
+                "The object's @id (" + obj.id.href + ") has a different origin " +
+                "than the document URL (" + baseUrl.href + "); refusing to return " +
+                "the object.  If you want to bypass this check and are aware of" +
+                'the security implications, set the crossOrigin option to "trust".'
+              );
+            }
+            getLogger(["fedify", "vocab"]).warn(
+              "The object's @id ({objectId}) has a different origin than the document " +
+              "URL ({documentUrl}); refusing to return the object.  If you want to " +
+              "bypass this check and are aware of the security implications, " +
+              'set the crossOrigin option to "trust".',
+              { ...fetchResult, objectId: obj.id.href },
+            );
+            return null;
+          }
           span.setAttribute("activitypub.object.id", (obj.id ?? url).href);
           span.setAttribute(
             "activitypub.object.type",
@@ -194,7 +213,7 @@ async function* generateProperty(
           contextLoader?: DocumentLoader,
           suppressError?: boolean,
           tracerProvider?: TracerProvider,
-          baseUrl?: URL
+          crossOrigin?: "ignore" | "throw" | "trust";
         } = {}
       ): Promise<${getTypeNames(property.range, types)} | null> {
         if (this._warning != null) {
@@ -204,12 +223,18 @@ async function* generateProperty(
           );
         }
         if (this.${await getFieldName(property.uri)}.length < 1) return null;
-        const v = this.${await getFieldName(property.uri)}[0];
+        let v = this.${await getFieldName(property.uri)}[0];
+        if (options.crossOrigin !== "trust" && !(v instanceof URL) &&
+            v.id != null && v.id.origin !== this.id?.origin &&
+            !this.${await getFieldName(property.uri, "#_trust")}.has(0)) {
+          v = v.id;
+        }
         if (v instanceof URL) {
           const fetched =
             await this.#fetch${pascalCase(property.singularName)}(v, options);
           if (fetched == null) return null;
           this.${await getFieldName(property.uri)}[0] = fetched;
+          this.${await getFieldName(property.uri, "#_trust")}.add(0);
           this._cachedJsonLd = undefined;
           return fetched;
         }
@@ -224,14 +249,36 @@ async function* generateProperty(
         ) {
           const prop = this._cachedJsonLd[
             ${JSON.stringify(property.compactName)}];
-          const obj = Array.isArray(prop) ? prop[0] : prop;
-          if (obj != null && typeof obj === "object" && "@context" in obj) {
-            return await this.#${property.singularName}_fromJsonLd(obj, {...options, baseUrl: options.baseUrl});
+          const doc = Array.isArray(prop) ? prop[0] : prop;
+          if (doc != null && typeof doc === "object" && "@context" in doc) {
+            v = await this.#${property.singularName}_fromJsonLd(doc, options);
           }
         }
         `;
       }
       yield `
+        if (options.crossOrigin !== "trust" && v?.id != null &&
+            this.id != null && v.id.origin !== this.id.origin &&
+            !this.${await getFieldName(property.uri, "#_trust")}.has(0)) {
+          if (options.crossOrigin === "throw") {
+            throw new Error(
+              "The property object's @id (" + v.id.href + ") has a different " +
+              "origin than the property owner's @id (" + this.id.href + "); " +
+              "refusing to return the object.  If you want to bypass this " +
+              "check and are aware of the security implications, set the " +
+              'crossOrigin option to "trust".'
+            );
+          }
+          getLogger(["fedify", "vocab"]).warn(
+            "The property object's @id ({objectId}) has a different origin " +
+            "than the property owner's @id ({parentObjectId}); refusing to " +
+            "return the object.  If you want to bypass this check and are " +
+            "aware of the security implications, set the crossOrigin option " +
+            'to "trust".',
+            { objectId: v.id.href, parentObjectId: this.id.href },
+          );
+          return null;
+        }
         return v;
       }
       `;
@@ -263,7 +310,7 @@ async function* generateProperty(
           contextLoader?: DocumentLoader,
           suppressError?: boolean,
           tracerProvider?: TracerProvider,
-          baseUrl?: URL
+          crossOrigin?: "ignore" | "throw" | "trust";
         } = {}
       ): AsyncIterable<${getTypeNames(property.range, types)}> {
         if (this._warning != null) {
@@ -274,13 +321,18 @@ async function* generateProperty(
         }
         const vs = this.${await getFieldName(property.uri)};
         for (let i = 0; i < vs.length; i++) {
-          const v = vs[i];
+          let v = vs[i];
+          if (options.crossOrigin !== "trust" && !(v instanceof URL) &&
+              v.id != null && v.id.origin !== this.id?.origin &&
+              !this.${await getFieldName(property.uri, "#_trust")}.has(i)) {
+            v = v.id;
+          }
           if (v instanceof URL) {
             const fetched =
-              await this.#fetch${pascalCase(property.singularName)}(
-                v, {...options, baseUrl: options.baseUrl});
+              await this.#fetch${pascalCase(property.singularName)}(v, options);
             if (fetched == null) continue;
             vs[i] = fetched;
+            this.${await getFieldName(property.uri, "#_trust")}.add(i);
             this._cachedJsonLd = undefined;
             yield fetched;
             continue;
@@ -298,14 +350,34 @@ async function* generateProperty(
               ${JSON.stringify(property.compactName)}];
             const obj = Array.isArray(prop) ? prop[i] : prop;
             if (obj != null && typeof obj === "object" && "@context" in obj) {
-              yield await this.#${property.singularName}_fromJsonLd(obj, {...options, baseUrl: options.baseUrl
-              });
-              continue;
+              v = await this.#${property.singularName}_fromJsonLd(obj, options);
             }
           }
         `;
       }
       yield `
+          if (options.crossOrigin !== "trust" && v?.id != null &&
+              this.id != null && v.id.origin !== this.id.origin &&
+              !this.${await getFieldName(property.uri, "#_trust")}.has(0)) {
+            if (options.crossOrigin === "throw") {
+              throw new Error(
+                "The property object's @id (" + v.id.href + ") has a different " +
+                "origin than the property owner's @id (" + this.id.href + "); " +
+                "refusing to return the object.  If you want to bypass this " +
+                "check and are aware of the security implications, set the " +
+                'crossOrigin option to "trust".'
+              );
+            }
+            getLogger(["fedify", "vocab"]).warn(
+              "The property object's @id ({objectId}) has a different origin " +
+              "than the property owner's @id ({parentObjectId}); refusing to " +
+              "return the object.  If you want to bypass this check and are " +
+              "aware of the security implications, set the crossOrigin " +
+              'option to "trust".',
+              { objectId: v.id.href, parentObjectId: this.id.href },
+            );
+            continue;
+          }
           yield v;
         }
       }

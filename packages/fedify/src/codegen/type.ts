@@ -577,16 +577,19 @@ export function getDecoder(
   types: Record<string, TypeSchema>,
   variable: string,
   optionsVariable: string,
+  baseUrlVariable: string,
 ): string {
   if (typeUri in scalarTypes) {
     return scalarTypes[typeUri].decoder(
       variable,
-      `${optionsVariable}?.baseUrl`,
+      baseUrlVariable,
     );
   }
   if (typeUri in types) {
     return `await ${types[typeUri].name}.fromJsonLd(
-      ${variable}, ${optionsVariable})`;
+      ${variable},
+      { ...${optionsVariable}, baseUrl: ${baseUrlVariable} }
+    )`;
   }
   throw new Error(`Unknown type: ${typeUri}`);
 }
@@ -614,11 +617,18 @@ export function* getDecoders(
   types: Record<string, TypeSchema>,
   variable: string,
   optionsVariable: string,
+  baseUrlVariable: string,
 ): Iterable<string> {
   for (const typeUri of typeUris) {
     yield getDataCheck(typeUri, types, variable);
     yield " ? ";
-    yield getDecoder(typeUri, types, variable, optionsVariable);
+    yield getDecoder(
+      typeUri,
+      types,
+      variable,
+      optionsVariable,
+      baseUrlVariable,
+    );
     yield " : ";
   }
   yield "undefined";

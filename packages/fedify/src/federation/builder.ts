@@ -33,6 +33,8 @@ import type {
   Federation,
   FederationBuilder,
   FederationOptions,
+  IdempotencyKeyCallback,
+  IdempotencyStrategy,
   InboxListenerSetters,
   ObjectCallbackSetters,
   Rfc6570Expression,
@@ -102,6 +104,9 @@ export class FederationBuilderImpl<TContextData>
   inboxListeners?: InboxListenerSet<TContextData>;
   inboxErrorHandler?: InboxErrorHandler<TContextData>;
   sharedInboxKeyDispatcher?: SharedInboxKeyDispatcher<TContextData>;
+  idempotencyStrategy?:
+    | IdempotencyStrategy
+    | IdempotencyKeyCallback<TContextData>;
   collectionTypeIds: Record<
     string | symbol,
     ConstructorWithTypeId<Object>
@@ -178,6 +183,7 @@ export class FederationBuilderImpl<TContextData>
     f.inboxListeners = this.inboxListeners?.clone();
     f.inboxErrorHandler = this.inboxErrorHandler;
     f.sharedInboxKeyDispatcher = this.sharedInboxKeyDispatcher;
+    f.idempotencyStrategy = this.idempotencyStrategy;
     return f;
   }
 
@@ -1203,6 +1209,12 @@ export class FederationBuilderImpl<TContextData>
         dispatcher: SharedInboxKeyDispatcher<TContextData>,
       ): InboxListenerSetters<TContextData> => {
         this.sharedInboxKeyDispatcher = dispatcher;
+        return setters;
+      },
+      withIdempotency: (
+        strategy: IdempotencyStrategy | IdempotencyKeyCallback<TContextData>,
+      ): InboxListenerSetters<TContextData> => {
+        this.idempotencyStrategy = strategy;
         return setters;
       },
     };
