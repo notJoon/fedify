@@ -113,7 +113,9 @@ export interface Federatable<TContextData> {
    * @throws {RouterError} Thrown if the path pattern is invalid.
    */
   setActorDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: ActorDispatcher<TContextData>,
   ): ActorCallbackSetters<TContextData>;
 
@@ -256,7 +258,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setInboxDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Activity,
       RequestContext<TContextData>,
@@ -293,7 +297,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setOutboxDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Activity,
       RequestContext<TContextData>,
@@ -318,7 +324,9 @@ export interface Federatable<TContextData> {
    * @throws {RouterError} Thrown if the path pattern is invalid.
    */
   setFollowingDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Actor | URL,
       RequestContext<TContextData>,
@@ -343,7 +351,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setFollowersDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Recipient,
       Context<TContextData>,
@@ -364,7 +374,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setLikedDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Object | URL,
       RequestContext<TContextData>,
@@ -389,7 +401,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setFeaturedDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Object,
       RequestContext<TContextData>,
@@ -414,7 +428,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setFeaturedTagsDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Hashtag,
       RequestContext<TContextData>,
@@ -457,7 +473,9 @@ export interface Federatable<TContextData> {
    * @throws {RouteError} Thrown if the path pattern is invalid.
    */
   setInboxListeners(
-    inboxPath: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    inboxPath:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     sharedInboxPath?: string,
   ): InboxListenerSetters<TContextData>;
 
