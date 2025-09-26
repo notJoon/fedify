@@ -35,7 +35,7 @@ import type {
   FederationOptions,
   InboxListenerSetters,
   ObjectCallbackSetters,
-  ParamsKeyPath,
+  Rfc6570Expression,
 } from "./federation.ts";
 import type {
   CollectionCallbacks,
@@ -110,7 +110,7 @@ export class FederationBuilderImpl<TContextData>
     string | symbol,
     CustomCollectionCallbacks<
       Object,
-      Record<string, string>,
+      string,
       RequestContext<TContextData>,
       TContextData
     >
@@ -1208,21 +1208,22 @@ export class FederationBuilderImpl<TContextData>
 
   setCollectionDispatcher<
     TObject extends Object,
-    TParams extends Record<string, string>,
+    TParam extends string,
   >(
     name: string | symbol,
     ...args: [
-      ConstructorWithTypeId<TObject>,
-      ParamsKeyPath<TParams>,
+      // deno-lint-ignore no-explicit-any
+      (new (...args: any[]) => TObject) & { typeId: URL },
+      `${string}${Rfc6570Expression<TParam>}${string}`,
       CustomCollectionDispatcher<
         TObject,
-        TParams,
+        TParam,
         RequestContext<TContextData>,
         TContextData
       >,
     ]
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     RequestContext<TContextData>,
     TContextData
   > {
@@ -1235,21 +1236,22 @@ export class FederationBuilderImpl<TContextData>
 
   setOrderedCollectionDispatcher<
     TObject extends Object,
-    TParams extends Record<string, string>,
+    TParam extends string,
   >(
     name: string | symbol,
     ...args: [
-      ConstructorWithTypeId<TObject>,
-      ParamsKeyPath<TParams>,
+      // deno-lint-ignore no-explicit-any
+      (new (...args: any[]) => TObject) & { typeId: URL },
+      `${string}${Rfc6570Expression<TParam>}${string}`,
       CustomCollectionDispatcher<
         TObject,
-        TParams,
+        TParam,
         RequestContext<TContextData>,
         TContextData
       >,
     ]
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     RequestContext<TContextData>,
     TContextData
   > {
@@ -1259,22 +1261,24 @@ export class FederationBuilderImpl<TContextData>
       ...args,
     );
   }
+
   #setCustomCollectionDispatcher<
     TObject extends Object,
-    TParams extends Record<string, string>,
+    TParam extends string,
   >(
     name: string | symbol,
     collectionType: "collection" | "orderedCollection",
-    itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams>,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
-      TParams,
+      TParam,
       RequestContext<TContextData>,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     RequestContext<TContextData>,
     TContextData
   > {
@@ -1302,7 +1306,7 @@ export class FederationBuilderImpl<TContextData>
 
     const callbacks: CustomCollectionCallbacks<
       TObject,
-      TParams,
+      TParam,
       RequestContext<TContextData>,
       TContextData
     > = { dispatcher };
@@ -1312,13 +1316,13 @@ export class FederationBuilderImpl<TContextData>
     this.collectionTypeIds[name] = itemType;
 
     const setters: CustomCollectionCallbackSetters<
-      TParams,
+      TParam,
       RequestContext<TContextData>,
       TContextData
     > = {
       setCounter(
         counter: CustomCollectionCounter<
-          TParams,
+          TParam,
           TContextData
         >,
       ) {
@@ -1327,7 +1331,7 @@ export class FederationBuilderImpl<TContextData>
       },
       setFirstCursor(
         cursor: CustomCollectionCursor<
-          TParams,
+          TParam,
           RequestContext<TContextData>,
           TContextData
         >,
@@ -1337,7 +1341,7 @@ export class FederationBuilderImpl<TContextData>
       },
       setLastCursor(
         cursor: CustomCollectionCursor<
-          TParams,
+          TParam,
           RequestContext<TContextData>,
           TContextData
         >,
@@ -1348,7 +1352,7 @@ export class FederationBuilderImpl<TContextData>
       authorize(
         predicate: ObjectAuthorizePredicate<
           TContextData,
-          keyof TParams & string
+          keyof TParam & string
         >,
       ) {
         callbacks.authorizePredicate = predicate;

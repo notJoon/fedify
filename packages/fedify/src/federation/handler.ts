@@ -862,14 +862,14 @@ async function handleInboxInternal<TContextData>(
 /**
  * Callbacks for handling a custom collection.
  * @template TItem The type of items in the collection.
- * @template TParams The parameter names of the requested URL.
+ * @template TParam The parameter names of the requested URL.
  * @template TContext The type of the context. {@link Context} or {@link RequestContext}.
  * @template TContextData The context data to pass to the `TContext`.
  * @since 1.8.0
  */
 export interface CustomCollectionCallbacks<
   TItem,
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContext extends Context<TContextData>,
   TContextData,
 > {
@@ -878,7 +878,7 @@ export interface CustomCollectionCallbacks<
    */
   dispatcher: CustomCollectionDispatcher<
     TItem,
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -886,24 +886,24 @@ export interface CustomCollectionCallbacks<
   /**
    * A callback that counts the number of items in a custom collection.
    */
-  counter?: CustomCollectionCounter<TParams, TContextData>;
+  counter?: CustomCollectionCounter<TParam, TContextData>;
 
   /**
    * A callback that returns the first cursor for a custom collection.
    */
-  firstCursor?: CustomCollectionCursor<TParams, TContext, TContextData>;
+  firstCursor?: CustomCollectionCursor<TParam, TContext, TContextData>;
 
   /**
    * A callback that returns the last cursor for a custom collection.
    */
-  lastCursor?: CustomCollectionCursor<TParams, TContext, TContextData>;
+  lastCursor?: CustomCollectionCursor<TParam, TContext, TContextData>;
 
   /**
    * A callback that determines if a request is authorized to access the custom collection.
    */
   authorizePredicate?: ObjectAuthorizePredicate<
     TContextData,
-    keyof TParams & string
+    keyof TParam & string
   >;
 }
 
@@ -917,17 +917,17 @@ export interface CustomCollectionCallbacks<
  */
 export interface CustomCollectionHandlerParameters<
   TItem,
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContext extends RequestContext<TContextData>,
   TContextData,
 > extends ErrorHandlers {
   name: string;
-  values: TParams;
+  values: Record<TParam, string>;
   filterPredicate?: (item: TItem) => boolean;
   context: TContext;
   collectionCallbacks?: CustomCollectionCallbacks<
     TItem,
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -937,7 +937,7 @@ export interface CustomCollectionHandlerParameters<
 /**
  * Handles a custom collection request.
  * @template TItem The type of items in the collection.
- * @template TParams The parameter names of the requested URL.
+ * @template TParam The parameter names of the requested URL.
  * @template TContext The type of the context, extending {@link RequestContext}.
  * @template TContextData The context data to pass to the `TContext`.
  * @param request The HTTP request.
@@ -947,21 +947,21 @@ export interface CustomCollectionHandlerParameters<
  */
 export const handleCustomCollection: <
   TItem extends URL | Object | Link | Recipient,
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContext extends RequestContext<TContextData>,
   TContextData,
 >(
   request: Request,
   handleParams: CustomCollectionHandlerParameters<
     TItem,
-    TParams,
+    TParam,
     TContext,
     TContextData
   >,
 ) => Promise<Response> = exceptWrapper(_handleCustomCollection);
 async function _handleCustomCollection<
   TItem extends URL | Object | Link | Recipient,
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContext extends RequestContext<TContextData>,
   TContextData,
 >(
@@ -975,7 +975,7 @@ async function _handleCustomCollection<
     filterPredicate,
   }: CustomCollectionHandlerParameters<
     TItem,
-    TParams,
+    TParam,
     TContext,
     TContextData
   >,
@@ -1011,21 +1011,21 @@ async function _handleCustomCollection<
  */
 export const handleOrderedCollection: <
   TItem extends URL | Object | Link | Recipient,
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContext extends RequestContext<TContextData>,
   TContextData,
 >(
   request: Request,
   handleParams: CustomCollectionHandlerParameters<
     TItem,
-    TParams,
+    TParam,
     TContext,
     TContextData
   >,
 ) => Promise<Response> = exceptWrapper(_handleOrderedCollection);
 async function _handleOrderedCollection<
   TItem extends URL | Object | Link | Recipient,
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContext extends RequestContext<TContextData>,
   TContextData,
 >(
@@ -1039,7 +1039,7 @@ async function _handleOrderedCollection<
     filterPredicate,
   }: CustomCollectionHandlerParameters<
     TItem,
-    TParams,
+    TParam,
     TContext,
     TContextData
   >,
@@ -1076,7 +1076,7 @@ async function _handleOrderedCollection<
  */
 class CustomCollectionHandler<
   TItem extends URL | Object | Link | Recipient,
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContextData,
   TContext extends RequestContext<TContextData>,
   TCollection extends Collection,
@@ -1106,7 +1106,7 @@ class CustomCollectionHandler<
    */
   #dispatcher: CustomCollectionDispatcher<
     TItem,
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1125,11 +1125,11 @@ class CustomCollectionHandler<
    */
   constructor(
     private readonly name: string,
-    private readonly values: TParams,
+    private readonly values: Record<TParam, string>,
     private readonly context: TContext,
     private readonly callbacks: CustomCollectionCallbacks<
       TItem,
-      TParams,
+      TParam,
       TContext,
       TContextData
     >,

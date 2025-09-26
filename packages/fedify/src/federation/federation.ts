@@ -457,7 +457,7 @@ export interface Federatable<TContextData> {
     inboxPath: `${string}{identifier}${string}` | `${string}{handle}${string}`,
     sharedInboxPath?: string,
   ): InboxListenerSetters<TContextData>;
-  /**
+  /** ß
    * Registers a collection of objects dispatcher.
    *
    * @template TContextData The context data to pass to the {@link Context}.
@@ -471,21 +471,19 @@ export interface Federatable<TContextData> {
    *             The path must have one or more variables.
    * @param dispatcher A collection dispatcher callback to register.
    */
-  setCollectionDispatcher<
-    TObject extends Object,
-    TParams extends Record<string, string>,
-  >(
+  setCollectionDispatcher<TObject extends Object, TParam extends string>(
     name: string | symbol,
-    itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams>,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
-      TParams,
+      TParam,
       RequestContext<TContextData>,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     RequestContext<TContextData>,
     TContextData
   >;
@@ -506,19 +504,20 @@ export interface Federatable<TContextData> {
    */
   setOrderedCollectionDispatcher<
     TObject extends Object,
-    TParams extends Record<string, string>,
+    TParam extends string,
   >(
     name: string | symbol,
-    itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams>,
+    // deno-lint-ignore no-explicit-any
+    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
-      TParams,
+      TParam,
       RequestContext<TContextData>,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     RequestContext<TContextData>,
     TContextData
   >;
@@ -1035,14 +1034,14 @@ export interface FederationFetchOptions<TContextData> {
 /**
  * Additional settings for a custom collection dispatcher.
  *
- * @template TParams The type of the parameters in the URL path.
+ * @template TParam The type of the parameters in the URL path.
  * @template TContext The type of the context.  {@link Context} or
  *                     {@link RequestContext}.
  * @template TContextData The context data to pass to the {@link Context}.
  * @template TFilter The type of filter for the collection.
  */
 export interface CustomCollectionCallbackSetters<
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContext extends Context<TContextData>,
   TContextData,
 > {
@@ -1053,11 +1052,11 @@ export interface CustomCollectionCallbackSetters<
    */
   setCounter(
     counter: CustomCollectionCounter<
-      TParams,
+      TParam,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1069,12 +1068,12 @@ export interface CustomCollectionCallbackSetters<
    */
   setFirstCursor(
     cursor: CustomCollectionCursor<
-      TParams,
+      TParam,
       TContext,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1086,12 +1085,12 @@ export interface CustomCollectionCallbackSetters<
    */
   setLastCursor(
     cursor: CustomCollectionCursor<
-      TParams,
+      TParam,
       TContext,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1105,7 +1104,7 @@ export interface CustomCollectionCallbackSetters<
   authorize(
     predicate: ObjectAuthorizePredicate<TContextData, string>,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1120,47 +1119,6 @@ export interface CustomCollectionCallbackSetters<
 export type ConstructorWithTypeId<TObject extends Object> =
   // deno-lint-ignore no-explicit-any
   (new (...args: any[]) => TObject) & { typeId: URL };
-
-/**
- * Represents a path from the key of parameter objects.
- * @param Params - A record of parameters where keys are parameter names and
- *                 values are their string representations.
- * @returns A string representing the path with all parameters.
- * @example
- * ```ts
- * type UserPostPath = ParamsKeyPath<{ userId: string; postId: string }>;
- * let userPostPath: UserPostPath;
- * // userPostPath = "/posts/{postId}"; // invalid - does not contain `{userId}`
- * // userPostPath = "/users/{userId}"; // invalid - does not contain `{postId}`
- * userPostPath = "/users/{userId}/posts/{postId}"; // valid
- * userPostPath = "/posts/{postId}/users/{userId}"; // valid
- * ```
- */
-export type ParamsKeyPath<Params extends Record<string, string>> =
-  & ParamPath<Extract<keyof Params, string>>
-  & string;
-
-/**
- * Represents a path with multiple parameters.
- * All permutations of the parameters are included in the union type.
- * The path must have all parameters in the form of `{paramName}`.
- * @param Params - A union of parameter names.
- * @returns A string representing the path with all parameters.
- * @example
- * ```ts
- * type UserPostPath = ParamsPath<"userId" | "postId">;
- * // = `${string}{userId}${string}` & `${string}{postId}${string}`
- * // =
- * //  | `${string}{userId}${string}{postId}${string}`
- * //  | `${string}{postId}${string}{userId}${string}`
- * let userPostPath: UserPostPath;
- * userPostPath = "/users/posts"; // ❌ invalid
- * userPostPath = "/users/{userId}"; // ❌ invalid
- * userPostPath = "/posts/{postId}"; // ❌ invalid
- * userPostPath = "/users/{userId}/posts/{postId}"; // ✅ valid
- * userPostPath = "/posts/{postId}/users/{userId}"; // ✅ valid
- */
-type ParamsPath<Params extends string> = UnionToIntersection<ParamPath<Params>>;
 /**
  * Defines a union of all valid RFC 6570 URI Template expressions for a given
  * parameter name.
@@ -1189,7 +1147,7 @@ type ParamsPath<Params extends string> = UnionToIntersection<ParamPath<Params>>;
  * ```
  * @see {@link https://tools.ietf.org/html/rfc6570} for the full specification.
  */
-type Rfc6570Expression<Param extends string> =
+export type Rfc6570Expression<Param extends string> =
   | `{${Param}}`
   | `{+${Param}}`
   | `{#${Param}}`
@@ -1198,39 +1156,3 @@ type Rfc6570Expression<Param extends string> =
   | `{;${Param}}`
   | `{?${Param}}`
   | `{&${Param}}`;
-/**
- * Represents a path with a single parameter.
- * The path must have at least one of the parameters in the form of `{paramName}`.
- * @param Param - The name of the parameter.
- * @returns A string representing the path with the parameter.
- * @example
- * ```ts
- * type UserPostPath = ParamPath<"userId" | "postId">;
- * // = `${string}{userId}${string}` | `${string}{postId}${string}`
- * let userPostPath: UserPostPath;
- * userPostPath = "/users/posts"; // ❌ invalid
- * userPostPath = "/users/{userId}"; // ✅ valid
- * userPostPath = "/posts/{postId}"; // ✅ valid
- * userPostPath = "/users/{userId}/posts/{postId}"; // ✅ valid
- * userPostPath = "/posts/{postId}/users/{userId}"; // ✅ valid
- */
-type ParamPath<Param extends string> = `${string}${Rfc6570Expression<
-  Param
->}${string}`;
-/**
- * Converts union types to intersection types.
- *
- * @template U - The union type to convert.
- * @returns The intersection type of the union.
- * @example
- * ```ts
- * type A = { a: string };
- * type B = { b: number };
- * type AorB = A | B;
- * type AandB = UnionToIntersection<AorB>;
- * // AandB = { a: string; b: number }
- */
-type UnionToIntersection<U> =
-  (U extends unknown ? (x: U) => void : never) extends ((x: infer I) => void)
-    ? I
-    : never;
