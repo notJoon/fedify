@@ -120,17 +120,18 @@ export async function* generateClasses(
   yield 'import { getLogger } from "@logtape/logtape";\n';
   yield `import { type Span, SpanStatusCode, type TracerProvider, trace }
     from "@opentelemetry/api";\n`;
-  yield `import { decodeMultibase, encodeMultibase }
-    from "@fedify/vocab-runtime";\n`;
-  yield `import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
-    from "@fedify/vocab-runtime";\n`;
   yield `import {
-    exportSpki,
+    decodeMultibase,
+    type DocumentLoader,
+    encodeMultibase,
     exportMultibaseKey,
-    importPem,
+    exportSpki,
+    getDocumentLoader,
     importMultibaseKey,
+    importPem,
+    LanguageString,
+    type RemoteDocument,
   } from "@fedify/vocab-runtime";\n`;
-  yield `import { LanguageString } from "@fedify/vocab-runtime";\n`;
   yield "\n\n";
   const sorted = sortTopologically(types);
   for (const typeUri of sorted) {
