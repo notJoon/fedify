@@ -9,6 +9,9 @@ catalogs:
     '@cloudflare/workers-types':
       specifier: ^4.20250529.0
       version: 4.20250529.0
+    '@fxts/core':
+      specifier: ^1.15.0
+      version: 1.15.0
     '@js-temporal/polyfill':
       specifier: ^0.5.1
       version: 0.5.1
@@ -568,7 +571,7 @@ importers:
         specifier: workspace:*
         version: link:../fedify
       '@fxts/core':
-        specifier: ^1.15.0
+        specifier: 'catalog:'
         version: 1.15.0
       '@hongminhee/localtunnel':
         specifier: ^0.3.0
@@ -683,6 +686,9 @@ importers:
       '@cfworker/json-schema':
         specifier: ^4.1.1
         version: 4.1.1
+      '@fxts/core':
+        specifier: 'catalog:'
+        version: 1.15.0
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1

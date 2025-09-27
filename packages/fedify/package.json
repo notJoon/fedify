@@ -151,6 +151,7 @@
   },
   "dependencies": {
     "@cfworker/json-schema": "^4.1.1",
+    "@fxts/core": "catalog:",
     "@js-temporal/polyfill": "^0.5.1",
     "@logtape/logtape": "catalog:",
     "@multiformats/base-x": "^4.0.1",
