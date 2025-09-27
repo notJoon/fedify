@@ -120,7 +120,7 @@ export async function* generateClasses(
   yield 'import { getLogger } from "@logtape/logtape";\n';
   yield `import { type Span, SpanStatusCode, type TracerProvider, trace }
     from "@opentelemetry/api";\n`;
-  yield `import { decode as decodeMultibase, encode as encodeMultibase }
+  yield `import { decodeMultibase, encodeMultibase }
     from "@fedify/vocab-runtime";\n`;
   yield `import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
     from "@fedify/vocab-runtime";\n`;

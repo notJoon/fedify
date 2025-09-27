@@ -1,4 +1,4 @@
-import { decode, LanguageString } from "@fedify/vocab-runtime";
+import { decodeMultibase, LanguageString } from "@fedify/vocab-runtime";
 import {
   assert,
   assertEquals,
@@ -362,7 +362,7 @@ test("Activity.fromJsonLd()", async () => {
   assertEquals(proofs[0].proofPurpose, "assertionMethod");
   assertEquals(
     proofs[0].proofValue,
-    decode(
+    decodeMultibase(
       // cSpell: disable
       "z3sXaxjKs4M3BRicwWA9peyNPJvJqxtGsDmpt1jjoHCjgeUf71TRFz56osPSfDErszyLp5Ks1EhYSgpDaNM977Rg2",
       // cSpell: enable

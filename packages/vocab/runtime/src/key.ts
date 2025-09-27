@@ -6,7 +6,7 @@ import { addPrefix, getCodeFromData, rmPrefix } from "multicodec";
 import { createPublicKey } from "node:crypto";
 import { PublicKeyInfo } from "pkijs";
 import { validateCryptoKey } from "./jwk.ts";
-import { decode, encode } from "./multibase/mod.ts";
+import { decodeMultibase, encodeMultibase } from "./multibase/mod.ts";
 
 const algorithms: Record<
   string,
@@ -100,7 +100,7 @@ export function importPem(pem: string): Promise<CryptoKey> {
  * @since 0.10.0
  */
 export async function importMultibaseKey(key: string): Promise<CryptoKey> {
-  const decoded = decode(key);
+  const decoded = decodeMultibase(key);
   const code: number = getCodeFromData(decoded);
   const content = rmPrefix(decoded);
   if (code === 0x1205) { // rsa-pub
@@ -180,7 +180,7 @@ export async function exportMultibaseKey(key: CryptoKey): Promise<string> {
   const codeHex = code.toString(16);
   const codeBytes = decodeHex(codeHex.length % 2 < 1 ? codeHex : "0" + codeHex);
   const prefixed = addPrefix(codeBytes, new Uint8Array(content));
-  const encoded = encode("base58btc", prefixed);
+  const encoded = encodeMultibase("base58btc", prefixed);
   return new TextDecoder().decode(encoded);
 }
 

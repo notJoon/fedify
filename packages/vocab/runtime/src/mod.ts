@@ -24,4 +24,8 @@ export {
   importSpki,
 } from "./key.ts";
 export { LanguageString } from "./langstr.ts";
-export { decode, encode, encodingFromData } from "./multibase/mod.ts";
+export {
+  decodeMultibase,
+  encodeMultibase,
+  encodingFromBaseData,
+} from "./multibase/mod.ts";

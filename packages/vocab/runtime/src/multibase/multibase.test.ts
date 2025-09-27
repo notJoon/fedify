@@ -1,7 +1,7 @@
 import { deepStrictEqual } from "node:assert";
 import { test } from "node:test";
 import * as constants from "./constants.ts";
-import { decode, encode } from "./mod.ts";
+import { decodeMultibase, encodeMultibase } from "./mod.ts";
 import type { BaseName } from "./types.d.ts";
 import { decodeText, encodeText } from "./util.ts";
 
@@ -77,17 +77,17 @@ test("multibase.encode and decode", async (t) => {
 
   for (const [name, input, expectedOutput] of testCases) {
     await t.test(`Encoding/Decoding ${name} with ${input}`, () => {
-      const encoded = encode(name, encodeText(input));
+      const encoded = encodeMultibase(name, encodeText(input));
       deepStrictEqual(
         decodeText(encoded),
         expectedOutput,
         `Encoding ${name} failed`,
       );
 
-      const decoded = decode(expectedOutput);
+      const decoded = decodeMultibase(expectedOutput);
       deepStrictEqual(decoded, encodeText(input), `Decoding ${name} failed`);
 
-      const decodedFromBuffer = decode(encodeText(expectedOutput));
+      const decodedFromBuffer = decodeMultibase(encodeText(expectedOutput));
       deepStrictEqual(
         decodedFromBuffer,
         encodeText(input),
@@ -98,9 +98,9 @@ test("multibase.encode and decode", async (t) => {
 
   await t.test("should allow base32pad full alphabet", () => {
     const encodedStr = "ctimaq4ygg2iegci7";
-    const decoded = decode(encodedStr);
-    const encoded = encode("c", decoded);
-    deepStrictEqual(decode(encoded), decoded);
+    const decoded = decodeMultibase(encodedStr);
+    const encoded = encodeMultibase("c", decoded);
+    deepStrictEqual(decodeMultibase(encoded), decoded);
   });
 });
 

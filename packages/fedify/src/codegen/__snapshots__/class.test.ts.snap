@@ -7,7 +7,7 @@ import jsonld from \\"jsonld\\";
 import { getLogger } from \\"@logtape/logtape\\";
 import { type Span, SpanStatusCode, type TracerProvider, trace }
     from \\"@opentelemetry/api\\";
-import { decode as decodeMultibase, encode as encodeMultibase }
+import { decodeMultibase, encodeMultibase }
     from \\"@fedify/vocab-runtime\\";
 import { type DocumentLoader, getDocumentLoader, type RemoteDocument }
     from \\"@fedify/vocab-runtime\\";
