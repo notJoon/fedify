@@ -1,3 +1,10 @@
+import {
+  type AuthenticatedDocumentLoaderFactory,
+  type DocumentLoader,
+  type DocumentLoaderFactory,
+  type DocumentLoaderFactoryOptions,
+  getDocumentLoader,
+} from "@fedify/vocab-runtime";
 import { getLogger, withContext } from "@logtape/logtape";
 import {
   context,
@@ -22,16 +29,6 @@ import type { ActivityTransformer } from "../compat/types.ts";
 import { getNodeInfo, type GetNodeInfoOptions } from "../nodeinfo/client.ts";
 import { handleNodeInfo, handleNodeInfoJrd } from "../nodeinfo/handler.ts";
 import type { JsonValue, NodeInfo } from "../nodeinfo/types.ts";
-import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
-import {
-  type AuthenticatedDocumentLoaderFactory,
-  type DocumentLoader,
-  type DocumentLoaderFactory,
-  type DocumentLoaderFactoryOptions,
-  getDocumentLoader,
-  type GetUserAgentOptions,
-  kvCache,
-} from "../runtime/docloader.ts";
 import {
   type HttpMessageSignaturesSpec,
   type HttpMessageSignaturesSpecDeterminer,
@@ -41,6 +38,9 @@ import { exportJwk, importJwk, validateCryptoKey } from "../sig/key.ts";
 import { hasSignature, signJsonLd } from "../sig/ld.ts";
 import { getKeyOwner, type GetKeyOwnerOptions } from "../sig/owner.ts";
 import { signObject, verifyObject } from "../sig/proof.ts";
+import { getAuthenticatedDocumentLoader } from "../utils/docloader.ts";
+import { kvCache } from "../utils/kv-cache.ts";
+import type { GetUserAgentOptions } from "../utils/request.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import {
   lookupObject,

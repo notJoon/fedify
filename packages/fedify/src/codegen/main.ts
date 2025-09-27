@@ -16,7 +16,7 @@ export async function main() {
     Deno.exit(1);
   }
   const schemaDir = Deno.args[0];
-  const runtimePath = Deno.args[1];
+  // const runtimePath = Deno.args[1]; // Remove this separate vocab-codegen
   const outputPath = Deno.args[2];
   if (!(await Deno.stat(schemaDir)).isDirectory) {
     console.error("error:", schemaDir, "is not a directory");

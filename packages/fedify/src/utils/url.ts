@@ -60,7 +60,7 @@ export async function validatePublicUrl(url: string): Promise<void> {
   }
 }
 
-function isValidPublicIPv4Address(address: string): boolean {
+export function isValidPublicIPv4Address(address: string): boolean {
   const parts = address.split(".");
   const first = parseInt(parts[0]);
   if (first === 0 || first === 10 || first === 127) return false;
@@ -71,7 +71,7 @@ function isValidPublicIPv4Address(address: string): boolean {
   return true;
 }
 
-function isValidPublicIPv6Address(address: string) {
+export function isValidPublicIPv6Address(address: string) {
   address = expandIPv6Address(address);
   if (address.at(4) !== ":") return false;
   const firstWord = parseInt(address.substring(0, 4), 16);
@@ -82,7 +82,7 @@ function isValidPublicIPv6Address(address: string) {
   );
 }
 
-function expandIPv6Address(address: string): string {
+export function expandIPv6Address(address: string): string {
   address = address.toLowerCase();
   if (address === "::") return "0000:0000:0000:0000:0000:0000:0000:0000";
   if (address.startsWith("::")) address = "0000" + address;

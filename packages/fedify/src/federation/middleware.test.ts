@@ -9,8 +9,6 @@ import {
   assertThrows,
 } from "@std/assert";
 import fetchMock from "fetch-mock";
-import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
-import { fetchDocumentLoader } from "../runtime/docloader.ts";
 import { signRequest, verifyRequest } from "../sig/http.ts";
 import type { KeyCache } from "../sig/key.ts";
 import { detachSignature, signJsonLd, verifyJsonLd } from "../sig/ld.ts";
@@ -36,6 +34,10 @@ import {
   rsaPublicKey3,
 } from "../testing/keys.ts";
 import { test } from "../testing/mod.ts";
+import {
+  fetchDocumentLoader,
+  getAuthenticatedDocumentLoader,
+} from "../utils/docloader.ts";
 import { lookupObject } from "../vocab/lookup.ts";
 import { getTypeId } from "../vocab/type.ts";
 import * as vocab from "../vocab/vocab.ts";
