@@ -61,6 +61,18 @@ To be released.
         on the same server, fixing issues where activities were incorrectly
         deduplicated globally.
 
+ -  Separated modules from `runtime/` directory to improve modularity and
+    reduce coupling between vocabulary generation and core federation
+    functionality.  [[#444] by ChanHaeng Lee]
+
+     -  Modules related to ActivityPub vocabulary generation (`docloader.ts`,
+        `key.ts`, `langstr.ts`, `multibase/`) have been extracted into the new
+        `@fedify/vocab-runtime` package.
+     -  Other utility modules from `runtime/` have been reorganized into the
+        `utils/` directory within the main package.
+     -  Updated import paths throughout the codebase to reflect the new module
+        organization.
+
 [#280]: https://github.com/fedify-dev/fedify/issues/280
 [#366]: https://github.com/fedify-dev/fedify/issues/366
 [#376]: https://github.com/fedify-dev/fedify/issues/376
@@ -68,6 +80,7 @@ To be released.
 [#393]: https://github.com/fedify-dev/fedify/pulls/393
 [#433]: https://github.com/fedify-dev/fedify/pull/433
 [#434]: https://github.com/fedify-dev/fedify/pull/434
+[#444]: https://github.com/fedify-dev/fedify/issues/444
 
 ### @fedify/cli
 
@@ -82,6 +95,24 @@ To be released.
 [#397]: https://github.com/fedify-dev/fedify/issues/397
 [#435]: https://github.com/fedify-dev/fedify/issues/435
 
+### @fedify/vocab-runtime
+
+ -  Created ActivityPub vocabulary runtime as the *@fedify/vocab-runtime*
+    package.  Separated core vocabulary generation and processing modules
+    from the main *@fedify/fedify* package to improve modularity and reduce
+    coupling between vocabulary processing and federation functionality.
+    [[#444] by ChanHaeng Lee]
+
+     -  Extracted `DocumentLoader`, `RemoteDocument`, and related types from
+        the main package.
+     -  Moved cryptographic key processing utilities (`importSpki`,
+        `exportSpki`, `importMultibaseKey`, `exportMultibaseKey`, etc.).
+     -  Relocated multibase encoding/decoding functionality.
+     -  Separated language string processing (`LanguageString` class).
+     -  This package is primarily used by generated vocabulary classes and
+        provides the runtime infrastructure for ActivityPub object processing.
+
+[#444]: https://github.com/fedify-dev/fedify/issues/444
 
 Version 1.9.0
 -------------
