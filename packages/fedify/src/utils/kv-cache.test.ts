@@ -1,9 +1,9 @@
 import type { DocumentLoader } from "@fedify/vocab-runtime";
 import { deepStrictEqual, throws } from "node:assert";
 import { test } from "node:test";
+import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import { preloadedContexts } from "./contexts.ts";
-import type { KvKey, KvStore, KvStoreSetOptions } from "./kv-cache.ts";
 import { kvCache, MockKvStore } from "./kv-cache.ts";
 
 test("kvCache()", async (t) => {
