@@ -18,7 +18,7 @@ import {
     importPem,
     LanguageString,
     type RemoteDocument,
-} from "@fedify/vocab-runtime\\";
+} from \\"@fedify/vocab-runtime\\";
 
 
 /** Describes an object of any kind. The Object type serves as the base type for

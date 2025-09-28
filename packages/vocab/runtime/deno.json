@@ -19,6 +19,11 @@
     "pkijs": "npm:pkijs@^3.2.5"
   },
   "exclude": [
-    "dist/"
-  ]
+    "dist",
+    "node_modules"
+  ],
+  "tasks": {
+    "check": "deno fmt --check && deno lint && deno check src/*.ts",
+    "test": "deno test"
+  }
 }

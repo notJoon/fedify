@@ -19,12 +19,16 @@
     },
     "./package.json": "./package.json"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "tsdown",
+    "prepublish": "tsdown",
+    "test": "tsdown && cd dist/ && node --test"
+  },
   "keywords": [
     "Fedify",
     "ActivityPub",
-    "Fediverse",
-    "vocab"
+    "Fediverse"
   ],
   "author": {
     "name": "Hong Minhee",

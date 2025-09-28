@@ -131,7 +131,7 @@ export async function* generateClasses(
     importPem,
     LanguageString,
     type RemoteDocument,
-  } from "@fedify/vocab-runtime";\n`;
+} from "@fedify/vocab-runtime";\n`;
   yield "\n\n";
   const sorted = sortTopologically(types);
   for (const typeUri of sorted) {
