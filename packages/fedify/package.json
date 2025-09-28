@@ -151,6 +151,7 @@
   },
   "dependencies": {
     "@cfworker/json-schema": "^4.1.1",
+    "@fedify/vocab-runtime": "workspace:*",
     "@fxts/core": "catalog:",
     "@js-temporal/polyfill": "^0.5.1",
     "@logtape/logtape": "catalog:",
@@ -177,7 +178,7 @@
     "@std/yaml": "jsr:^1.0.6",
     "@types/node": "^24.2.1",
     "fast-check": "^3.22.0",
-    "fetch-mock": "^12.5.2",
+    "fetch-mock": "catalog:",
     "miniflare": "^4.20250523.0",
     "tsdown": "catalog:",
     "tsx": "^4.19.4",

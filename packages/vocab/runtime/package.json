@@ -34,11 +34,12 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^24.2.1",
-    "fetch-mock": "^12.5.4",
+    "fetch-mock": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "dependencies": {
+    "@logtape/logtape": "catalog:",
     "@multiformats/base-x": "^4.0.1",
     "asn1js": "^3.0.6",
     "byte-encodings": "^1.0.11",
