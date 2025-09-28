@@ -912,7 +912,7 @@ export interface CustomCollectionCallbacks<
    */
   authorizePredicate?: ObjectAuthorizePredicate<
     TContextData,
-    keyof TParam & string
+    TParam
   >;
 }
 

@@ -1520,7 +1520,7 @@ export class FederationBuilderImpl<TContextData>
       authorize(
         predicate: ObjectAuthorizePredicate<
           TContextData,
-          keyof TParam & string
+          TParam
         >,
       ) {
         callbacks.authorizePredicate = predicate;
