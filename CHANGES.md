@@ -130,6 +130,25 @@ To be released.
     interoperability with ActivityPub servers that emit relative URLs in
     properties like `icon.url` and `image.url`.  [[#411], [#443] by Jiwon Kwon]
 
+ -  Added TypeScript support for all [RFC 6570] URI Template expression types
+    in dispatcher path parameters.  Previously, only simple string expansion
+    (`{identifier}`) was supported in TypeScript types, while the runtime
+    already supported all RFC 6570 expressions.  Now TypeScript accepts all
+    expression types including `{+identifier}` (reserved string expansion,
+    recommended for URI identifiers), `{#identifier}` (fragment expansion),
+    `{.identifier}` (label expansion), `{/identifier}` (path segments),
+    `{;identifier}` (path-style parameters), `{?identifier}` (query component),
+    and `{&identifier}` (query continuation).  [[#426], [#446] by Jiwon Kwon]
+
+     -  Added `Rfc6570Expression<TParam>` type helper.
+     -  Updated all dispatcher path type parameters to accept RFC 6570
+        expressions: `setActorDispatcher()`, `setObjectDispatcher()`,
+        `setInboxDispatcher()`, `setOutboxDispatcher()`,
+        `setFollowingDispatcher()`, `setFollowersDispatcher()`,
+        `setLikedDispatcher()`, `setFeaturedDispatcher()`,
+        `setFeaturedTagsDispatcher()`, `setInboxListeners()`,
+        `setCollectionDispatcher()`, and `setOrderedCollectionDispatcher()`.
+
  -  Added inverse properties for collections to Vocabulary API.
     [[FEP-5711], [#373], [#381] by Jiwon Kwon]
 
@@ -188,6 +207,7 @@ To be released.
 
 [FEP-fe34]: https://w3id.org/fep/fe34
 [FEP-5711]: https://w3id.org/fep/5711
+[RFC 6570]: https://tools.ietf.org/html/rfc6570
 [OStatus 1.0 Draft 2]: https://www.w3.org/community/ostatus/wiki/images/9/93/OStatus_1.0_Draft_2.pdf
 [RFC 7033 Section 4.4.4.3]: https://datatracker.ietf.org/doc/html/rfc7033#section-4.4.4.3
 [#119]: https://github.com/fedify-dev/fedify/issues/119
@@ -200,11 +220,13 @@ To be released.
 [#404]: https://github.com/fedify-dev/fedify/pull/404
 [#407]: https://github.com/fedify-dev/fedify/pull/407
 [#411]: https://github.com/fedify-dev/fedify/issues/411
+[#426]: https://github.com/fedify-dev/fedify/issues/426
 [#429]: https://github.com/fedify-dev/fedify/issues/429
 [#431]: https://github.com/fedify-dev/fedify/pull/431
 [#440]: https://github.com/fedify-dev/fedify/issues/440
 [#441]: https://github.com/fedify-dev/fedify/issues/441
 [#443]: https://github.com/fedify-dev/fedify/pull/443
+[#446]: https://github.com/fedify-dev/fedify/pull/446
 
 ### @fedify/cli
 
