@@ -2,8 +2,8 @@ import { generateClasses } from "./class.ts";
 import { loadSchemaFiles } from "./schema.ts";
 
 export async function main() {
-  if (Deno.args.length != 3) {
-    if (Deno.args.length < 3) {
+  if (Deno.args.length != 2) {
+    if (Deno.args.length < 2) {
       console.error("error: too few arguments");
     } else {
       console.error("error: too many arguments");
@@ -16,8 +16,7 @@ export async function main() {
     Deno.exit(1);
   }
   const schemaDir = Deno.args[0];
-  // const runtimePath = Deno.args[1]; // Remove this separate vocab-codegen
-  const outputPath = Deno.args[2];
+  const outputPath = Deno.args[1];
   if (!(await Deno.stat(schemaDir)).isDirectory) {
     console.error("error:", schemaDir, "is not a directory");
     Deno.exit(1);

@@ -55,10 +55,11 @@ The repository is organized as a monorepo with the following packages:
     -  *src/compat/*: Compatibility layer
     -  *src/federation/*: Core federation functionality
     -  *src/nodeinfo/*: NodeInfo protocol implementation
-    -  *src/runtime/*: Runtime utilities
+    -  ~~*src/runtime/*~~: **Don't use.** Moved to `@fedify/vocab-runtime` and `src/utils/*`. If user code imports from here, notice and suggest migration.
     -  *src/shim/*: Platform abstraction layer
     -  *src/sig/*: Signature implementation
     -  *src/testing/*: Testing utilities
+    -  *src/utils/*: Utility functions
     -  *src/vocab/*: ActivityPub vocabulary implementation
     -  *src/webfinger/*: WebFinger protocol implementation
     -  ~~src/x/: Framework integrations~~ **Don't use.** This directory will be removed in version 2.0.0. Use packages from the `@fedify` scope, which are located in the `packages/` directory (e.g., `@fedify/hono` is in `packages/hono/`).
@@ -77,6 +78,7 @@ The repository is organized as a monorepo with the following packages:
  -  *packages/sqlite/*: SQLite driver (@fedify/sqlite)
  -  *packages/sveltekit/*: SvelteKit integration (@fedify/sveltekit)
  -  *packages/testing/*: Testing utilities (@fedify/testing)
+ -  *packages/vocab-runtime/*: Runtime utilities and types (@fedify/vocab-runtime)
  -  *docs/*: Documentation built with Node.js and VitePress
  -  *examples/*: Example projects demonstrating Fedify usage
 

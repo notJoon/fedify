@@ -7,10 +7,10 @@
     "./compat": "./src/compat/mod.ts",
     "./federation": "./src/federation/mod.ts",
     "./nodeinfo": "./src/nodeinfo/mod.ts",
-    "./runtime": "./src/runtime/mod.ts",
     "./sig": "./src/sig/mod.ts",
     "./testing": "./src/testing/mod.ts",
     "./vocab": "./src/vocab/mod.ts",
+    "./utils": "./src/utils/mod.ts",
     "./webfinger": "./src/webfinger/mod.ts",
     "./x/cfworkers": "./src/x/cfworkers.ts",
     "./x/denokv": "./src/x/denokv.ts",
@@ -62,7 +62,7 @@
     "!src/vocab/vocab.ts"
   ],
   "tasks": {
-    "codegen": "GENPATH=vocab-$(deno eval \"console.log(crypto.randomUUID());\").ts && deno run --allow-read --allow-write --check src/codegen/main.ts src/vocab/ ../runtime/ src/vocab/$GENPATH && deno fmt src/vocab/$GENPATH && mv src/vocab/$GENPATH src/vocab/vocab.ts && deno cache src/vocab/vocab.ts && deno check src/vocab/vocab.ts",
+    "codegen": "GENPATH=vocab-$(deno eval \"console.log(crypto.randomUUID());\").ts && deno run --allow-read --allow-write --check src/codegen/main.ts src/vocab/ src/vocab/$GENPATH && deno fmt src/vocab/$GENPATH && mv src/vocab/$GENPATH src/vocab/vocab.ts && deno cache src/vocab/vocab.ts && deno check src/vocab/vocab.ts",
     "cache": {
       "command": "deno cache src/mod.ts",
       "dependencies": [

@@ -78,16 +78,6 @@
       "require": "./dist/nodeinfo/mod.cjs",
       "default": "./dist/nodeinfo/mod.js"
     },
-    "./runtime": {
-      "types": {
-        "import": "./dist/runtime/mod.d.ts",
-        "require": "./dist/runtime/mod.d.cts",
-        "default": "./dist/runtime/mod.d.ts"
-      },
-      "import": "./dist/runtime/mod.js",
-      "require": "./dist/runtime/mod.cjs",
-      "default": "./dist/runtime/mod.js"
-    },
     "./sig": {
       "types": {
         "import": "./dist/sig/mod.d.ts",
@@ -97,6 +87,16 @@
       "import": "./dist/sig/mod.js",
       "require": "./dist/sig/mod.cjs",
       "default": "./dist/sig/mod.js"
+    },
+    "./utils": {
+      "types": {
+        "import": "./dist/utils/mod.d.ts",
+        "require": "./dist/utils/mod.d.cts",
+        "default": "./dist/utils/mod.d.ts"
+      },
+      "import": "./dist/utils/mod.js",
+      "require": "./dist/utils/mod.cjs",
+      "default": "./dist/utils/mod.js"
     },
     "./vocab": {
       "types": {
