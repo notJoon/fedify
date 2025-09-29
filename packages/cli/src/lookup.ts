@@ -508,8 +508,7 @@ export async function runLookup(command: InferValue<typeof lookupCommand>) {
   try {
     objects = await Promise.all(promises);
   } catch (_error) {
-    //TODO: implement -a --authorized-fetch
-    // await server?.close();
+    await server?.close();
     process.exit(1);
   }
 
