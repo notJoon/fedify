@@ -1,15 +1,15 @@
 import type { DocumentLoader } from "@fedify/vocab-runtime";
 import { deepStrictEqual, throws } from "node:assert";
-import { test } from "node:test";
 import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
+import { test } from "../testing/mod.ts";
 import { preloadedContexts } from "./contexts.ts";
 import { kvCache, MockKvStore } from "./kv-cache.ts";
 
 test("kvCache()", async (t) => {
   const kv = new MockKvStore();
 
-  await t.test("cached", async () => {
+  await t.step("cached", async () => {
     const loader = kvCache({
       kv,
       loader: mockDocumentLoader,
@@ -80,7 +80,7 @@ test("kvCache()", async (t) => {
     });
   });
 
-  await t.test("not cached", async () => {
+  await t.step("not cached", async () => {
     const loader = kvCache({
       kv,
       loader: mockDocumentLoader,
@@ -106,7 +106,7 @@ test("kvCache()", async (t) => {
     deepStrictEqual(cache, undefined);
   });
 
-  await t.test("maximum cache duration", () => {
+  await t.step("maximum cache duration", () => {
     throws(
       () =>
         kvCache({
@@ -139,7 +139,7 @@ test("kvCache()", async (t) => {
     );
   });
 
-  await t.test("on kv store exception", async () => {
+  await t.step("on kv store exception", async () => {
     class KvStoreThrowsException implements KvStore {
       get<T = unknown>(_key: KvKey): Promise<T | undefined> {
         throw new Error("Failed to get key");
@@ -182,7 +182,7 @@ test("kvCache()", async (t) => {
     });
   });
 
-  await t.test("preloaded contexts bypass cache", async () => {
+  await t.step("preloaded contexts bypass cache", async () => {
     const kv = new MockKvStore();
     let loaderCalled = false;
     const mockLoader: DocumentLoader = (url: string) => {

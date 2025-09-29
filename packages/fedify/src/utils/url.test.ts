@@ -1,5 +1,5 @@
 import { deepStrictEqual, ok, rejects } from "node:assert";
-import { test } from "node:test";
+import { test } from "../testing/mod.ts";
 import {
   expandIPv6Address,
   isValidPublicIPv4Address,
