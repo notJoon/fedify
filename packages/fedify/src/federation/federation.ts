@@ -1,6 +1,5 @@
 import type {
   AuthenticatedDocumentLoaderFactory,
-  DocumentLoader,
   DocumentLoaderFactory,
 } from "@fedify/vocab-runtime";
 import type { TracerProvider } from "@opentelemetry/api";
@@ -845,13 +844,6 @@ export interface FederationOptions<TContextData> {
    * @since 1.4.0
    */
   contextLoaderFactory?: DocumentLoaderFactory;
-
-  /**
-   * A custom JSON-LD context loader.  By default, this uses the same loader
-   * as the document loader.
-   * @deprecated Use {@link contextLoaderFactory} instead.
-   */
-  contextLoader?: DocumentLoader;
 
   /**
    * A factory function that creates an authenticated document loader for a

@@ -10,6 +10,10 @@ To be released.
 
 ### @fedify/fedify
 
+ -  Remove `contextLoader` option (which was deprecated) from
+    `FederationOptions` interface in favor of `contextLoaderFactory` option
+    for better flexibility.  [[#376], [#445] by Hasang Cho]
+
  -  Migrated from *@phensley/language-tag* package and its `LanguageTag` class
     to the standardized `Intl.Locale` class for representing language tags.
     [[#280], [#392] by Jang Hanarae]
@@ -81,6 +85,7 @@ To be released.
 [#433]: https://github.com/fedify-dev/fedify/pull/433
 [#434]: https://github.com/fedify-dev/fedify/pull/434
 [#444]: https://github.com/fedify-dev/fedify/issues/444
+[#445]: https://github.com/fedify-dev/fedify/pull/445
 
 ### @fedify/cli
 
