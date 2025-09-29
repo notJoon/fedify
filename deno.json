@@ -16,8 +16,6 @@
     "./packages/sveltekit",
     "./packages/testing",
     "./examples/blog",
-    "./examples/cloudflare-workers",
-    "./examples/fastify",
     "./examples/hono-sample"
   ],
   "imports": {
