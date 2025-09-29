@@ -62,12 +62,7 @@
     "!src/vocab/vocab.ts"
   ],
   "tasks": {
-    "codegen": {
-      "command": "GENPATH=vocab-$(deno eval \"console.log(crypto.randomUUID());\").ts && deno run --allow-read --allow-write --check src/codegen/main.ts src/vocab/ src/vocab/$GENPATH && deno fmt src/vocab/$GENPATH && mv src/vocab/$GENPATH src/vocab/vocab.ts && deno cache src/vocab/vocab.ts && deno check src/vocab/vocab.ts",
-      "dependencies": [
-        "pnpm:build-vocab"
-      ]
-    },
+    "codegen": "GENPATH=vocab-$(deno eval \"console.log(crypto.randomUUID());\").ts && deno run --allow-read --allow-write --check src/codegen/main.ts src/vocab/ src/vocab/$GENPATH && deno fmt src/vocab/$GENPATH && mv src/vocab/$GENPATH src/vocab/vocab.ts && deno cache src/vocab/vocab.ts && deno check src/vocab/vocab.ts",
     "cache": {
       "command": "deno cache src/mod.ts",
       "dependencies": [
@@ -110,7 +105,8 @@
       "command": "pnpm exec tsdown",
       "dependencies": [
         "codegen",
-        "pnpm:install"
+        "pnpm:install",
+        "pnpm:build-vocab"
       ]
     },
     "pnpm:build-vocab-runtime": {
@@ -136,8 +132,7 @@
     "test:cfworkers": {
       "command": "pnpm exec wrangler deploy --dry-run --outdir src/cfworkers && node --import=tsx src/cfworkers/client.ts",
       "dependencies": [
-        "pnpm:build",
-        "pnpm:build-vocab"
+        "pnpm:build"
       ]
     },
     "test-all": {
