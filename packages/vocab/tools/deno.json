@@ -1,0 +1,23 @@
+{
+  "name": "@fedify/vocab-tools",
+  "version": "2.0.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/mod.ts"
+  },
+  "description": "Util library for @fedify/vocab",
+  "author": {
+    "name": "Hong Minhee",
+    "email": "hong@minhee.org",
+    "url": "https://hongminhee.org/"
+  },
+  "imports": {},
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+  "tasks": {
+    "check": "deno fmt --check && deno lint && deno check src/*.ts",
+    "test": "deno test"
+  }
+}
