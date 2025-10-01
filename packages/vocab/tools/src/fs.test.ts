@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { join } from "@std/path";
-import { test } from "../testing/mod.ts";
+import { test } from "node:test";
 import { readDirRecursive } from "./fs.ts";
 
 test("readDirRecursive()", async () => {

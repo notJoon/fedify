@@ -1,8 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { dirname, join } from "@std/path";
-import { assertSnapshot } from "@std/testing/snapshot";
-import metadata from "../../deno.json" with { type: "json" };
-import { test } from "../testing/mod.ts";
+import { test } from "node:test";
+import metadata from "../deno.json" with { type: "json" };
 import { generateClasses, sortTopologically } from "./class.ts";
 import { loadSchemaFiles } from "./schema.ts";
 
@@ -76,5 +75,5 @@ test("generateClasses()", async (t) => {
     JSON.stringify(metadata.version),
     '"0.0.0"',
   );
-  await assertSnapshot(t, entireCode);
+  await t.assert.snapshot(entireCode);
 });
