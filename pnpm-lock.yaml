@@ -1010,6 +1010,18 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
+  packages/vocab/tools:
+    devDependencies:
+      '@types/node':
+        specifier: ^24.2.1
+        version: 24.3.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.12.9(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
 packages:
 
   '@algolia/autocomplete-core@1.17.7':
