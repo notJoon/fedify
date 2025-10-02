@@ -1,5 +1,5 @@
-import { assertEquals } from "@std/assert";
-import { dirname, join } from "@std/path";
+import { deepStrictEqual } from "node:assert";
+import { dirname, join } from "node:path";
 import { test } from "node:test";
 import metadata from "../deno.json" with { type: "json" };
 import { generateClasses, sortTopologically } from "./class.ts";
@@ -52,7 +52,7 @@ test("sortTopologically()", () => {
       defaultContext: {},
     },
   });
-  assertEquals(
+  deepStrictEqual(
     sorted,
     [
       "https://example.com/foo",
@@ -75,5 +75,5 @@ test("generateClasses()", async (t) => {
     JSON.stringify(metadata.version),
     '"0.0.0"',
   );
-  await t.assert.snapshot(entireCode);
+  t.assert.snapshot(entireCode);
 });
