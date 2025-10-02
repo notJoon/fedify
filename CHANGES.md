@@ -10,6 +10,10 @@ To be released.
 
 ### @fedify/fedify
 
+ -  Remove `contextLoader` option (which was deprecated) from
+    `FederationOptions` interface in favor of `contextLoaderFactory` option
+    for better flexibility.  [[#376], [#445] by Hasang Cho]
+
  -  Migrated from *@phensley/language-tag* package and its `LanguageTag` class
     to the standardized `Intl.Locale` class for representing language tags.
     [[#280], [#392] by Jang Hanarae]
@@ -81,6 +85,7 @@ To be released.
 [#433]: https://github.com/fedify-dev/fedify/pull/433
 [#434]: https://github.com/fedify-dev/fedify/pull/434
 [#444]: https://github.com/fedify-dev/fedify/issues/444
+[#445]: https://github.com/fedify-dev/fedify/pull/445
 
 ### @fedify/cli
 
@@ -92,8 +97,14 @@ To be released.
         to trash and continue the initialization from new created directory.
      -  Ask again if some options is not specified or invalid.
 
+ -  The `fedify lookup` command now supports multiple URLs with the
+    `-t`/`--traverse` option, allowing users to traverse multiple collections
+    in a single command.  [[#408], [#449] by Jiwon Kwon]
+
 [#397]: https://github.com/fedify-dev/fedify/issues/397
+[#408]: https://github.com/fedify-dev/fedify/issues/408
 [#435]: https://github.com/fedify-dev/fedify/issues/435
+[#449]: https://github.com/fedify-dev/fedify/pull/449
 
 ### @fedify/vocab-runtime
 
