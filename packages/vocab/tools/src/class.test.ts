@@ -64,6 +64,9 @@ test("sortTopologically()", () => {
   );
 });
 
+/*
+This test will revive after `@fedify/vocab` is separated from `@fedify/fedify`.
+
 test("generateClasses()", async (t) => {
   const schemaDir = join(dirname(import.meta.dirname!), "vocab");
   const types = await loadSchemaFiles(schemaDir);
@@ -77,3 +80,4 @@ test("generateClasses()", async (t) => {
   );
   t.assert.snapshot(entireCode);
 });
+*/
