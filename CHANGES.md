@@ -97,8 +97,14 @@ To be released.
         to trash and continue the initialization from new created directory.
      -  Ask again if some options is not specified or invalid.
 
+ -  The `fedify lookup` command now supports multiple URLs with the
+    `-t`/`--traverse` option, allowing users to traverse multiple collections
+    in a single command.  [[#408], [#449] by Jiwon Kwon]
+
 [#397]: https://github.com/fedify-dev/fedify/issues/397
+[#408]: https://github.com/fedify-dev/fedify/issues/408
 [#435]: https://github.com/fedify-dev/fedify/issues/435
+[#449]: https://github.com/fedify-dev/fedify/pull/449
 
 ### @fedify/vocab-runtime
 
