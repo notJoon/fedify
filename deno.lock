@@ -4702,16 +4702,22 @@
             "npm:@multiformats/base-x@^4.0.1",
             "npm:@types/node@^24.2.1",
             "npm:asn1js@^3.0.6",
-            "npm:byte-encodings@^1.0.11",
             "npm:multicodec@^3.2.1",
             "npm:pkijs@^3.2.5"
           ]
         }
       },
       "packages/vocab/tools": {
+        "dependencies": [
+          "npm:@cfworker/json-schema@^4.1.1",
+          "npm:byte-encodings@^1.0.11",
+          "npm:es-toolkit@^1.39.10"
+        ],
         "packageJson": {
           "dependencies": [
-            "npm:@types/node@^24.2.1"
+            "npm:@cfworker/json-schema@^4.1.1",
+            "npm:@types/node@^24.2.1",
+            "npm:es-toolkit@^1.39.10"
           ]
         }
       }
