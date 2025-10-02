@@ -1,5 +1,5 @@
-import { assertEquals } from "@std/assert";
-import { join } from "@std/path";
+import { deepStrictEqual } from "node:assert";
+import { join } from "node:path";
 import { test } from "node:test";
 import { readDirRecursive } from "./fs.ts";
 
@@ -16,7 +16,7 @@ test("readDirRecursive()", async () => {
   await Deno.writeTextFile(join(dir, "b", "bb.txt"), "bb");
 
   // Read the directory recursively:
-  assertEquals(
+  deepStrictEqual(
     new Set(await Array.fromAsync(readDirRecursive(dir))),
     new Set([
       join("a", "aa", "aaa.txt"),

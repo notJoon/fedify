@@ -1,4 +1,5 @@
-import { assertEquals } from "@std/assert";
+import { deepStrictEqual, ok } from "node:assert";
+import { test } from "node:test";
 import {
   hasSingularAccessor,
   isNonFunctionalProperty,
@@ -6,8 +7,8 @@ import {
   type TypeUri,
 } from "./schema.ts";
 
-Deno.test("isNonFunctionalProperty", async (t) => {
-  await t.step("returns true for non-functional property", () => {
+test("isNonFunctionalProperty", async (t) => {
+  await t.test("returns true for non-functional property", () => {
     const property: PropertySchema = {
       singularName: "name",
       pluralName: "names",
@@ -17,7 +18,7 @@ Deno.test("isNonFunctionalProperty", async (t) => {
       functional: false,
     };
 
-    assertEquals(isNonFunctionalProperty(property), true);
+    ok(isNonFunctionalProperty(property));
 
     // Type narrowing test - this should compile without errors
     if (isNonFunctionalProperty(property)) {
@@ -28,7 +29,7 @@ Deno.test("isNonFunctionalProperty", async (t) => {
     }
   });
 
-  await t.step("returns true for property without functional field", () => {
+  await t.test("returns true for property without functional field", () => {
     const property: PropertySchema = {
       singularName: "name",
       pluralName: "names",
@@ -38,10 +39,10 @@ Deno.test("isNonFunctionalProperty", async (t) => {
       // functional is optional and defaults to false
     };
 
-    assertEquals(isNonFunctionalProperty(property), true);
+    ok(isNonFunctionalProperty(property));
   });
 
-  await t.step("returns false for functional property", () => {
+  await t.test("returns false for functional property", () => {
     const property: PropertySchema = {
       singularName: "id",
       uri: "https://example.com/id",
@@ -50,12 +51,12 @@ Deno.test("isNonFunctionalProperty", async (t) => {
       functional: true,
     };
 
-    assertEquals(isNonFunctionalProperty(property), false);
+    ok(!isNonFunctionalProperty(property));
   });
 });
 
-Deno.test("hasSingularAccessor", async (t) => {
-  await t.step("returns true for functional property", () => {
+test("hasSingularAccessor", async (t) => {
+  await t.test("returns true for functional property", () => {
     const property: PropertySchema = {
       singularName: "id",
       uri: "https://example.com/id",
@@ -64,10 +65,10 @@ Deno.test("hasSingularAccessor", async (t) => {
       functional: true,
     };
 
-    assertEquals(hasSingularAccessor(property), true);
+    ok(hasSingularAccessor(property));
   });
 
-  await t.step(
+  await t.test(
     "returns true for non-functional property with singularAccessor",
     () => {
       const property: PropertySchema = {
@@ -80,11 +81,11 @@ Deno.test("hasSingularAccessor", async (t) => {
         singularAccessor: true,
       };
 
-      assertEquals(hasSingularAccessor(property), true);
+      ok(hasSingularAccessor(property));
     },
   );
 
-  await t.step(
+  await t.test(
     "returns false for non-functional property without singularAccessor",
     () => {
       const property: PropertySchema = {
@@ -97,11 +98,11 @@ Deno.test("hasSingularAccessor", async (t) => {
         singularAccessor: false,
       };
 
-      assertEquals(hasSingularAccessor(property), false);
+      ok(!hasSingularAccessor(property));
     },
   );
 
-  await t.step(
+  await t.test(
     "returns false for non-functional property with undefined singularAccessor",
     () => {
       const property: PropertySchema = {
@@ -113,13 +114,13 @@ Deno.test("hasSingularAccessor", async (t) => {
         // functional defaults to false, singularAccessor is undefined
       };
 
-      assertEquals(hasSingularAccessor(property), false);
+      ok(!hasSingularAccessor(property));
     },
   );
 });
 
-Deno.test("Type guard combinations", async (t) => {
-  await t.step("functional property with redundantProperties", () => {
+test("Type guard combinations", async (t) => {
+  await t.test("functional property with redundantProperties", () => {
     const property: PropertySchema = {
       singularName: "type",
       uri: "https://www.w3.org/ns/activitystreams#type",
@@ -131,11 +132,11 @@ Deno.test("Type guard combinations", async (t) => {
       ],
     };
 
-    assertEquals(isNonFunctionalProperty(property), false);
-    assertEquals(hasSingularAccessor(property), true);
+    ok(!isNonFunctionalProperty(property));
+    ok(hasSingularAccessor(property));
   });
 
-  await t.step("non-functional property with container", () => {
+  await t.test("non-functional property with container", () => {
     const property: PropertySchema = {
       singularName: "item",
       pluralName: "items",
@@ -146,16 +147,16 @@ Deno.test("Type guard combinations", async (t) => {
       container: "list",
     };
 
-    assertEquals(isNonFunctionalProperty(property), true);
-    assertEquals(hasSingularAccessor(property), false);
+    ok(isNonFunctionalProperty(property));
+    ok(!hasSingularAccessor(property));
 
     // Type narrowing test
     if (isNonFunctionalProperty(property)) {
-      assertEquals(property.container, "list");
+      deepStrictEqual(property.container, "list");
     }
   });
 
-  await t.step("non-functional property with graph container", () => {
+  await t.test("non-functional property with graph container", () => {
     const property: PropertySchema = {
       singularName: "member",
       pluralName: "members",
@@ -166,16 +167,16 @@ Deno.test("Type guard combinations", async (t) => {
       container: "graph",
     };
 
-    assertEquals(isNonFunctionalProperty(property), true);
-    assertEquals(hasSingularAccessor(property), false);
+    ok(isNonFunctionalProperty(property));
+    ok(!hasSingularAccessor(property));
 
     // Type narrowing test
     if (isNonFunctionalProperty(property)) {
-      assertEquals(property.container, "graph");
+      deepStrictEqual(property.container, "graph");
     }
   });
 
-  await t.step("untyped property", () => {
+  await t.test("untyped property", () => {
     const property: PropertySchema = {
       singularName: "value",
       pluralName: "values",
@@ -185,7 +186,7 @@ Deno.test("Type guard combinations", async (t) => {
       range: ["https://example.com/Value"] as [TypeUri],
     };
 
-    assertEquals(isNonFunctionalProperty(property), true);
-    assertEquals(hasSingularAccessor(property), false);
+    ok(isNonFunctionalProperty(property));
+    ok(!hasSingularAccessor(property));
   });
 });
