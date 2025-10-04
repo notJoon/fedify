@@ -141,6 +141,9 @@ importers:
       '@fedify/testing':
         specifier: 'workspace:'
         version: link:../packages/testing
+      '@fedify/vocab-runtime':
+        specifier: 'workspace:'
+        version: link:../packages/vocab-runtime
       '@hono/node-server':
         specifier: ^1.13.7
         version: 1.14.4(hono@4.8.3)
