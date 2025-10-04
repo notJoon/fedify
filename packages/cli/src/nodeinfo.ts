@@ -1,4 +1,5 @@
-import { getNodeInfo, getUserAgent } from "@fedify/fedify";
+import { getNodeInfo } from "@fedify/fedify";
+import { getUserAgent } from "@fedify/vocab-runtime";
 import { createJimp } from "@jimp/core";
 import webp from "@jimp/wasm-webp";
 import { getLogger } from "@logtape/logtape";

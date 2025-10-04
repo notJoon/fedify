@@ -1,11 +1,11 @@
 import type {
   AuthenticatedDocumentLoaderFactory,
   DocumentLoaderFactory,
+  GetUserAgentOptions,
 } from "@fedify/vocab-runtime";
 import type { TracerProvider } from "@opentelemetry/api";
 import type { ActivityTransformer } from "../compat/types.ts";
 import type { HttpMessageSignaturesSpec } from "../sig/http.ts";
-import type { GetUserAgentOptions } from "../utils/request.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import type { Activity, Hashtag, Object } from "../vocab/vocab.ts";
 import type {

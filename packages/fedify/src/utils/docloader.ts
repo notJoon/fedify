@@ -1,10 +1,14 @@
 import {
+  createActivityPubRequest,
   type DocumentLoader,
   type DocumentLoaderFactoryOptions,
   type DocumentLoaderOptions,
   getDocumentLoader,
   getRemoteDocument,
+  logRequest,
   type RemoteDocument,
+  UrlError,
+  validatePublicUrl,
 } from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
 import type { TracerProvider } from "@opentelemetry/api";
@@ -14,8 +18,6 @@ import {
   type HttpMessageSignaturesSpecDeterminer,
 } from "../sig/http.ts";
 import { validateCryptoKey } from "../sig/key.ts";
-import { createActivityPubRequest, logRequest } from "./request.ts";
-import { UrlError, validatePublicUrl } from "./url.ts";
 
 const logger = getLogger(["fedify", "utils", "docloader"]);
 

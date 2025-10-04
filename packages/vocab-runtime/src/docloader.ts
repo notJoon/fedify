@@ -2,7 +2,7 @@ import { getLogger } from "@logtape/logtape";
 import preloadedContexts from "./contexts.ts";
 import { HttpHeaderLink } from "./link.ts";
 import {
-  createRequest,
+  createActivityPubRequest,
   FetchError,
   type GetUserAgentOptions,
   logRequest,
@@ -289,7 +289,7 @@ export function getDocumentLoader(
         throw error;
       }
     }
-    const request = createRequest(url, { userAgent });
+    const request = createActivityPubRequest(url, { userAgent });
     logRequest(logger, request);
     const response = await fetch(request, {
       // Since Bun has a bug that ignores the `Request.redirect` option,

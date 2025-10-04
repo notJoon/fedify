@@ -3,9 +3,9 @@ import type {
   DocumentLoaderOptions,
   RemoteDocument,
 } from "@fedify/vocab-runtime";
+import { preloadedContexts } from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
 import type { KvKey, KvStore, KvStoreSetOptions } from "../federation/kv.ts";
-import { preloadedContexts } from "./contexts.ts";
 
 const logger = getLogger(["fedify", "utils", "kv-cache"]);
 

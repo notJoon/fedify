@@ -1,3 +1,4 @@
+import type { GetUserAgentOptions } from "@fedify/vocab-runtime";
 import {
   type AuthenticatedDocumentLoaderFactory,
   type DocumentLoader,
@@ -40,7 +41,6 @@ import { getKeyOwner, type GetKeyOwnerOptions } from "../sig/owner.ts";
 import { signObject, verifyObject } from "../sig/proof.ts";
 import { getAuthenticatedDocumentLoader } from "../utils/docloader.ts";
 import { kvCache } from "../utils/kv-cache.ts";
-import type { GetUserAgentOptions } from "../utils/request.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import {
   lookupObject,

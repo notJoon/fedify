@@ -1,3 +1,4 @@
+import type { GetUserAgentOptions } from "@fedify/vocab-runtime";
 import {
   type DocumentLoader,
   getDocumentLoader,
@@ -7,7 +8,6 @@ import { getLogger } from "@logtape/logtape";
 import { SpanStatusCode, trace, type TracerProvider } from "@opentelemetry/api";
 import { delay } from "es-toolkit";
 import metadata from "../../deno.json" with { type: "json" };
-import type { GetUserAgentOptions } from "../utils/request.ts";
 import { lookupWebFinger } from "../webfinger/lookup.ts";
 import { toAcctUrl } from "./handle.ts";
 import { getTypeId } from "./type.ts";
