@@ -1,7 +1,7 @@
 {
   "name": "@fedify/vocab-runtime",
   "version": "2.0.0",
-  "description": "Runtime library for @fedify/vocab",
+  "description": "Runtime library for code-generated Activity Vocabulary APIs",
   "type": "module",
   "main": "./dist/mod.cjs",
   "module": "./dist/mod.js",
