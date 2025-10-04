@@ -6,9 +6,9 @@ import {
   getRemoteDocument,
   type RemoteDocument,
 } from "@fedify/vocab-runtime";
-import { curry } from "@fxts/core";
 import { getLogger } from "@logtape/logtape";
 import type { TracerProvider } from "@opentelemetry/api";
+import { curry } from "es-toolkit";
 import {
   doubleKnock,
   type HttpMessageSignaturesSpecDeterminer,

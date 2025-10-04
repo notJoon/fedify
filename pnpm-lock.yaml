@@ -692,9 +692,6 @@ importers:
       '@fedify/vocab-runtime':
         specifier: workspace:*
         version: link:../vocab-runtime
-      '@fxts/core':
-        specifier: 'catalog:'
-        version: 1.15.0
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1
