@@ -78,6 +78,7 @@ import type {
   SendActivityOptionsForCollection,
 } from "./context.ts";
 import type {
+  ConstructorWithTypeId,
   Federation,
   FederationFetchOptions,
   FederationOptions,
@@ -931,8 +932,7 @@ export class FederationImpl<TContextData>
       documentLoader?: DocumentLoader;
       invokedFromActorDispatcher?: { identifier: string };
       invokedFromObjectDispatcher?: {
-        // deno-lint-ignore no-explicit-any
-        cls: (new (...args: any[]) => Object) & { typeId: URL };
+        cls: ConstructorWithTypeId<Object>;
         values: Record<string, string>;
       };
     },
@@ -945,8 +945,7 @@ export class FederationImpl<TContextData>
       documentLoader?: DocumentLoader;
       invokedFromActorDispatcher?: { identifier: string };
       invokedFromObjectDispatcher?: {
-        // deno-lint-ignore no-explicit-any
-        cls: (new (...args: any[]) => Object) & { typeId: URL };
+        cls: ConstructorWithTypeId<Object>;
         values: Record<string, string>;
       };
     } = {},
@@ -1621,8 +1620,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
   }
 
   getObjectUri<TObject extends Object>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     values: Record<string, string>,
   ): URL {
     const callbacks = this.federation.objectCallbacks[cls.typeId.href];
@@ -2564,8 +2562,7 @@ interface RequestContextOptions<TContextData>
   request: Request;
   invokedFromActorDispatcher?: { identifier: string };
   invokedFromObjectDispatcher?: {
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => Object) & { typeId: URL };
+    cls: ConstructorWithTypeId<Object>;
     values: Record<string, string>;
   };
 }
@@ -2574,8 +2571,7 @@ class RequestContextImpl<TContextData> extends ContextImpl<TContextData>
   implements RequestContext<TContextData> {
   readonly #invokedFromActorDispatcher?: { identifier: string };
   readonly #invokedFromObjectDispatcher?: {
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => Object) & { typeId: URL };
+    cls: ConstructorWithTypeId<Object>;
     values: Record<string, string>;
   };
   readonly request: Request;
@@ -2634,8 +2630,7 @@ class RequestContextImpl<TContextData> extends ContextImpl<TContextData>
   }
 
   async getObject<TObject extends Object>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     values: Record<string, string>,
   ): Promise<TObject | null> {
     const callbacks = this.federation.objectCallbacks[cls.typeId.href];

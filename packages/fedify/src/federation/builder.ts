@@ -53,11 +53,7 @@ export class FederationBuilderImpl<TContextData>
   nodeInfoDispatcher?: NodeInfoDispatcher<TContextData>;
   webFingerLinksDispatcher?: WebFingerLinksDispatcher<TContextData>;
   objectCallbacks: Record<string, ObjectCallbacks<TContextData, string>>;
-  objectTypeIds: Record<
-    string,
-    // deno-lint-ignore no-explicit-any
-    (new (...args: any[]) => Object) & { typeId: URL }
-  >;
+  objectTypeIds: Record<string, ConstructorWithTypeId<Object>>;
   inboxPath?: string;
   inboxCallbacks?: CollectionCallbacks<
     Activity,
@@ -507,51 +503,44 @@ export class FederationBuilderImpl<TContextData>
   }
 
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path: string,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam> {
@@ -1226,8 +1215,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<
@@ -1253,8 +1241,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<
@@ -1278,8 +1265,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}`,
@@ -1299,8 +1285,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
@@ -1318,8 +1303,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: string,
     dispatcher: CustomCollectionDispatcher<
       TObject,
@@ -1346,8 +1330,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<TParam>}${string}`,
@@ -1367,8 +1350,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}`,
@@ -1388,8 +1370,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
@@ -1407,8 +1388,7 @@ export class FederationBuilderImpl<TContextData>
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: string,
     dispatcher: CustomCollectionDispatcher<
       TObject,
@@ -1436,8 +1416,7 @@ export class FederationBuilderImpl<TContextData>
   >(
     name: string | symbol,
     collectionType: "collection" | "orderedCollection",
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
