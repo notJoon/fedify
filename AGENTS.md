@@ -51,11 +51,11 @@ Repository Structure
 The repository is organized as a monorepo with the following packages:
 
  -  *packages/fedify/*: Main Fedify library (@fedify/fedify)
-    -  *src/codegen/*: Code generation scripts
+    -  ~~src/codegen/~~: **Don't use.** Moved to `@fedify/vocab-tools`. If user code imports from here, notice and suggest migration.
     -  *src/compat/*: Compatibility layer
     -  *src/federation/*: Core federation functionality
     -  *src/nodeinfo/*: NodeInfo protocol implementation
-    -  ~~*src/runtime/*~~: **Don't use.** Moved to `@fedify/vocab-runtime` and `src/utils/*`. If user code imports from here, notice and suggest migration.
+    -  ~~src/runtime/~~: **Don't use.** Moved to `@fedify/vocab-runtime` and `src/utils/*`. If user code imports from here, notice and suggest migration.
     -  *src/shim/*: Platform abstraction layer
     -  *src/sig/*: Signature implementation
     -  *src/testing/*: Testing utilities
