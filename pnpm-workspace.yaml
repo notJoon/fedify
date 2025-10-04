@@ -14,7 +14,7 @@ packages:
 - packages/sqlite
 - packages/sveltekit
 - packages/testing
-- packages/vocab/runtime
+- packages/vocab-runtime
 - docs
 - examples/cloudflare-workers
 - examples/elysia

@@ -110,7 +110,7 @@
       ]
     },
     "pnpm:build-vocab-runtime": {
-      "command": "cd ../vocab/runtime && pnpm build"
+      "command": "cd ../vocab-runtime && pnpm build"
     },
     "pnpm:build-vocab": {
       "dependencies": [

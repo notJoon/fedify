@@ -13,7 +13,7 @@
     "./packages/sqlite",
     "./packages/sveltekit",
     "./packages/testing",
-    "./packages/vocab/runtime",
+    "./packages/vocab-runtime",
     "./examples/blog",
     "./examples/hono-sample"
   ],
