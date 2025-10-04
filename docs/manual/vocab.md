@@ -321,7 +321,8 @@ property of a `Note` object:
 ~~~~ typescript{8-10} twoslash
 import { Temporal } from "@js-temporal/polyfill";
 // ---cut-before---
-import { LanguageString, Note } from "@fedify/fedify";
+import { Note } from "@fedify/fedify";
+import { LanguageString } from "@fedify/vocab-runtime";
 
 const noteInEnglish = new Note({
   id: new URL("https://example.com/notes/123"),

@@ -1,9 +1,9 @@
+import { DenoKvStore } from "@fedify/denokv";
+import { kvCache } from "@fedify/fedify";
 import {
   type DocumentLoader,
   getDocumentLoader as getDefaultDocumentLoader,
-  kvCache,
-} from "@fedify/fedify";
-import { DenoKvStore } from "@fedify/fedify/x/denokv";
+} from "@fedify/vocab-runtime";
 import { join } from "@std/path";
 import { getCacheDir } from "./cache.ts";
 

@@ -1,14 +1,10 @@
+import { type DocumentLoader, getDocumentLoader } from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
 import { SpanStatusCode, trace, type TracerProvider } from "@opentelemetry/api";
 import { decodeBase64, encodeBase64 } from "byte-encodings/base64";
 import { encodeHex } from "byte-encodings/hex";
-// @ts-ignore TS7016
 import jsonld from "jsonld";
 import metadata from "../../deno.json" with { type: "json" };
-import {
-  type DocumentLoader,
-  getDocumentLoader,
-} from "../runtime/docloader.ts";
 import { getTypeId } from "../vocab/type.ts";
 import { Activity, CryptographicKey, Object } from "../vocab/vocab.ts";
 import { fetchKey, type KeyCache, validateCryptoKey } from "./key.ts";

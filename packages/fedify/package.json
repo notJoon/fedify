@@ -78,16 +78,6 @@
       "require": "./dist/nodeinfo/mod.cjs",
       "default": "./dist/nodeinfo/mod.js"
     },
-    "./runtime": {
-      "types": {
-        "import": "./dist/runtime/mod.d.ts",
-        "require": "./dist/runtime/mod.d.cts",
-        "default": "./dist/runtime/mod.d.ts"
-      },
-      "import": "./dist/runtime/mod.js",
-      "require": "./dist/runtime/mod.cjs",
-      "default": "./dist/runtime/mod.js"
-    },
     "./sig": {
       "types": {
         "import": "./dist/sig/mod.d.ts",
@@ -97,6 +87,16 @@
       "import": "./dist/sig/mod.js",
       "require": "./dist/sig/mod.cjs",
       "default": "./dist/sig/mod.js"
+    },
+    "./utils": {
+      "types": {
+        "import": "./dist/utils/mod.d.ts",
+        "require": "./dist/utils/mod.d.cts",
+        "default": "./dist/utils/mod.d.ts"
+      },
+      "import": "./dist/utils/mod.js",
+      "require": "./dist/utils/mod.cjs",
+      "default": "./dist/utils/mod.js"
     },
     "./vocab": {
       "types": {
@@ -151,6 +151,7 @@
   },
   "dependencies": {
     "@cfworker/json-schema": "^4.1.1",
+    "@fedify/vocab-runtime": "workspace:*",
     "@js-temporal/polyfill": "^0.5.1",
     "@logtape/logtape": "catalog:",
     "@multiformats/base-x": "^4.0.1",
@@ -176,7 +177,7 @@
     "@std/yaml": "jsr:^1.0.6",
     "@types/node": "^24.2.1",
     "fast-check": "^3.22.0",
-    "fetch-mock": "^12.5.2",
+    "fetch-mock": "catalog:",
     "miniflare": "^4.20250523.0",
     "tsdown": "catalog:",
     "tsx": "^4.19.4",
@@ -188,7 +189,7 @@
     "prepack": "deno task codegen && tsdown",
     "prepublish": "deno task codegen && tsdown",
     "test": "deno task codegen && tsdown && cd dist/ && node --test",
-    "test:bun": "deno task codegen && tsdown && cd dist/ && bun test --timeout 60000",
+    "test:bun": "deno task codegen && deno task pnpm:build-vocab && tsdown && cd dist/ && bun test --timeout 60000",
     "test:cfworkers": "deno task codegen && wrangler deploy --dry-run --outdir src/cfworkers && node --import=tsx src/cfworkers/client.ts"
   }
 }

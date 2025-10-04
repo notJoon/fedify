@@ -1,8 +1,5 @@
+import { getUserAgent, type GetUserAgentOptions } from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
-import {
-  getUserAgent,
-  type GetUserAgentOptions,
-} from "../runtime/docloader.ts";
 import type { ResourceDescriptor } from "../webfinger/jrd.ts";
 import type {
   InboundService,

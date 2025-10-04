@@ -1,3 +1,9 @@
+import {
+  getUserAgent,
+  type GetUserAgentOptions,
+  UrlError,
+  validatePublicUrl,
+} from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
 import {
   SpanKind,
@@ -6,11 +12,6 @@ import {
   type TracerProvider,
 } from "@opentelemetry/api";
 import metadata from "../../deno.json" with { type: "json" };
-import {
-  getUserAgent,
-  type GetUserAgentOptions,
-} from "../runtime/docloader.ts";
-import { UrlError, validatePublicUrl } from "../runtime/url.ts";
 import type { ResourceDescriptor } from "./jrd.ts";
 
 const logger = getLogger(["fedify", "webfinger", "lookup"]);

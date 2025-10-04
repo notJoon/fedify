@@ -65,6 +65,18 @@ To be released.
         on the same server, fixing issues where activities were incorrectly
         deduplicated globally.
 
+ -  Separated modules from `@fedify/fedify/runtime` to improve modularity and
+    reduce coupling between vocabulary generation and core federation
+    functionality.  [[#444], [#451] by ChanHaeng Lee]
+
+     -  Modules related to ActivityPub vocabulary generation have been extracted
+        into the new `@fedify/vocab-runtime` package.
+     -  Other utility modules from `@fedify/fedify/runtime` have been
+        reorganized into the `@fedify/fedify/utils` directory within the main
+        package.
+     -  Updated import paths throughout the codebase to reflect the new module
+        organization.
+
 [#280]: https://github.com/fedify-dev/fedify/issues/280
 [#366]: https://github.com/fedify-dev/fedify/issues/366
 [#376]: https://github.com/fedify-dev/fedify/issues/376
@@ -72,7 +84,9 @@ To be released.
 [#393]: https://github.com/fedify-dev/fedify/pulls/393
 [#433]: https://github.com/fedify-dev/fedify/pull/433
 [#434]: https://github.com/fedify-dev/fedify/pull/434
+[#444]: https://github.com/fedify-dev/fedify/issues/444
 [#445]: https://github.com/fedify-dev/fedify/pull/445
+[#451]: https://github.com/fedify-dev/fedify/pull/451
 
 ### @fedify/cli
 
@@ -92,6 +106,23 @@ To be released.
 [#408]: https://github.com/fedify-dev/fedify/issues/408
 [#435]: https://github.com/fedify-dev/fedify/issues/435
 [#449]: https://github.com/fedify-dev/fedify/pull/449
+
+### @fedify/vocab-runtime
+
+ -  Created ActivityPub vocabulary runtime as the *@fedify/vocab-runtime*
+    package.  Separated core vocabulary generation and processing modules
+    from the main *@fedify/fedify* package to improve modularity and reduce
+    coupling between vocabulary processing and federation functionality.
+    [[#444], [#451] by ChanHaeng Lee]
+
+     -  Extracted `DocumentLoader`, `RemoteDocument`, and related types from
+        the main package.
+     -  Moved cryptographic key processing utilities, e.g., `importSpki`,
+        `exportSpki`, `importMultibaseKey`, `exportMultibaseKey`.
+     -  Relocated multibase encoding/decoding functionality.
+     -  Separated language string processing (`LanguageString` class).
+     -  This package is primarily used by generated vocabulary classes and
+        provides the runtime infrastructure for ActivityPub object processing.
 
 
 Version 1.9.0

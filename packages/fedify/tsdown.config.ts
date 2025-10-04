@@ -9,7 +9,7 @@ export default [
       "./src/compat/mod.ts",
       "./src/federation/mod.ts",
       "./src/nodeinfo/mod.ts",
-      "./src/runtime/mod.ts",
+      "./src/utils/mod.ts",
       "./src/sig/mod.ts",
       "./src/vocab/mod.ts",
       "./src/webfinger/mod.ts",

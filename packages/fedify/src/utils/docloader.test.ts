@@ -1,11 +1,11 @@
+import { UrlError } from "@fedify/vocab-runtime";
 import { assertEquals, assertRejects } from "@std/assert";
 import fetchMock from "fetch-mock";
 import { verifyRequest } from "../sig/http.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import { rsaPrivateKey2 } from "../testing/keys.ts";
 import { test } from "../testing/mod.ts";
-import { getAuthenticatedDocumentLoader } from "./authdocloader.ts";
-import { UrlError } from "./url.ts";
+import { getAuthenticatedDocumentLoader } from "./docloader.ts";
 
 test("getAuthenticatedDocumentLoader()", async (t) => {
   fetchMock.spyGlobal();

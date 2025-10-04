@@ -71,7 +71,7 @@ export function isValidPublicIPv4Address(address: string): boolean {
   return true;
 }
 
-export function isValidPublicIPv6Address(address: string) {
+export function isValidPublicIPv6Address(address: string): boolean {
   address = expandIPv6Address(address);
   if (address.at(4) !== ":") return false;
   const firstWord = parseInt(address.substring(0, 4), 16);

@@ -216,6 +216,7 @@ jobs:
         deno-version: 2.5.0  # Keep in sync with mise.toml
     - uses: pnpm/action-setup@v4
       with:
+        run_install: true
         version: 10
     - uses: actions/setup-node@v4
       with:

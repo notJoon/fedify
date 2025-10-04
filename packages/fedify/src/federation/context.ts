@@ -1,7 +1,7 @@
+import type { DocumentLoader } from "@fedify/vocab-runtime";
 import type { TracerProvider } from "@opentelemetry/api";
 import type { GetNodeInfoOptions } from "../nodeinfo/client.ts";
 import type { JsonValue, NodeInfo } from "../nodeinfo/types.ts";
-import type { DocumentLoader } from "../runtime/docloader.ts";
 import type { GetKeyOwnerOptions } from "../sig/owner.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import type {

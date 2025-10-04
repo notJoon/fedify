@@ -1,3 +1,4 @@
+import { type DocumentLoader, getDocumentLoader } from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
 import {
   SpanKind,
@@ -6,10 +7,6 @@ import {
   type TracerProvider,
 } from "@opentelemetry/api";
 import metadata from "../../deno.json" with { type: "json" };
-import {
-  type DocumentLoader,
-  getDocumentLoader,
-} from "../runtime/docloader.ts";
 import { isActor } from "../vocab/actor.ts";
 import { CryptographicKey, type Multikey, Object } from "../vocab/vocab.ts";
 

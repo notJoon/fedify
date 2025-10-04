@@ -67,10 +67,9 @@ test("sortTopologically()", () => {
 
 test("generateClasses()", async (t) => {
   const schemaDir = join(dirname(import.meta.dirname!), "vocab");
-  const runtimePath = "../runtime/";
   const types = await loadSchemaFiles(schemaDir);
   let entireCode = "";
-  for await (const code of generateClasses(types, runtimePath)) {
+  for await (const code of generateClasses(types)) {
     entireCode += code;
   }
   entireCode = entireCode.replaceAll(

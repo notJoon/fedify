@@ -1,22 +1,25 @@
+import {
+  createActivityPubRequest,
+  type DocumentLoader,
+  type DocumentLoaderFactoryOptions,
+  type DocumentLoaderOptions,
+  getDocumentLoader,
+  getRemoteDocument,
+  logRequest,
+  type RemoteDocument,
+  UrlError,
+  validatePublicUrl,
+} from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
 import type { TracerProvider } from "@opentelemetry/api";
+import { curry } from "es-toolkit";
 import {
   doubleKnock,
   type HttpMessageSignaturesSpecDeterminer,
 } from "../sig/http.ts";
 import { validateCryptoKey } from "../sig/key.ts";
-import {
-  createRequest,
-  type DocumentLoader,
-  type DocumentLoaderFactoryOptions,
-  type DocumentLoaderOptions,
-  getRemoteDocument,
-  logRequest,
-  type RemoteDocument,
-} from "./docloader.ts";
-import { UrlError, validatePublicUrl } from "./url.ts";
 
-const logger = getLogger(["fedify", "runtime", "docloader"]);
+const logger = getLogger(["fedify", "utils", "docloader"]);
 
 /**
  * Options for {@link getAuthenticatedDocumentLoader}.
@@ -73,13 +76,13 @@ export function getAuthenticatedDocumentLoader(
         throw error;
       }
     }
-    const originalRequest = createRequest(url, { userAgent });
+    const originalRequest = createActivityPubRequest(url, { userAgent });
     const response = await doubleKnock(
       originalRequest,
       identity,
       {
         specDeterminer,
-        log: logRequest,
+        log: curry(logRequest)(logger),
         tracerProvider,
         signal: options?.signal,
       },
@@ -87,4 +90,50 @@ export function getAuthenticatedDocumentLoader(
     return getRemoteDocument(url, response, load);
   }
   return load;
+}
+
+const _fetchDocumentLoader = getDocumentLoader();
+const _fetchDocumentLoader_allowPrivateAddress = getDocumentLoader({
+  allowPrivateAddress: true,
+});
+
+/**
+ * A JSON-LD document loader that utilizes the browser's `fetch` API.
+ *
+ * This loader preloads the below frequently used contexts:
+ *
+ * - <https://www.w3.org/ns/activitystreams>
+ * - <https://w3id.org/security/v1>
+ * - <https://w3id.org/security/data-integrity/v1>
+ * - <https://www.w3.org/ns/did/v1>
+ * - <https://w3id.org/security/multikey/v1>
+ * - <https://purl.archive.org/socialweb/webfinger>
+ * - <http://schema.org/>
+ * @param url The URL of the document to load.
+ * @param allowPrivateAddress Whether to allow fetching private network
+ *                            addresses.  Turned off by default.
+ * @returns The remote document.
+ * @deprecated Use {@link getDocumentLoader} instead.
+ */
+export function fetchDocumentLoader(
+  url: string,
+  allowPrivateAddress?: boolean,
+): Promise<RemoteDocument>;
+export function fetchDocumentLoader(
+  url: string,
+  options?: DocumentLoaderOptions,
+): Promise<RemoteDocument>;
+export function fetchDocumentLoader(
+  url: string,
+  arg: boolean | DocumentLoaderOptions = false,
+): Promise<RemoteDocument> {
+  const allowPrivateAddress = typeof arg === "boolean" ? arg : false;
+  logger.warn(
+    "fetchDocumentLoader() function is deprecated.  " +
+      "Use getDocumentLoader() function instead.",
+  );
+  const loader = allowPrivateAddress
+    ? _fetchDocumentLoader_allowPrivateAddress
+    : _fetchDocumentLoader;
+  return loader(url);
 }

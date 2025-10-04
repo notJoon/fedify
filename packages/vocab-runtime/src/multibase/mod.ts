@@ -1,14 +1,14 @@
-import * as constants from "./constants.ts";
-import { concat, decodeText, encodeText } from "./util.ts";
-import type { BaseCode, BaseName, BaseNameOrCode } from "./types.d.ts";
 import type { Base } from "./base.ts";
+import * as constants from "./constants.ts";
+import type { BaseCode, BaseName, BaseNameOrCode } from "./types.d.ts";
+import { concat, decodeText, encodeText } from "./util.ts";
 
 /**
  * Encode data with the specified base and add the multibase prefix.
  *
  * @throws {Error} Will throw if the encoding is not supported
  */
-export function encode(
+export function encodeMultibase(
   nameOrCode: BaseNameOrCode,
   buf: Uint8Array,
 ): Uint8Array {
@@ -24,7 +24,7 @@ export function encode(
  *
  * @throws {Error} Will throw if the encoding is not supported
  */
-export function decode(data: Uint8Array | string): Uint8Array {
+export function decodeMultibase(data: Uint8Array | string): Uint8Array {
   if (data instanceof Uint8Array) {
     data = decodeText(data);
   }
@@ -67,13 +67,13 @@ function encoding(nameOrCode: BaseNameOrCode): Base {
 }
 
 /**
- * Get encoding from data
+ * Get encoding multibase from data
  *
  * @param {string|Uint8Array} data
  * @returns {Base}
  * @throws {Error} Will throw if the encoding is not supported
  */
-export function encodingFromData(data: string | Uint8Array): Base {
+export function encodingFromBaseData(data: string | Uint8Array): Base {
   if (data instanceof Uint8Array) {
     data = decodeText(data);
   }

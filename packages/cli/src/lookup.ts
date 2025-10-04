@@ -1,4 +1,19 @@
 import {
+  Application,
+  Collection,
+  CryptographicKey,
+  generateCryptoKeyPair,
+  getAuthenticatedDocumentLoader,
+  type Link,
+  lookupObject,
+  Object as APObject,
+  type ResourceDescriptor,
+  respondWithObject,
+  traverseCollection,
+} from "@fedify/fedify";
+import type { DocumentLoader } from "@fedify/vocab-runtime";
+import { getLogger } from "@logtape/logtape";
+import {
   argument,
   choice,
   command,
@@ -18,30 +33,15 @@ import {
   withDefault,
 } from "@optique/core";
 import { path, print, printError } from "@optique/run";
-import {
-  Application,
-  Collection,
-  CryptographicKey,
-  type DocumentLoader,
-  generateCryptoKeyPair,
-  getAuthenticatedDocumentLoader,
-  type Link,
-  lookupObject,
-  Object as APObject,
-  type ResourceDescriptor,
-  respondWithObject,
-  traverseCollection,
-} from "@fedify/fedify";
-import { getLogger } from "@logtape/logtape";
-import ora from "ora";
 import * as colors from "@std/fmt/colors";
-import process from "node:process";
 import { createWriteStream, type WriteStream } from "node:fs";
+import process from "node:process";
+import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
+import { configureLogging, debugOption } from "./globals.ts";
+import { renderImages } from "./imagerenderer.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
 import { colorEnabled, formatObject } from "./utils.ts";
-import { renderImages } from "./imagerenderer.ts";
-import { configureLogging, debugOption } from "./globals.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 

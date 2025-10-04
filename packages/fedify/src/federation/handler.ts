@@ -1,3 +1,4 @@
+import type { DocumentLoader } from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
 import type {
   Span,
@@ -7,7 +8,6 @@ import type {
 } from "@opentelemetry/api";
 import { SpanKind, SpanStatusCode, trace } from "@opentelemetry/api";
 import metadata from "../../deno.json" with { type: "json" };
-import type { DocumentLoader } from "../runtime/docloader.ts";
 import { verifyRequest } from "../sig/http.ts";
 import { detachSignature, verifyJsonLd } from "../sig/ld.ts";
 import { doesActorOwnKey } from "../sig/owner.ts";

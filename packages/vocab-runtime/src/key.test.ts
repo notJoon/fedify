@@ -1,6 +1,6 @@
-import { assertEquals } from "@std/assert";
-import { exportJwk, importJwk } from "../sig/key.ts";
-import { test } from "../testing/mod.ts";
+import { deepStrictEqual } from "node:assert";
+import { test } from "node:test";
+import { exportJwk, importJwk } from "./jwk.ts";
 import {
   exportMultibaseKey,
   exportSpki,
@@ -82,54 +82,54 @@ const ed25519Multibase = "z6MksHj1MJnidCtDiyYW9ugNFftoX9fLK4bornTxmMZ6X7vq";
 
 test("importSpki()", async () => {
   const rsaKey = await importSpki(rsaSpki);
-  assertEquals(await exportJwk(rsaKey), rsaJwk);
+  deepStrictEqual(await exportJwk(rsaKey), rsaJwk);
 
   const ed25519Key = await importSpki(ed25519Pem);
-  assertEquals(await exportJwk(ed25519Key), ed25519Jwk);
+  deepStrictEqual(await exportJwk(ed25519Key), ed25519Jwk);
 });
 
 test("exportSpki()", async () => {
   const rsaKey = await importJwk(rsaJwk, "public");
   const rsaSpki = await exportSpki(rsaKey);
-  assertEquals(rsaSpki, rsaSpki);
+  deepStrictEqual(rsaSpki, rsaSpki);
 
   const ed25519Key = await importJwk(ed25519Jwk, "public");
   const ed25519Spki = await exportSpki(ed25519Key);
-  assertEquals(ed25519Spki, ed25519Pem);
+  deepStrictEqual(ed25519Spki, ed25519Pem);
 });
 
 test("importPkcs1()", async () => {
   const rsaKey = await importPkcs1(rsaPkcs1);
-  assertEquals(await exportJwk(rsaKey), rsaJwk);
+  deepStrictEqual(await exportJwk(rsaKey), rsaJwk);
 });
 
 test("importPem()", async () => {
   const rsaPkcs1Key = await importPem(rsaPkcs1);
-  assertEquals(await exportJwk(rsaPkcs1Key), rsaJwk);
+  deepStrictEqual(await exportJwk(rsaPkcs1Key), rsaJwk);
 
   const rsaSpkiKey = await importPem(rsaSpki);
-  assertEquals(await exportJwk(rsaSpkiKey), rsaJwk);
+  deepStrictEqual(await exportJwk(rsaSpkiKey), rsaJwk);
 
   const ed25519Key = await importPem(ed25519Pem);
-  assertEquals(await exportJwk(ed25519Key), ed25519Jwk);
+  deepStrictEqual(await exportJwk(ed25519Key), ed25519Jwk);
 });
 
 test("importMultibase()", async () => {
   const rsaKey = await importMultibaseKey(rsaMultibase);
-  assertEquals(await exportJwk(rsaKey), rsaJwk);
+  deepStrictEqual(await exportJwk(rsaKey), rsaJwk);
 
   const ed25519Key = await importMultibaseKey(ed25519Multibase);
-  assertEquals(await exportJwk(ed25519Key), ed25519Jwk);
+  deepStrictEqual(await exportJwk(ed25519Key), ed25519Jwk);
 });
 
 test("exportMultibaseKey()", async () => {
   const rsaKey = await importJwk(rsaJwk, "public");
   const rsaMb = await exportMultibaseKey(rsaKey);
-  assertEquals(rsaMb, rsaMultibase);
+  deepStrictEqual(rsaMb, rsaMultibase);
 
   const ed25519Key = await importJwk(ed25519Jwk, "public");
   const ed25519Mb = await exportMultibaseKey(ed25519Key);
-  assertEquals(ed25519Mb, ed25519Multibase);
+  deepStrictEqual(ed25519Mb, ed25519Multibase);
 
   // Test vectors from <https://codeberg.org/fediverse/fep/src/branch/main/fep/521a/fep-521a.feature>:
   const rsaKey2 = await importJwk({
@@ -147,7 +147,7 @@ test("exportMultibaseKey()", async () => {
     // cSpell: enable
   }, "public");
   const rsaMb2 = await exportMultibaseKey(rsaKey2);
-  assertEquals(
+  deepStrictEqual(
     rsaMb2,
     // cSpell: disable
     "z4MXj1wBzi9jUstyPMS4jQqB6KdJaiatPkAtVtGc6bQEQEEsKTic4G7Rou3iBf9vPmT5dbkm" +
@@ -170,7 +170,7 @@ test("exportMultibaseKey()", async () => {
     // cSpell: enable
   }, "public");
   const ed25519Mb2 = await exportMultibaseKey(ed25519Key2);
-  assertEquals(
+  deepStrictEqual(
     ed25519Mb2,
     // cSpell: disable
     "z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",
