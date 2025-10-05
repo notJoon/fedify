@@ -70,6 +70,7 @@ The repository is organized as a monorepo with the following packages:
  -  *packages/express/*: Express.js integration (@fedify/express)
  -  *packages/h3/*: h3 framework integration (@fedify/h3)
  -  *packages/hono/*: Hono integration (@fedify/hono)
+ -  *packages/koa/*: Koa integration (@fedify/koa)
  -  *packages/postgres/*: PostgreSQL drivers (@fedify/postgres)
  -  *packages/redis/*: Redis drivers (@fedify/redis)
  -  *packages/nestjs/*: NestJS integration (@fedify/nestjs)

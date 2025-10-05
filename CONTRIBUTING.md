@@ -197,6 +197,7 @@ The repository is organized as a monorepo with the following packages:
  -  *packages/express/*: Express integration (@fedify/express) for Fedify.
  -  *packages/h3/*: h3 framework integration (@fedify/h3) for Fedify.
  -  *packages/hono/*: Hono integration (@fedify/hono) for Fedify.
+ -  *packages/koa/*: Koa integration (@fedify/koa) for Fedify.
  -  *packages/postgres/*: PostgreSQL drivers (@fedify/postgres) for Fedify.
  -  *packages/redis/*: Redis drivers (@fedify/redis) for Fedify.
  -  *packages/nestjs/*: NestJS integration (@fedify/nestjs) for Fedify.
