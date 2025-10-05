@@ -39,7 +39,7 @@ export interface CreateRequestOptions {
  * @returns The created request.
  * @internal
  */
-export function createRequest(
+export function createActivityPubRequest(
   url: string,
   options: CreateRequestOptions = {},
 ): Request {

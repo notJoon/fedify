@@ -216,6 +216,7 @@ jobs:
         deno-version: 2.5.0  # Keep in sync with mise.toml
     - uses: pnpm/action-setup@v4
       with:
+        run_install: true
         version: 10
     - uses: actions/setup-node@v4
       with:
@@ -435,6 +436,7 @@ jobs:
           | @fedify/express   | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/express]   | [npm][npm:@fedify/express]   |
           | @fedify/h3        | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/h3]        | [npm][npm:@fedify/h3]        |
           | @fedify/hono      | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/hono]      | [npm][npm:@fedify/hono]      |
+          | @fedify/koa       | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/koa]       | [npm][npm:@fedify/koa]       |
           | @fedify/nestjs    | ${{ steps.versioning.outputs.version }} |                              | [npm][npm:@fedify/nestjs]    |
           | @fedify/next      | ${{ steps.versioning.outputs.version }} |                              | [npm][npm:@fedify/next]      |
           | @fedify/postgres  | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/postgres]  | [npm][npm:@fedify/postgres]  |
@@ -458,6 +460,8 @@ jobs:
           [npm:@fedify/h3]: https://www.npmjs.com/package/@fedify/h3/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/hono]: https://jsr.io/@fedify/hono@${{ steps.versioning.outputs.version }}
           [npm:@fedify/hono]: https://www.npmjs.com/package/@fedify/hono/v/${{ steps.versioning.outputs.short_version }}
+          [jsr:@fedify/koa]: https://jsr.io/@fedify/koa@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/koa]: https://www.npmjs.com/package/@fedify/koa/v/${{ steps.versioning.outputs.short_version }}
           [npm:@fedify/nestjs]: https://www.npmjs.com/package/@fedify/nestjs/v/${{ steps.versioning.outputs.short_version }}
           [npm:@fedify/next]: https://www.npmjs.com/package/@fedify/next/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/postgres]: https://jsr.io/@fedify/postgres@${{ steps.versioning.outputs.version }}

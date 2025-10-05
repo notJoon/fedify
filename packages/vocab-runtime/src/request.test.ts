@@ -1,7 +1,7 @@
 import { deepStrictEqual } from "node:assert";
 import process from "node:process";
-import metadata from "../../deno.json" with { type: "json" };
-import { test } from "../testing/mod.ts";
+import { test } from "node:test";
+import metadata from "../deno.json" with { type: "json" };
 import { getUserAgent } from "./request.ts";
 
 test("getUserAgent()", () => {

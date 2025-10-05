@@ -65,15 +65,15 @@ To be released.
         on the same server, fixing issues where activities were incorrectly
         deduplicated globally.
 
- -  Separated modules from `runtime/` directory to improve modularity and
+ -  Separated modules from `@fedify/fedify/runtime` to improve modularity and
     reduce coupling between vocabulary generation and core federation
-    functionality.  [[#444] by ChanHaeng Lee]
+    functionality.  [[#444], [#451] by ChanHaeng Lee]
 
-     -  Modules related to ActivityPub vocabulary generation (`docloader.ts`,
-        `key.ts`, `langstr.ts`, `multibase/`) have been extracted into the new
-        `@fedify/vocab-runtime` package.
-     -  Other utility modules from `runtime/` have been reorganized into the
-        `utils/` directory within the main package.
+     -  Modules related to ActivityPub vocabulary generation have been extracted
+        into the new `@fedify/vocab-runtime` package.
+     -  Other utility modules from `@fedify/fedify/runtime` have been
+        reorganized into the `@fedify/fedify/utils` directory within the main
+        package.
      -  Updated import paths throughout the codebase to reflect the new module
         organization.
 
@@ -86,6 +86,7 @@ To be released.
 [#434]: https://github.com/fedify-dev/fedify/pull/434
 [#444]: https://github.com/fedify-dev/fedify/issues/444
 [#445]: https://github.com/fedify-dev/fedify/pull/445
+[#451]: https://github.com/fedify-dev/fedify/pull/451
 
 ### @fedify/cli
 
@@ -112,18 +113,17 @@ To be released.
     package.  Separated core vocabulary generation and processing modules
     from the main *@fedify/fedify* package to improve modularity and reduce
     coupling between vocabulary processing and federation functionality.
-    [[#444] by ChanHaeng Lee]
+    [[#444], [#451] by ChanHaeng Lee]
 
      -  Extracted `DocumentLoader`, `RemoteDocument`, and related types from
         the main package.
-     -  Moved cryptographic key processing utilities (`importSpki`,
-        `exportSpki`, `importMultibaseKey`, `exportMultibaseKey`, etc.).
+     -  Moved cryptographic key processing utilities, e.g., `importSpki`,
+        `exportSpki`, `importMultibaseKey`, `exportMultibaseKey`.
      -  Relocated multibase encoding/decoding functionality.
      -  Separated language string processing (`LanguageString` class).
      -  This package is primarily used by generated vocabulary classes and
         provides the runtime infrastructure for ActivityPub object processing.
 
-[#444]: https://github.com/fedify-dev/fedify/issues/444
 
 Version 1.9.0
 -------------
@@ -330,6 +330,21 @@ To be released.
 
  -  Added CommonJS support alongside ESM for better compatibility with
     CommonJS-based Node.js applications.  [[#429], [#431]]
+
+### @fedify/koa
+
+ -  Created [Koa] integration as the *@fedify/koa* package.  [[#454], [#455]]
+
+     -  Added `createMiddleware()` function for integrating Fedify into Koa
+        applications.
+     -  Supports both Koa v2.x and v3.x via peer dependencies.
+     -  Converts between Koa's context-based API and Web Standards
+        Request/Response.
+     -  Builds for both npm (ESM/CJS) and JSR distribution.
+
+[Koa]: https://koajs.com/
+[#454]: https://github.com/fedify-dev/fedify/issues/454
+[#455]: https://github.com/fedify-dev/fedify/pull/455
 
 ### @fedify/next
 

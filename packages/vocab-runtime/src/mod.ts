@@ -4,6 +4,7 @@
  *
  * @module
  */
+export { default as preloadedContexts } from "./contexts.ts";
 export {
   type AuthenticatedDocumentLoaderFactory,
   type DocumentLoader,
@@ -29,3 +30,18 @@ export {
   encodeMultibase,
   encodingFromBaseData,
 } from "./multibase/mod.ts";
+export {
+  createActivityPubRequest,
+  type CreateRequestOptions,
+  FetchError,
+  getUserAgent,
+  type GetUserAgentOptions,
+  logRequest,
+} from "./request.ts";
+export {
+  expandIPv6Address,
+  isValidPublicIPv4Address,
+  isValidPublicIPv6Address,
+  UrlError,
+  validatePublicUrl,
+} from "./url.ts";
