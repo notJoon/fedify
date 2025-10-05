@@ -8,6 +8,7 @@
     "./packages/express",
     "./packages/h3",
     "./packages/hono",
+    "./packages/koa",
     "./packages/postgres",
     "./packages/redis",
     "./packages/sqlite",
