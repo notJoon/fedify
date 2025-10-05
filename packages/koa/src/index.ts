@@ -10,7 +10,6 @@
  * @since 1.9.0
  */
 import type { Federation } from "@fedify/fedify/federation";
-import { Buffer } from "node:buffer";
 import { Readable } from "node:stream";
 
 /**
@@ -47,8 +46,7 @@ export function createMiddleware<TContextData, TKoaContext = any>(
 ): (ctx: TKoaContext, next: () => Promise<void>) => Promise<void> {
   return async (ctx: TKoaContext, next: () => Promise<void>) => {
     const request = toRequest(ctx);
-    let contextData = contextDataFactory(ctx);
-    if (contextData instanceof Promise) contextData = await contextData;
+    const contextData = await contextDataFactory(ctx);
 
     let notFound = false;
     let notAcceptable = false;
@@ -103,11 +101,11 @@ function toRequest(ctx: any): Request {
   return new Request(url, {
     method: ctx.method,
     headers,
-    // @ts-ignore: duplex is not supported in Deno, but it is in Node.js
+    // @ts-expect-error: duplex is not supported in Deno, but it is in Node.js
     duplex: "half",
     body: ctx.method === "GET" || ctx.method === "HEAD"
       ? undefined
-      : (Readable.toWeb(ctx.req)),
+      : Readable.toWeb(ctx.req),
   });
 }
 
@@ -125,7 +123,7 @@ function setResponse(ctx: any, response: Response): void {
         this.push(null);
         reader.releaseLock();
       } else {
-        this.push(Buffer.from(value));
+        this.push(value);
       }
     },
   });
