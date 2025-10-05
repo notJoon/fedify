@@ -15,6 +15,7 @@ packages:
 - packages/sveltekit
 - packages/testing
 - packages/vocab-runtime
+- packages/relay
 - docs
 - examples/cloudflare-workers
 - examples/elysia
