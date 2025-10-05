@@ -162,6 +162,36 @@ Common Tasks
 3. Follow the pattern from existing database adapter packages
 4. Implement both KV store and message queue interfaces as needed
 
+### Adding a New Package
+
+When adding a new package to the monorepo, the following files must be updated:
+
+**Required updates:**
+
+ 1. *AGENTS.md* and *CONTRIBUTING.md*: Add the package to the repository
+    structure list
+ 2. *README.md*: Add the package to the "Packages" section table
+ 3. *.github/workflows/build.yaml*: Update the PR comment in the `publish` job
+    (around the `thollander/actions-comment-pull-request` action)
+ 4. Root *deno.json*: Add the package path to the `workspace` array
+ 5. *pnpm-workspace.yaml*: Add the package path to the `packages` array
+
+**Conditional updates:**
+
+ -  If the package is a web framework integration: Update
+    *docs/manual/integration.md*
+ -  If the package implements `KvStore`: Update *docs/manual/kv.md*
+ -  If the package implements `MessageQueue`: Update *docs/manual/mq.md*
+ -  If the package is published to JSR: Add JSR link to the `REFERENCES` data
+    in *docs/.vitepress/config.mts* (note: only JSR links are added here,
+    not npm links)
+
+**Optional updates:**
+
+ -  If special dependencies are needed: Add to `imports` in root *deno.json*
+ -  If using pnpm catalog for dependency management: Add to `catalog` in
+    *pnpm-workspace.yaml*
+
 
 Important Security Considerations
 ---------------------------------
