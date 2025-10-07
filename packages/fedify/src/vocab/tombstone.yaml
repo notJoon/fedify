@@ -1,4 +1,4 @@
-$schema: ../../../vocab/tools/schema.yaml
+$schema: ../../../vocab-tools/schema.yaml
 name: Tombstone
 compactName: Tombstone
 uri: "https://www.w3.org/ns/activitystreams#Tombstone"

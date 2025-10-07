@@ -1106,7 +1106,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
-  packages/vocab/tools:
+  packages/vocab-tools:
     dependencies:
       '@cfworker/json-schema':
         specifier: ^4.1.1

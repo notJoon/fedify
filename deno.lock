@@ -4707,7 +4707,7 @@
           ]
         }
       },
-      "packages/vocab/tools": {
+      "packages/vocab-tools": {
         "dependencies": [
           "npm:@cfworker/json-schema@^4.1.1",
           "npm:byte-encodings@^1.0.11",

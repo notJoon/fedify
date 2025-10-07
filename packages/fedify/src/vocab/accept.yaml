@@ -1,4 +1,4 @@
-$schema: ../../../vocab/tools/schema.yaml
+$schema: ../../../vocab-tools/schema.yaml
 name: Accept
 compactName: Accept
 uri: "https://www.w3.org/ns/activitystreams#Accept"
