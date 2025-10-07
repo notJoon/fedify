@@ -1,4 +1,4 @@
-$schema: ../../../vocab/tools/schema.yaml
+$schema: ../../../vocab-tools/schema.yaml
 name: Emoji
 compactName: Emoji
 uri: "http://joinmastodon.org/ns#Emoji"

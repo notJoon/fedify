@@ -79,6 +79,7 @@ The repository is organized as a monorepo with the following packages:
  -  *packages/sveltekit/*: SvelteKit integration (@fedify/sveltekit)
  -  *packages/testing/*: Testing utilities (@fedify/testing)
  -  *packages/vocab-runtime/*: Runtime utilities and types (@fedify/vocab-runtime)
+ -  *packages/vocab-tools/*: Utilities and types for code-generated Activity Vocabulary APIs (@fedify/vocab-runtime)
  -  *docs/*: Documentation built with Node.js and VitePress
  -  *examples/*: Example projects demonstrating Fedify usage
 

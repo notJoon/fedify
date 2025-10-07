@@ -15,7 +15,7 @@
     "./packages/sveltekit",
     "./packages/testing",
     "./packages/vocab-runtime",
-    "./packages/vocab/tools",
+    "./packages/vocab-tools",
     "./examples/blog",
     "./examples/hono-sample"
   ],
