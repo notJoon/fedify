@@ -94,6 +94,10 @@ To be released.
 
 ### @fedify/cli
 
+ -  The Fedify CLI now runs natively on Node.js and Bun without requiring
+    compiled binaries, providing a more natural JavaScript package experience
+    for Node.js and Bun users.  [[#374], [#456], [#457]]
+
  -  Updated `fedify init` command for better DX.
     [[#397], [#435] by Chanhaeng Lee]
 
@@ -106,10 +110,13 @@ To be released.
     `-t`/`--traverse` option, allowing users to traverse multiple collections
     in a single command.  [[#408], [#449] by Jiwon Kwon]
 
+[#374]: https://github.com/fedify-dev/fedify/issues/374
 [#397]: https://github.com/fedify-dev/fedify/issues/397
 [#408]: https://github.com/fedify-dev/fedify/issues/408
 [#435]: https://github.com/fedify-dev/fedify/issues/435
 [#449]: https://github.com/fedify-dev/fedify/pull/449
+[#456]: https://github.com/fedify-dev/fedify/issues/456
+[#457]: https://github.com/fedify-dev/fedify/pull/457
 
 ### @fedify/vocab-runtime
 
