@@ -1,4 +1,21 @@
-import type { KvStore, MessageQueue } from "@fedify/fedify";
+import type { Context, KvStore, MessageQueue } from "@fedify/fedify";
+
+/**
+ * Handler for subscription requests (Follow/Undo activities).
+ */
+export type SubscriptionRequestHandler = (
+  ctx: Context<void>,
+  actor: string,
+  activity: unknown,
+) => Promise<void>;
+
+/**
+ * Handler for incoming activities to be relayed.
+ */
+export type ActivityHandler = (
+  ctx: Context<void>,
+  activity: unknown,
+) => Promise<void>;
 
 /**
  * Configuration options for the ActivityPub relay.
@@ -31,11 +48,12 @@ export interface Relay {
   readonly requiresApproval: boolean;
   readonly maxSubscribers?: number;
 
-  handleActivity(activity: unknown): Promise<void>;
-  forwardActivity(activity: unknown): Promise<void>;
-  handleSubscription(actor: string): Promise<void>;
-  handleUnsubscription(actor: string): Promise<void>;
-  isActorAllowed(actor: string): Promise<boolean>;
+  fetch(request: Request, options?: RelayOptions): Promise<Response>;
+  setSubscriptionHandler(handler: SubscriptionRequestHandler): this;
+  setActivityHandler(handler: ActivityHandler): this;
+  getSubscribers(ctx: Context<void>): Promise<string[]>;
+  approveSubscriber(ctx: Context<void>, clientActor: string): Promise<void>;
+  blockSubscriber(ctx: Context<void>, clientActor: string): Promise<void>;
 }
 
 /**
@@ -47,6 +65,8 @@ export interface Relay {
  */
 export class MastodonRelay implements Relay {
   #options: RelayOptions;
+  #subscriptionHandler?: SubscriptionRequestHandler;
+  #activityHandler?: ActivityHandler;
 
   constructor(options: RelayOptions) {
     this.#options = options;
@@ -78,6 +98,50 @@ export class MastodonRelay implements Relay {
 
   get maxSubscribers(): number | undefined {
     return this.#options.maxSubscribers;
+  }
+
+  fetch(request: Request, options?: RelayOptions): Promise<Response> {
+    // TODO: Implement Mastodon-specific fetch logic
+    console.log("MastodonRelay: Fetching request:", request, options);
+    return Promise.resolve(new Response());
+  }
+
+  setSubscriptionHandler(handler: SubscriptionRequestHandler): this {
+    this.#subscriptionHandler = handler;
+    return this;
+  }
+
+  setActivityHandler(handler: ActivityHandler): this {
+    this.#activityHandler = handler;
+    return this;
+  }
+
+  async getSubscribers(ctx: Context<void>): Promise<string[]> {
+    // TODO: Implement getting subscribers from KV store
+    console.log("MastodonRelay: Getting subscribers", ctx);
+    const subscribers = await this.#options.kv.get<string[]>([
+      "relay",
+      "subscribers",
+    ]);
+    return subscribers || [];
+  }
+
+  async approveSubscriber(
+    ctx: Context<void>,
+    clientActor: string,
+  ): Promise<void> {
+    // TODO: Implement subscriber approval in KV store
+    console.log("MastodonRelay: Approving subscriber:", ctx, clientActor);
+    await Promise.resolve();
+  }
+
+  async blockSubscriber(
+    ctx: Context<void>,
+    clientActor: string,
+  ): Promise<void> {
+    // TODO: Implement subscriber blocking in KV store
+    console.log("MastodonRelay: Blocking subscriber:", ctx, clientActor);
+    await Promise.resolve();
   }
 
   async handleActivity(activity: unknown): Promise<void> {
@@ -134,6 +198,8 @@ export class MastodonRelay implements Relay {
  */
 export class LitePubRelay implements Relay {
   #options: RelayOptions;
+  #subscriptionHandler?: SubscriptionRequestHandler;
+  #activityHandler?: ActivityHandler;
 
   constructor(options: RelayOptions) {
     this.#options = options;
@@ -165,6 +231,50 @@ export class LitePubRelay implements Relay {
 
   get maxSubscribers(): number | undefined {
     return this.#options.maxSubscribers;
+  }
+
+  fetch(request: Request, options?: RelayOptions): Promise<Response> {
+    // TODO: Implement LitePub-specific fetch logic
+    console.log("LitePubRelay: Fetching request:", request, options);
+    return Promise.resolve(new Response());
+  }
+
+  setSubscriptionHandler(handler: SubscriptionRequestHandler): this {
+    this.#subscriptionHandler = handler;
+    return this;
+  }
+
+  setActivityHandler(handler: ActivityHandler): this {
+    this.#activityHandler = handler;
+    return this;
+  }
+
+  async getSubscribers(ctx: Context<void>): Promise<string[]> {
+    // TODO: Implement getting subscribers from KV store
+    console.log("LitePubRelay: Getting subscribers", ctx);
+    const subscribers = await this.#options.kv.get<string[]>([
+      "relay",
+      "subscribers",
+    ]);
+    return subscribers || [];
+  }
+
+  async approveSubscriber(
+    ctx: Context<void>,
+    clientActor: string,
+  ): Promise<void> {
+    // TODO: Implement subscriber approval in KV store
+    console.log("LitePubRelay: Approving subscriber:", ctx, clientActor);
+    await Promise.resolve();
+  }
+
+  async blockSubscriber(
+    ctx: Context<void>,
+    clientActor: string,
+  ): Promise<void> {
+    // TODO: Implement subscriber blocking in KV store
+    console.log("LitePubRelay: Blocking subscriber:", ctx, clientActor);
+    await Promise.resolve();
   }
 
   async handleActivity(activity: unknown): Promise<void> {
