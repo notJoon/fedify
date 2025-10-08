@@ -10,14 +10,13 @@ import {
   when,
 } from "@fxts/core";
 import { getLogger } from "@logtape/logtape";
-import * as colors from "@std/fmt/colors";
 import { dirname, join as joinPath } from "node:path";
 import { toMerged } from "es-toolkit";
 import { readFileSync } from "node:fs";
 import { mkdir, readdir, writeFile } from "node:fs/promises";
 import process from "node:process";
 import metadata from "../../deno.json" with { type: "json" };
-import { isNotFoundError, runSubCommand } from "../utils.ts";
+import { colors, isNotFoundError, runSubCommand } from "../utils.ts";
 import kv from "./json/kv.json" with { type: "json" };
 import mq from "./json/mq.json" with { type: "json" };
 import pm from "./json/pm.json" with { type: "json" };

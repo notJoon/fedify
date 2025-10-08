@@ -1,4 +1,5 @@
 import { isObject } from "@fxts/core";
+import { Chalk } from "chalk";
 import { highlight } from "cli-highlight";
 import { toMerged } from "es-toolkit";
 import { spawn } from "node:child_process";
@@ -8,6 +9,8 @@ import util from "node:util";
 
 export const colorEnabled: boolean = process.stdout.isTTY &&
   !("NO_COLOR" in process.env && process.env.NO_COLOR !== "");
+
+export const colors = new Chalk(colorEnabled ? {} : { level: 0 });
 
 export function formatObject(
   obj: unknown,
