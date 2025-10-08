@@ -1,4 +1,8 @@
 import { encodeBase64 } from "byte-encodings/base64";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import process from "node:process";
 import { Jimp } from "./nodeinfo.ts";
 
 export type TerminalType = "kitty" | "iterm2" | "none";
@@ -16,7 +20,7 @@ const KITTY_IDENTIFIERS: string[] = [
 type KittyCommand = Record<string, string | number>;
 
 export function detectTerminalCapabilities(): TerminalType {
-  const termProgram = (Deno.env.get("TERM_PROGRAM") || "").toLowerCase();
+  const termProgram = (process.env.TERM_PROGRAM || "").toLowerCase();
 
   if (KITTY_IDENTIFIERS.includes(termProgram)) return "kitty";
 
@@ -62,7 +66,7 @@ export async function renderImageKitty(
   imagePath: string,
   cmd: KittyCommand,
 ): Promise<void> {
-  const imageData = await Deno.readFile(imagePath);
+  const imageData = await fs.readFile(imagePath);
   const base64Data = encodeBase64(imageData);
   let remaining = base64Data;
   let isFirst = true;
@@ -78,7 +82,7 @@ export async function renderImageKitty(
 
     const command = serializeGrCommand(chunkCmd, chunk);
 
-    await Deno.stderr.write(command);
+    process.stderr.write(command);
 
     isFirst = false;
   }
@@ -87,14 +91,14 @@ export async function renderImageKitty(
 export async function renderImageITerm2(
   imagePath: string,
 ): Promise<void> {
-  const imageData = await Deno.readFile(imagePath);
+  const imageData = await fs.readFile(imagePath);
   const base64Data = encodeBase64(imageData);
 
   const encoder = new TextEncoder();
   const command = encoder.encode(
     `\x1b]1337;File=inline=1preserveAspectRatio=1:${base64Data}\x07\n`,
   );
-  await Deno.stderr.write(command);
+  process.stderr.write(command);
 }
 
 export async function downloadImage(url: string): Promise<string | null> {
@@ -102,9 +106,10 @@ export async function downloadImage(url: string): Promise<string | null> {
     const response = await fetch(url);
     const imageData = new Uint8Array(await response.arrayBuffer());
     const extension = new URL(url).pathname.split(".").pop() || "jpg";
-    const tempPath = await Deno.makeTempFile({ suffix: `.${extension}` });
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "fedify"));
+    const tempPath = path.join(tempDir, `image.${extension}`);
 
-    await Deno.writeFile(tempPath, imageData);
+    await fs.writeFile(tempPath, imageData);
 
     return tempPath;
   } catch (_error) {
@@ -123,7 +128,7 @@ export async function renderImages(
     const convertedImagePath: `${string}.png` = `${tempPath}.converted.png`;
     const image = await Jimp.read(tempPath);
     await image.write(convertedImagePath);
-    await Deno.remove(tempPath);
+    await fs.rm(tempPath);
 
     console.error(); // clear the line before rendering image
 
