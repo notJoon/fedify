@@ -28,7 +28,7 @@ export async function getDocumentLoader(
           search: "*",
           hash: "*",
         }),
-        Temporal.Duration.from({ seconds: 0 }),
+        { seconds: 0 },
       ],
       [
         new URLPattern({
@@ -39,7 +39,7 @@ export async function getDocumentLoader(
           search: "*",
           hash: "*",
         }),
-        Temporal.Duration.from({ seconds: 0 }),
+        { seconds: 0 },
       ],
       [
         new URLPattern({
@@ -50,7 +50,7 @@ export async function getDocumentLoader(
           search: "*",
           hash: "*",
         }),
-        Temporal.Duration.from({ seconds: 0 }),
+        { seconds: 0 },
       ],
     ],
     loader: getDefaultDocumentLoader({

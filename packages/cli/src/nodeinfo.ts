@@ -18,6 +18,7 @@ import {
   string,
 } from "@optique/core";
 import { print, printError } from "@optique/run";
+import type { ChalkInstance } from "chalk";
 import { isICO, parseICO } from "icojs";
 import { defaultFormats, defaultPlugins, intToRGBA } from "jimp";
 import ora from "ora";
@@ -155,7 +156,7 @@ export async function runNodeInfo(
         }
         const image = await Jimp.read(buffer);
         const colorSupport = checkTerminalColorSupport();
-        layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, colorSupport)
+        layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, colorSupport, colors)
           .split("\n").map((line) => ` ${line}  `);
         defaultWidth = 41;
       } else {
@@ -409,6 +410,7 @@ export function getAsciiArt(
   image: Awaited<ReturnType<typeof Jimp.read>>,
   width = DEFAULT_IMAGE_WIDTH,
   colorSupport: "truecolor" | "256color" | "none",
+  colors: ChalkInstance,
 ): string {
   const ratio = image.width / image.height;
   const height = Math.round(

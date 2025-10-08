@@ -77,6 +77,10 @@ To be released.
      -  Updated import paths throughout the codebase to reflect the new module
         organization.
 
+ -  The `KvCacheParameters.rules` option's type became
+    `[string | URL | URLPattern, Temporal.Duration | Temporal.DurationLike][]`
+    (was `[string | URL | URLPattern, Temporal.Duration][]`).
+
 [#280]: https://github.com/fedify-dev/fedify/issues/280
 [#366]: https://github.com/fedify-dev/fedify/issues/366
 [#376]: https://github.com/fedify-dev/fedify/issues/376

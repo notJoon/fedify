@@ -56,12 +56,15 @@ export interface KvCacheParameters {
   /**
    * The per-URL cache rules in the array of `[urlPattern, duration]` pairs
    * where `urlPattern` is either a string, a {@link URL}, or
-   * a {@link URLPattern} and `duration` is a {@link Temporal.Duration}.
+   * a {@link URLPattern} and `duration` is a {@link Temporal.DurationLike}.
    * The `duration` is allowed to be at most 30 days.
    *
    * By default, 5 minutes for all URLs.
    */
-  rules?: [string | URL | URLPattern, Temporal.Duration][];
+  rules?: [
+    string | URL | URLPattern,
+    Temporal.Duration | Temporal.DurationLike,
+  ][];
 }
 
 /**
@@ -131,9 +134,15 @@ export function kvCache(
 
 function matchRule(
   url: string,
-  rules: [string | URL | URLPattern, Temporal.Duration][],
+  rules: [
+    string | URL | URLPattern,
+    Temporal.Duration | Temporal.DurationLike,
+  ][],
 ): Temporal.Duration | null {
-  for (const [pattern, duration] of rules!) {
+  for (const [pattern, d] of rules!) {
+    const duration = d instanceof Temporal.Duration
+      ? d
+      : Temporal.Duration.from(d);
     if (typeof pattern === "string") {
       if (url === pattern) return duration;
       continue;
