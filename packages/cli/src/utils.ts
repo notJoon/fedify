@@ -4,9 +4,10 @@ import { toMerged } from "es-toolkit";
 import { spawn } from "node:child_process";
 import { writeFile } from "node:fs/promises";
 import process from "node:process";
+import util from "node:util";
 
-export const colorEnabled: boolean = Deno.stdout.isTerminal() &&
-  !Deno.env.has("NO_COLOR");
+export const colorEnabled: boolean = process.stdout.isTTY &&
+  !("NO_COLOR" in process.env && process.env.NO_COLOR !== "");
 
 export function formatObject(
   obj: unknown,
@@ -14,7 +15,7 @@ export function formatObject(
   json?: boolean,
 ): string {
   const enableColors = colors ?? colorEnabled;
-  if (!json) return Deno.inspect(obj, { colors: enableColors });
+  if (!json) return util.inspect(obj, { colors: enableColors });
   const formatted = JSON.stringify(obj, null, 2);
   if (enableColors) {
     return highlight(formatted, { language: "json" });

@@ -1,4 +1,4 @@
-import { encodeBase64 } from "@std/encoding/base64";
+import { encodeBase64 } from "byte-encodings/base64";
 import { Jimp } from "./nodeinfo.ts";
 
 export type TerminalType = "kitty" | "iterm2" | "none";

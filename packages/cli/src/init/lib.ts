@@ -11,7 +11,7 @@ import {
 } from "@fxts/core";
 import { getLogger } from "@logtape/logtape";
 import * as colors from "@std/fmt/colors";
-import { dirname, join as joinPath } from "@std/path";
+import { dirname, join as joinPath } from "node:path";
 import { toMerged } from "es-toolkit";
 import { readFileSync } from "node:fs";
 import { mkdir, readdir, writeFile } from "node:fs/promises";

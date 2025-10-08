@@ -34,23 +34,39 @@
     "bun": ">=1.2.0",
     "denp": ">=2.0.0"
   },
+  "bin": {
+    "fedify": "./dist/mod.js"
+  },
+  "exports": "./dist/mod.js",
+  "imports": {
+    "#kv": {
+      "bun": "./dist/kv.bun.js",
+      "default": "./dist/kv.node.js"
+    }
+  },
   "dependencies": {
-    "@cross/dir": "jsr:@cross/dir@^1.1.0",
     "@david/dax": "jsr:@david/dax@^0.43.2",
     "@fedify/fedify": "workspace:*",
+    "@fedify/sqlite": "workspace:*",
+    "@fedify/vocab-runtime": "workspace:*",
     "@fxts/core": "catalog:",
     "@hongminhee/localtunnel": "^0.3.0",
     "@inquirer/prompts": "^7.8.4",
     "@jimp/core": "^1.6.0",
     "@jimp/wasm-webp": "^1.6.0",
+    "@js-temporal/polyfill": "catalog:",
+    "@logtape/file": "catalog:",
+    "@logtape/logtape": "catalog:",
     "@optique/core": "^0.4.0-dev.54",
     "@optique/run": "^0.4.0-dev.54",
     "@poppanator/http-constants": "^1.1.1",
     "@std/dotenv": "jsr:^0.225.5",
-    "@std/fmt/colors": "jsr:@std/fmt@^0.224.0/colors",
+    "@std/fmt": "jsr:@std/fmt@^0.224.0",
+    "byte-encodings": "catalog:",
     "cli-highlight": "^2.1.11",
     "cli-table3": "^0.6.5",
     "enquirer": "^2.4.1",
+    "env-paths": "^3.0.0",
     "es-toolkit": "catalog:",
     "fetch-mock": "catalog:",
     "hono": "^4.8.3",
@@ -61,5 +77,21 @@
     "ora": "^8.2.0",
     "shiki": "^1.6.4",
     "srvx": "^0.8.7"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "codegen": "deno task -f @fedify/fedify codegen",
+    "build": "pnpm run codegen && pnpm run --filter fedify build && pnpm run --filter sqlite build && tsdown",
+    "prepack": "pnpm run build",
+    "prepublish": "pnpm run build",
+    "run": "pnpm build && node dist/mod.js",
+    "runi": "tsdown && node dist/mod.js",
+    "run:bun": "pnpm build && bun dist/mod.js",
+    "runi:bun": "tsdown && bun dist/mod.js"
   }
 }
