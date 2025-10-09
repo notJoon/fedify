@@ -33,7 +33,6 @@ import {
   withDefault,
 } from "@optique/core";
 import { path, print, printError } from "@optique/run";
-import * as colors from "@std/fmt/colors";
 import { createWriteStream, type WriteStream } from "node:fs";
 import process from "node:process";
 import ora from "ora";
@@ -41,7 +40,7 @@ import { getContextLoader, getDocumentLoader } from "./docloader.ts";
 import { configureLogging, debugOption } from "./globals.ts";
 import { renderImages } from "./imagerenderer.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
-import { colorEnabled, formatObject } from "./utils.ts";
+import { colorEnabled, colors, formatObject } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
