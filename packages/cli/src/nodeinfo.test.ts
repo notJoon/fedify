@@ -1,4 +1,6 @@
-import { assertEquals } from "@std/assert";
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import { Chalk } from "chalk";
 import fetchMock from "fetch-mock";
 import { getAsciiArt, getFaviconUrl, Jimp, rgbTo256Color } from "./nodeinfo.ts";
 
@@ -14,7 +16,7 @@ const HTML_WITH_SMALL_ICON = `
 </html>
 `;
 
-Deno.test("getFaviconUrl - small favicon.ico and apple-touch-icon.png", async () => {
+test("getFaviconUrl - small favicon.ico and apple-touch-icon.png", async () => {
   fetchMock.spyGlobal();
 
   fetchMock.get("https://example.com/", {
@@ -23,7 +25,7 @@ Deno.test("getFaviconUrl - small favicon.ico and apple-touch-icon.png", async ()
   });
 
   const result = await getFaviconUrl("https://example.com/");
-  assertEquals(result.href, "https://example.com/apple-touch-icon.png");
+  assert.equal(result.href, "https://example.com/apple-touch-icon.png");
 
   fetchMock.hardReset();
 });
@@ -40,7 +42,7 @@ const HTML_WITH_ICON = `
 </html>
 `;
 
-Deno.test("getFaviconUrl - favicon.ico and apple-touch-icon.png", async () => {
+test("getFaviconUrl - favicon.ico and apple-touch-icon.png", async () => {
   fetchMock.spyGlobal();
 
   fetchMock.get("https://example.com/", {
@@ -49,7 +51,7 @@ Deno.test("getFaviconUrl - favicon.ico and apple-touch-icon.png", async () => {
   });
 
   const result = await getFaviconUrl("https://example.com/");
-  assertEquals(result.href, "https://example.com/favicon.ico");
+  assert.equal(result.href, "https://example.com/favicon.ico");
 
   fetchMock.hardReset();
 });
@@ -59,13 +61,13 @@ const HTML_WITH_SVG_ONLY = `
 <html>
 <head>
   <title>Test Site</title>
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">  
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
   </head>
 <body>Test</body>
 </html>
 `;
 
-Deno.test("getFaviconUrl - svg icons only falls back to /favicon.ico", async () => {
+test("getFaviconUrl - svg icons only falls back to /favicon.ico", async () => {
   fetchMock.spyGlobal();
 
   fetchMock.get("https://example.com/", {
@@ -74,7 +76,7 @@ Deno.test("getFaviconUrl - svg icons only falls back to /favicon.ico", async () 
   });
 
   const result = await getFaviconUrl("https://example.com/");
-  assertEquals(result.href, "https://example.com/favicon.ico");
+  assert.equal(result.href, "https://example.com/favicon.ico");
 
   fetchMock.hardReset();
 });
@@ -89,7 +91,7 @@ const HTML_WITHOUT_ICON = `
 </html>
 `;
 
-Deno.test("getFaviconUrl - falls back to /favicon.ico", async () => {
+test("getFaviconUrl - falls back to /favicon.ico", async () => {
   fetchMock.spyGlobal();
 
   fetchMock.get("https://example.com/", {
@@ -98,12 +100,12 @@ Deno.test("getFaviconUrl - falls back to /favicon.ico", async () => {
   });
 
   const result = await getFaviconUrl("https://example.com/");
-  assertEquals(result.href, "https://example.com/favicon.ico");
+  assert.equal(result.href, "https://example.com/favicon.ico");
 
   fetchMock.hardReset();
 });
 
-Deno.test("rgbTo256Color - check RGB cube", () => {
+test("rgbTo256Color - check RGB cube", () => {
   const CUBE_VALUES = [0, 95, 135, 175, 215, 255];
   const colors: Array<{ r: number; g: number; b: number }> = [];
 
@@ -129,10 +131,10 @@ Deno.test("rgbTo256Color - check RGB cube", () => {
   const results = colors.map((color) =>
     rgbTo256Color(color.r, color.g, color.b)
   );
-  assertEquals(results, expected_color_idx);
+  assert.deepEqual(results, expected_color_idx);
 });
 
-Deno.test("rgbTo256Color - check grayscale", () => {
+test("rgbTo256Color - check grayscale", () => {
   const grayscale = Array.from({ length: 24 }).map(
     (_, idx) => ({
       r: 8 + idx * 10,
@@ -149,73 +151,79 @@ Deno.test("rgbTo256Color - check grayscale", () => {
   const results = grayscale.map((GRAY) =>
     rgbTo256Color(GRAY.r, GRAY.g, GRAY.b)
   );
-  assertEquals(results, expected_gray_idx);
+  assert.deepEqual(results, expected_gray_idx);
 });
 
 async function createTestImage(
   color: number,
 ): Promise<Awaited<ReturnType<typeof Jimp.read>>> {
   const image = new Jimp({ width: 1, height: 1, color });
-  const imageBuffer = await image.getBuffer("image/webp");
+  const imageBuffer = await image.getBuffer("image/png");
   return Jimp.read(imageBuffer);
 }
 
-Deno.test("getAsciiArt - Darkest Letter without color support", async () => {
+test("getAsciiArt - Darkest Letter without color support", async () => {
   const blackResult = getAsciiArt(
     await createTestImage(0x000000ff),
     1,
     "none",
+    new Chalk({ level: 0 }),
   );
 
-  assertEquals(blackResult, "█");
+  assert.equal(blackResult, "█");
 });
 
-Deno.test("getAsciiArt - Brightest Letter without color support", async () => {
+test("getAsciiArt - Brightest Letter without color support", async () => {
   const whiteResult = getAsciiArt(
     await createTestImage(0xffffffff),
     1,
     "none",
+    new Chalk({ level: 0 }),
   );
 
-  assertEquals(whiteResult, " ");
+  assert.equal(whiteResult, " ");
 });
 
-Deno.test("getAsciiArt - Darkest Letter with 256 color support", async () => {
+test("getAsciiArt - Darkest Letter with 256 color support", async () => {
   const blackResult = getAsciiArt(
     await createTestImage(0x000000ff),
     1,
     "256color",
+    new Chalk({ level: 2 }),
   );
 
-  assertEquals(blackResult, "\u001b[38;5;16m█\u001b[39m");
+  assert.equal(blackResult, "\u001b[38;5;16m█\u001b[39m");
 });
 
-Deno.test("getAsciiArt - Brightest Letter with 256 color support", async () => {
+test("getAsciiArt - Brightest Letter with 256 color support", async () => {
   const whiteResult = getAsciiArt(
     await createTestImage(0xffffffff),
     1,
     "256color",
+    new Chalk({ level: 2 }),
   );
 
-  assertEquals(whiteResult, "\u001b[38;5;231m \u001b[39m");
+  assert.equal(whiteResult, "\u001b[38;5;231m \u001b[39m");
 });
 
-Deno.test("getAsciiArt - Darkest Letter with true color support", async () => {
+test("getAsciiArt - Darkest Letter with true color support", async () => {
   const blackResult = getAsciiArt(
     await createTestImage(0x000000ff),
     1,
     "truecolor",
+    new Chalk({ level: 3 }),
   );
 
-  assertEquals(blackResult, "\u001b[38;2;0;0;0m█\u001b[39m");
+  assert.equal(blackResult, "\u001b[38;2;0;0;0m█\u001b[39m");
 });
 
-Deno.test("getAsciiArt - Brightest Letter with true color support", async () => {
+test("getAsciiArt - Brightest Letter with true color support", async () => {
   const whiteResult = getAsciiArt(
     await createTestImage(0xffffffff),
     1,
     "truecolor",
+    new Chalk({ level: 3 }),
   );
 
-  assertEquals(whiteResult, "\u001b[38;2;255;255;255m \u001b[39m");
+  assert.equal(whiteResult, "\u001b[38;2;255;255;255m \u001b[39m");
 });

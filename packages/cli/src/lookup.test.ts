@@ -1,5 +1,5 @@
 import { Activity, Note } from "@fedify/fedify";
-import { assertEquals, assertExists } from "@std/assert";
+import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdir, readFile, rm } from "node:fs/promises";
 import { getContextLoader } from "./docloader.ts";
@@ -27,9 +27,9 @@ test("writeObjectToStream - writes Note object with default options", async () =
 
   const content = await readFile(testFile, { encoding: "utf8" });
 
-  assertExists(content);
-  assertEquals(content.includes("Hello, fediverse!"), true);
-  assertEquals(content.includes("id"), true);
+  assert.ok(content);
+  assert.match(content, /Hello, fediverse!/);
+  assert.match(content, /id/);
 
   await rm(testDir, { recursive: true });
 });
@@ -51,9 +51,9 @@ test("writeObjectToStream - writes Activity object in raw JSON-LD format", async
   // Verify file exists and contains JSON-LD
   const content = await readFile(testFile);
 
-  assertExists(content);
-  assertEquals(content.includes("@context"), true);
-  assertEquals(content.includes("id"), true);
+  assert.ok(content);
+  assert.ok(content.includes("@context"));
+  assert.ok(content.includes("id"));
 
   await rm(testDir, { recursive: true });
 });
@@ -75,8 +75,8 @@ test("writeObjectToStream - writes object in compact JSON-LD format", async () =
 
   // Verify file exists and contains compacted JSON-LD
   const content = await readFile(testFile);
-  assertExists(content);
-  assertEquals(content.includes("Test note"), true);
+  assert.ok(content);
+  assert.ok(content.includes("Test note"));
 
   await rm(testDir, { recursive: true });
 });
@@ -97,8 +97,8 @@ test("writeObjectToStream - writes object in expanded JSON-LD format", async () 
   await new Promise((resolve) => setTimeout(resolve, 100));
 
   const content = await readFile(testFile);
-  assertExists(content);
-  assertEquals(content.includes("Test note for expansion"), true);
+  assert.ok(content);
+  assert.ok(content.includes("Test note for expansion"));
 
   await rm(testDir, { recursive: true });
 });
@@ -130,32 +130,32 @@ test("writeObjectToStream - handles empty content properly", async () => {
   await new Promise((resolve) => setTimeout(resolve, 100));
 
   const content = await readFile(testFile);
-  assertExists(content);
-  assertEquals(content.includes("Note"), true);
+  assert.ok(content);
+  assert.ok(content.includes("Note"));
 
   await rm(testDir, { recursive: true });
 });
 
 test("createTimeoutSignal - returns undefined when no timeout specified", () => {
   const signal = createTimeoutSignal();
-  assertEquals(signal, undefined);
+  assert.strictEqual(signal, undefined);
 });
 
 test("createTimeoutSignal - returns undefined when timeout is null", () => {
   const signal = createTimeoutSignal(undefined);
-  assertEquals(signal, undefined);
+  assert.strictEqual(signal, undefined);
 });
 
 test("createTimeoutSignal - creates AbortSignal that aborts after timeout", async () => {
   const signal = createTimeoutSignal(0.1);
-  assertExists(signal);
-  assertEquals(signal.aborted, false);
+  assert.ok(signal);
+  assert.ok(!signal.aborted);
 
   await new Promise((resolve) => setTimeout(resolve, 150));
 
-  assertEquals(signal.aborted, true);
-  assertEquals(signal.reason instanceof TimeoutError, true);
-  assertEquals(
+  assert.ok(signal.aborted);
+  assert.ok(signal.reason instanceof TimeoutError);
+  assert.equal(
     (signal.reason as TimeoutError).message,
     "Request timed out after 0.1 seconds",
   );
@@ -163,20 +163,20 @@ test("createTimeoutSignal - creates AbortSignal that aborts after timeout", asyn
 
 test("createTimeoutSignal - signal is not aborted before timeout", () => {
   const signal = createTimeoutSignal(1); // 1 second timeout
-  assertExists(signal);
-  assertEquals(signal.aborted, false);
+  assert.ok(signal);
+  assert.ok(!signal.aborted);
 
   clearTimeoutSignal(signal);
 });
 
 test("clearTimeoutSignal - cleans up timer properly", async () => {
   const signal = createTimeoutSignal(0.05); // 50ms timeout
-  assertExists(signal);
-  assertEquals(signal.aborted, false);
+  assert.ok(signal);
+  assert.ok(!signal.aborted);
 
   clearTimeoutSignal(signal);
 
   await new Promise((resolve) => setTimeout(resolve, 100));
 
-  assertEquals(signal.aborted, false);
+  assert.ok(!signal.aborted);
 });

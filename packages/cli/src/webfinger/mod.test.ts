@@ -1,5 +1,5 @@
 import { parse } from "@optique/core/parser";
-import { assertEquals, assertObjectMatch } from "@std/assert";
+import assert from "node:assert/strict";
 import test from "node:test";
 import { lookupSingleWebFinger } from "./action.ts";
 import { webFingerCommand } from "./command.ts";
@@ -18,7 +18,7 @@ const ALIASES = [
 test("Test webFingerCommand", () => {
   // Resources only
   const argsWithResourcesOnly = [COMMAND, ...RESOURCES];
-  assertEquals(
+  assert.deepEqual(
     parse(webFingerCommand, argsWithResourcesOnly),
     {
       success: true,
@@ -34,7 +34,7 @@ test("Test webFingerCommand", () => {
   );
   // With options
   const maxRedirection = 10;
-  assertEquals(
+  assert.deepEqual(
     parse(webFingerCommand, [
       ...argsWithResourcesOnly,
       "-d",
@@ -57,18 +57,17 @@ test("Test webFingerCommand", () => {
     },
   );
   // Wrong option
-  assertObjectMatch(
-    parse(webFingerCommand, [...argsWithResourcesOnly, "-Q"]),
-    { success: false },
-  );
+  const wrongOptionResult = parse(webFingerCommand, [
+    ...argsWithResourcesOnly,
+    "-Q",
+  ]);
+  assert.ok(!wrongOptionResult.success);
   // Wrong option value
-  assertObjectMatch(
-    parse(
-      webFingerCommand,
-      [...argsWithResourcesOnly, "--max-redirection", "-10"],
-    ),
-    { success: false },
+  const wrongOptionValueResult = parse(
+    webFingerCommand,
+    [...argsWithResourcesOnly, "--max-redirection", "-10"],
   );
+  assert.ok(!wrongOptionValueResult.success);
 });
 
 test("Test lookupSingleWebFinger", async () => {
@@ -76,5 +75,5 @@ test("Test lookupSingleWebFinger", async () => {
     RESOURCES,
     (resource) => lookupSingleWebFinger({ resource }),
   )).map((w) => w?.aliases?.[0]);
-  assertEquals(aliases, ALIASES);
+  assert.deepEqual(aliases, ALIASES);
 });

@@ -33,7 +33,6 @@ import {
   string,
   withDefault,
 } from "@optique/core";
-import * as colors from "@std/fmt/colors";
 import Table from "cli-table3";
 import { type Context as HonoContext, Hono } from "hono";
 import type { BlankEnv, BlankInput } from "hono/types";
@@ -47,6 +46,7 @@ import { ActivityEntryPage, ActivityListPage } from "./inbox/view.tsx";
 import { recordingSink } from "./log.ts";
 import { tableStyle } from "./table.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
+import { colors } from "./utils.ts";
 
 /**
  * Context data for the ephemeral ActivityPub inbox server.
