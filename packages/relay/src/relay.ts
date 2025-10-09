@@ -1,7 +1,10 @@
 import {
   type Context,
   createFederation,
+  exportJwk,
   type Federation,
+  generateCryptoKeyPair,
+  importJwk,
   type KvStore,
 } from "@fedify/fedify";
 import {
@@ -19,6 +22,8 @@ import {
   Undo,
   Update,
 } from "@fedify/fedify/vocab";
+import type { DocumentLoaderFactory } from "@fedify/vocab-runtime";
+import type { AuthenticatedDocumentLoaderFactory } from "../../vocab-runtime/src/docloader.ts";
 
 const RELAY_SERVER_ACTOR = "relay";
 
@@ -36,6 +41,9 @@ export type SubscriptionRequestHandler = (
 export interface RelayOptions {
   kv: KvStore;
   domain?: string;
+  documentLoaderFactory?: DocumentLoaderFactory;
+  authenticatedDocumentLoaderFactory?: AuthenticatedDocumentLoaderFactory;
+  federation?: Federation<void>;
 }
 
 /**
@@ -62,14 +70,18 @@ export class MastodonRelay implements Relay {
 
   constructor(options: RelayOptions) {
     this.#options = options;
-    this.#federation = createFederation<void>({
+    this.#federation = options.federation ?? createFederation<void>({
       kv: options.kv,
+      documentLoaderFactory: options.documentLoaderFactory,
+      authenticatedDocumentLoaderFactory:
+        options.authenticatedDocumentLoaderFactory,
     });
 
     this.#federation.setActorDispatcher(
       "/users/{identifier}",
-      (ctx, identifier) => {
+      async (ctx, identifier) => {
         if (identifier !== RELAY_SERVER_ACTOR) return null;
+        const keys = await ctx.getActorKeyPairs(identifier);
         return new Application({
           id: ctx.getActorUri(identifier),
           preferredUsername: identifier,
@@ -81,16 +93,55 @@ export class MastodonRelay implements Relay {
           }),
           followers: ctx.getFollowersUri(identifier),
           url: ctx.getActorUri(identifier),
+          publicKey: keys[0].cryptographicKey,
+          assertionMethods: keys.map((k) => k.multikey),
         });
       },
-    );
+    )
+      .setKeyPairsDispatcher(
+        async (_ctx, identifier) => {
+          if (identifier !== RELAY_SERVER_ACTOR) return [];
+
+          const rsaPairJson = await options.kv.get<
+            { privateKey: JsonWebKey; publicKey: JsonWebKey }
+          >(["keypair", "rsa", identifier]);
+          const ed25519PairJson = await options.kv.get<
+            { privateKey: JsonWebKey; publicKey: JsonWebKey }
+          >(["keypair", "ed25519", identifier]);
+          if (rsaPairJson == null || ed25519PairJson == null) {
+            const rsaPair = await generateCryptoKeyPair("RSASSA-PKCS1-v1_5");
+            const ed25519Pair = await generateCryptoKeyPair("Ed25519");
+            await options.kv.set(["keypair", "rsa", identifier], {
+              privateKey: await exportJwk(rsaPair.privateKey),
+              publicKey: await exportJwk(rsaPair.publicKey),
+            });
+            await options.kv.set(["keypair", "ed25519", identifier], {
+              privateKey: await exportJwk(ed25519Pair.privateKey),
+              publicKey: await exportJwk(ed25519Pair.publicKey),
+            });
+
+            return [rsaPair, ed25519Pair];
+          }
+
+          const rsaPair: CryptoKeyPair = {
+            privateKey: await importJwk(rsaPairJson.privateKey, "private"),
+            publicKey: await importJwk(rsaPairJson.publicKey, "public"),
+          };
+          const ed25519Pair: CryptoKeyPair = {
+            privateKey: await importJwk(ed25519PairJson.privateKey, "private"),
+            publicKey: await importJwk(ed25519PairJson.publicKey, "public"),
+          };
+          return [rsaPair, ed25519Pair];
+        },
+      );
 
     this.#federation.setFollowersDispatcher(
       "/users/{identifier}/followers",
       async (_ctx, identifier) => {
         if (identifier !== RELAY_SERVER_ACTOR) return null;
 
-        const activityIds = await options.kv.get<string[]>(["followers"]) ?? [];
+        const activityIds = await options.kv.get<string[]>(["followers"]) ??
+          [];
         const actors: Actor[] = [];
         for (const activityId of activityIds) {
           const actorJson = await options.kv.get(["follower", activityId]);
