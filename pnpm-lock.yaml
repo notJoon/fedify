@@ -763,9 +763,6 @@ importers:
 
   packages/fedify:
     dependencies:
-      '@cfworker/json-schema':
-        specifier: ^4.1.1
-        version: 4.1.1
       '@fedify/vocab-runtime':
         specifier: workspace:*
         version: link:../vocab-runtime
