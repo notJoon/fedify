@@ -19,7 +19,6 @@
     "./x/sveltekit": "./src/x/sveltekit.ts"
   },
   "imports": {
-    "@cfworker/json-schema": "npm:@cfworker/json-schema@^4.1.1",
     "@multiformats/base-x": "npm:@multiformats/base-x@^4.0.1",
     "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
     "@opentelemetry/semantic-conventions": "npm:@opentelemetry/semantic-conventions@^1.27.0",
