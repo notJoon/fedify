@@ -7,10 +7,14 @@ import {
 import {
   Accept,
   type Actor,
+  Application,
   Create,
   Delete,
+  Endpoints,
   Follow,
+  isActor,
   Move,
+  Object,
   Reject,
   Undo,
   Update,
@@ -62,7 +66,43 @@ export class MastodonRelay implements Relay {
       kv: options.kv,
     });
 
-    // for only relay like relay/inbox or something?
+    this.#federation.setActorDispatcher(
+      "/users/{identifier}",
+      (ctx, identifier) => {
+        if (identifier !== RELAY_SERVER_ACTOR) return null;
+        return new Application({
+          id: ctx.getActorUri(identifier),
+          preferredUsername: identifier,
+          name: "ActivityPub Relay",
+          summary: "Mastodon-compatible ActivityPub relay server",
+          inbox: ctx.getInboxUri(identifier),
+          endpoints: new Endpoints({
+            sharedInbox: ctx.getInboxUri(),
+          }),
+          followers: ctx.getFollowersUri(identifier),
+          url: ctx.getActorUri(identifier),
+        });
+      },
+    );
+
+    this.#federation.setFollowersDispatcher(
+      "/users/{identifier}/followers",
+      async (_ctx, identifier) => {
+        if (identifier !== RELAY_SERVER_ACTOR) return null;
+
+        const activityIds = await options.kv.get<string[]>(["followers"]) ?? [];
+        const actors: Actor[] = [];
+        for (const activityId of activityIds) {
+          const actorJson = await options.kv.get(["follower", activityId]);
+          const actor = await Object.fromJsonLd(actorJson);
+          if (!isActor(actor)) continue;
+          actors.push(actor);
+        }
+
+        return { items: actors };
+      },
+    );
+
     this.#federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
       .on(Follow, async (ctx, follow) => {
         if (follow.id == null || follow.objectId == null) return;
@@ -76,15 +116,17 @@ export class MastodonRelay implements Relay {
         ) return;
         let approved = false;
 
-        // Then check custom subscription handler if provided
         if (this.#subscriptionHandler) {
           approved = await this.#subscriptionHandler(
             ctx,
             recipient,
           );
         }
-        // add subscriber
+
         if (approved) {
+          const followers = await options.kv.get<string[]>(["followers"]) ?? [];
+          followers.push(follow.id.href);
+          options.kv.set(["followers"], followers);
           options.kv.set(["follower", follow.id.href], recipient.toJsonLd());
 
           await ctx.sendActivity(
@@ -109,10 +151,18 @@ export class MastodonRelay implements Relay {
         }
       })
       .on(Undo, async (ctx, undo) => {
-        const activity = await undo.getObject(ctx); // An `Activity` to undo
+        const activity = await undo.getObject(ctx);
         if (activity instanceof Follow) {
-          if (activity.id == null || activity.actorId == null) return;
-          options.kv.delete(["follower", activity.id.href]);
+          if (
+            activity.id == null ||
+            activity.actorId == null
+          ) return;
+          const activityId = activity.id.href;
+          const followers = await options.kv.get<string[]>(["followers"]) ??
+            [];
+          const updatedFollowers = followers.filter((id) => id !== activityId);
+          await options.kv.set(["followers"], updatedFollowers);
+          options.kv.delete(["follower", activityId]);
         } else {
           console.warn(
             "Unsupported object type ({type}) for Undo activity: {object}",
