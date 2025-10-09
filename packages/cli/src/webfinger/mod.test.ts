@@ -61,19 +61,13 @@ test("Test webFingerCommand", () => {
     ...argsWithResourcesOnly,
     "-Q",
   ]);
-  assert.deepEqual(
-    wrongOptionResult,
-    { ...wrongOptionResult, success: false },
-  );
+  assert.ok(!wrongOptionResult.success);
   // Wrong option value
   const wrongOptionValueResult = parse(
     webFingerCommand,
     [...argsWithResourcesOnly, "--max-redirection", "-10"],
   );
-  assert.deepEqual(
-    wrongOptionValueResult,
-    { ...wrongOptionValueResult, success: false },
-  );
+  assert.ok(!wrongOptionValueResult.success);
 });
 
 test("Test lookupSingleWebFinger", async () => {
