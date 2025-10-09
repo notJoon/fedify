@@ -1,4 +1,4 @@
-import { join as joinPath } from "@std/path";
+import { join as joinPath } from "node:path";
 import biome from "../json/biome.json" with { type: "json" };
 import vscodeSettingsForDeno from "../json/vscode-settings-for-deno.json" with {
   type: "json",

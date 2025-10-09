@@ -1,8 +1,7 @@
 import { message } from "@optique/core";
 import { print, printError } from "@optique/run";
-import * as colors from "@std/fmt/colors";
 import { flow } from "es-toolkit";
-import type { RequiredNotNull } from "../../utils.ts";
+import { colors, type RequiredNotNull } from "../../utils.ts";
 import type { InitCommand } from "../command.ts";
 import type { InitCommandData } from "../types.ts";
 
