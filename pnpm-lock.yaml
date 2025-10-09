@@ -763,9 +763,6 @@ importers:
 
   packages/fedify:
     dependencies:
-      '@cfworker/json-schema':
-        specifier: ^4.1.1
-        version: 4.1.1
       '@fedify/vocab-runtime':
         specifier: workspace:*
         version: link:../vocab-runtime
@@ -10763,20 +10760,20 @@ snapshots:
 
   '@types/accepts@1.3.7':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/amqplib@0.10.7':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/better-sqlite3@7.6.13':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.36
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/bun@1.2.17':
     dependencies:
@@ -10790,7 +10787,7 @@ snapshots:
 
   '@types/connect@3.4.36':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/content-disposition@0.5.9': {}
 
@@ -10801,7 +10798,7 @@ snapshots:
       '@types/connect': 3.4.36
       '@types/express': 4.17.23
       '@types/keygrip': 1.0.6
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/d3-array@3.2.1': {}
 
@@ -10928,7 +10925,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.19.6':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.5
@@ -10971,7 +10968,7 @@ snapshots:
       '@types/http-errors': 2.0.5
       '@types/keygrip': 1.0.6
       '@types/koa-compose': 3.2.8
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/linkify-it@5.0.0': {}
 
@@ -10992,11 +10989,11 @@ snapshots:
 
   '@types/mute-stream@0.0.4':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/mysql@2.15.26':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/node@16.9.1': {}
 
@@ -11022,7 +11019,7 @@ snapshots:
 
   '@types/pg@8.6.1':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
       pg-protocol: 1.10.3
       pg-types: 2.2.0
 
@@ -11052,19 +11049,19 @@ snapshots:
   '@types/send@0.17.5':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/serve-static@1.15.8':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
       '@types/send': 0.17.5
 
   '@types/shimmer@1.2.0': {}
 
   '@types/tedious@4.0.14':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   '@types/trusted-types@2.0.7':
     optional: true
@@ -11788,7 +11785,7 @@ snapshots:
 
   bun-types@1.2.17:
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
 
   bun-types@1.2.19(@types/react@19.1.8):
     dependencies:
@@ -11797,7 +11794,7 @@ snapshots:
 
   bun-types@1.2.23(@types/react@19.1.8):
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
       '@types/react': 19.1.8
 
   busboy@1.6.0:
@@ -14883,7 +14880,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 22.18.8
+      '@types/node': 24.3.0
       long: 5.3.2
 
   proxy-addr@2.0.7:

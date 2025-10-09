@@ -150,7 +150,6 @@
     }
   },
   "dependencies": {
-    "@cfworker/json-schema": "^4.1.1",
     "@fedify/vocab-runtime": "workspace:*",
     "@js-temporal/polyfill": "^0.5.1",
     "@logtape/logtape": "catalog:",
