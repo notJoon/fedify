@@ -197,6 +197,33 @@ When adding a new package to the monorepo, the following files must be updated:
  -  If using pnpm catalog for dependency management: Add to `catalog` in
     *pnpm-workspace.yaml*.
 
+### Dependency management
+
+Fedify uses two package managers:
+
+ -  **Deno**: For Deno-based packages.  The lockfile is *deno.lock*.
+ -  **pnpm**: For Node.js-based packages.  The lockfile is *pnpm-lock.yaml*.
+
+Both lockfiles are committed to the repository to ensure reproducible builds and
+consistent dependency resolution across all environments.  When you add, update,
+or remove dependencies, you must commit the updated lockfile(s) along with your
+changes.
+
+To update the Deno lockfile, run:
+
+~~~~ bash
+deno task install
+~~~~
+
+To update the pnpm lockfile, run:
+
+~~~~ bash
+pnpm install
+~~~~
+
+When reviewing pull requests, please check that lockfile changes are included
+for any dependency-related changes.
+
 ### Pull request builds
 
 Each pull request is automatically built and published to the JSR and npm
