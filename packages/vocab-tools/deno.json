@@ -19,7 +19,8 @@
   },
   "exclude": [
     "dist",
-    "node_modules"
+    "node_modules",
+    "src/schema.yaml"
   ],
   "tasks": {
     "check": "deno fmt --check && deno lint && deno check src/*.ts",
