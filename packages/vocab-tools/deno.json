@@ -14,7 +14,8 @@
   "imports": {
     "@cfworker/json-schema": "npm:@cfworker/json-schema@^4.1.1",
     "byte-encodings": "npm:byte-encodings@^1.0.11",
-    "es-toolkit": "npm:es-toolkit@^1.39.10"
+    "es-toolkit": "npm:es-toolkit@^1.39.10",
+    "yaml": "npm:yaml@^2.8.1"
   },
   "exclude": [
     "dist",

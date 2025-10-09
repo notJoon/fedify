@@ -1,8 +1,8 @@
 import { type Schema as JsonSchema, Validator } from "@cfworker/json-schema";
-import { parse } from "@std/yaml";
 import { readFile } from "node:fs/promises";
 import { join, posix as url } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parse } from "yaml";
 import { readDirRecursive } from "./fs.ts";
 
 /**
