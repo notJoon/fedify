@@ -16,9 +16,9 @@ export default async function generateVocab(
     writer.write(encoder.encode(code));
   }
 
-  await new Promise<void>((resolve, reject) =>
-    writer.end((err?: Error | null) => err ? reject(err) : resolve())
-  );
-
-  await file.close();
+  await new Promise<void>((resolve, reject) => {
+    writer.once("finish", () => file.close().then(resolve, reject));
+    writer.once("error", reject);
+    writer.end();
+  });
 }

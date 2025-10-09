@@ -1,4 +1,5 @@
 import { generateVocab } from "@fedify/vocab-tools";
+import { rename } from "node:fs/promises";
 import { join } from "node:path";
 
 async function codegen() {
@@ -10,8 +11,10 @@ async function codegen() {
     schemaDir,
     `vocab-${crypto.randomUUID()}.ts`,
   );
+  const realPath = join(schemaDir, "vocab.ts");
+
   await generateVocab(schemaDir, generatedPath);
-  await Deno.rename(generatedPath, "src/vocab/vocab.ts");
+  await rename(generatedPath, realPath);
 }
 
 if (import.meta.main) {
