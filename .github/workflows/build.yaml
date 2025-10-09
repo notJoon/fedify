@@ -342,9 +342,6 @@ jobs:
     - run: |
         pnpm install
         pnpm pack --recursive --filter='!./examples/**'
-        if [[ "$GITHUB_REF_TYPE" != tag ]]; then
-          rm fedify-cli-*.tgz
-        fi
     - run: deno task pack
       working-directory: ${{ github.workspace }}/packages/cli/
     - id: extract-changelog
@@ -428,7 +425,7 @@ jobs:
           | Package           | Version                                 | JSR                          | npm                          |
           | ----------------- | --------------------------------------- | ---------------------------- | ---------------------------- |
           | @fedify/fedify    | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/fedify]    | [npm][npm:@fedify/fedify]    |
-          | @fedify/cli       | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/cli]       |                              |
+          | @fedify/cli       | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/cli]       | [npm][npm:@fedify/cli]       |
           | @fedify/amqp      | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/amqp]      | [npm][npm:@fedify/amqp]      |
           | @fedify/cfworkers | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/cfworkers] | [npm][npm:@fedify/cfworkers] |
           | @fedify/denokv    | ${{ steps.versioning.outputs.version }} | [JSR][jsr:@fedify/denokv]    |                              |
@@ -448,6 +445,7 @@ jobs:
           [jsr:@fedify/fedify]: https://jsr.io/@fedify/fedify@${{ steps.versioning.outputs.version }}
           [npm:@fedify/fedify]: https://www.npmjs.com/package/@fedify/fedify/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/cli]: https://jsr.io/@fedify/cli@${{ steps.versioning.outputs.version }}
+          [npm:@fedify/cli]: https://www.npmjs.com/package/@fedify/cli/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/amqp]: https://jsr.io/@fedify/amqp@${{ steps.versioning.outputs.version }}
           [npm:@fedify/amqp]: https://www.npmjs.com/package/@fedify/amqp/v/${{ steps.versioning.outputs.short_version }}
           [jsr:@fedify/cfworkers]: https://jsr.io/@fedify/cfworkers@${{ steps.versioning.outputs.version }}
