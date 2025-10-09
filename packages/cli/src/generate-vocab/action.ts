@@ -11,6 +11,6 @@ export default async function runGenerateVocab(
     message`"error: ${schemaPath} is not a directory"`;
     process.exit(1);
   }
-  
+
   await generateVocab(schemaPath, generatedPath);
 }
