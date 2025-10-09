@@ -37,6 +37,8 @@ Development Environment
  -  Recommended editor: [Visual Studio Code] with [Deno extension]
  -  Important: Run `deno task codegen` before working with the codebase (for
     code generation)
+ -  Lockfiles: Both *deno.lock* and *pnpm-lock.yaml* are committed to the
+    repository for reproducible builds.  Update them when changing dependencies.
 
 [Deno]: https://deno.com/
 [Node.js]: https://nodejs.org/
