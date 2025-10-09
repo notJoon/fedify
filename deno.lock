@@ -118,6 +118,7 @@
     "npm:sharp@~0.34.3": "0.34.4",
     "npm:shiki@^1.6.4": "1.29.2",
     "npm:structured-field-values@^2.0.4": "2.0.4",
+    "npm:tsdown@0.12.9": "0.12.9_rolldown@1.0.0-beta.42",
     "npm:tsdown@~0.12.9": "0.12.9_rolldown@1.0.0-beta.42",
     "npm:tsx@^4.19.4": "4.20.6",
     "npm:uri-template-router@^0.0.17": "0.0.17",
