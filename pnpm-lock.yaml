@@ -818,6 +818,9 @@ importers:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 4.20250529.0
+      '@fedify/vocab-tools':
+        specifier: workspace:^
+        version: link:../vocab-tools
       '@std/assert':
         specifier: jsr:^0.226.0
         version: '@jsr/std__assert@0.226.0'

@@ -53,7 +53,6 @@
     "src/cfworkers/server.ts",
     "src/cfworkers/server.js",
     "src/cfworkers/server.js.map",
-    "src/codegen/schema.yaml",
     "src/vocab/*.yaml",
     "!src/vocab/vocab.ts"
   ],
