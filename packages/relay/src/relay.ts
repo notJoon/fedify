@@ -1,39 +1,37 @@
-import type { Context, KvStore, MessageQueue } from "@fedify/fedify";
+import {
+  type Context,
+  createFederation,
+  type Federation,
+  type KvStore,
+} from "@fedify/fedify";
+import {
+  Accept,
+  type Actor,
+  Create,
+  Delete,
+  Follow,
+  Move,
+  Reject,
+  Undo,
+  Update,
+} from "@fedify/fedify/vocab";
+
+const RELAY_SERVER_ACTOR = "relay";
 
 /**
  * Handler for subscription requests (Follow/Undo activities).
  */
 export type SubscriptionRequestHandler = (
   ctx: Context<void>,
-  actor: string,
-  activity: unknown,
-) => Promise<void>;
-
-/**
- * Handler for incoming activities to be relayed.
- */
-export type ActivityHandler = (
-  ctx: Context<void>,
-  activity: unknown,
-) => Promise<void>;
+  clientActor: Actor,
+) => Promise<boolean>;
 
 /**
  * Configuration options for the ActivityPub relay.
  */
 export interface RelayOptions {
   kv: KvStore;
-  queue?: MessageQueue;
   domain?: string;
-  actorPath?: string;
-  preferredUsername?: string;
-  requireApproval?: boolean;
-  allowlist?: string[];
-  blocklist?: string[];
-  maxSubscribers?: number;
-  allowedActivityTypes?: string[];
-  privateKeyPair?: Promise<CryptoKeyPair>;
-  maxAttempts?: number;
-  delayMs?: number;
 }
 
 /**
@@ -41,19 +39,9 @@ export interface RelayOptions {
  */
 export interface Relay {
   readonly domain: string;
-  readonly actorPath: string;
-  readonly actorId: string;
-  readonly preferredUsername: string;
-  readonly handle: string;
-  readonly requiresApproval: boolean;
-  readonly maxSubscribers?: number;
 
-  fetch(request: Request, options?: RelayOptions): Promise<Response>;
+  fetch(request: Request): Promise<Response>;
   setSubscriptionHandler(handler: SubscriptionRequestHandler): this;
-  setActivityHandler(handler: ActivityHandler): this;
-  getSubscribers(ctx: Context<void>): Promise<string[]>;
-  approveSubscriber(ctx: Context<void>, clientActor: string): Promise<void>;
-  blockSubscriber(ctx: Context<void>, clientActor: string): Promise<void>;
 }
 
 /**
@@ -64,128 +52,111 @@ export interface Relay {
  * @since 2.0.0
  */
 export class MastodonRelay implements Relay {
+  #federation: Federation<void>;
   #options: RelayOptions;
   #subscriptionHandler?: SubscriptionRequestHandler;
-  #activityHandler?: ActivityHandler;
 
   constructor(options: RelayOptions) {
     this.#options = options;
+    this.#federation = createFederation<void>({
+      kv: options.kv,
+    });
+
+    // for only relay like relay/inbox or something?
+    this.#federation.setInboxListeners("/users/{identifier}/inbox", "/inbox")
+      .on(Follow, async (ctx, follow) => {
+        if (follow.id == null || follow.objectId == null) return;
+        const parsed = ctx.parseUri(follow.objectId);
+        if (parsed?.type !== "actor") return;
+        const recipient = await follow.getActor(ctx);
+        if (
+          recipient == null || recipient.id == null ||
+          recipient.preferredUsername == null ||
+          recipient.inboxId == null
+        ) return;
+        let approved = false;
+
+        // Then check custom subscription handler if provided
+        if (this.#subscriptionHandler) {
+          approved = await this.#subscriptionHandler(
+            ctx,
+            recipient,
+          );
+        }
+        // add subscriber
+        if (approved) {
+          options.kv.set(["follower", follow.id.href], recipient.toJsonLd());
+
+          await ctx.sendActivity(
+            { identifier: RELAY_SERVER_ACTOR },
+            recipient,
+            new Accept({
+              id: new URL(`#accept`, ctx.getActorUri(RELAY_SERVER_ACTOR)),
+              actor: follow.objectId,
+              object: follow,
+            }),
+          );
+        } else {
+          await ctx.sendActivity(
+            { identifier: RELAY_SERVER_ACTOR },
+            recipient,
+            new Reject({
+              id: new URL(`#reject`, ctx.getActorUri(RELAY_SERVER_ACTOR)),
+              actor: follow.objectId,
+              object: follow,
+            }),
+          );
+        }
+      })
+      .on(Undo, async (ctx, undo) => {
+        const activity = await undo.getObject(ctx); // An `Activity` to undo
+        if (activity instanceof Follow) {
+          if (activity.id == null || activity.actorId == null) return;
+          options.kv.delete(["follower", activity.id.href]);
+        } else {
+          console.warn(
+            "Unsupported object type ({type}) for Undo activity: {object}",
+            { type: activity?.constructor.name, object: activity },
+          );
+        }
+      })
+      .on(Create, async (ctx) => {
+        await ctx.forwardActivity(
+          { identifier: RELAY_SERVER_ACTOR },
+          "followers",
+        );
+      })
+      .on(Update, async (ctx) => {
+        await ctx.forwardActivity(
+          { identifier: RELAY_SERVER_ACTOR },
+          "followers",
+        );
+      })
+      .on(Move, async (ctx) => {
+        await ctx.forwardActivity(
+          { identifier: RELAY_SERVER_ACTOR },
+          "followers",
+        );
+      })
+      .on(Delete, async (ctx) => {
+        await ctx.forwardActivity(
+          { identifier: RELAY_SERVER_ACTOR },
+          "followers",
+        );
+      });
   }
 
   get domain(): string {
     return this.#options.domain || "localhost";
   }
 
-  get actorPath(): string {
-    return this.#options.actorPath || "actor";
-  }
-
-  get actorId(): string {
-    return `https://${this.domain}/${this.actorPath}`;
-  }
-
-  get preferredUsername(): string {
-    return this.#options.preferredUsername || "relay";
-  }
-
-  get handle(): string {
-    return `@${this.preferredUsername}@${this.domain}`;
-  }
-
-  get requiresApproval(): boolean {
-    return this.#options.requireApproval ?? false;
-  }
-
-  get maxSubscribers(): number | undefined {
-    return this.#options.maxSubscribers;
-  }
-
-  fetch(request: Request, options?: RelayOptions): Promise<Response> {
-    // TODO: Implement Mastodon-specific fetch logic
-    console.log("MastodonRelay: Fetching request:", request, options);
-    return Promise.resolve(new Response());
+  fetch(request: Request): Promise<Response> {
+    return this.#federation.fetch(request, { contextData: undefined });
   }
 
   setSubscriptionHandler(handler: SubscriptionRequestHandler): this {
     this.#subscriptionHandler = handler;
     return this;
-  }
-
-  setActivityHandler(handler: ActivityHandler): this {
-    this.#activityHandler = handler;
-    return this;
-  }
-
-  async getSubscribers(ctx: Context<void>): Promise<string[]> {
-    // TODO: Implement getting subscribers from KV store
-    console.log("MastodonRelay: Getting subscribers", ctx);
-    const subscribers = await this.#options.kv.get<string[]>([
-      "relay",
-      "subscribers",
-    ]);
-    return subscribers || [];
-  }
-
-  async approveSubscriber(
-    ctx: Context<void>,
-    clientActor: string,
-  ): Promise<void> {
-    // TODO: Implement subscriber approval in KV store
-    console.log("MastodonRelay: Approving subscriber:", ctx, clientActor);
-    await Promise.resolve();
-  }
-
-  async blockSubscriber(
-    ctx: Context<void>,
-    clientActor: string,
-  ): Promise<void> {
-    // TODO: Implement subscriber blocking in KV store
-    console.log("MastodonRelay: Blocking subscriber:", ctx, clientActor);
-    await Promise.resolve();
-  }
-
-  async handleActivity(activity: unknown): Promise<void> {
-    // TODO: Implement Mastodon-specific activity handling logic
-    console.log("MastodonRelay: Handling activity:", activity);
-    await Promise.resolve();
-  }
-
-  async forwardActivity(activity: unknown): Promise<void> {
-    // TODO: Implement Mastodon-specific activity forwarding logic
-    console.log("MastodonRelay: Forwarding activity:", activity);
-    await Promise.resolve();
-  }
-
-  async handleSubscription(actor: string): Promise<void> {
-    // TODO: Implement Mastodon-specific subscription handling logic
-    console.log("MastodonRelay: Handling subscription from:", actor);
-    await Promise.resolve();
-  }
-
-  async handleUnsubscription(actor: string): Promise<void> {
-    // TODO: Implement Mastodon-specific unsubscription handling logic
-    console.log("MastodonRelay: Handling unsubscription from:", actor);
-    await Promise.resolve();
-  }
-
-  async isActorAllowed(actor: string): Promise<boolean> {
-    if (this.#options.blocklist) {
-      for (const domain of this.#options.blocklist) {
-        if (await actor.includes(domain)) {
-          return false;
-        }
-      }
-    }
-    if (this.#options.allowlist && this.#options.allowlist.length > 0) {
-      for (const domain of this.#options.allowlist) {
-        if (await actor.includes(domain)) {
-          return true;
-        }
-      }
-      return false; // Has allowlist but actor not in it
-    }
-
-    return true; // No allowlist, allow by default
   }
 }
 
@@ -197,127 +168,27 @@ export class MastodonRelay implements Relay {
  * @since 2.0.0
  */
 export class LitePubRelay implements Relay {
+  #federation: Federation<void>;
   #options: RelayOptions;
   #subscriptionHandler?: SubscriptionRequestHandler;
-  #activityHandler?: ActivityHandler;
 
   constructor(options: RelayOptions) {
     this.#options = options;
+    this.#federation = createFederation<void>({
+      kv: options.kv,
+    });
   }
 
   get domain(): string {
     return this.#options.domain || "localhost";
   }
 
-  get actorPath(): string {
-    return this.#options.actorPath || "actor";
-  }
-
-  get actorId(): string {
-    return `https://${this.domain}/${this.actorPath}`;
-  }
-
-  get preferredUsername(): string {
-    return this.#options.preferredUsername || "relay";
-  }
-
-  get handle(): string {
-    return `@${this.preferredUsername}@${this.domain}`;
-  }
-
-  get requiresApproval(): boolean {
-    return this.#options.requireApproval ?? false;
-  }
-
-  get maxSubscribers(): number | undefined {
-    return this.#options.maxSubscribers;
-  }
-
-  fetch(request: Request, options?: RelayOptions): Promise<Response> {
-    // TODO: Implement LitePub-specific fetch logic
-    console.log("LitePubRelay: Fetching request:", request, options);
-    return Promise.resolve(new Response());
+  fetch(request: Request): Promise<Response> {
+    return this.#federation.fetch(request, { contextData: undefined });
   }
 
   setSubscriptionHandler(handler: SubscriptionRequestHandler): this {
     this.#subscriptionHandler = handler;
     return this;
-  }
-
-  setActivityHandler(handler: ActivityHandler): this {
-    this.#activityHandler = handler;
-    return this;
-  }
-
-  async getSubscribers(ctx: Context<void>): Promise<string[]> {
-    // TODO: Implement getting subscribers from KV store
-    console.log("LitePubRelay: Getting subscribers", ctx);
-    const subscribers = await this.#options.kv.get<string[]>([
-      "relay",
-      "subscribers",
-    ]);
-    return subscribers || [];
-  }
-
-  async approveSubscriber(
-    ctx: Context<void>,
-    clientActor: string,
-  ): Promise<void> {
-    // TODO: Implement subscriber approval in KV store
-    console.log("LitePubRelay: Approving subscriber:", ctx, clientActor);
-    await Promise.resolve();
-  }
-
-  async blockSubscriber(
-    ctx: Context<void>,
-    clientActor: string,
-  ): Promise<void> {
-    // TODO: Implement subscriber blocking in KV store
-    console.log("LitePubRelay: Blocking subscriber:", ctx, clientActor);
-    await Promise.resolve();
-  }
-
-  async handleActivity(activity: unknown): Promise<void> {
-    // TODO: Implement LitePub-specific activity handling logic
-    console.log("LitePubRelay: Handling activity:", activity);
-    await Promise.resolve();
-  }
-
-  async forwardActivity(activity: unknown): Promise<void> {
-    // TODO: Implement LitePub-specific activity forwarding logic
-    console.log("LitePubRelay: Forwarding activity:", activity);
-    await Promise.resolve();
-  }
-
-  async handleSubscription(actor: string): Promise<void> {
-    // TODO: Implement LitePub-specific subscription handling logic
-    console.log("LitePubRelay: Handling subscription from:", actor);
-    await Promise.resolve();
-  }
-
-  async handleUnsubscription(actor: string): Promise<void> {
-    // TODO: Implement LitePub-specific unsubscription handling logic
-    console.log("LitePubRelay: Handling unsubscription from:", actor);
-    await Promise.resolve();
-  }
-
-  async isActorAllowed(actor: string): Promise<boolean> {
-    if (this.#options.blocklist) {
-      for (const domain of this.#options.blocklist) {
-        if (await actor.includes(domain)) {
-          return false;
-        }
-      }
-    }
-    if (this.#options.allowlist && this.#options.allowlist.length > 0) {
-      for (const domain of this.#options.allowlist) {
-        if (await actor.includes(domain)) {
-          return true;
-        }
-      }
-      return false; // Has allowlist but actor not in it
-    }
-
-    return true; // No allowlist, allow by default
   }
 }
