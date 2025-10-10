@@ -29,6 +29,7 @@ import type {
   ObjectDispatcher,
 } from "./callback.ts";
 import type { RequestContext } from "./context.ts";
+import type { ConstructorWithTypeId } from "./federation.ts";
 import {
   type CustomCollectionCallbacks,
   handleActor,
@@ -276,8 +277,7 @@ test("handleObject()", async () => {
     data: undefined,
     url: new URL("https://example.com/"),
     getObjectUri(
-      // deno-lint-ignore no-explicit-any
-      _cls: (new (...args: any[]) => Object) & { typeId: URL },
+      _cls: ConstructorWithTypeId<Object>,
       values: Record<string, string>,
     ) {
       return new URL(

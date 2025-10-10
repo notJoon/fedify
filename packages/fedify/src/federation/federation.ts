@@ -132,8 +132,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
@@ -153,8 +152,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
@@ -174,8 +172,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
@@ -195,8 +192,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<TParam>}${string}`,
@@ -217,8 +213,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}`,
@@ -239,8 +234,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
@@ -494,8 +488,7 @@ export interface Federatable<TContextData> {
    */
   setCollectionDispatcher<TObject extends Object, TParam extends string>(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<
@@ -531,8 +524,7 @@ export interface Federatable<TContextData> {
    */
   setCollectionDispatcher<TObject extends Object, TParam extends string>(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}`,
@@ -564,8 +556,7 @@ export interface Federatable<TContextData> {
    */
   setCollectionDispatcher<TObject extends Object, TParam extends string>(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
@@ -598,8 +589,7 @@ export interface Federatable<TContextData> {
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}${Rfc6570Expression<TParam>}${string}`,
@@ -634,8 +624,7 @@ export interface Federatable<TContextData> {
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
       TParam
     >}${string}`,
@@ -670,8 +659,7 @@ export interface Federatable<TContextData> {
     TParam extends string,
   >(
     name: string | symbol,
-    // deno-lint-ignore no-explicit-any
-    itemType: (new (...args: any[]) => TObject) & { typeId: URL },
+    itemType: ConstructorWithTypeId<TObject>,
     path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
