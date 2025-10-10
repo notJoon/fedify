@@ -3,6 +3,12 @@
 Fedify changelog
 ================
 
+Version 1.8.14
+--------------
+
+To be released.
+
+
 Version 1.8.13
 --------------
 
