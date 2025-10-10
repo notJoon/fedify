@@ -491,8 +491,8 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
       uri-template-router:
-        specifier: ^0.0.17
-        version: 0.0.17
+        specifier: ^1.0.0
+        version: 1.0.0
       url-template:
         specifier: ^3.1.1
         version: 3.1.1
@@ -6258,8 +6258,8 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  uri-template-router@0.0.17:
-    resolution: {integrity: sha512-5h2I/eSN+XFRAFaSR72KTFWg5rf8GB6Ur5+yWHjtwEqmn6cfZqoWsoWTh6NhxW8pIlFq144G2J23OCg3CeAaSg==}
+  uri-template-router@1.0.0:
+    resolution: {integrity: sha512-WKcL9ZSIEhHE3f5P4Z47Tf0nWbcgV1ISb/OBuF8YKEYi0SQOyTLCzM6B/gAKFWZhRhqA+C/Ks8UXe2qU5W0FVg==}
 
   url-parse@1.5.10:
     resolution: {integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==}
@@ -12806,7 +12806,7 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  uri-template-router@0.0.17: {}
+  uri-template-router@1.0.0: {}
 
   url-parse@1.5.10:
     dependencies:
