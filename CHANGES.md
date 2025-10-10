@@ -276,6 +276,23 @@ To be released.
     CommonJS-based Node.js applications.  [[#429], [#431]]
 
 
+Version 1.8.13
+--------------
+
+Released on October 10, 2025.
+
+### @fedify/fedify
+
+ -  Fixed inconsistent encoding/decoding of URI template identifiers with
+    special characters.  Updated *uri-template-router* to version 1.0.0,
+    which properly decodes percent-encoded characters in URI template variables
+    according to RFC 6570.  This resolves issues where identifiers containing
+    URIs (e.g., `https%3A%2F%2Fexample.com`) were being inconsistently decoded
+    in dispatcher callbacks and double-encoded in collection URLs.  [[#416]]
+
+[#416]: https://github.com/fedify-dev/fedify/issues/416
+
+
 Version 1.8.12
 --------------
 
