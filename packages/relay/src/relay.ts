@@ -22,8 +22,10 @@ import {
   Undo,
   Update,
 } from "@fedify/fedify/vocab";
-import type { DocumentLoaderFactory } from "@fedify/vocab-runtime";
-import type { AuthenticatedDocumentLoaderFactory } from "../../vocab-runtime/src/docloader.ts";
+import type {
+  AuthenticatedDocumentLoaderFactory,
+  DocumentLoaderFactory,
+} from "@fedify/vocab-runtime";
 
 const RELAY_SERVER_ACTOR = "relay";
 
