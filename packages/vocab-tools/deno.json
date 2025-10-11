@@ -5,7 +5,6 @@
   "exports": {
     ".": "./src/mod.ts"
   },
-  "description": "Util library for @fedify/vocab",
   "author": {
     "name": "Hong Minhee",
     "email": "hong@minhee.org",
