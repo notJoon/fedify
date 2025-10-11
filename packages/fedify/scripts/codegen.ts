@@ -1,16 +1,14 @@
 import { generateVocab } from "@fedify/vocab-tools";
 import { rename } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 async function codegen() {
-  const schemaDir = import.meta.dirname;
-  if (!schemaDir) {
+  const scriptsDir = import.meta.dirname;
+  if (!scriptsDir) {
     throw new Error("Could not determine schema directory");
   }
-  const generatedPath = join(
-    schemaDir,
-    `vocab-${crypto.randomUUID()}.ts`,
-  );
+  const schemaDir = join(dirname(scriptsDir), "src", "vocab");
+  const generatedPath = join(schemaDir, `vocab-${crypto.randomUUID()}.ts`);
   const realPath = join(schemaDir, "vocab.ts");
 
   await generateVocab(schemaDir, generatedPath);
