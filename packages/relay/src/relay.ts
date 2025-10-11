@@ -160,7 +160,11 @@ export class MastodonRelay implements Relay {
       .on(Follow, async (ctx, follow) => {
         if (follow.id == null || follow.objectId == null) return;
         const parsed = ctx.parseUri(follow.objectId);
-        if (parsed?.type !== "actor") return;
+        const isPublicFollow = follow.objectId.href ===
+          "https://www.w3.org/ns/activitystreams#Public";
+        if (!isPublicFollow && parsed?.type !== "actor") return;
+
+        const relayActorUri = ctx.getActorUri(RELAY_SERVER_ACTOR);
         const recipient = await follow.getActor(ctx);
         if (
           recipient == null || recipient.id == null ||
@@ -179,15 +183,18 @@ export class MastodonRelay implements Relay {
         if (approved) {
           const followers = await options.kv.get<string[]>(["followers"]) ?? [];
           followers.push(follow.id.href);
-          options.kv.set(["followers"], followers);
-          options.kv.set(["follower", follow.id.href], recipient.toJsonLd());
+          await options.kv.set(["followers"], followers);
+          await options.kv.set(
+            ["follower", follow.id.href],
+            recipient.toJsonLd(),
+          );
 
           await ctx.sendActivity(
             { identifier: RELAY_SERVER_ACTOR },
             recipient,
             new Accept({
-              id: new URL(`#accept`, ctx.getActorUri(RELAY_SERVER_ACTOR)),
-              actor: follow.objectId,
+              id: new URL(`#accepts`, relayActorUri),
+              actor: relayActorUri,
               object: follow,
             }),
           );
@@ -196,8 +203,8 @@ export class MastodonRelay implements Relay {
             { identifier: RELAY_SERVER_ACTOR },
             recipient,
             new Reject({
-              id: new URL(`#reject`, ctx.getActorUri(RELAY_SERVER_ACTOR)),
-              actor: follow.objectId,
+              id: new URL(`#rejects`, relayActorUri),
+              actor: relayActorUri,
               object: follow,
             }),
           );
