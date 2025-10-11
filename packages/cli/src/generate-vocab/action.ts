@@ -6,12 +6,12 @@ import process from "node:process";
 import type { GenerateVocabCommand } from "./command.ts";
 
 export default async function runGenerateVocab(
-  { schemaPath, generatedPath }: GenerateVocabCommand,
+  { schemaDir, generatedPath }: GenerateVocabCommand,
 ) {
-  if (!(await stat(schemaPath)).isDirectory()) {
-    printError(message`${schemaPath} is not a directory.`);
+  if (!(await stat(schemaDir)).isDirectory()) {
+    printError(message`${schemaDir} is not a directory.`);
     process.exit(1);
   }
 
-  await generateVocab(schemaPath, generatedPath);
+  await generateVocab(schemaDir, generatedPath);
 }

@@ -8,22 +8,22 @@ import {
 } from "@optique/core";
 import { path } from "@optique/run";
 
-const schemaPath = option(
+const schemaDir = option(
   "-i",
   "--input",
-  path({ metavar: "SCHEMA FILES PATH" }),
+  path({ metavar: "DIR" }),
 );
 const generatedPath = option(
   "-o",
   "--output",
-  path({ metavar: "GENERATED CODE PATH" }),
+  path({ metavar: "PATH" }),
 );
 
 const generateVocabCommand = command(
   "generate-vocab",
   object({
     command: constant("generate-vocab"),
-    schemaPath,
+    schemaDir,
     generatedPath,
   }),
   {
