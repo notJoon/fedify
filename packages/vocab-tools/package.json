@@ -1,7 +1,7 @@
 {
   "name": "@fedify/vocab-tools",
   "version": "2.0.0",
-  "description": "Utils library for code-generated Activity Vocabulary APIs",
+  "description": "Code generator for Activity Vocabulary APIs",
   "type": "module",
   "main": "./dist/mod.cjs",
   "module": "./dist/mod.js",
