@@ -1,6 +1,6 @@
 import type { Tunnel, TunnelOptions } from "@hongminhee/localtunnel";
 import { run } from "@optique/run";
-import { assertEquals, assertRejects } from "@std/assert";
+import { deepEqual, rejects } from "node:assert/strict";
 import test from "node:test";
 import type { Ora } from "ora";
 import { runTunnel, tunnelCommand } from "./tunnel.ts";
@@ -13,14 +13,14 @@ test("tunnel command structure", () => {
     args: ["tunnel", "3000"],
   });
 
-  assertEquals(testCommandWithOptions.command, "tunnel");
-  assertEquals(testCommandWithOptions.port, 3001);
-  assertEquals(testCommandWithOptions.service, "pinggy.io");
-  assertEquals(testCommandWithOptions.debug, true);
+  deepEqual(testCommandWithOptions.command, "tunnel");
+  deepEqual(testCommandWithOptions.port, 3001);
+  deepEqual(testCommandWithOptions.service, "pinggy.io");
+  deepEqual(testCommandWithOptions.debug, true);
 
-  assertEquals(testCommandWithoutOptions.port, 3000);
-  assertEquals(testCommandWithoutOptions.service, undefined);
-  assertEquals(testCommandWithoutOptions.debug, false);
+  deepEqual(testCommandWithoutOptions.port, 3000);
+  deepEqual(testCommandWithoutOptions.service, undefined);
+  deepEqual(testCommandWithoutOptions.debug, false);
 });
 
 test("tunnel successfully creates and manages tunnel", async () => {
@@ -78,13 +78,13 @@ test("tunnel successfully creates and manages tunnel", async () => {
   try {
     await runTunnel(mockCommand, mockDeps);
   } finally {
-    assertEquals(openTunnelCalled, true);
-    assertEquals(openTunnelPort, 3001);
-    assertEquals(openTunnelService, "pinggy.io");
-    assertEquals(openTunnelSucceed, true);
-    assertEquals(openTunnelFailed, false);
-    assertEquals(spinnerCalled, true);
-    assertEquals(
+    deepEqual(openTunnelCalled, true);
+    deepEqual(openTunnelPort, 3001);
+    deepEqual(openTunnelService, "pinggy.io");
+    deepEqual(openTunnelSucceed, true);
+    deepEqual(openTunnelFailed, false);
+    deepEqual(spinnerCalled, true);
+    deepEqual(
       spinnerMsg,
       `Your local server at ${mockTunnel.localPort} is now publicly accessible:\n`,
     );
@@ -137,19 +137,19 @@ test("tunnel fails to create a secure tunnel and handles error", async () => {
   };
 
   try {
-    await assertRejects(
+    await rejects(
       () => runTunnel(mockCommand, mockDeps),
       Error,
       "Process exit called",
     );
   } finally {
-    assertEquals(openTunnelCalled, true);
-    assertEquals(openTunnelPort, 3001);
-    assertEquals(openTunnelService, undefined);
-    assertEquals(openTunnelSucceed, false);
-    assertEquals(openTunnelFailed, true);
-    assertEquals(spinnerCalled, true);
-    assertEquals(
+    deepEqual(openTunnelCalled, true);
+    deepEqual(openTunnelPort, 3001);
+    deepEqual(openTunnelService, undefined);
+    deepEqual(openTunnelSucceed, false);
+    deepEqual(openTunnelFailed, true);
+    deepEqual(spinnerCalled, true);
+    deepEqual(
       spinnerMsg,
       "Failed to create a secure tunnel.",
     );
