@@ -82,6 +82,13 @@ and a callback function that takes a `Context` object and the activity object.
 Note that the `~InboxListenerSetters.on()` method can be chained to register
 multiple inbox listeners for different activity types.
 
+> [!NOTE]
+> The URI Template syntax supports different expansion types like `{identifier}`
+> (simple expansion) and `{+identifier}` (reserved expansion).  If your
+> identifiers contain URIs or special characters, you may need to use
+> `{+identifier}` to avoid double-encoding issues.  See the
+> [*URI Template* guide](./uri-template.md) for details.
+
 > [!WARNING]
 > Activities of any type that are not registered with
 > the `~InboxListenerSetters.on()` method are silently ignored.

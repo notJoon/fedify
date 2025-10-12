@@ -1,3 +1,11 @@
+import type { GetUserAgentOptions } from "@fedify/vocab-runtime";
+import {
+  type AuthenticatedDocumentLoaderFactory,
+  type DocumentLoader,
+  type DocumentLoaderFactory,
+  type DocumentLoaderFactoryOptions,
+  getDocumentLoader,
+} from "@fedify/vocab-runtime";
 import { getLogger, withContext } from "@logtape/logtape";
 import {
   context,
@@ -22,16 +30,6 @@ import type { ActivityTransformer } from "../compat/types.ts";
 import { getNodeInfo, type GetNodeInfoOptions } from "../nodeinfo/client.ts";
 import { handleNodeInfo, handleNodeInfoJrd } from "../nodeinfo/handler.ts";
 import type { JsonValue, NodeInfo } from "../nodeinfo/types.ts";
-import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
-import {
-  type AuthenticatedDocumentLoaderFactory,
-  type DocumentLoader,
-  type DocumentLoaderFactory,
-  type DocumentLoaderFactoryOptions,
-  getDocumentLoader,
-  type GetUserAgentOptions,
-  kvCache,
-} from "../runtime/docloader.ts";
 import {
   type HttpMessageSignaturesSpec,
   type HttpMessageSignaturesSpecDeterminer,
@@ -41,6 +39,8 @@ import { exportJwk, importJwk, validateCryptoKey } from "../sig/key.ts";
 import { hasSignature, signJsonLd } from "../sig/ld.ts";
 import { getKeyOwner, type GetKeyOwnerOptions } from "../sig/owner.ts";
 import { signObject, verifyObject } from "../sig/proof.ts";
+import { getAuthenticatedDocumentLoader } from "../utils/docloader.ts";
+import { kvCache } from "../utils/kv-cache.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import {
   lookupObject,
@@ -78,6 +78,7 @@ import type {
   SendActivityOptionsForCollection,
 } from "./context.ts";
 import type {
+  ConstructorWithTypeId,
   Federation,
   FederationFetchOptions,
   FederationOptions,
@@ -238,7 +239,6 @@ export class FederationImpl<TContextData>
 
   constructor(options: FederationOptions<TContextData>) {
     super();
-    const logger = getLogger(["fedify", "federation"]);
     this.kv = options.kv;
     this.kvPrefixes = {
       ...({
@@ -318,12 +318,19 @@ export class FederationImpl<TContextData>
       false;
     this._initializeRouter();
     if (options.allowPrivateAddress || options.userAgent != null) {
-      if (options.contextLoader != null) {
+      if (options.documentLoaderFactory != null) {
         throw new TypeError(
-          "Cannot set contextLoader with allowPrivateAddress or " +
+          "Cannot set documentLoaderFactory with allowPrivateAddress or " +
             "userAgent options.",
         );
-      } else if (options.authenticatedDocumentLoaderFactory != null) {
+      }
+      if (options.contextLoaderFactory != null) {
+        throw new TypeError(
+          "Cannot set contextLoaderFactory with allowPrivateAddress or " +
+            "userAgent options.",
+        );
+      }
+      if (options.authenticatedDocumentLoaderFactory != null) {
         throw new TypeError(
           "Cannot set authenticatedDocumentLoaderFactory with " +
             "allowPrivateAddress or userAgent options.",
@@ -344,22 +351,8 @@ export class FederationImpl<TContextData>
           prefix: this.kvPrefixes.remoteDocument,
         });
       });
-    if (options.contextLoader != null) {
-      if (options.contextLoaderFactory != null) {
-        throw new TypeError(
-          "Cannot set both contextLoader and contextLoaderFactory options " +
-            "at a time; use contextLoaderFactory only.",
-        );
-      }
-      this.contextLoaderFactory = () => options.contextLoader!;
-      logger.warn(
-        "The contextLoader option is deprecated; use contextLoaderFactory " +
-          "option instead.",
-      );
-    } else {
-      this.contextLoaderFactory = options.contextLoaderFactory ??
-        this.documentLoaderFactory;
-    }
+    this.contextLoaderFactory = options.contextLoaderFactory ??
+      this.documentLoaderFactory;
     this.authenticatedDocumentLoaderFactory =
       options.authenticatedDocumentLoaderFactory ??
         ((identity) =>
@@ -913,8 +906,7 @@ export class FederationImpl<TContextData>
       documentLoader?: DocumentLoader;
       invokedFromActorDispatcher?: { identifier: string };
       invokedFromObjectDispatcher?: {
-        // deno-lint-ignore no-explicit-any
-        cls: (new (...args: any[]) => Object) & { typeId: URL };
+        cls: ConstructorWithTypeId<Object>;
         values: Record<string, string>;
       };
     },
@@ -927,8 +919,7 @@ export class FederationImpl<TContextData>
       documentLoader?: DocumentLoader;
       invokedFromActorDispatcher?: { identifier: string };
       invokedFromObjectDispatcher?: {
-        // deno-lint-ignore no-explicit-any
-        cls: (new (...args: any[]) => Object) & { typeId: URL };
+        cls: ConstructorWithTypeId<Object>;
         values: Record<string, string>;
       };
     } = {},
@@ -1458,7 +1449,7 @@ export class FederationImpl<TContextData>
         const callbacks = this.collectionCallbacks[name];
         return await handleCustomCollection<
           URL | Object | Link | Recipient,
-          Record<string, string>,
+          string,
           RequestContext<TContextData>,
           TContextData
         >(request, {
@@ -1476,7 +1467,7 @@ export class FederationImpl<TContextData>
         const callbacks = this.collectionCallbacks[name];
         return await handleOrderedCollection<
           URL | Object | Link | Recipient,
-          Record<string, string>,
+          string,
           RequestContext<TContextData>,
           TContextData
         >(request, {
@@ -1604,8 +1595,7 @@ export class ContextImpl<TContextData> implements Context<TContextData> {
   }
 
   getObjectUri<TObject extends Object>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     values: Record<string, string>,
   ): URL {
     const callbacks = this.federation.objectCallbacks[cls.typeId.href];
@@ -2547,8 +2537,7 @@ interface RequestContextOptions<TContextData>
   request: Request;
   invokedFromActorDispatcher?: { identifier: string };
   invokedFromObjectDispatcher?: {
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => Object) & { typeId: URL };
+    cls: ConstructorWithTypeId<Object>;
     values: Record<string, string>;
   };
 }
@@ -2557,8 +2546,7 @@ class RequestContextImpl<TContextData> extends ContextImpl<TContextData>
   implements RequestContext<TContextData> {
   readonly #invokedFromActorDispatcher?: { identifier: string };
   readonly #invokedFromObjectDispatcher?: {
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => Object) & { typeId: URL };
+    cls: ConstructorWithTypeId<Object>;
     values: Record<string, string>;
   };
   readonly request: Request;
@@ -2617,8 +2605,7 @@ class RequestContextImpl<TContextData> extends ContextImpl<TContextData>
   }
 
   async getObject<TObject extends Object>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     values: Record<string, string>,
   ): Promise<TObject | null> {
     const callbacks = this.federation.objectCallbacks[cls.typeId.href];

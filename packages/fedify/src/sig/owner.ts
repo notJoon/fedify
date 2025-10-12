@@ -1,8 +1,5 @@
+import { type DocumentLoader, getDocumentLoader } from "@fedify/vocab-runtime";
 import { trace, type TracerProvider } from "@opentelemetry/api";
-import {
-  type DocumentLoader,
-  getDocumentLoader,
-} from "../runtime/docloader.ts";
 import { type Actor, isActor } from "../vocab/actor.ts";
 import {
   type Activity,

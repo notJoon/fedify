@@ -1,3 +1,4 @@
+import { exportSpki } from "@fedify/vocab-runtime";
 import {
   assert,
   assertEquals,
@@ -9,7 +10,6 @@ import {
 } from "@std/assert";
 import { encodeBase64 } from "byte-encodings/base64";
 import fetchMock from "fetch-mock";
-import { exportSpki } from "../runtime/key.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import {
   rsaPrivateKey2,

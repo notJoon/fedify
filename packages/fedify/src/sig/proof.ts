@@ -1,10 +1,9 @@
+import type { DocumentLoader } from "@fedify/vocab-runtime";
 import { getLogger } from "@logtape/logtape";
 import { SpanStatusCode, trace, type TracerProvider } from "@opentelemetry/api";
 import { encodeHex } from "byte-encodings/hex";
-// @ts-ignore: json-canon is not typed
 import serialize from "json-canon";
 import metadata from "../../deno.json" with { type: "json" };
-import type { DocumentLoader } from "../runtime/docloader.ts";
 import { getTypeId } from "../vocab/type.ts";
 import {
   Activity,

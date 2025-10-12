@@ -24,7 +24,6 @@ import type {
   WebFingerLinksDispatcher,
 } from "@fedify/fedify/federation";
 import type { JsonValue, NodeInfo } from "@fedify/fedify/nodeinfo";
-import type { DocumentLoader } from "@fedify/fedify/runtime";
 import type {
   Activity,
   Actor,
@@ -36,6 +35,7 @@ import type {
   TraverseCollectionOptions,
 } from "@fedify/fedify/vocab";
 import type { ResourceDescriptor } from "@fedify/fedify/webfinger";
+import type { DocumentLoader } from "@fedify/vocab-runtime";
 import { trace, type TracerProvider } from "@opentelemetry/api";
 import { createInboxContext, createRequestContext } from "./context.ts";
 

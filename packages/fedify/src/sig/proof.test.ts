@@ -1,7 +1,6 @@
+import { decodeMultibase, importMultibaseKey } from "@fedify/vocab-runtime";
 import { assertEquals, assertInstanceOf, assertRejects } from "@std/assert";
 import { decodeHex, encodeHex } from "byte-encodings/hex";
-import { importMultibaseKey } from "../runtime/key.ts";
-import { decode } from "../runtime/multibase/index.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
 import {
   ed25519Multikey,
@@ -120,7 +119,7 @@ test("createProof()", async () => {
   assertEquals(proof2.proofPurpose, "assertionMethod");
   assertEquals(
     proof2.proofValue,
-    decode(
+    decodeMultibase(
       // cSpell: disable
       "zLaewdp4H9kqtwyrLatK4cjY5oRHwVcw4gibPSUDYDMhi4M49v8pcYk3ZB6D69dNpAPbUmY8ocuJ3m9KhKJEEg7z",
       // cSpell: enable
@@ -310,7 +309,7 @@ test("verifyProof()", async () => {
       "https://server.example/users/alice#ed25519-key",
     ),
     proofPurpose: "assertionMethod",
-    proofValue: decode(
+    proofValue: decodeMultibase(
       // cSpell: disable
       "zLaewdp4H9kqtwyrLatK4cjY5oRHwVcw4gibPSUDYDMhi4M49v8pcYk3ZB6D69dNpAPbUmY8ocuJ3m9KhKJEEg7z",
       // cSpell: enable

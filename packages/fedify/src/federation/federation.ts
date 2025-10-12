@@ -1,11 +1,10 @@
-import type { TracerProvider } from "@opentelemetry/api";
-import type { ActivityTransformer } from "../compat/types.ts";
 import type {
   AuthenticatedDocumentLoaderFactory,
-  DocumentLoader,
   DocumentLoaderFactory,
   GetUserAgentOptions,
-} from "../runtime/docloader.ts";
+} from "@fedify/vocab-runtime";
+import type { TracerProvider } from "@opentelemetry/api";
+import type { ActivityTransformer } from "../compat/types.ts";
 import type { HttpMessageSignaturesSpec } from "../sig/http.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import type { Activity, Hashtag, Object } from "../vocab/vocab.ts";
@@ -113,7 +112,9 @@ export interface Federatable<TContextData> {
    * @throws {RouterError} Thrown if the path pattern is invalid.
    */
   setActorDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: ActorDispatcher<TContextData>,
   ): ActorCallbackSetters<TContextData>;
 
@@ -131,8 +132,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
@@ -152,8 +152,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
@@ -173,8 +172,7 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     path:
       `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
@@ -194,10 +192,10 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
-    path:
-      `${string}{${TParam}}${string}{${TParam}}${string}{${TParam}}${string}`,
+    cls: ConstructorWithTypeId<TObject>,
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
 
@@ -215,9 +213,10 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
-    path: `${string}{${TParam}}${string}{${TParam}}${string}`,
+    cls: ConstructorWithTypeId<TObject>,
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
 
@@ -235,9 +234,8 @@ export interface Federatable<TContextData> {
    * @param dispatcher An object dispatcher callback to register.
    */
   setObjectDispatcher<TObject extends Object, TParam extends string>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
-    path: `${string}{${TParam}}${string}`,
+    cls: ConstructorWithTypeId<TObject>,
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
   ): ObjectCallbackSetters<TContextData, TObject, TParam>;
 
@@ -253,7 +251,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setInboxDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Activity,
       RequestContext<TContextData>,
@@ -290,7 +290,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setOutboxDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Activity,
       RequestContext<TContextData>,
@@ -315,7 +317,9 @@ export interface Federatable<TContextData> {
    * @throws {RouterError} Thrown if the path pattern is invalid.
    */
   setFollowingDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Actor | URL,
       RequestContext<TContextData>,
@@ -340,7 +344,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setFollowersDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Recipient,
       Context<TContextData>,
@@ -361,7 +367,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setLikedDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Object | URL,
       RequestContext<TContextData>,
@@ -386,7 +394,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setFeaturedDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Object,
       RequestContext<TContextData>,
@@ -411,7 +421,9 @@ export interface Federatable<TContextData> {
    * @throws {@link RouterError} Thrown if the path pattern is invalid.
    */
   setFeaturedTagsDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    path:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     dispatcher: CollectionDispatcher<
       Hashtag,
       RequestContext<TContextData>,
@@ -454,9 +466,12 @@ export interface Federatable<TContextData> {
    * @throws {RouteError} Thrown if the path pattern is invalid.
    */
   setInboxListeners(
-    inboxPath: `${string}{identifier}${string}` | `${string}{handle}${string}`,
+    inboxPath:
+      | `${string}${Rfc6570Expression<"identifier">}${string}`
+      | `${string}${Rfc6570Expression<"handle">}${string}`,
     sharedInboxPath?: string,
   ): InboxListenerSetters<TContextData>;
+
   /**
    * Registers a collection of objects dispatcher.
    *
@@ -471,21 +486,86 @@ export interface Federatable<TContextData> {
    *             The path must have one or more variables.
    * @param dispatcher A collection dispatcher callback to register.
    */
-  setCollectionDispatcher<
-    TObject extends Object,
-    TParams extends Record<string, string>,
-  >(
+  setCollectionDispatcher<TObject extends Object, TParam extends string>(
     name: string | symbol,
     itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams>,
+    path: `${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
-      TParams,
+      TParam,
       RequestContext<TContextData>,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers a collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setCollectionDispatcher<TObject extends Object, TParam extends string>(
+    name: string | symbol,
+    itemType: ConstructorWithTypeId<TObject>,
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers a collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setCollectionDispatcher<TObject extends Object, TParam extends string>(
+    name: string | symbol,
+    itemType: ConstructorWithTypeId<TObject>,
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
     RequestContext<TContextData>,
     TContextData
   >;
@@ -506,19 +586,89 @@ export interface Federatable<TContextData> {
    */
   setOrderedCollectionDispatcher<
     TObject extends Object,
-    TParams extends Record<string, string>,
+    TParam extends string,
   >(
     name: string | symbol,
     itemType: ConstructorWithTypeId<TObject>,
-    path: ParamsKeyPath<TParams>,
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}${Rfc6570Expression<TParam>}${string}`,
     dispatcher: CustomCollectionDispatcher<
       TObject,
-      TParams,
+      TParam,
       RequestContext<TContextData>,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers an ordered collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    itemType: ConstructorWithTypeId<TObject>,
+    path: `${string}${Rfc6570Expression<TParam>}${string}${Rfc6570Expression<
+      TParam
+    >}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
+    RequestContext<TContextData>,
+    TContextData
+  >;
+
+  /**
+   * Registers an ordered collection of objects dispatcher.
+   *
+   * @template TContextData The context data to pass to the {@link Context}.
+   * @template TObject The type of objects to dispatch.
+   * @template TParam The parameter names of the requested URL.
+   * @param name A unique name for the collection dispatcher.
+   * @param itemType The Activity Vocabulary class of the object to dispatch.
+   * @param path The URI path pattern for the collection dispatcher.
+   *             The syntax is based on URI Template
+   *             ([RFC 6570](https://tools.ietf.org/html/rfc6570)).
+   *             The path must have one or more variables.
+   * @param dispatcher A collection dispatcher callback to register.
+   */
+  setOrderedCollectionDispatcher<
+    TObject extends Object,
+    TParam extends string,
+  >(
+    name: string | symbol,
+    itemType: ConstructorWithTypeId<TObject>,
+    path: `${string}${Rfc6570Expression<TParam>}${string}`,
+    dispatcher: CustomCollectionDispatcher<
+      TObject,
+      TParam,
+      RequestContext<TContextData>,
+      TContextData
+    >,
+  ): CustomCollectionCallbackSetters<
+    TParam,
     RequestContext<TContextData>,
     TContextData
   >;
@@ -682,13 +832,6 @@ export interface FederationOptions<TContextData> {
    * @since 1.4.0
    */
   contextLoaderFactory?: DocumentLoaderFactory;
-
-  /**
-   * A custom JSON-LD context loader.  By default, this uses the same loader
-   * as the document loader.
-   * @deprecated Use {@link contextLoaderFactory} instead.
-   */
-  contextLoader?: DocumentLoader;
 
   /**
    * A factory function that creates an authenticated document loader for a
@@ -1096,14 +1239,14 @@ export interface FederationFetchOptions<TContextData> {
 /**
  * Additional settings for a custom collection dispatcher.
  *
- * @template TParams The type of the parameters in the URL path.
+ * @template TParam The type of the parameters in the URL path.
  * @template TContext The type of the context.  {@link Context} or
  *                     {@link RequestContext}.
  * @template TContextData The context data to pass to the {@link Context}.
  * @template TFilter The type of filter for the collection.
  */
 export interface CustomCollectionCallbackSetters<
-  TParams extends Record<string, string>,
+  TParam extends string,
   TContext extends Context<TContextData>,
   TContextData,
 > {
@@ -1114,11 +1257,11 @@ export interface CustomCollectionCallbackSetters<
    */
   setCounter(
     counter: CustomCollectionCounter<
-      TParams,
+      TParam,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1130,12 +1273,12 @@ export interface CustomCollectionCallbackSetters<
    */
   setFirstCursor(
     cursor: CustomCollectionCursor<
-      TParams,
+      TParam,
       TContext,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1147,12 +1290,12 @@ export interface CustomCollectionCallbackSetters<
    */
   setLastCursor(
     cursor: CustomCollectionCursor<
-      TParams,
+      TParam,
       TContext,
       TContextData
     >,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1166,7 +1309,7 @@ export interface CustomCollectionCallbackSetters<
   authorize(
     predicate: ObjectAuthorizePredicate<TContextData, string>,
   ): CustomCollectionCallbackSetters<
-    TParams,
+    TParam,
     TContext,
     TContextData
   >;
@@ -1183,76 +1326,39 @@ export type ConstructorWithTypeId<TObject extends Object> =
   (new (...args: any[]) => TObject) & { typeId: URL };
 
 /**
- * Represents a path from the key of parameter objects.
- * @param Params - A record of parameters where keys are parameter names and
- *                 values are their string representations.
- * @returns A string representing the path with all parameters.
- * @example
- * ```ts
- * type UserPostPath = ParamsKeyPath<{ userId: string; postId: string }>;
- * let userPostPath: UserPostPath;
- * // userPostPath = "/posts/{postId}"; // invalid - does not contain `{userId}`
- * // userPostPath = "/users/{userId}"; // invalid - does not contain `{postId}`
- * userPostPath = "/users/{userId}/posts/{postId}"; // valid
- * userPostPath = "/posts/{postId}/users/{userId}"; // valid
- * ```
- */
-export type ParamsKeyPath<Params extends Record<string, string>> =
-  & ParamsPath<Extract<keyof Params, string>>
-  & string;
-
-/**
- * Represents a path with multiple parameters.
- * All permutations of the parameters are included in the union type.
- * The path must have all parameters in the form of `{paramName}`.
- * @param Params - A union of parameter names.
- * @returns A string representing the path with all parameters.
- * @example
- * ```ts
- * type UserPostPath = ParamsPath<"userId" | "postId">;
- * // = `${string}{userId}${string}` & `${string}{postId}${string}`
- * // =
- * //  | `${string}{userId}${string}{postId}${string}`
- * //  | `${string}{postId}${string}{userId}${string}`
- * let userPostPath: UserPostPath;
- * userPostPath = "/users/posts"; // ❌ invalid
- * userPostPath = "/users/{userId}"; // ❌ invalid
- * userPostPath = "/posts/{postId}"; // ❌ invalid
- * userPostPath = "/users/{userId}/posts/{postId}"; // ✅ valid
- * userPostPath = "/posts/{postId}/users/{userId}"; // ✅ valid
- */
-type ParamsPath<Params extends string> = UnionToIntersection<ParamPath<Params>>;
-/**
- * Represents a path with a single parameter.
- * The path must have at least one of the parameters in the form of `{paramName}`.
- * @param Param - The name of the parameter.
- * @returns A string representing the path with the parameter.
- * @example
- * ```ts
- * type UserPostPath = ParamPath<"userId" | "postId">;
- * // = `${string}{userId}${string}` | `${string}{postId}${string}`
- * let userPostPath: UserPostPath;
- * userPostPath = "/users/posts"; // ❌ invalid
- * userPostPath = "/users/{userId}"; // ✅ valid
- * userPostPath = "/posts/{postId}"; // ✅ valid
- * userPostPath = "/users/{userId}/posts/{postId}"; // ✅ valid
- * userPostPath = "/posts/{postId}/users/{userId}"; // ✅ valid
- */
-type ParamPath<Param extends string> = `${string}{${Param}}${string}`;
-/**
- * Converts union types to intersection types.
+ * Defines a union of all valid RFC 6570 URI Template expressions for a given
+ * parameter name.
  *
- * @template U - The union type to convert.
- * @returns The intersection type of the union.
+ * RFC 6570 specifies a syntax for URI templates, allowing for variable
+ * expansion. This type captures all Level 1-4 operator expressions for a
+ * single, named variable.
+ *
+ * The supported expression types are:
+ * - `{Param}`: Simple string expansion
+ * - `+{Param}`: Reserved string expansion
+ * - `#{Param}`: Fragment expansion
+ * - `{.Param}`: Label expansion with a dot-prefix
+ * - `{/Param}`: Path segment expansion
+ * - `{;Param}`: Path-style parameter expansion
+ * - `{?Param}`: Query component expansion
+ * - `{&Param}`: Query continuation expansion
+ *
+ * @template Param The name of the parameter to be used in the expressions.
  * @example
  * ```ts
- * type A = { a: string };
- * type B = { b: number };
- * type AorB = A | B;
- * type AandB = UnionToIntersection<AorB>;
- * // AandB = { a: string; b: number }
+ * type UserIdExpression = Rfc6570Expression<"userId">;
+ *
+ * // The variable `userPath` can be assigned any of the valid expressions.
+ * const userPath: UserIdExpression = "{/userId}";
+ * ```
+ * @see {@link https://tools.ietf.org/html/rfc6570} for the full specification.
  */
-type UnionToIntersection<U> =
-  (U extends unknown ? (x: U) => void : never) extends ((x: infer I) => void)
-    ? I
-    : never;
+export type Rfc6570Expression<Param extends string> =
+  | `{${Param}}`
+  | `{+${Param}}`
+  | `{#${Param}}`
+  | `{.${Param}}`
+  | `{/${Param}}`
+  | `{;${Param}}`
+  | `{?${Param}}`
+  | `{&${Param}}`;

@@ -1,4 +1,19 @@
 import {
+  Application,
+  Collection,
+  CryptographicKey,
+  generateCryptoKeyPair,
+  getAuthenticatedDocumentLoader,
+  type Link,
+  lookupObject,
+  Object as APObject,
+  type ResourceDescriptor,
+  respondWithObject,
+  traverseCollection,
+} from "@fedify/fedify";
+import type { DocumentLoader } from "@fedify/vocab-runtime";
+import { getLogger } from "@logtape/logtape";
+import {
   argument,
   choice,
   command,
@@ -18,30 +33,14 @@ import {
   withDefault,
 } from "@optique/core";
 import { path, print, printError } from "@optique/run";
-import {
-  Application,
-  Collection,
-  CryptographicKey,
-  type DocumentLoader,
-  generateCryptoKeyPair,
-  getAuthenticatedDocumentLoader,
-  type Link,
-  lookupObject,
-  Object as APObject,
-  type ResourceDescriptor,
-  respondWithObject,
-  traverseCollection,
-} from "@fedify/fedify";
-import { getLogger } from "@logtape/logtape";
-import ora from "ora";
-import * as colors from "@std/fmt/colors";
-import process from "node:process";
 import { createWriteStream, type WriteStream } from "node:fs";
+import process from "node:process";
+import ora from "ora";
 import { getContextLoader, getDocumentLoader } from "./docloader.ts";
-import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
-import { colorEnabled, formatObject } from "./utils.ts";
-import { renderImages } from "./imagerenderer.ts";
 import { configureLogging, debugOption } from "./globals.ts";
+import { renderImages } from "./imagerenderer.ts";
+import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
+import { colorEnabled, colors, formatObject } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "lookup"]);
 
@@ -69,7 +68,7 @@ const traverseOption = withDefault(
   object({
     traverse: flag("-t", "--traverse", {
       description:
-        message`Traverse the given collection to fetch all items. If it is turned on, the argument cannot be multiple.`,
+        message`Traverse the given collection(s) to fetch all items.`,
     }),
     suppressErrors: option("-S", "--suppress-errors", {
       description:
@@ -276,14 +275,8 @@ function handleTimeoutError(
 }
 
 export async function runLookup(command: InferValue<typeof lookupCommand>) {
-  // FIXME: Implement -t, --traverse when multiple URLs are provided
   if (command.urls.length < 1) {
     printError(message`At least one URL or actor handle must be provided.`);
-    process.exit(1);
-  } else if (command.traverse && command.urls.length > 1) {
-    printError(
-      message`The -t/--traverse option cannot be used with multiple arguments.`,
-    );
     process.exit(1);
   }
 
@@ -389,84 +382,103 @@ export async function runLookup(command: InferValue<typeof lookupCommand>) {
   }...`;
 
   if (command.traverse) {
-    const url = command.urls[0];
-    let collection: APObject | null;
-    try {
-      collection = await lookupObject(url, {
-        documentLoader: authLoader ?? documentLoader,
-        contextLoader,
-        userAgent: command.userAgent,
-      });
-    } catch (error) {
-      if (error instanceof TimeoutError) {
-        handleTimeoutError(spinner, command.timeout, url);
-      } else {
+    let totalItems = 0;
+
+    for (let urlIndex = 0; urlIndex < command.urls.length; urlIndex++) {
+      const url = command.urls[urlIndex];
+
+      if (urlIndex > 0) {
+        spinner.text = `Looking up collection ${
+          urlIndex + 1
+        }/${command.urls.length}...`;
+      }
+
+      let collection: APObject | null;
+      try {
+        collection = await lookupObject(url, {
+          documentLoader: authLoader ?? documentLoader,
+          contextLoader,
+          userAgent: command.userAgent,
+        });
+      } catch (error) {
+        if (error instanceof TimeoutError) {
+          handleTimeoutError(spinner, command.timeout, url);
+        } else {
+          spinner.fail(`Failed to fetch object: ${colors.red(url)}.`);
+          if (authLoader == null) {
+            printError(
+              message`It may be a private object.  Try with -a/--authorized-fetch.`,
+            );
+          }
+        }
+        await server?.close();
+        process.exit(1);
+      }
+      if (collection == null) {
         spinner.fail(`Failed to fetch object: ${colors.red(url)}.`);
         if (authLoader == null) {
           printError(
             message`It may be a private object.  Try with -a/--authorized-fetch.`,
           );
         }
+        await server?.close();
+        process.exit(1);
       }
-      await server?.close();
-      process.exit(1);
-    }
-    if (collection == null) {
-      spinner.fail(`Failed to fetch object: ${colors.red(url)}.`);
-      if (authLoader == null) {
-        printError(
-          message`It may be a private object.  Try with -a/--authorized-fetch.`,
+      if (!(collection instanceof Collection)) {
+        spinner.fail(
+          `Not a collection: ${colors.red(url)}.  ` +
+            "The -t/--traverse option requires a collection.",
         );
+        await server?.close();
+        process.exit(1);
       }
-      await server?.close();
-      process.exit(1);
-    }
-    if (!(collection instanceof Collection)) {
-      spinner.fail(
-        `Not a collection: ${colors.red(url)}.  ` +
-          "The -t/--traverse option requires a collection.",
-      );
-      await server?.close();
-      process.exit(1);
-    }
-    spinner.succeed(`Fetched collection: ${colors.green(url)}.`);
+      spinner.succeed(`Fetched collection: ${colors.green(url)}.`);
 
-    try {
-      let i = 0;
-      for await (
-        const item of traverseCollection(collection, {
-          documentLoader: authLoader ?? documentLoader,
-          contextLoader,
-          suppressError: command.suppressErrors,
-        })
-      ) {
-        if (!command.output && i > 0) print(message`${command.separator}`);
-        await writeObjectToStream(
-          item,
-          command.output,
-          command.format,
-          contextLoader,
-        );
-        i++;
-      }
-    } catch (error) {
-      logger.error("Failed to complete the traversal: {error}", { error });
-      if (error instanceof TimeoutError) {
-        handleTimeoutError(spinner, command.timeout);
-      } else {
-        spinner.fail("Failed to complete the traversal.");
-        if (authLoader == null) {
-          printError(
-            message`It may be a private object.  Try with -a/--authorized-fetch.`,
+      try {
+        let collectionItems = 0;
+        for await (
+          const item of traverseCollection(collection, {
+            documentLoader: authLoader ?? documentLoader,
+            contextLoader,
+            suppressError: command.suppressErrors,
+          })
+        ) {
+          if (!command.output && (totalItems > 0 || collectionItems > 0)) {
+            print(message`${command.separator}`);
+          }
+          await writeObjectToStream(
+            item,
+            command.output,
+            command.format,
+            contextLoader,
           );
-        } else {
-          printError(
-            message`Use the -S/--suppress-errors option to suppress partial errors.`,
-          );
+          collectionItems++;
+          totalItems++;
         }
+      } catch (error) {
+        logger.error("Failed to complete the traversal for {url}: {error}", {
+          url,
+          error,
+        });
+        if (error instanceof TimeoutError) {
+          handleTimeoutError(spinner, command.timeout, url);
+        } else {
+          spinner.fail(
+            `Failed to complete the traversal for: ${colors.red(url)}.`,
+          );
+          if (authLoader == null) {
+            printError(
+              message`It may be a private object.  Try with -a/--authorized-fetch.`,
+            );
+          } else {
+            printError(
+              message`Use the -S/--suppress-errors option to suppress partial errors.`,
+            );
+          }
+        }
+        await server?.close();
+        process.exit(1);
       }
-      await server?.close();
-      process.exit(1);
     }
     spinner.succeed("Successfully fetched all items in the collection.");
 
@@ -495,8 +507,7 @@ export async function runLookup(command: InferValue<typeof lookupCommand>) {
   try {
     objects = await Promise.all(promises);
   } catch (_error) {
-    //TODO: implement -a --authorized-fetch
-    // await server?.close();
+    await server?.close();
     process.exit(1);
   }
 

@@ -1,4 +1,4 @@
-import type { DocumentLoader } from "../runtime/docloader.ts";
+import type { DocumentLoader } from "@fedify/vocab-runtime";
 import type { KeyCache } from "../sig/key.ts";
 import { CryptographicKey, Multikey } from "../vocab/vocab.ts";
 import type { KvKey, KvStore } from "./kv.ts";

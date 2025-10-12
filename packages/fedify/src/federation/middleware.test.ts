@@ -9,8 +9,6 @@ import {
   assertThrows,
 } from "@std/assert";
 import fetchMock from "fetch-mock";
-import { getAuthenticatedDocumentLoader } from "../runtime/authdocloader.ts";
-import { fetchDocumentLoader } from "../runtime/docloader.ts";
 import { signRequest, verifyRequest } from "../sig/http.ts";
 import type { KeyCache } from "../sig/key.ts";
 import { detachSignature, signJsonLd, verifyJsonLd } from "../sig/ld.ts";
@@ -36,6 +34,10 @@ import {
   rsaPublicKey3,
 } from "../testing/keys.ts";
 import { test } from "../testing/mod.ts";
+import {
+  fetchDocumentLoader,
+  getAuthenticatedDocumentLoader,
+} from "../utils/docloader.ts";
 import { lookupObject } from "../vocab/lookup.ts";
 import { getTypeId } from "../vocab/type.ts";
 import * as vocab from "../vocab/vocab.ts";
@@ -59,7 +61,7 @@ test("createFederation()", async (t) => {
     assertThrows(() =>
       createFederation<number>({
         kv,
-        contextLoader: mockDocumentLoader,
+        contextLoaderFactory: () => mockDocumentLoader,
         allowPrivateAddress: true,
       }), TypeError);
     assertThrows(() =>
@@ -543,7 +545,7 @@ test({
         kv,
         origin: "https://ap.example.com",
         documentLoaderFactory: () => mockDocumentLoader,
-        contextLoader: mockDocumentLoader,
+        contextLoaderFactory: () => mockDocumentLoader,
       });
       const ctx = federation.createContext(
         new URL("https://example.com:1234/"),
@@ -1637,7 +1639,7 @@ test("FederationImpl.sendActivity()", async (t) => {
   const kv = new MemoryKvStore();
   const federation = new FederationImpl<void>({
     kv,
-    contextLoader: mockDocumentLoader,
+    contextLoaderFactory: () => mockDocumentLoader,
   });
   const context = federation.createContext(new URL("https://example.com/"));
 
@@ -2007,7 +2009,7 @@ test("ContextImpl.sendActivity()", async (t) => {
   const kv = new MemoryKvStore();
   const federation = new FederationImpl<void>({
     kv,
-    contextLoader: mockDocumentLoader,
+    contextLoaderFactory: () => mockDocumentLoader,
   });
 
   federation
@@ -2166,7 +2168,7 @@ test("ContextImpl.sendActivity()", async (t) => {
   };
   const federation2 = new FederationImpl<void>({
     kv,
-    contextLoader: mockDocumentLoader,
+    contextLoaderFactory: () => mockDocumentLoader,
     queue,
   });
   federation2
@@ -2621,7 +2623,7 @@ test("InboxContextImpl.forwardActivity()", async (t) => {
   const kv = new MemoryKvStore();
   const federation = new FederationImpl<void>({
     kv,
-    contextLoader: mockDocumentLoader,
+    contextLoaderFactory: () => mockDocumentLoader,
   });
 
   await t.step("skip", async () => {

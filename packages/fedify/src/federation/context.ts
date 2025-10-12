@@ -1,7 +1,7 @@
+import type { DocumentLoader } from "@fedify/vocab-runtime";
 import type { TracerProvider } from "@opentelemetry/api";
 import type { GetNodeInfoOptions } from "../nodeinfo/client.ts";
 import type { JsonValue, NodeInfo } from "../nodeinfo/types.ts";
-import type { DocumentLoader } from "../runtime/docloader.ts";
 import type { GetKeyOwnerOptions } from "../sig/owner.ts";
 import type { Actor, Recipient } from "../vocab/actor.ts";
 import type {
@@ -120,8 +120,7 @@ export interface Context<TContextData> {
    * @since 0.7.0
    */
   getObjectUri<TObject extends Object>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     values: Record<string, string>,
   ): URL;
 
@@ -483,8 +482,7 @@ export interface RequestContext<TContextData> extends Context<TContextData> {
    * @since 0.7.0
    */
   getObject<TObject extends Object>(
-    // deno-lint-ignore no-explicit-any
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
+    cls: ConstructorWithTypeId<TObject>,
     values: Record<string, string>,
   ): Promise<TObject | null>;
 
@@ -646,8 +644,7 @@ export type ParseUriResult =
    */
   | {
     readonly type: "object";
-    // deno-lint-ignore no-explicit-any
-    readonly class: (new (...args: any[]) => Object) & { typeId: URL };
+    readonly class: ConstructorWithTypeId<Object>;
     readonly typeId: URL;
     readonly values: Record<string, string>;
   }

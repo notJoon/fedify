@@ -10,6 +10,10 @@ To be released.
 
 ### @fedify/fedify
 
+ -  Remove `contextLoader` option (which was deprecated) from
+    `FederationOptions` interface in favor of `contextLoaderFactory` option
+    for better flexibility.  [[#376], [#445] by Hasang Cho]
+
  -  Migrated from *@phensley/language-tag* package and its `LanguageTag` class
     to the standardized `Intl.Locale` class for representing language tags.
     [[#280], [#392] by Jang Hanarae]
@@ -61,6 +65,22 @@ To be released.
         on the same server, fixing issues where activities were incorrectly
         deduplicated globally.
 
+ -  Separated modules from `@fedify/fedify/runtime` to improve modularity and
+    reduce coupling between vocabulary generation and core federation
+    functionality.  [[#444], [#451] by ChanHaeng Lee]
+
+     -  Modules related to ActivityPub vocabulary generation have been extracted
+        into the new `@fedify/vocab-runtime` package.
+     -  Other utility modules from `@fedify/fedify/runtime` have been
+        reorganized into the `@fedify/fedify/utils` directory within the main
+        package.
+     -  Updated import paths throughout the codebase to reflect the new module
+        organization.
+
+ -  The `KvCacheParameters.rules` option's type became
+    `[string | URL | URLPattern, Temporal.Duration | Temporal.DurationLike][]`
+    (was `[string | URL | URLPattern, Temporal.Duration][]`).
+
 [#280]: https://github.com/fedify-dev/fedify/issues/280
 [#366]: https://github.com/fedify-dev/fedify/issues/366
 [#376]: https://github.com/fedify-dev/fedify/issues/376
@@ -68,8 +88,15 @@ To be released.
 [#393]: https://github.com/fedify-dev/fedify/pulls/393
 [#433]: https://github.com/fedify-dev/fedify/pull/433
 [#434]: https://github.com/fedify-dev/fedify/pull/434
+[#444]: https://github.com/fedify-dev/fedify/issues/444
+[#445]: https://github.com/fedify-dev/fedify/pull/445
+[#451]: https://github.com/fedify-dev/fedify/pull/451
 
 ### @fedify/cli
+
+ -  The Fedify CLI now runs natively on Node.js and Bun without requiring
+    compiled binaries, providing a more natural JavaScript package experience
+    for Node.js and Bun users.  [[#374], [#456], [#457]]
 
  -  Updated `fedify init` command for better DX.
     [[#397], [#435] by Chanhaeng Lee]
@@ -79,8 +106,34 @@ To be released.
         to trash and continue the initialization from new created directory.
      -  Ask again if some options is not specified or invalid.
 
+ -  The `fedify lookup` command now supports multiple URLs with the
+    `-t`/`--traverse` option, allowing users to traverse multiple collections
+    in a single command.  [[#408], [#449] by Jiwon Kwon]
+
+[#374]: https://github.com/fedify-dev/fedify/issues/374
 [#397]: https://github.com/fedify-dev/fedify/issues/397
+[#408]: https://github.com/fedify-dev/fedify/issues/408
 [#435]: https://github.com/fedify-dev/fedify/issues/435
+[#449]: https://github.com/fedify-dev/fedify/pull/449
+[#456]: https://github.com/fedify-dev/fedify/issues/456
+[#457]: https://github.com/fedify-dev/fedify/pull/457
+
+### @fedify/vocab-runtime
+
+ -  Created ActivityPub vocabulary runtime as the *@fedify/vocab-runtime*
+    package.  Separated core vocabulary generation and processing modules
+    from the main *@fedify/fedify* package to improve modularity and reduce
+    coupling between vocabulary processing and federation functionality.
+    [[#444], [#451] by ChanHaeng Lee]
+
+     -  Extracted `DocumentLoader`, `RemoteDocument`, and related types from
+        the main package.
+     -  Moved cryptographic key processing utilities, e.g., `importSpki`,
+        `exportSpki`, `importMultibaseKey`, `exportMultibaseKey`.
+     -  Relocated multibase encoding/decoding functionality.
+     -  Separated language string processing (`LanguageString` class).
+     -  This package is primarily used by generated vocabulary classes and
+        provides the runtime infrastructure for ActivityPub object processing.
 
 
 Version 1.9.0
@@ -129,6 +182,25 @@ To be released.
     the need for manual `baseUrl` specification in most cases.  This improves
     interoperability with ActivityPub servers that emit relative URLs in
     properties like `icon.url` and `image.url`.  [[#411], [#443] by Jiwon Kwon]
+
+ -  Added TypeScript support for all [RFC 6570] URI Template expression types
+    in dispatcher path parameters.  Previously, only simple string expansion
+    (`{identifier}`) was supported in TypeScript types, while the runtime
+    already supported all RFC 6570 expressions.  Now TypeScript accepts all
+    expression types including `{+identifier}` (reserved string expansion,
+    recommended for URI identifiers), `{#identifier}` (fragment expansion),
+    `{.identifier}` (label expansion), `{/identifier}` (path segments),
+    `{;identifier}` (path-style parameters), `{?identifier}` (query component),
+    and `{&identifier}` (query continuation).  [[#426], [#446] by Jiwon Kwon]
+
+     -  Added `Rfc6570Expression<TParam>` type helper.
+     -  Updated all dispatcher path type parameters to accept RFC 6570
+        expressions: `setActorDispatcher()`, `setObjectDispatcher()`,
+        `setInboxDispatcher()`, `setOutboxDispatcher()`,
+        `setFollowingDispatcher()`, `setFollowersDispatcher()`,
+        `setLikedDispatcher()`, `setFeaturedDispatcher()`,
+        `setFeaturedTagsDispatcher()`, `setInboxListeners()`,
+        `setCollectionDispatcher()`, and `setOrderedCollectionDispatcher()`.
 
  -  Added inverse properties for collections to Vocabulary API.
     [[FEP-5711], [#373], [#381] by Jiwon Kwon]
@@ -188,6 +260,7 @@ To be released.
 
 [FEP-fe34]: https://w3id.org/fep/fe34
 [FEP-5711]: https://w3id.org/fep/5711
+[RFC 6570]: https://tools.ietf.org/html/rfc6570
 [OStatus 1.0 Draft 2]: https://www.w3.org/community/ostatus/wiki/images/9/93/OStatus_1.0_Draft_2.pdf
 [RFC 7033 Section 4.4.4.3]: https://datatracker.ietf.org/doc/html/rfc7033#section-4.4.4.3
 [#119]: https://github.com/fedify-dev/fedify/issues/119
@@ -200,11 +273,13 @@ To be released.
 [#404]: https://github.com/fedify-dev/fedify/pull/404
 [#407]: https://github.com/fedify-dev/fedify/pull/407
 [#411]: https://github.com/fedify-dev/fedify/issues/411
+[#426]: https://github.com/fedify-dev/fedify/issues/426
 [#429]: https://github.com/fedify-dev/fedify/issues/429
 [#431]: https://github.com/fedify-dev/fedify/pull/431
 [#440]: https://github.com/fedify-dev/fedify/issues/440
 [#441]: https://github.com/fedify-dev/fedify/issues/441
 [#443]: https://github.com/fedify-dev/fedify/pull/443
+[#446]: https://github.com/fedify-dev/fedify/pull/446
 
 ### @fedify/cli
 
@@ -266,6 +341,21 @@ To be released.
 
  -  Added CommonJS support alongside ESM for better compatibility with
     CommonJS-based Node.js applications.  [[#429], [#431]]
+
+### @fedify/koa
+
+ -  Created [Koa] integration as the *@fedify/koa* package.  [[#454], [#455]]
+
+     -  Added `createMiddleware()` function for integrating Fedify into Koa
+        applications.
+     -  Supports both Koa v2.x and v3.x via peer dependencies.
+     -  Converts between Koa's context-based API and Web Standards
+        Request/Response.
+     -  Builds for both npm (ESM/CJS) and JSR distribution.
+
+[Koa]: https://koajs.com/
+[#454]: https://github.com/fedify-dev/fedify/issues/454
+[#455]: https://github.com/fedify-dev/fedify/pull/455
 
 ### @fedify/next
 

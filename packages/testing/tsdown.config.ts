@@ -9,7 +9,7 @@ export default defineConfig({
     "@fedify/fedify",
     "@fedify/fedify/federation",
     "@fedify/fedify/nodeinfo",
-    "@fedify/fedify/runtime",
+    "@fedify/fedify/utils",
     "@fedify/fedify/vocab",
     "@fedify/fedify/webfinger",
     "@opentelemetry/api",

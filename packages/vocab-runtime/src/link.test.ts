@@ -1,6 +1,6 @@
 // Borrowed from https://github.com/hugoalh/http-header-link-es
 import { deepStrictEqual, throws } from "node:assert";
-import { test } from "../testing/mod.ts";
+import { test } from "node:test";
 import { HttpHeaderLink } from "./link.ts";
 
 test("String Good 1", () => {

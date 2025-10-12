@@ -1,8 +1,8 @@
-import { getLogger } from "@logtape/logtape";
 import type {
   DocumentLoaderOptions,
   RemoteDocument,
-} from "../runtime/docloader.ts";
+} from "@fedify/vocab-runtime";
+import { getLogger } from "@logtape/logtape";
 
 const logger = getLogger(["fedify", "testing", "docloader"]);
 
