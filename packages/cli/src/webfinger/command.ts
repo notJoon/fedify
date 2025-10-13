@@ -41,9 +41,12 @@ export const webFingerCommand = command(
   merge(
     object({
       command: constant("webfinger"),
-      resources: multiple(argument(string({ metavar: "RESOURCE" }), {
-        description: message`WebFinger resource(s) to look up.`,
-      })),
+      resources: multiple(
+        argument(string({ metavar: "RESOURCE" }), {
+          description: message`WebFinger resource(s) to look up.`,
+        }),
+        { min: 1 },
+      ),
       userAgent,
       allowPrivateAddresses,
       maxRedirection,
@@ -51,8 +54,10 @@ export const webFingerCommand = command(
     debugOption,
   ),
   {
-    description:
-      message`Look up WebFinger resources. The argument can be multiple.`,
+    brief: message`Look up WebFinger resources.`,
+    description: message`Look up WebFinger resources.
+
+The argument can be multiple.`,
   },
 );
 

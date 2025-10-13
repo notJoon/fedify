@@ -28,6 +28,7 @@ import {
   object,
   option,
   optional,
+  optionNames,
   or,
   string,
   withDefault,
@@ -54,8 +55,9 @@ export const authorizedFetchOption = withDefault(
         "--first-knock",
         choice(["draft-cavage-http-signatures-12", "rfc9421"]),
         {
-          description:
-            message`The first-knock spec for -a/--authorized-fetch. It is used for the double-knocking technique.`,
+          description: message`The first-knock spec for ${
+            optionNames(["-a", "--authorized-fetch"])
+          }. It is used for the double-knocking technique.`,
         },
       ),
       "draft-cavage-http-signatures-12" as const,
@@ -147,8 +149,11 @@ export const lookupCommand = command(
     }),
   ),
   {
+    brief: message`Look up Activity Streams objects.`,
     description:
-      message`Lookup an Activity Streams object by URL or the actor handle. The argument can be either a URL or an actor handle (e.g., @username@domain), and it can be multiple.`,
+      message`Look up Activity Streams objects by URL or actor handle.
+
+The arguments can be either URLs or actor handles (e.g., ${"@username@domain"}), and they can be multiple.`,
   },
 );
 

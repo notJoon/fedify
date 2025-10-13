@@ -79,7 +79,7 @@ export const inboxCommand = command(
         multiple(
           option("-a", "--accept-follow", string({ metavar: "URI" }), {
             description:
-              message`Accept follow requests from the given actor. The argument can be either an actor URI or a handle, or a wildcard (*). Can be specified multiple times. If a wildcard is specified, all follow requests will be accepted.`,
+              message`Accept follow requests from the given actor. The argument can be either an actor URI or a handle, or a wildcard (${"*"}). Can be specified multiple times. If a wildcard is specified, all follow requests will be accepted.`,
           }),
         ),
       ),
@@ -107,6 +107,7 @@ export const inboxCommand = command(
     debugOption,
   ),
   {
+    brief: message`Run an ephemeral ActivityPub inbox server.`,
     description:
       message`Spins up an ephemeral server that serves the ActivityPub inbox with an one-time actor, through a short-lived public DNS with HTTPS. You can monitor the incoming activities in real-time.`,
   },
