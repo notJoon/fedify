@@ -98,6 +98,11 @@ To be released.
     compiled binaries, providing a more natural JavaScript package experience
     for Node.js and Bun users.  [[#374], [#456], [#457]]
 
+ -  Added `fedify generate-vocab` command to generate Activity Vocabulary
+    classes from schema files.  This command uses the new *@fedify/vocab-tools*
+    package internally and allows users to extend Activity Vocabulary with
+    custom types.  [[#444], [#458] by ChanHaeng Lee]
+
  -  Updated `fedify init` command for better DX.
     [[#397], [#435] by Chanhaeng Lee]
 
@@ -117,6 +122,22 @@ To be released.
 [#449]: https://github.com/fedify-dev/fedify/pull/449
 [#456]: https://github.com/fedify-dev/fedify/issues/456
 [#457]: https://github.com/fedify-dev/fedify/pull/457
+[#458]: https://github.com/fedify-dev/fedify/pull/458
+
+### @fedify/vocab-tools
+
+ -  Created Activity Vocabulary code generator as the *@fedify/vocab-tools*
+    package.  Separated vocabulary code generation tools from the main
+    *@fedify/fedify* package to improve modularity and enable custom vocabulary
+    extensions across different JavaScript runtimes.
+    [[#444], [#458] by ChanHaeng Lee]
+
+     -  Made the code generator runtime-agnostic, supporting Deno, Node.js,
+        and Bun environments.
+     -  Provides programmatic API for generating vocabulary classes from
+        schema files.
+     -  Integrated with `fedify generate-vocab` CLI command.
+     -  Published to both npm and JSR for broad ecosystem compatibility.
 
 ### @fedify/vocab-runtime
 

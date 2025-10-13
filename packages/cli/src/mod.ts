@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 import { or } from "@optique/core";
 import { run } from "@optique/run";
+import {
+  generateVocabCommand,
+  runGenerateVocab,
+} from "./generate-vocab/mod.ts";
 import { inboxCommand, runInbox } from "./inbox.tsx";
 import { initCommand, runInit } from "./init/mod.ts";
 import { lookupCommand, runLookup } from "./lookup.ts";
@@ -15,6 +19,7 @@ const command = or(
   inboxCommand,
   nodeInfoCommand,
   tunnelCommand,
+  generateVocabCommand,
 );
 
 async function main() {
@@ -39,6 +44,9 @@ async function main() {
   }
   if (result.command === "tunnel") {
     await runTunnel(result);
+  }
+  if (result.command === "generate-vocab") {
+    await runGenerateVocab(result);
   }
 }
 
