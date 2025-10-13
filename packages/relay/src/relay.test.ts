@@ -126,7 +126,7 @@ describe("MastodonRelay", () => {
     ok(response instanceof Response);
   });
 
-  test("fetching relay actor returns Application", async () => {
+  test("fetching relay actor returns Service", async () => {
     const kv = new MemoryKvStore();
     const relay = new MastodonRelay({
       kv,
@@ -141,7 +141,7 @@ describe("MastodonRelay", () => {
 
     strictEqual(response.status, 200);
     const json = await response.json() as any;
-    strictEqual(json.type, "Application");
+    strictEqual(json.type, "Service");
     strictEqual(json.preferredUsername, "relay");
     strictEqual(json.name, "ActivityPub Relay");
   });
@@ -397,7 +397,7 @@ describe("MastodonRelay", () => {
     strictEqual(response.status, 200);
     const json = await response.json() as any;
 
-    strictEqual(json.type, "Application");
+    strictEqual(json.type, "Service");
     strictEqual(json.preferredUsername, "relay");
     strictEqual(json.name, "ActivityPub Relay");
     strictEqual(
@@ -405,13 +405,11 @@ describe("MastodonRelay", () => {
       "Mastodon-compatible ActivityPub relay server",
     );
     strictEqual(json.id, "https://relay.example.com/users/relay");
-    strictEqual(json.inbox, "https://relay.example.com/users/relay/inbox");
+    strictEqual(json.inbox, "https://relay.example.com/inbox");
     strictEqual(
       json.followers,
       "https://relay.example.com/users/relay/followers",
     );
-    ok(json.endpoints);
-    strictEqual(json.endpoints.sharedInbox, "https://relay.example.com/inbox");
   });
 
   test("multiple followers can be stored", async () => {
