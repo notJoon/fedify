@@ -124,6 +124,22 @@ To be released.
 [#457]: https://github.com/fedify-dev/fedify/pull/457
 [#458]: https://github.com/fedify-dev/fedify/pull/458
 
+### @fedify/relay
+
+ -  Created ActivityPub relay integration as the *@fedify/relay* package.
+    [[#359], [#459] by Jiwon Kwon]
+
+     -  Added `Relay` interface defining the common contract for relay
+        implementations.
+     -  Added `MastodonRelay` class implementing Mastodon-compatible relay
+        protocol with:
+     -  Added `SubscriptionRequestHandler` type for custom subscription approval
+        logic.
+     -  Added `RelayOptions` interface for relay configuration.
+
+[#359]: https://github.com/fedify-dev/fedify/issues/359
+[#459]: https://github.com/fedify-dev/fedify/pull/459
+
 ### @fedify/vocab-tools
 
  -  Created Activity Vocabulary code generator as the *@fedify/vocab-tools*
