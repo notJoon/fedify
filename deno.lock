@@ -9,6 +9,7 @@
     "jsr:@denorg/scrypt@4.4.4": "4.4.4",
     "jsr:@es-toolkit/es-toolkit@^1.39.5": "1.39.10",
     "jsr:@hongminhee/localtunnel@0.3": "0.3.0",
+    "jsr:@hongminhee/x-forwarded-fetch@*": "0.2.0",
     "jsr:@hongminhee/x-forwarded-fetch@0.2": "0.2.0",
     "jsr:@hono/hono@^4.7.1": "4.9.10",
     "jsr:@hono/hono@^4.8.3": "4.9.10",

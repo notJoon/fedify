@@ -6,19 +6,19 @@ import {
   generateCryptoKeyPair,
   importJwk,
   type KvStore,
+  type MessageQueue,
 } from "@fedify/fedify";
 import {
   Accept,
   type Actor,
-  Application,
   Create,
   Delete,
-  Endpoints,
   Follow,
   isActor,
   Move,
   Object,
   Reject,
+  Service,
   Undo,
   Update,
 } from "@fedify/fedify/vocab";
@@ -46,6 +46,7 @@ export interface RelayOptions {
   documentLoaderFactory?: DocumentLoaderFactory;
   authenticatedDocumentLoaderFactory?: AuthenticatedDocumentLoaderFactory;
   federation?: Federation<void>;
+  queue?: MessageQueue;
 }
 
 /**
@@ -74,6 +75,7 @@ export class MastodonRelay implements Relay {
     this.#options = options;
     this.#federation = options.federation ?? createFederation<void>({
       kv: options.kv,
+      queue: options.queue,
       documentLoaderFactory: options.documentLoaderFactory,
       authenticatedDocumentLoaderFactory:
         options.authenticatedDocumentLoaderFactory,
@@ -84,15 +86,12 @@ export class MastodonRelay implements Relay {
       async (ctx, identifier) => {
         if (identifier !== RELAY_SERVER_ACTOR) return null;
         const keys = await ctx.getActorKeyPairs(identifier);
-        return new Application({
+        return new Service({
           id: ctx.getActorUri(identifier),
           preferredUsername: identifier,
           name: "ActivityPub Relay",
           summary: "Mastodon-compatible ActivityPub relay server",
-          inbox: ctx.getInboxUri(identifier),
-          endpoints: new Endpoints({
-            sharedInbox: ctx.getInboxUri(),
-          }),
+          inbox: ctx.getInboxUri(), // This should be sharedInboxUri
           followers: ctx.getFollowersUri(identifier),
           url: ctx.getActorUri(identifier),
           publicKey: keys[0].cryptographicKey,
@@ -144,14 +143,16 @@ export class MastodonRelay implements Relay {
 
         const activityIds = await options.kv.get<string[]>(["followers"]) ??
           [];
+
         const actors: Actor[] = [];
         for (const activityId of activityIds) {
           const actorJson = await options.kv.get(["follower", activityId]);
+
           const actor = await Object.fromJsonLd(actorJson);
           if (!isActor(actor)) continue;
+
           actors.push(actor);
         }
-
         return { items: actors };
       },
     );
@@ -184,9 +185,10 @@ export class MastodonRelay implements Relay {
           const followers = await options.kv.get<string[]>(["followers"]) ?? [];
           followers.push(follow.id.href);
           await options.kv.set(["followers"], followers);
+
           await options.kv.set(
             ["follower", follow.id.href],
-            recipient.toJsonLd(),
+            await recipient.toJsonLd(),
           );
 
           await ctx.sendActivity(
@@ -230,28 +232,64 @@ export class MastodonRelay implements Relay {
           );
         }
       })
-      .on(Create, async (ctx) => {
+      .on(Create, async (ctx, create) => {
+        const sender = await create.getActor(ctx);
+        // Exclude the sender's origin to prevent forwarding back to them
+        const excludeBaseUris = sender?.id ? [new URL(sender.id)] : [];
+
         await ctx.forwardActivity(
           { identifier: RELAY_SERVER_ACTOR },
           "followers",
+          {
+            skipIfUnsigned: true,
+            excludeBaseUris,
+            preferSharedInbox: true,
+          },
         );
       })
-      .on(Update, async (ctx) => {
+      .on(Delete, async (ctx, deleteActivity) => {
+        const sender = await deleteActivity.getActor(ctx);
+        // Exclude the sender's origin to prevent forwarding back to them
+        const excludeBaseUris = sender?.id ? [new URL(sender.id)] : [];
+
         await ctx.forwardActivity(
           { identifier: RELAY_SERVER_ACTOR },
           "followers",
+          {
+            skipIfUnsigned: true,
+            excludeBaseUris,
+            preferSharedInbox: true,
+          },
         );
       })
-      .on(Move, async (ctx) => {
+      .on(Move, async (ctx, deleteActivity) => {
+        const sender = await deleteActivity.getActor(ctx);
+        // Exclude the sender's origin to prevent forwarding back to them
+        const excludeBaseUris = sender?.id ? [new URL(sender.id)] : [];
+
         await ctx.forwardActivity(
           { identifier: RELAY_SERVER_ACTOR },
           "followers",
+          {
+            skipIfUnsigned: true,
+            excludeBaseUris,
+            preferSharedInbox: true,
+          },
         );
       })
-      .on(Delete, async (ctx) => {
+      .on(Update, async (ctx, deleteActivity) => {
+        const sender = await deleteActivity.getActor(ctx);
+        // Exclude the sender's origin to prevent forwarding back to them
+        const excludeBaseUris = sender?.id ? [new URL(sender.id)] : [];
+
         await ctx.forwardActivity(
           { identifier: RELAY_SERVER_ACTOR },
           "followers",
+          {
+            skipIfUnsigned: true,
+            excludeBaseUris,
+            preferSharedInbox: true,
+          },
         );
       });
   }
