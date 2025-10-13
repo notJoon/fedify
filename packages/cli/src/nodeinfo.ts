@@ -44,21 +44,23 @@ const nodeInfoOption = optional(
     object({
       bestEffort: optional(flag("-b", "--best-effort", {
         description:
-          message`Parse the NodeInfo document with best effort. If the NodeInfo document is not well-formed, the option will try to parse it as much as possible.`,
+          message`Parse the NodeInfo document with best effort.  If the NodeInfo document is not well-formed, the option will try to parse it as much as possible.`,
       })),
       noFavicon: optional(flag("--no-favicon", {
         description: message`Disable fetching the favicon of the instance`,
       })),
       metadata: optional(flag("-m", "--metadata", {
         description:
-          message`show the extra metadata of the NodeInfo, i.e., the metadata field of the document.`,
+          message`Show the extra metadata of the NodeInfo, i.e., the metadata field of the document.`,
       })),
     }),
   ),
 );
 
 const userAgentOption = optional(object({
-  userAgent: option("-u", "--user-agent", string()),
+  userAgent: option("-u", "--user-agent", string(), {
+    description: message`The custom User-Agent header value.`,
+  }),
 }));
 
 export const nodeInfoCommand = Command(
@@ -66,7 +68,7 @@ export const nodeInfoCommand = Command(
   merge(
     object({
       command: constant("nodeinfo"),
-      host: argument(string({ metavar: "hostname or URL" }), {
+      host: argument(string({ metavar: "HOST" }), {
         description: message`Bare hostname or a full URL of the instance`,
       }),
     }),
@@ -75,8 +77,12 @@ export const nodeInfoCommand = Command(
     userAgentOption,
   ),
   {
+    brief:
+      message`Get information about a remote node using the NodeInfo protocol`,
     description:
-      message`Get information about a remote node using the NodeInfo protocol. The argument is the hostname of the remote node, or the URL of the remote node.`,
+      message`Get information about a remote node using the NodeInfo protocol.
+
+The argument is the hostname of the remote node, or the URL of the remote node.`,
   },
 );
 

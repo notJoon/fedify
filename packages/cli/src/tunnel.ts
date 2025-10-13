@@ -32,18 +32,22 @@ export const tunnelCommand = command(
         option(
           "-s",
           "--service",
-          choice(["localhost.run", "serveo.net", "pinggy.io"]),
-          {
-            description: message`The localtunnel service to use.`,
-          },
+          choice(["localhost.run", "serveo.net", "pinggy.io"], {
+            metavar: "SERVICE",
+          }),
+          { description: message`The tunneling service to use.` },
         ),
       ),
     }),
     debugOption,
   ),
   {
+    brief:
+      message`Expose a local HTTP server to the public internet using a secure tunnel.`,
     description:
-      message`Expose a local HTTP server to the public internet using a secure tunnel.\nNote that the HTTP requests through the tunnel have X-Forwarded-* headers.`,
+      message`Expose a local HTTP server to the public internet using a secure tunnel.
+
+Note that the HTTP requests through the tunnel have X-Forwarded-* headers.`,
   },
 );
 
