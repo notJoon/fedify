@@ -11,12 +11,12 @@ import { path } from "@optique/run";
 const schemaDir = option(
   "-i",
   "--input",
-  path({ metavar: "DIR" }),
+  path({ metavar: "DIR", type: "directory", mustExist: true }),
 );
 const generatedPath = option(
   "-o",
   "--output",
-  path({ metavar: "PATH" }),
+  path({ metavar: "PATH", type: "file", allowCreate: true }),
 );
 
 const generateVocabCommand = command(
@@ -27,7 +27,7 @@ const generateVocabCommand = command(
     generatedPath,
   }),
   {
-    description: message`Generate Vocabulary Classes from Schema Files`,
+    description: message`Generate vocabulary classes from schema files.`,
   },
 );
 
