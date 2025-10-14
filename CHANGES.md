@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.9.0
 -------------
 
-To be released.
+Released on October 14, 2025.
 
 ### @fedify/fedify
 
