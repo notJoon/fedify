@@ -163,10 +163,11 @@ To be released.
  -  Added `-T`/`--timeout` option to `fedify lookup` command. This option allows
     users to specify timeout in seconds for network requests to prevent
     hanging on slow or unresponsive servers.
-    [[#258] by Hyunchae Kim]
+    [[#258], [#372] by Hyunchae Kim]
 
 [#353]: https://github.com/fedify-dev/fedify/issues/353
 [#365]: https://github.com/fedify-dev/fedify/pull/365
+[#372]: https://github.com/fedify-dev/fedify/pull/372
 
 ### @fedify/amqp
 
