@@ -59,7 +59,6 @@
     "build": "tsdown",
     "prepack": "tsdown",
     "prepublish": "tsdown",
-    "test": "tsdown && node --experimental-transform-types --test",
-    "test:bun": "tsdown && bun test --timeout 15000"
+    "test": "tsdown && node --experimental-transform-types --test"
   }
 }

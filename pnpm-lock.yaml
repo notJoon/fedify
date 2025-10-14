@@ -114,6 +114,9 @@ importers:
       '@fedify/express':
         specifier: 'workspace:'
         version: link:../packages/express
+      '@fedify/fastify':
+        specifier: 'workspace:'
+        version: link:../packages/fastify
       '@fedify/fedify':
         specifier: 'workspace:'
         version: link:../packages/fedify
@@ -207,6 +210,9 @@ importers:
       express:
         specifier: 'catalog:'
         version: 4.21.2
+      fastify:
+        specifier: 'catalog:'
+        version: 5.6.1
       h3:
         specifier: 'catalog:'
         version: 1.15.3
