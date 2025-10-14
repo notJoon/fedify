@@ -195,6 +195,21 @@ To be released.
  -  Added CommonJS support alongside ESM for better compatibility with
     CommonJS-based Node.js applications.  [[#429], [#431]]
 
+### @fedify/fastify
+
+ -  Created [Fastify] integration as the *@fedify/fastify* package.
+    [[#151], [#450] by An Subin]
+
+     -  Added `fedifyPlugin()` function for integrating Fedify into Fastify
+        applications.
+     -  Converts between Fastify's request/reply API and Web Standards
+        `Request`/`Response`.
+     -  Supports both ESM and CommonJS for broad Node.js compatibility.
+
+[Fastify]: https://fastify.dev/
+[#151]: https://github.com/fedify-dev/fedify/issues/151
+[#450]: https://github.com/fedify-dev/fedify/pull/450
+
 ### @fedify/h3
 
  -  Added CommonJS support alongside ESM for better compatibility with
