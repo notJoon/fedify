@@ -1,3 +1,4 @@
+import { fedifyPlugin } from "@fedify/fastify";
 import {
   createFederation,
   MemoryKvStore,
@@ -7,7 +8,6 @@ import {
 import Fastify from "fastify";
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { fedifyPlugin } from "./index.ts";
 
 test("Fedify should handle requests successfully", async () => {
   const fastify = Fastify({ logger: false });

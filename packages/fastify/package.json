@@ -30,6 +30,11 @@
         "types": "./dist/index.d.ts",
         "import": "./dist/index.js",
         "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "import": "./dist/index.cjs",
+        "default": "./dist/index.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -54,9 +59,7 @@
     "build": "tsdown",
     "prepack": "tsdown",
     "prepublish": "tsdown",
-    "test": "deno test --allow-all",
-    "test:node": "tsdown && node --experimental-transform-types --test",
-    "test:bun": "tsdown && bun test --timeout 15000",
-    "test-all": "pnpm build && pnpm test && pnpm test:node && pnpm test:bun"
+    "test": "tsdown && node --experimental-transform-types --test",
+    "test:bun": "tsdown && bun test --timeout 15000"
   }
 }
