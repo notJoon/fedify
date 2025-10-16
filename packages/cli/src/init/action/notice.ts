@@ -1,4 +1,4 @@
-import { message } from "@optique/core";
+import { message, text } from "@optique/core";
 import { print, printError } from "@optique/run";
 import { flow } from "es-toolkit";
 import { colors, type RequiredNotNull } from "../../utils.ts";
@@ -80,13 +80,15 @@ export const noticeConfigEnv = () =>
   printMessage`Note that you probably want to edit the ${".env"} file.
 It currently contains the following values:\n`;
 
-export const noticeEnvKeyValue = ([key, value]: [string, string]) =>
-  printMessage`  ${key}=${value}`;
+export const noticeEnvKeyValue = ([key, value]: [string, string]) => {
+  const keyValueMessage = `  ${key}='${value}'`;
+  printMessage`${text(keyValueMessage)}`;
+};
 
 export function noticeHowToRun(
   { initializer: { instruction, federationFile } }: InitCommandData,
 ) {
-  printMessage`${instruction}`;
+  printMessage`${text(instruction)}`;
   printMessage`Start by editing the ${federationFile} file to define your federation!
 `;
 }
