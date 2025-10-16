@@ -81,16 +81,17 @@ export const noticeConfigEnv = () =>
 It currently contains the following values:\n`;
 
 export const noticeEnvKeyValue = ([key, value]: [string, string]) => {
-  const keyValueMessage = `  ${key}='${value}'`;
-  printMessage`${text(keyValueMessage)}`;
+  printMessage`${text(`  ${key}='${value}'`)}`;
 };
 
 export function noticeHowToRun(
   { initializer: { instruction, federationFile } }: InitCommandData,
 ) {
-  printMessage`${text(instruction)}`;
-  printMessage`Start by editing the ${federationFile} file to define your federation!
-`;
+  print(message`
+${instruction}
+    
+Start by editing the ${federationFile} file to define your federation!
+`);
 }
 
 export function noticeErrorWhileAddDeps(command: string[]) {

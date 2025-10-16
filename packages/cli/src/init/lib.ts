@@ -10,13 +10,15 @@ import {
   when,
 } from "@fxts/core";
 import { getLogger } from "@logtape/logtape";
-import { dirname, join as joinPath } from "node:path";
+import type { Message } from "@optique/core";
+import { commandLine, message } from "@optique/core/message";
 import { toMerged } from "es-toolkit";
 import { readFileSync } from "node:fs";
 import { mkdir, readdir, writeFile } from "node:fs/promises";
+import { dirname, join as joinPath } from "node:path";
 import process from "node:process";
 import metadata from "../../deno.json" with { type: "json" };
-import { colors, isNotFoundError, runSubCommand } from "../utils.ts";
+import { isNotFoundError, runSubCommand } from "../utils.ts";
 import kv from "./json/kv.json" with { type: "json" };
 import mq from "./json/mq.json" with { type: "json" };
 import pm from "./json/pm.json" with { type: "json" };
@@ -108,31 +110,20 @@ export const readTemplate: (templatePath: string) => string = (
 
 export const getInstruction: (
   packageManager: PackageManager,
-) => string = (pm) => `
+) => Message = (pm) =>
+  message`
 To start the server, run the following command:
 
-  ${getDevCommand(pm)}
+  ${commandLine(getDevCommand(pm))}
 
 Then, try look up an actor from your server:
 
-  ${
-  colors.bold(colors.green(
-    "fedify lookup http://localhost:8000/users/john",
-  ))
-}
+  ${commandLine("fedify lookup http://localhost:8000/users/john")}
 
 `;
 
 const getDevCommand = (pm: PackageManager) =>
-  colors.bold(
-    colors.green(
-      pm === "deno"
-        ? "deno task dev"
-        : pm === "bun"
-        ? "bun dev"
-        : `${pm} run dev`,
-    ),
-  );
+  pm === "deno" ? "deno task dev" : pm === "bun" ? "bun dev" : `${pm} run dev`;
 
 async function isCommandAvailable(
   { checkCommand, outputPattern }: {
