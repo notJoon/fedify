@@ -1,4 +1,5 @@
 import { pipe } from "@fxts/core";
+import { message } from "@optique/core";
 import { replace } from "../utils.ts";
 import { PACKAGE_MANAGER } from "./const.ts";
 import {
@@ -31,7 +32,7 @@ const webFrameworks: WebFrameworks = {
           "x-forwarded-fetch": "^0.2.0",
         },
       devDependencies: pm === "bun" ? { "@types/bun": "^1.1.6" } : {},
-      federationFile: "src/federation.ts",
+      federationFile: message`src/federation.ts`,
       loggingFile: "src/logging.ts",
       files: {
         "src/app.tsx": pipe(
@@ -87,7 +88,7 @@ const webFrameworks: WebFrameworks = {
         "@types/express": "^4.17.21",
         ...(pm === "bun" ? { "@types/bun": "^1.1.6" } : {}),
       },
-      federationFile: "src/federation.ts",
+      federationFile: message`src/federation.ts`,
       loggingFile: "src/logging.ts",
       files: {
         "src/app.ts": readTemplate("express/app.ts")
@@ -121,7 +122,7 @@ const webFrameworks: WebFrameworks = {
     init: (_, pm) => ({
       command: getNitroInitCommand(pm),
       dependencies: { "@fedify/h3": PACKAGE_VERSION },
-      federationFile: "server/federation.ts",
+      federationFile: message`server/federation.ts`,
       loggingFile: "server/logging.ts",
       files: {
         "server/middleware/federation.ts": readTemplate(
@@ -141,7 +142,7 @@ const webFrameworks: WebFrameworks = {
       command: getNextInitCommand(pm),
       dependencies: { "@fedify/next": PACKAGE_VERSION },
       devDependencies: { "@types/node": "^20.11.2" },
-      federationFile: "federation/index.ts",
+      federationFile: message`federation/index.ts`,
       loggingFile: "logging.ts",
       files: { "middleware.ts": readTemplate("next/middleware.ts") },
       instruction: getInstruction(pm),
