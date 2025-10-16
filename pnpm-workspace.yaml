@@ -4,7 +4,9 @@ packages:
 - packages/cli
 - packages/elysia
 - packages/express
+- packages/fastify
 - packages/fedify
+- packages/h3
 - packages/h3
 - packages/hono
 - packages/koa
@@ -23,6 +25,7 @@ packages:
 - examples/express
 - examples/koa
 - examples/next-integration
+- examples/fastify
 - examples/next14-app-router
 - examples/next15-app-router
 - examples/sveltekit-sample
@@ -48,6 +51,8 @@ catalog:
   elysia: ^1.3.8
   es-toolkit: 1.39.10
   express: ^4.0.0
+  fastify-plugin: ^5.0.1
+  fastify: ^5.2.0
   fetch-mock: ^12.5.4
   h3: ^1.15.0
   hono: ^4.0.0
