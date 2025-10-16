@@ -1,3 +1,4 @@
+import { DenoKvMessageQueue, DenoKvStore } from "@fedify/denokv";
 import { createFederation } from "@fedify/fedify/federation";
 import {
   Accept,
@@ -13,7 +14,6 @@ import {
   Person,
   Undo,
 } from "@fedify/fedify/vocab";
-import { DenoKvMessageQueue, DenoKvStore } from "@fedify/fedify/x/denokv";
 import { getLogger } from "@logtape/logtape";
 import { dirname, join } from "@std/path";
 import { getBlog } from "../models/blog.ts";

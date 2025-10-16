@@ -3,7 +3,6 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_app from "./routes/_app.tsx";
-import * as $_middleware from "./routes/_middleware.ts";
 import * as $followers from "./routes/followers.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $posts_uuid_ from "./routes/posts/[uuid].tsx";
@@ -15,7 +14,6 @@ import type { Manifest } from "$fresh/server.ts";
 const manifest = {
   routes: {
     "./routes/_app.tsx": $_app,
-    "./routes/_middleware.ts": $_middleware,
     "./routes/followers.tsx": $followers,
     "./routes/index.tsx": $index,
     "./routes/posts/[uuid].tsx": $posts_uuid_,
