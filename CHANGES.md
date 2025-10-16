@@ -82,8 +82,7 @@ To be released.
     (was `[string | URL | URLPattern, Temporal.Duration][]`).
 
  -  The `@fedify/fedify/x/*` modules are removed.  Also, there are no Fresh 
-    integration for now. Therefore, `blog` example is removed while the
-    integration is being reworked.  [[#391] by Chanhaeng Lee]
+    integration for now. [[#391] by Chanhaeng Lee]
 
      -  Removed `@fedify/fedify/x/cfworkers` in favor of `@fedify/cfworkers`.
      -  Removed `@fedify/fedify/x/denokv` in favor of `@fedify/denokv`.
