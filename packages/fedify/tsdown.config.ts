@@ -13,9 +13,6 @@ export default [
       "./src/sig/mod.ts",
       "./src/vocab/mod.ts",
       "./src/webfinger/mod.ts",
-      "./src/x/cfworkers.ts",
-      "./src/x/hono.ts",
-      "./src/x/sveltekit.ts",
     ],
     dts: true,
     format: ["esm", "cjs"],
@@ -40,10 +37,6 @@ export default [
     entry: [
       "./src/testing/mod.ts",
       ...(await Array.fromAsync(glob(`src/**/*.test.ts`)))
-        .filter((f) =>
-          !f.startsWith(`src${sep}codegen${sep}`) &&
-          f !== `src${sep}x${sep}denokv.test.ts`
-        )
         .map((f) => f.replace(sep, "/")),
     ],
     dts: true,
