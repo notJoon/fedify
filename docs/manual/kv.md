@@ -133,10 +133,6 @@ const federation = createFederation<void>({
 
 ### `DenoKvStore` (Deno only)
 
-> [!WARNING]
-> The `@fedify/fedify/x/denokv` module is deprecated and will be removed in
-> Fedify 2.0.0.  Please use the [`@fedify/denokv`] package instead.
-
 To use the [`DenoKvStore`], you need to install the *@fedify/denokv* package
 first:
 
@@ -296,10 +292,6 @@ const federation = createFederation<void>({
 ### `WorkersKvStore` (Cloudflare Workers only)
 
 *This API is available since Fedify 1.6.0.*
-
-> [!WARNING]
-> The `@fedify/fedify/x/cfworkers` module is deprecated and will be removed in
-> Fedify 2.0.0.  Please use the [`@fedify/cfworkers`] package instead.
 
 To use the [`WorkersKvStore`], you need to install the *@fedify/cfworkers*
 package first:
