@@ -1437,7 +1437,12 @@ async function isCommandAvailable(
       "The command {command} failed with the error: {error}",
       { command: checkCommand, error },
     );
-    if (error instanceof Deno.errors.NotFound) return false;
+    if (
+      error instanceof Deno.errors.NotFound ||
+      error instanceof Deno.errors.PermissionDenied
+    ) {
+      return false;
+    }
     throw error;
   }
 }
@@ -1454,11 +1459,13 @@ async function locatePackageManager(
   }
   if (Deno.build.os !== "windows") return undefined;
   const cmd: [string, ...string[]] = [
+    "cmd",
+    "/c",
     packageManagers[pm].checkCommand[0] + ".cmd",
     ...packageManagers[pm].checkCommand.slice(1),
   ];
   if (await isCommandAvailable({ ...packageManagers[pm], checkCommand: cmd })) {
-    return cmd[0];
+    return cmd[2];
   }
   return undefined;
 }
@@ -1485,22 +1492,39 @@ async function addDependencies(
       }`
     );
   if (deps.length < 1) return;
-  const cmd = new Deno.Command(
-    runtime === "node" ? (packageManagerLocations[pm] ?? pm) : runtime,
-    {
-      args: [
-        "add",
-        ...(dev
-          ? [runtime === "bun" || pm === "yarn" ? "--dev" : "--save-dev"]
-          : []),
-        ...uniqueArray(deps),
-      ],
-      cwd: dir,
-      stdin: "inherit",
-      stdout: "inherit",
-      stderr: "inherit",
-    },
-  );
+  const cmd =
+    runtime === "node" && packageManagerLocations[pm]?.match(/\.cmd$/i)
+      ? new Deno.Command(
+        "cmd",
+        {
+          args: [
+            "/c",
+            `${packageManagerLocations[pm]} add ${
+              dev ? (pm === "yarn" ? "--dev" : "--save-dev") : ""
+            } ${uniqueArray(deps).join(" ")}`,
+          ],
+          cwd: dir,
+          stdin: "inherit",
+          stdout: "inherit",
+          stderr: "inherit",
+        },
+      )
+      : new Deno.Command(
+        runtime === "node" ? (packageManagerLocations[pm] ?? pm) : runtime,
+        {
+          args: [
+            "add",
+            ...(dev
+              ? [runtime === "bun" || pm === "yarn" ? "--dev" : "--save-dev"]
+              : []),
+            ...uniqueArray(deps),
+          ],
+          cwd: dir,
+          stdin: "inherit",
+          stdout: "inherit",
+          stderr: "inherit",
+        },
+      );
   const result = await cmd.output();
   if (!result.success) {
     throw new Error("Failed to add dependencies.");

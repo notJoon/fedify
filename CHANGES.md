@@ -8,6 +8,15 @@ Version 1.8.14
 
 To be released.
 
+### @fedify/cli
+
+ -  Fixed `fedify` command failing on Windows with `PermissionDenied` error
+    when trying to locate or execute package managers during initialization.
+    The CLI now properly handles _\*.cmd_ and _\*.bat_ files on Windows by
+    invoking them through `cmd /c`.  [[#463]]
+
+[#463]: https://github.com/fedify-dev/fedify/issues/463
+
 
 Version 1.8.13
 --------------
