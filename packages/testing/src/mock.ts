@@ -35,8 +35,23 @@ import type {
   TraverseCollectionOptions,
 } from "@fedify/fedify/vocab";
 import type { ResourceDescriptor } from "@fedify/fedify/webfinger";
-import { trace, type TracerProvider } from "@opentelemetry/api";
-import { createInboxContext, createRequestContext } from "./context.ts";
+import { createContext } from "./context.ts";
+
+// Re-export createContext for public API
+export { createContext };
+
+// Create a no-op tracer provider.
+// We use `any` type instead of importing TracerProvider from @opentelemetry/api
+// to avoid type graph analysis issues in JSR. When @opentelemetry/api types are
+// imported alongside ResourceDescriptor from @fedify/fedify/webfinger, JSR's type
+// analyzer hangs indefinitely during the "processing" stage.
+// See: https://github.com/fedify-dev/fedify/issues/468
+const noopTracerProvider: any = {
+  getTracer: () => ({
+    startActiveSpan: () => undefined as any,
+    startSpan: () => undefined as any,
+  }),
+};
 
 /**
  * Helper function to expand URI templates with values.
@@ -52,6 +67,58 @@ function expandUriTemplate(
   return template.replace(/{([^}]+)}/g, (match, key) => {
     return values[key] || match;
   });
+}
+
+/**
+ * Creates a RequestContext for testing purposes.
+ * @param args Partial RequestContext properties
+ * @returns A RequestContext instance
+ * @since 1.8.0
+ */
+export function createRequestContext<TContextData>(
+  args: Partial<RequestContext<TContextData>> & {
+    url: URL;
+    data: TContextData;
+    federation: Federation<TContextData>;
+  },
+): RequestContext<TContextData> {
+  return {
+    ...createContext(args),
+    clone: args.clone ?? ((data) => createRequestContext({ ...args, data })),
+    request: args.request ?? new Request(args.url),
+    url: args.url,
+    getActor: args.getActor ?? (() => Promise.resolve(null)),
+    getObject: args.getObject ?? (() => Promise.resolve(null)),
+    getSignedKey: args.getSignedKey ?? (() => Promise.resolve(null)),
+    getSignedKeyOwner: args.getSignedKeyOwner ?? (() => Promise.resolve(null)),
+    sendActivity: args.sendActivity ?? ((_params) => {
+      throw new Error("Not implemented");
+    }),
+  };
+}
+
+/**
+ * Creates an InboxContext for testing purposes.
+ * @param args Partial InboxContext properties
+ * @returns An InboxContext instance
+ * @since 1.8.0
+ */
+export function createInboxContext<TContextData>(
+  args: Partial<InboxContext<TContextData>> & {
+    url?: URL;
+    data: TContextData;
+    recipient?: string | null;
+    federation: Federation<TContextData>;
+  },
+): InboxContext<TContextData> {
+  return {
+    ...createContext(args),
+    clone: args.clone ?? ((data) => createInboxContext({ ...args, data })),
+    recipient: args.recipient ?? null,
+    forwardActivity: args.forwardActivity ?? ((_params) => {
+      throw new Error("Not implemented");
+    }),
+  };
 }
 
 /**
@@ -176,7 +243,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     private options: {
       contextData?: TContextData;
       origin?: string;
-      tracerProvider?: TracerProvider;
+      tracerProvider?: any;
     } = {},
   ) {
     this.contextData = options.contextData;
@@ -628,7 +695,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
   readonly federation: Federation<TContextData>;
   readonly documentLoader: DocumentLoader;
   readonly contextLoader: DocumentLoader;
-  readonly tracerProvider: TracerProvider;
+  readonly tracerProvider: any;
 
   private sentActivities: Array<{
     sender: any;
@@ -643,7 +710,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
       federation: Federation<TContextData>;
       documentLoader?: DocumentLoader;
       contextLoader?: DocumentLoader;
-      tracerProvider?: TracerProvider;
+      tracerProvider?: any;
     },
   ) {
     const url = options.url ?? new URL("https://example.com");
@@ -660,7 +727,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
       documentUrl: url,
     }));
     this.contextLoader = options.contextLoader ?? this.documentLoader;
-    this.tracerProvider = options.tracerProvider ?? trace.getTracerProvider();
+    this.tracerProvider = options.tracerProvider ?? noopTracerProvider;
   }
 
   clone(data: TContextData): Context<TContextData> {

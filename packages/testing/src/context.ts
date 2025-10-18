@@ -1,17 +1,25 @@
-import type {
-  Context,
-  Federation,
-  InboxContext,
-  RequestContext,
-} from "@fedify/fedify/federation";
+// deno-lint-ignore-file no-explicit-any
+import type { Context, Federation } from "@fedify/fedify/federation";
 import { RouterError } from "@fedify/fedify/federation";
 import {
   lookupObject as globalLookupObject,
   traverseCollection as globalTraverseCollection,
 } from "@fedify/fedify/vocab";
 import { lookupWebFinger as globalLookupWebFinger } from "@fedify/fedify/webfinger";
-import { trace } from "@opentelemetry/api";
 import { mockDocumentLoader } from "./docloader.ts";
+
+// Create a no-op tracer provider.
+// We use `any` type instead of importing TracerProvider from @opentelemetry/api
+// to avoid type graph analysis issues in JSR. When @opentelemetry/api types are
+// imported alongside ResourceDescriptor from @fedify/fedify/webfinger, JSR's type
+// analyzer hangs indefinitely during the "processing" stage.
+// See: https://github.com/fedify-dev/fedify/issues/468
+const noopTracerProvider: any = {
+  getTracer: () => ({
+    startActiveSpan: () => undefined as any,
+    startSpan: () => undefined as any,
+  }),
+};
 
 // NOTE: Copied from @fedify/fedify/testing/context.ts
 
@@ -64,7 +72,7 @@ export function createContext<TContextData>(
     hostname: url.hostname,
     documentLoader: documentLoader ?? mockDocumentLoader,
     contextLoader: contextLoader ?? mockDocumentLoader,
-    tracerProvider: tracerProvider ?? trace.getTracerProvider(),
+    tracerProvider: tracerProvider ?? noopTracerProvider,
     clone: clone ?? ((data) => createContext({ ...values, data })),
     getNodeInfoUri: getNodeInfoUri ?? throwRouteError,
     getActorUri: getActorUri ?? throwRouteError,
@@ -110,46 +118,6 @@ export function createContext<TContextData>(
       throw new Error("Not implemented");
     }),
     routeActivity: routeActivity ?? ((_params) => {
-      throw new Error("Not implemented");
-    }),
-  };
-}
-
-export function createRequestContext<TContextData>(
-  args: Partial<RequestContext<TContextData>> & {
-    url: URL;
-    data: TContextData;
-    federation: Federation<TContextData>;
-  },
-): RequestContext<TContextData> {
-  return {
-    ...createContext(args),
-    clone: args.clone ?? ((data) => createRequestContext({ ...args, data })),
-    request: args.request ?? new Request(args.url),
-    url: args.url,
-    getActor: args.getActor ?? (() => Promise.resolve(null)),
-    getObject: args.getObject ?? (() => Promise.resolve(null)),
-    getSignedKey: args.getSignedKey ?? (() => Promise.resolve(null)),
-    getSignedKeyOwner: args.getSignedKeyOwner ?? (() => Promise.resolve(null)),
-    sendActivity: args.sendActivity ?? ((_params) => {
-      throw new Error("Not implemented");
-    }),
-  };
-}
-
-export function createInboxContext<TContextData>(
-  args: Partial<InboxContext<TContextData>> & {
-    url?: URL;
-    data: TContextData;
-    recipient?: string | null;
-    federation: Federation<TContextData>;
-  },
-): InboxContext<TContextData> {
-  return {
-    ...createContext(args),
-    clone: args.clone ?? ((data) => createInboxContext({ ...args, data })),
-    recipient: args.recipient ?? null,
-    forwardActivity: args.forwardActivity ?? ((_params) => {
       throw new Error("Not implemented");
     }),
   };

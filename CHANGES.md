@@ -8,6 +8,17 @@ Version 1.8.14
 
 To be released.
 
+### @fedify/testing
+
+ -  Fixed JSR publishing hanging indefinitely at the *processing* stage.
+    Removed all dependencies on *@opentelemetry/api* package to avoid type
+    graph analysis issues in JSR when the package is used alongside
+    `ResourceDescriptor` from *@fedify/fedify/webfinger*.  The `tracerProvider`
+    fields now use `any` type instead of `TracerProvider`.  [[#468], [#470]]
+
+[#468]: https://github.com/fedify-dev/fedify/issues/468
+[#470]: https://github.com/fedify-dev/fedify/pull/470
+
 ### @fedify/cli
 
  -  Fixed `fedify` command failing on Windows with `PermissionDenied` error

@@ -47,9 +47,6 @@
   "peerDependencies": {
     "@fedify/fedify": "workspace:^"
   },
-  "dependencies": {
-    "@opentelemetry/api": "^1.9.0"
-  },
   "devDependencies": {
     "@js-temporal/polyfill": "catalog:",
     "@std/assert": "catalog:",
