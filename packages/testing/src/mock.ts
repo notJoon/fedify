@@ -18,11 +18,7 @@ import type {
   ParseUriResult,
   RequestContext,
   RouteActivityOptions,
-  SendActivityOptions,
-  SendActivityOptionsForCollection,
-  SenderKeyPair,
 } from "@fedify/fedify/federation";
-import type { JsonValue, NodeInfo } from "@fedify/fedify/nodeinfo";
 import type { DocumentLoader } from "@fedify/fedify/runtime";
 import type {
   Activity,
@@ -499,15 +495,10 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     // no queue in mock type. process immediately
   }
 
-  createContext(baseUrl: URL, contextData: TContextData): Context<TContextData>;
   createContext(
-    request: Request,
+    baseUrlOrRequest: any,
     contextData: TContextData,
-  ): RequestContext<TContextData>;
-  createContext(
-    baseUrlOrRequest: URL | Request,
-    contextData: TContextData,
-  ): Context<TContextData> | RequestContext<TContextData> {
+  ): any {
     // deno-lint-ignore no-this-alias
     const mockFederation = this;
 
@@ -675,7 +666,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
 
   private sentActivities: Array<{
     sender: any;
-    recipients: Recipient | Recipient[] | "followers";
+    recipients: any;
     activity: Activity;
   }> = [];
 
@@ -769,9 +760,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
     return new URL(`/users/${identifier}/outbox`, this.origin);
   }
 
-  getInboxUri(identifier: string): URL;
-  getInboxUri(): URL;
-  getInboxUri(identifier?: string): URL {
+  getInboxUri(identifier?: any): URL {
     if (identifier) {
       if (
         this.federation instanceof MockFederation && this.federation.inboxPath
@@ -888,13 +877,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
     return Promise.resolve([]);
   }
 
-  getDocumentLoader(
-    params: { handle: string } | { identifier: string },
-  ): Promise<DocumentLoader>;
-  getDocumentLoader(
-    params: { keyId: URL; privateKey: CryptoKey },
-  ): DocumentLoader;
-  getDocumentLoader(params: any): DocumentLoader | Promise<DocumentLoader> {
+  getDocumentLoader(params: any): any {
     // return the same document loader
     if ("keyId" in params) {
       return this.documentLoader;
@@ -922,17 +905,9 @@ export class MockContext<TContextData> implements Context<TContextData> {
   }
 
   lookupNodeInfo(
-    url: URL | string,
-    options?: { parse?: "strict" | "best-effort" } & any,
-  ): Promise<NodeInfo | undefined>;
-  lookupNodeInfo(
-    url: URL | string,
-    options?: { parse: "none" } & any,
-  ): Promise<JsonValue | undefined>;
-  lookupNodeInfo(
-    _url: URL | string,
+    _url: any,
     _options?: any,
-  ): Promise<NodeInfo | JsonValue | undefined> {
+  ): Promise<any> {
     return Promise.resolve(undefined);
   }
 
@@ -944,49 +919,10 @@ export class MockContext<TContextData> implements Context<TContextData> {
   }
 
   sendActivity(
-    sender:
-      | SenderKeyPair
-      | SenderKeyPair[]
-      | { identifier: string }
-      | { username: string }
-      | { handle: string },
-    recipients: Recipient | Recipient[],
+    sender: any,
+    recipients: any,
     activity: Activity,
-    options?: SendActivityOptions,
-  ): Promise<void>;
-  sendActivity(
-    sender: { identifier: string } | { username: string } | { handle: string },
-    recipients: "followers",
-    activity: Activity,
-    options?: SendActivityOptionsForCollection,
-  ): Promise<void>;
-  sendActivity(
-    sender:
-      | SenderKeyPair
-      | SenderKeyPair[]
-      | { identifier: string }
-      | { username: string }
-      | { handle: string },
-    recipients: Recipient | Recipient[],
-    activity: Activity,
-    options?: SendActivityOptions,
-  ): Promise<void>;
-  sendActivity(
-    sender: { identifier: string } | { username: string } | { handle: string },
-    recipients: "followers",
-    activity: Activity,
-    options?: SendActivityOptionsForCollection,
-  ): Promise<void>;
-  sendActivity(
-    sender:
-      | SenderKeyPair
-      | SenderKeyPair[]
-      | { identifier: string }
-      | { username: string }
-      | { handle: string },
-    recipients: Recipient | Recipient[] | "followers",
-    activity: Activity,
-    _options?: SendActivityOptions | SendActivityOptionsForCollection,
+    _options?: any,
   ): Promise<void> {
     this.sentActivities.push({ sender, recipients, activity });
 
@@ -1020,13 +956,8 @@ export class MockContext<TContextData> implements Context<TContextData> {
    * @returns An array of sent activity records.
    */
   getSentActivities(): Array<{
-    sender:
-      | SenderKeyPair
-      | SenderKeyPair[]
-      | { identifier: string }
-      | { username: string }
-      | { handle: string };
-    recipients: Recipient | Recipient[] | "followers";
+    sender: any;
+    recipients: any;
     activity: Activity;
   }> {
     return [...this.sentActivities];

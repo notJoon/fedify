@@ -10,13 +10,11 @@ To be released.
 
 ### @fedify/testing
 
- -  **Breaking change:** The `MockContext` class is no longer exported from
-    the public API.  This was necessary to fix JSR publishing hanging
-    indefinitely at the *processing* stage, as the class contained complex
-    type dependencies that caused JSR's type analyzer to hang during
-    processing.  If you were using `MockContext` directly, please use
-    `createContext()`, `createRequestContext()`, or `createInboxContext()`
-    functions instead.  [[#468], [#470]]
+ -  Fixed JSR publishing hanging indefinitely at the *processing* stage.
+    The issue was caused by TypeScript function overload signatures in
+    `MockContext` and `MockFederation` classes that triggered a bug in JSR's
+    type analyzer.  All method overloads have been removed and simplified to
+    use `any` types where necessary.  [[#468], [#470]]
 
 [#468]: https://github.com/fedify-dev/fedify/issues/468
 [#470]: https://github.com/fedify-dev/fedify/pull/470
