@@ -511,41 +511,15 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     // deno-lint-ignore no-this-alias
     const mockFederation = this;
 
-    // sendActivity implementation for mock contexts
-    const sendActivity = (
-      _sender: any,
-      _recipients: any,
-      activity: any,
-      _options?: any,
-    ): Promise<void> => {
-      const queued = mockFederation.queueStarted;
-      mockFederation.sentActivities.push({
-        queued,
-        queue: queued ? "outbox" : undefined,
-        activity,
-        sentOrder: ++mockFederation.sentCounter,
-      });
-      return Promise.resolve();
-    };
+    const url = baseUrlOrRequest instanceof Request
+      ? new URL(baseUrlOrRequest.url)
+      : baseUrlOrRequest;
 
-    if (baseUrlOrRequest instanceof Request) {
-      return createRequestContext({
-        url: new URL(baseUrlOrRequest.url),
-        request: baseUrlOrRequest,
-        data: contextData,
-        federation: mockFederation as any,
-        sendActivity: sendActivity as any,
-      });
-    } else {
-      return {
-        ...createContext({
-          url: baseUrlOrRequest,
-          data: contextData,
-          federation: mockFederation as any,
-        }),
-        sendActivity: sendActivity as any,
-      } as Context<TContextData>;
-    }
+    return new MockContext({
+      url,
+      data: contextData,
+      federation: mockFederation as any,
+    });
   }
 
   // deno-lint-ignore require-await
@@ -653,18 +627,20 @@ interface InboxListener<TContextData, TActivity extends Activity> {
  * This class provides a way to test Fedify applications without needing
  * a real federation context.
  *
+ * Note: This class is not exported from the public API. Use
+ * {@link MockFederation.createContext} instead.
+ *
  * @example
  * ```typescript
  * import { Person, Create } from "@fedify/fedify/vocab";
- * import { MockContext, MockFederation } from "@fedify/testing";
+ * import { MockFederation } from "@fedify/testing";
  *
- * // Create a mock context
+ * // Create a mock federation and context
  * const mockFederation = new MockFederation<{ userId: string }>();
- * const context = new MockContext({
- *   url: new URL("https://example.com"),
- *   data: { userId: "test-user" },
- *   federation: mockFederation
- * });
+ * const context = mockFederation.createContext(
+ *   new URL("https://example.com"),
+ *   { userId: "test-user" }
+ * );
  *
  * // Send an activity
  * const recipient = new Person({ id: new URL("https://example.com/users/bob") });
@@ -678,8 +654,8 @@ interface InboxListener<TContextData, TActivity extends Activity> {
  *   activity
  * );
  *
- * // Check sent activities
- * const sent = context.getSentActivities();
+ * // Check sent activities from the federation
+ * const sent = mockFederation.sentActivities;
  * console.log(sent[0].activity);
  * ```
  *
