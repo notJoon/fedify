@@ -34,7 +34,6 @@ import type {
   Recipient,
   TraverseCollectionOptions,
 } from "@fedify/fedify/vocab";
-import type { ResourceDescriptor } from "@fedify/fedify/webfinger";
 import { createContext } from "./context.ts";
 
 // Re-export createContext for public API
@@ -42,9 +41,10 @@ export { createContext };
 
 // Create a no-op tracer provider.
 // We use `any` type instead of importing TracerProvider from @opentelemetry/api
-// to avoid type graph analysis issues in JSR. When @opentelemetry/api types are
-// imported alongside ResourceDescriptor from @fedify/fedify/webfinger, JSR's type
-// analyzer hangs indefinitely during the "processing" stage.
+// to avoid type graph analysis issues in JSR. When types from @opentelemetry/api
+// are imported (either directly or indirectly through other @fedify modules like
+// @fedify/fedify/webfinger which uses ResourceDescriptor), JSR's type analyzer
+// hangs indefinitely during the "processing" stage.
 // See: https://github.com/fedify-dev/fedify/issues/468
 const noopTracerProvider: any = {
   getTracer: () => ({
@@ -511,40 +511,40 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     // deno-lint-ignore no-this-alias
     const mockFederation = this;
 
+    // sendActivity implementation for mock contexts
+    const sendActivity = (
+      _sender: any,
+      _recipients: any,
+      activity: any,
+      _options?: any,
+    ): Promise<void> => {
+      const queued = mockFederation.queueStarted;
+      mockFederation.sentActivities.push({
+        queued,
+        queue: queued ? "outbox" : undefined,
+        activity,
+        sentOrder: ++mockFederation.sentCounter,
+      });
+      return Promise.resolve();
+    };
+
     if (baseUrlOrRequest instanceof Request) {
-      // For now, we'll use createRequestContext since MockContext doesn't support Request
-      // But we need to ensure the sendActivity behavior is consistent
       return createRequestContext({
         url: new URL(baseUrlOrRequest.url),
         request: baseUrlOrRequest,
         data: contextData,
         federation: mockFederation as any,
-        sendActivity: (async (
-          sender: any,
-          recipients: any,
-          activity: any,
-          options: any,
-        ) => {
-          // Create a temporary MockContext to use its sendActivity logic
-          const tempContext = new MockContext({
-            url: new URL(baseUrlOrRequest.url),
-            data: contextData,
-            federation: mockFederation as any,
-          });
-          await tempContext.sendActivity(
-            sender,
-            recipients,
-            activity,
-            options,
-          );
-        }) as any,
+        sendActivity: sendActivity as any,
       });
     } else {
-      return new MockContext({
-        url: baseUrlOrRequest,
-        data: contextData,
-        federation: mockFederation as any,
-      });
+      return {
+        ...createContext({
+          url: baseUrlOrRequest,
+          data: contextData,
+          federation: mockFederation as any,
+        }),
+        sendActivity: sendActivity as any,
+      } as Context<TContextData>;
     }
   }
 
@@ -963,7 +963,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
   lookupWebFinger(
     _resource: URL | `acct:${string}@${string}` | string,
     _options?: any,
-  ): Promise<ResourceDescriptor | null> {
+  ): Promise<any> {
     return Promise.resolve(null);
   }
 

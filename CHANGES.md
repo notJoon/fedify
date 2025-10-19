@@ -10,11 +10,13 @@ To be released.
 
 ### @fedify/testing
 
- -  Fixed JSR publishing hanging indefinitely at the *processing* stage.
-    Removed all dependencies on *@opentelemetry/api* package to avoid type
-    graph analysis issues in JSR when the package is used alongside
-    `ResourceDescriptor` from *@fedify/fedify/webfinger*.  The `tracerProvider`
-    fields now use `any` type instead of `TracerProvider`.  [[#468], [#470]]
+ -  **Breaking change:** The `MockContext` class is no longer exported from
+    the public API.  This was necessary to fix JSR publishing hanging
+    indefinitely at the *processing* stage, as the class contained complex
+    type dependencies that caused JSR's type analyzer to hang during
+    processing.  If you were using `MockContext` directly, please use
+    `createContext()`, `createRequestContext()`, or `createInboxContext()`
+    functions instead.  [[#468], [#470]]
 
 [#468]: https://github.com/fedify-dev/fedify/issues/468
 [#470]: https://github.com/fedify-dev/fedify/pull/470

@@ -1,5 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
-import type { Context, Federation } from "@fedify/fedify/federation";
+import type {
+  Context,
+  Federation,
+  InboxContext,
+  RequestContext,
+} from "@fedify/fedify/federation";
 import { RouterError } from "@fedify/fedify/federation";
 import {
   lookupObject as globalLookupObject,
@@ -118,6 +123,58 @@ export function createContext<TContextData>(
       throw new Error("Not implemented");
     }),
     routeActivity: routeActivity ?? ((_params) => {
+      throw new Error("Not implemented");
+    }),
+  };
+}
+
+/**
+ * Creates a RequestContext for testing purposes.
+ * @param args Partial RequestContext properties
+ * @returns A RequestContext instance
+ * @since 1.8.0
+ */
+export function createRequestContext<TContextData>(
+  args: Partial<RequestContext<TContextData>> & {
+    url: URL;
+    data: TContextData;
+    federation: Federation<TContextData>;
+  },
+): RequestContext<TContextData> {
+  return {
+    ...createContext(args),
+    clone: args.clone ?? ((data) => createRequestContext({ ...args, data })),
+    request: args.request ?? new Request(args.url),
+    url: args.url,
+    getActor: args.getActor ?? (() => Promise.resolve(null)),
+    getObject: args.getObject ?? (() => Promise.resolve(null)),
+    getSignedKey: args.getSignedKey ?? (() => Promise.resolve(null)),
+    getSignedKeyOwner: args.getSignedKeyOwner ?? (() => Promise.resolve(null)),
+    sendActivity: args.sendActivity ?? ((_params) => {
+      throw new Error("Not implemented");
+    }),
+  };
+}
+
+/**
+ * Creates an InboxContext for testing purposes.
+ * @param args Partial InboxContext properties
+ * @returns An InboxContext instance
+ * @since 1.8.0
+ */
+export function createInboxContext<TContextData>(
+  args: Partial<InboxContext<TContextData>> & {
+    url?: URL;
+    data: TContextData;
+    recipient?: string | null;
+    federation: Federation<TContextData>;
+  },
+): InboxContext<TContextData> {
+  return {
+    ...createContext(args),
+    clone: args.clone ?? ((data) => createInboxContext({ ...args, data })),
+    recipient: args.recipient ?? null,
+    forwardActivity: args.forwardActivity ?? ((_params) => {
       throw new Error("Not implemented");
     }),
   };
