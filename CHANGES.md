@@ -8,6 +8,17 @@ Version 1.8.14
 
 To be released.
 
+### @fedify/testing
+
+ -  Fixed JSR publishing hanging indefinitely at the *processing* stage.
+    The issue was caused by TypeScript function overload signatures in
+    `MockContext` and `MockFederation` classes that triggered a bug in JSR's
+    type analyzer.  All method overloads have been removed and simplified to
+    use `any` types where necessary.  [[#468], [#470]]
+
+[#468]: https://github.com/fedify-dev/fedify/issues/468
+[#470]: https://github.com/fedify-dev/fedify/pull/470
+
 ### @fedify/cli
 
  -  Fixed `fedify` command failing on Windows with `PermissionDenied` error

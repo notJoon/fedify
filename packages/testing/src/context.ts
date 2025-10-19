@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import type {
   Context,
   Federation,
@@ -10,8 +11,20 @@ import {
   traverseCollection as globalTraverseCollection,
 } from "@fedify/fedify/vocab";
 import { lookupWebFinger as globalLookupWebFinger } from "@fedify/fedify/webfinger";
-import { trace } from "@opentelemetry/api";
 import { mockDocumentLoader } from "./docloader.ts";
+
+// Create a no-op tracer provider.
+// We use `any` type instead of importing TracerProvider from @opentelemetry/api
+// to avoid type graph analysis issues in JSR. When @opentelemetry/api types are
+// imported alongside ResourceDescriptor from @fedify/fedify/webfinger, JSR's type
+// analyzer hangs indefinitely during the "processing" stage.
+// See: https://github.com/fedify-dev/fedify/issues/468
+const noopTracerProvider: any = {
+  getTracer: () => ({
+    startActiveSpan: () => undefined as any,
+    startSpan: () => undefined as any,
+  }),
+};
 
 // NOTE: Copied from @fedify/fedify/testing/context.ts
 
@@ -64,7 +77,7 @@ export function createContext<TContextData>(
     hostname: url.hostname,
     documentLoader: documentLoader ?? mockDocumentLoader,
     contextLoader: contextLoader ?? mockDocumentLoader,
-    tracerProvider: tracerProvider ?? trace.getTracerProvider(),
+    tracerProvider: tracerProvider ?? noopTracerProvider,
     clone: clone ?? ((data) => createContext({ ...values, data })),
     getNodeInfoUri: getNodeInfoUri ?? throwRouteError,
     getActorUri: getActorUri ?? throwRouteError,
@@ -115,6 +128,12 @@ export function createContext<TContextData>(
   };
 }
 
+/**
+ * Creates a RequestContext for testing purposes.
+ * @param args Partial RequestContext properties
+ * @returns A RequestContext instance
+ * @since 1.8.0
+ */
 export function createRequestContext<TContextData>(
   args: Partial<RequestContext<TContextData>> & {
     url: URL;
@@ -137,6 +156,12 @@ export function createRequestContext<TContextData>(
   };
 }
 
+/**
+ * Creates an InboxContext for testing purposes.
+ * @param args Partial InboxContext properties
+ * @returns An InboxContext instance
+ * @since 1.8.0
+ */
 export function createInboxContext<TContextData>(
   args: Partial<InboxContext<TContextData>> & {
     url?: URL;
