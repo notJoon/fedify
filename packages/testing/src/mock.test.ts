@@ -1,7 +1,7 @@
 import { Create, Note, Person } from "@fedify/fedify/vocab";
 import { assertEquals, assertRejects } from "@std/assert";
 import { test } from "../../fedify/src/testing/mod.ts";
-import { MockContext, MockFederation } from "./mock.ts";
+import { MockFederation } from "./mock.ts";
 
 test("getSentActivities returns sent activities", async () => {
   const mockFederation = new MockFederation<void>();
@@ -97,11 +97,10 @@ test("receiveActivity triggers inbox listeners", async () => {
 
 test("MockContext tracks sent activities", async () => {
   const mockFederation = new MockFederation<void>();
-  const mockContext = new MockContext({
-    url: new URL("https://example.com"),
-    data: undefined,
-    federation: mockFederation,
-  });
+  const mockContext = mockFederation.createContext(
+    new URL("https://example.com"),
+    undefined,
+  );
 
   // Create a test activity
   const activity = new Create({
@@ -120,23 +119,17 @@ test("MockContext tracks sent activities", async () => {
     activity,
   );
 
-  // Check that the activity was recorded in the context
-  const contextSentActivities = mockContext.getSentActivities();
-  assertEquals(contextSentActivities.length, 1);
-  assertEquals(contextSentActivities[0].activity, activity);
-
-  // Check that it was also recorded in the federation
+  // Check that the activity was recorded in the federation
   assertEquals(mockFederation.sentActivities.length, 1);
   assertEquals(mockFederation.sentActivities[0].activity, activity);
 });
 
 test("MockContext URI methods should work correctly", () => {
   const mockFederation = new MockFederation<void>();
-  const mockContext = new MockContext({
-    url: new URL("https://example.com"),
-    data: undefined,
-    federation: mockFederation,
-  });
+  const mockContext = mockFederation.createContext(
+    new URL("https://example.com"),
+    undefined,
+  );
 
   // Test URI generation methods
   assertEquals(

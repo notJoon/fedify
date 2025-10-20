@@ -230,23 +230,22 @@ await federation.receiveActivity(activity);
 console.log("Sent activities:", federation.sentActivities);
 ~~~~
 
-### `MockContext`
+### Creating mock contexts
 
-The `MockContext` class provides a mock implementation of the `Context`
-interface that tracks sent activities and provides mock implementations of
-URI generation methods:
+You can create mock contexts using `MockFederation.createContext()` method,
+which provides a mock implementation of the `Context` interface that tracks
+sent activities and provides mock implementations of URI generation methods:
 
 ~~~~ typescript twoslash
-import { MockContext, MockFederation } from "@fedify/testing";
+import { MockFederation } from "@fedify/testing";
 import { Create, Note, Person } from "@fedify/fedify/vocab";
 
 // Create a mock federation and context
 const federation = new MockFederation<{ userId: string }>();
-const context = new MockContext({
-  url: new URL("https://example.com"),
-  data: { userId: "test-user" },
-  federation: federation
-});
+const context = federation.createContext(
+  new URL("https://example.com"),
+  { userId: "test-user" }
+);
 
 // Send an activity
 const activity = new Create({
@@ -274,11 +273,12 @@ console.log("Federation sent activities:", federation.sentActivities);
 
 ### Testing URI generation
 
-`MockContext` provides mock implementations of all URI generation methods
-that work with the paths configured in your `MockFederation`:
+Mock contexts created with `MockFederation.createContext()` provide mock
+implementations of all URI generation methods that work with the paths
+configured in your `MockFederation`:
 
 ~~~~ typescript twoslash
-import { MockContext, MockFederation } from "@fedify/testing";
+import { MockFederation } from "@fedify/testing";
 import { Note } from "@fedify/fedify/vocab";
 
 const federation = new MockFederation();
@@ -303,37 +303,36 @@ console.log(context.getObjectUri(Note, { id: "123" })); // https://example.com/n
 
 ### Tracking sent activities
 
-Both `MockFederation` and `MockContext` track sent activities with detailed
+Both `MockFederation` and mock contexts track sent activities with detailed
 metadata:
 
 ~~~~ typescript twoslash
 // @noErrors: 2554
-import { MockContext, MockFederation } from "@fedify/testing";
+import { MockFederation } from "@fedify/testing";
 
 const federation = new MockFederation();
-const context = new MockContext({
-  federation,
-  url: new URL("https://example.com/"),
-  data: undefined,
-});
+const context = federation.createContext(
+  new URL("https://example.com/"),
+  undefined
+);
 
 // Send some activities...
 await context.sendActivity(/* ... */);
 
 // Check federation-level tracking
-federation.sentActivities.forEach(sent => {
+for (const sent of federation.sentActivities) {
   console.log("Activity:", sent.activity.id);
   console.log("Queued:", sent.queued);
   console.log("Queue type:", sent.queue);
   console.log("Send order:", sent.sentOrder);
-});
+}
 
 // Check context-level tracking
-context.getSentActivities().forEach(sent => {
+for (const sent of context.getSentActivities()) {
   console.log("Sender:", sent.sender);
   console.log("Recipients:", sent.recipients);
   console.log("Activity:", sent.activity);
-});
+}
 ~~~~
 
 ### Simulating queue processing
@@ -342,7 +341,7 @@ You can test queue-based activity processing by starting the mock queue:
 
 ~~~~ typescript twoslash
 // @noErrors: 2554
-import { MockContext, MockFederation } from "@fedify/testing";
+import { MockFederation } from "@fedify/testing";
 
 const federation = new MockFederation();
 
@@ -350,11 +349,10 @@ const federation = new MockFederation();
 await federation.startQueue({ contextData: { userId: "test" } });
 
 // Now sent activities will be marked as queued
-const context = new MockContext({
-  federation,
-  url: new URL("https://example.com/"),
-  data: { userId: "test" },
-})
+const context = federation.createContext(
+  new URL("https://example.com/"),
+  { userId: "test" }
+);
 await context.sendActivity(/* ... */);
 
 // Check if activities were queued
@@ -364,16 +362,16 @@ console.log("Queued activities:", queued.length);
 
 ### Resetting mock state
 
-Both mock classes provide `reset()` methods to clear tracked activities:
+Both `MockFederation` and mock contexts provide `reset()` methods to clear
+tracked activities:
 
 ~~~~ typescript twoslash
-import { MockContext, MockFederation } from "@fedify/testing";
+import { MockFederation } from "@fedify/testing";
 const federation = new MockFederation();
-const context = new MockContext({
-  federation,
-  url: new URL("https://example.com/"),
-  data: undefined,
-});
+const context = federation.createContext(
+  new URL("https://example.com/"),
+  undefined
+);
 // ---cut-before---
 // Clear all sent activities
 federation.reset();

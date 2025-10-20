@@ -8,6 +8,21 @@ Version 1.9.1
 
 To be released.
 
+### @fedify/testing
+
+ -  Fixed JSR publishing hanging indefinitely at the *processing* stage.
+    The issue was caused by TypeScript function overload signatures in
+    `MockContext` and `MockFederation` classes that triggered a bug in JSR's
+    type analyzer.  All method overloads have been removed and simplified to
+    use `any` types where necessary.  [[#468], [#470]]
+
+### @fedify/cli
+
+ -  Fixed `fedify` command failing on Windows with `PermissionDenied` error
+    when trying to locate or execute package managers during initialization.
+    The CLI now properly handles _\*.cmd_ and _\*.bat_ files on Windows by
+    invoking them through `cmd /c`.  [[#463]]
+
 
 Version 1.9.0
 -------------
@@ -296,6 +311,32 @@ Released on October 14, 2025.
 
  -  Added CommonJS support alongside ESM for better compatibility with
     CommonJS-based Node.js applications.  [[#429], [#431]]
+
+
+Version 1.8.14
+--------------
+
+Released on October 19, 2025.
+
+### @fedify/testing
+
+ -  Fixed JSR publishing hanging indefinitely at the *processing* stage.
+    The issue was caused by TypeScript function overload signatures in
+    `MockContext` and `MockFederation` classes that triggered a bug in JSR's
+    type analyzer.  All method overloads have been removed and simplified to
+    use `any` types where necessary.  [[#468], [#470]]
+
+[#468]: https://github.com/fedify-dev/fedify/issues/468
+[#470]: https://github.com/fedify-dev/fedify/pull/470
+
+### @fedify/cli
+
+ -  Fixed `fedify` command failing on Windows with `PermissionDenied` error
+    when trying to locate or execute package managers during initialization.
+    The CLI now properly handles _\*.cmd_ and _\*.bat_ files on Windows by
+    invoking them through `cmd /c`.  [[#463]]
+
+[#463]: https://github.com/fedify-dev/fedify/issues/463
 
 
 Version 1.8.13

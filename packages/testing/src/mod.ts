@@ -8,10 +8,10 @@
  * @module
  */
 
-export { MockContext, MockFederation } from "./mock.ts";
+export type { SentActivity } from "./mock.ts";
+export { MockFederation } from "./mock.ts";
 export {
   createContext,
   createInboxContext,
   createRequestContext,
 } from "./context.ts";
-export type { SentActivity } from "./mock.ts";

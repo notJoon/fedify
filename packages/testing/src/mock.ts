@@ -18,12 +18,7 @@ import type {
   ParseUriResult,
   RequestContext,
   RouteActivityOptions,
-  SendActivityOptions,
-  SendActivityOptionsForCollection,
-  SenderKeyPair,
-  WebFingerLinksDispatcher,
 } from "@fedify/fedify/federation";
-import type { JsonValue, NodeInfo } from "@fedify/fedify/nodeinfo";
 import type { DocumentLoader } from "@fedify/fedify/runtime";
 import type {
   Activity,
@@ -35,9 +30,32 @@ import type {
   Recipient,
   TraverseCollectionOptions,
 } from "@fedify/fedify/vocab";
-import type { ResourceDescriptor } from "@fedify/fedify/webfinger";
-import { trace, type TracerProvider } from "@opentelemetry/api";
-import { createInboxContext, createRequestContext } from "./context.ts";
+import { createContext } from "./context.ts";
+
+// Re-export createContext for public API
+export { createContext };
+
+// Create a no-op tracer provider.
+// We use `any` type instead of importing TracerProvider from @opentelemetry/api
+// to avoid type graph analysis issues in JSR.
+//
+// Root cause: JSR's type analyzer hangs when types from @opentelemetry/api
+// (which are indirectly included via Context.tracerProvider) are analyzed
+// alongside types from @fedify/fedify/webfinger in the same module.
+//
+// The specific trigger is when both of these are present:
+// 1. Types from @fedify/fedify/federation that reference TracerProvider
+// 2. WebFingerLinksDispatcher type (which references Link from webfinger)
+//
+// Solution: Avoid importing WebFingerLinksDispatcher and use `any` instead.
+//
+// See: https://github.com/fedify-dev/fedify/issues/468
+const noopTracerProvider: any = {
+  getTracer: () => ({
+    startActiveSpan: () => undefined as any,
+    startSpan: () => undefined as any,
+  }),
+};
 
 /**
  * Helper function to expand URI templates with values.
@@ -53,6 +71,58 @@ function expandUriTemplate(
   return template.replace(/{([^}]+)}/g, (match, key) => {
     return values[key] || match;
   });
+}
+
+/**
+ * Creates a RequestContext for testing purposes.
+ * @param args Partial RequestContext properties
+ * @returns A RequestContext instance
+ * @since 1.8.0
+ */
+export function createRequestContext<TContextData>(
+  args: Partial<RequestContext<TContextData>> & {
+    url: URL;
+    data: TContextData;
+    federation: Federation<TContextData>;
+  },
+): RequestContext<TContextData> {
+  return {
+    ...createContext(args),
+    clone: args.clone ?? ((data) => createRequestContext({ ...args, data })),
+    request: args.request ?? new Request(args.url),
+    url: args.url,
+    getActor: args.getActor ?? (() => Promise.resolve(null)),
+    getObject: args.getObject ?? (() => Promise.resolve(null)),
+    getSignedKey: args.getSignedKey ?? (() => Promise.resolve(null)),
+    getSignedKeyOwner: args.getSignedKeyOwner ?? (() => Promise.resolve(null)),
+    sendActivity: args.sendActivity ?? ((_params) => {
+      throw new Error("Not implemented");
+    }),
+  };
+}
+
+/**
+ * Creates an InboxContext for testing purposes.
+ * @param args Partial InboxContext properties
+ * @returns An InboxContext instance
+ * @since 1.8.0
+ */
+export function createInboxContext<TContextData>(
+  args: Partial<InboxContext<TContextData>> & {
+    url?: URL;
+    data: TContextData;
+    recipient?: string | null;
+    federation: Federation<TContextData>;
+  },
+): InboxContext<TContextData> {
+  return {
+    ...createContext(args),
+    clone: args.clone ?? ((data) => createInboxContext({ ...args, data })),
+    recipient: args.recipient ?? null,
+    forwardActivity: args.forwardActivity ?? ((_params) => {
+      throw new Error("Not implemented");
+    }),
+  };
 }
 
 /**
@@ -109,7 +179,11 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
   private activeQueues: Set<"inbox" | "outbox" | "fanout"> = new Set();
   public sentCounter = 0;
   private nodeInfoDispatcher?: NodeInfoDispatcher<TContextData>;
-  private webFingerDispatcher?: WebFingerLinksDispatcher<TContextData>;
+  // Note: Using `any` instead of WebFingerLinksDispatcher to avoid JSR hang.
+  // WebFingerLinksDispatcher references Link type from @fedify/fedify/webfinger,
+  // which causes JSR type analyzer to hang when combined with @opentelemetry/api
+  // types present in Context.tracerProvider (issue #468).
+  private webFingerDispatcher?: any;
   private actorDispatchers: Map<string, ActorDispatcher<TContextData>> =
     new Map();
   public actorPath?: string;
@@ -178,7 +252,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     private options: {
       contextData?: TContextData;
       origin?: string;
-      tracerProvider?: TracerProvider;
+      tracerProvider?: any;
     } = {},
   ) {
     this.contextData = options.contextData;
@@ -192,8 +266,10 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     this.nodeInfoPath = path;
   }
 
+  // Note: Parameter type is `any` instead of WebFingerLinksDispatcher to avoid
+  // JSR type analyzer hang (issue #468). See comment on webFingerDispatcher field.
   setWebFingerLinksDispatcher(
-    dispatcher: WebFingerLinksDispatcher<TContextData>,
+    dispatcher: any,
   ): void {
     this.webFingerDispatcher = dispatcher;
   }
@@ -443,53 +519,22 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     // no queue in mock type. process immediately
   }
 
-  createContext(baseUrl: URL, contextData: TContextData): Context<TContextData>;
   createContext(
-    request: Request,
+    baseUrlOrRequest: any,
     contextData: TContextData,
-  ): RequestContext<TContextData>;
-  createContext(
-    baseUrlOrRequest: URL | Request,
-    contextData: TContextData,
-  ): Context<TContextData> | RequestContext<TContextData> {
+  ): any {
     // deno-lint-ignore no-this-alias
     const mockFederation = this;
 
-    if (baseUrlOrRequest instanceof Request) {
-      // For now, we'll use createRequestContext since MockContext doesn't support Request
-      // But we need to ensure the sendActivity behavior is consistent
-      return createRequestContext({
-        url: new URL(baseUrlOrRequest.url),
-        request: baseUrlOrRequest,
-        data: contextData,
-        federation: mockFederation as any,
-        sendActivity: (async (
-          sender: any,
-          recipients: any,
-          activity: any,
-          options: any,
-        ) => {
-          // Create a temporary MockContext to use its sendActivity logic
-          const tempContext = new MockContext({
-            url: new URL(baseUrlOrRequest.url),
-            data: contextData,
-            federation: mockFederation as any,
-          });
-          await tempContext.sendActivity(
-            sender,
-            recipients,
-            activity,
-            options,
-          );
-        }) as any,
-      });
-    } else {
-      return new MockContext({
-        url: baseUrlOrRequest,
-        data: contextData,
-        federation: mockFederation as any,
-      });
-    }
+    const url = baseUrlOrRequest instanceof Request
+      ? new URL(baseUrlOrRequest.url)
+      : baseUrlOrRequest;
+
+    return new MockContext({
+      url,
+      data: contextData,
+      federation: mockFederation as any,
+    });
   }
 
   // deno-lint-ignore require-await
@@ -597,18 +642,23 @@ interface InboxListener<TContextData, TActivity extends Activity> {
  * This class provides a way to test Fedify applications without needing
  * a real federation context.
  *
+ * Note: This class is not exported from the public API to avoid JSR type
+ * analyzer issues. The MockContext class has complex type dependencies that
+ * can cause JSR's type analyzer to hang during processing (issue #468).
+ * Use {@link MockFederation.createContext}, {@link createContext},
+ * {@link createRequestContext}, or {@link createInboxContext} instead.
+ *
  * @example
  * ```typescript
  * import { Person, Create } from "@fedify/fedify/vocab";
- * import { MockContext, MockFederation } from "@fedify/testing";
+ * import { MockFederation } from "@fedify/testing";
  *
- * // Create a mock context
+ * // Create a mock federation and context
  * const mockFederation = new MockFederation<{ userId: string }>();
- * const context = new MockContext({
- *   url: new URL("https://example.com"),
- *   data: { userId: "test-user" },
- *   federation: mockFederation
- * });
+ * const context = mockFederation.createContext(
+ *   new URL("https://example.com"),
+ *   { userId: "test-user" }
+ * );
  *
  * // Send an activity
  * const recipient = new Person({ id: new URL("https://example.com/users/bob") });
@@ -622,15 +672,15 @@ interface InboxListener<TContextData, TActivity extends Activity> {
  *   activity
  * );
  *
- * // Check sent activities
- * const sent = context.getSentActivities();
+ * // Check sent activities from the federation
+ * const sent = mockFederation.sentActivities;
  * console.log(sent[0].activity);
  * ```
  *
  * @template TContextData The context data to pass to the {@link Context}.
  * @since 1.8.0
  */
-export class MockContext<TContextData> implements Context<TContextData> {
+class MockContext<TContextData> implements Context<TContextData> {
   readonly origin: string;
   readonly canonicalOrigin: string;
   readonly host: string;
@@ -639,11 +689,11 @@ export class MockContext<TContextData> implements Context<TContextData> {
   readonly federation: Federation<TContextData>;
   readonly documentLoader: DocumentLoader;
   readonly contextLoader: DocumentLoader;
-  readonly tracerProvider: TracerProvider;
+  readonly tracerProvider: any;
 
   private sentActivities: Array<{
     sender: any;
-    recipients: Recipient | Recipient[] | "followers";
+    recipients: any;
     activity: Activity;
   }> = [];
 
@@ -654,7 +704,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
       federation: Federation<TContextData>;
       documentLoader?: DocumentLoader;
       contextLoader?: DocumentLoader;
-      tracerProvider?: TracerProvider;
+      tracerProvider?: any;
     },
   ) {
     const url = options.url ?? new URL("https://example.com");
@@ -671,7 +721,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
       documentUrl: url,
     }));
     this.contextLoader = options.contextLoader ?? this.documentLoader;
-    this.tracerProvider = options.tracerProvider ?? trace.getTracerProvider();
+    this.tracerProvider = options.tracerProvider ?? noopTracerProvider;
   }
 
   clone(data: TContextData): Context<TContextData> {
@@ -737,9 +787,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
     return new URL(`/users/${identifier}/outbox`, this.origin);
   }
 
-  getInboxUri(identifier: string): URL;
-  getInboxUri(): URL;
-  getInboxUri(identifier?: string): URL {
+  getInboxUri(identifier?: any): URL {
     if (identifier) {
       if (
         this.federation instanceof MockFederation && this.federation.inboxPath
@@ -856,13 +904,7 @@ export class MockContext<TContextData> implements Context<TContextData> {
     return Promise.resolve([]);
   }
 
-  getDocumentLoader(
-    params: { handle: string } | { identifier: string },
-  ): Promise<DocumentLoader>;
-  getDocumentLoader(
-    params: { keyId: URL; privateKey: CryptoKey },
-  ): DocumentLoader;
-  getDocumentLoader(params: any): DocumentLoader | Promise<DocumentLoader> {
+  getDocumentLoader(params: any): any {
     // return the same document loader
     if ("keyId" in params) {
       return this.documentLoader;
@@ -890,71 +932,24 @@ export class MockContext<TContextData> implements Context<TContextData> {
   }
 
   lookupNodeInfo(
-    url: URL | string,
-    options?: { parse?: "strict" | "best-effort" } & any,
-  ): Promise<NodeInfo | undefined>;
-  lookupNodeInfo(
-    url: URL | string,
-    options?: { parse: "none" } & any,
-  ): Promise<JsonValue | undefined>;
-  lookupNodeInfo(
-    _url: URL | string,
+    _url: any,
     _options?: any,
-  ): Promise<NodeInfo | JsonValue | undefined> {
+  ): Promise<any> {
     return Promise.resolve(undefined);
   }
 
   lookupWebFinger(
     _resource: URL | `acct:${string}@${string}` | string,
     _options?: any,
-  ): Promise<ResourceDescriptor | null> {
+  ): Promise<any> {
     return Promise.resolve(null);
   }
 
   sendActivity(
-    sender:
-      | SenderKeyPair
-      | SenderKeyPair[]
-      | { identifier: string }
-      | { username: string }
-      | { handle: string },
-    recipients: Recipient | Recipient[],
+    sender: any,
+    recipients: any,
     activity: Activity,
-    options?: SendActivityOptions,
-  ): Promise<void>;
-  sendActivity(
-    sender: { identifier: string } | { username: string } | { handle: string },
-    recipients: "followers",
-    activity: Activity,
-    options?: SendActivityOptionsForCollection,
-  ): Promise<void>;
-  sendActivity(
-    sender:
-      | SenderKeyPair
-      | SenderKeyPair[]
-      | { identifier: string }
-      | { username: string }
-      | { handle: string },
-    recipients: Recipient | Recipient[],
-    activity: Activity,
-    options?: SendActivityOptions,
-  ): Promise<void>;
-  sendActivity(
-    sender: { identifier: string } | { username: string } | { handle: string },
-    recipients: "followers",
-    activity: Activity,
-    options?: SendActivityOptionsForCollection,
-  ): Promise<void>;
-  sendActivity(
-    sender:
-      | SenderKeyPair
-      | SenderKeyPair[]
-      | { identifier: string }
-      | { username: string }
-      | { handle: string },
-    recipients: Recipient | Recipient[] | "followers",
-    activity: Activity,
-    _options?: SendActivityOptions | SendActivityOptionsForCollection,
+    _options?: any,
   ): Promise<void> {
     this.sentActivities.push({ sender, recipients, activity });
 
@@ -988,13 +983,8 @@ export class MockContext<TContextData> implements Context<TContextData> {
    * @returns An array of sent activity records.
    */
   getSentActivities(): Array<{
-    sender:
-      | SenderKeyPair
-      | SenderKeyPair[]
-      | { identifier: string }
-      | { username: string }
-      | { handle: string };
-    recipients: Recipient | Recipient[] | "followers";
+    sender: any;
+    recipients: any;
     activity: Activity;
   }> {
     return [...this.sentActivities];

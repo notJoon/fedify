@@ -4838,16 +4838,6 @@
           "jsr:@std/assert@^1.0.13",
           "npm:@sveltejs/kit@2"
         ]
-      },
-      "packages/testing": {
-        "dependencies": [
-          "npm:@opentelemetry/api@^1.9.0"
-        ],
-        "packageJson": {
-          "dependencies": [
-            "npm:@opentelemetry/api@^1.9.0"
-          ]
-        }
       }
     }
   }
