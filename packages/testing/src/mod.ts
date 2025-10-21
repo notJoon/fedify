@@ -5,13 +5,29 @@
  * {@link Context} interfaces to facilitate unit testing of federated applications
  * built with Fedify.
  *
+ * Note: MockFederation and SentActivity are intentionally not exported from this
+ * public API to avoid JSR type analyzer hangs (issue #468). The JSR type analyzer
+ * struggles with the complex type dependencies in MockFederation and MockContext
+ * classes, which can cause indefinite hangs during the "processing" stage.
+ *
+ * Instead, use the exported helper functions to create test instances:
+ * - {@link createFederation} - Create a mock Federation for testing
+ * - {@link createContext} - Create a basic Context for testing
+ * - {@link createRequestContext} - Create a RequestContext for testing
+ * - {@link createInboxContext} - Create an InboxContext for testing
+ *
+ * These functions provide the same testing capabilities while avoiding the
+ * problematic type exports.
+ *
  * @module
  */
 
-export type { SentActivity } from "./mock.ts";
-export { MockFederation } from "./mock.ts";
 export {
   createContext,
+  createFederation,
   createInboxContext,
   createRequestContext,
-} from "./context.ts";
+  type SentActivity,
+  type TestContext,
+  type TestFederation,
+} from "./mock.ts";

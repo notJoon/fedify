@@ -1,20 +1,12 @@
 // deno-lint-ignore-file no-explicit-any
 import type {
-  ActorCallbackSetters,
-  ActorDispatcher,
   ActorKeyPair,
-  CollectionCallbackSetters,
-  CollectionDispatcher,
   Context,
   Federation,
   FederationFetchOptions,
   FederationStartQueueOptions,
   InboxContext,
-  InboxListenerSetters,
   Message,
-  NodeInfoDispatcher,
-  ObjectCallbackSetters,
-  ObjectDispatcher,
   ParseUriResult,
   RequestContext,
   RouteActivityOptions,
@@ -22,12 +14,9 @@ import type {
 import type { DocumentLoader } from "@fedify/fedify/runtime";
 import type {
   Activity,
-  Actor,
   Collection,
-  Hashtag,
   LookupObjectOptions,
   Object,
-  Recipient,
   TraverseCollectionOptions,
 } from "@fedify/fedify/vocab";
 import { createContext } from "./context.ts";
@@ -141,6 +130,60 @@ export interface SentActivity {
 }
 
 /**
+ * A mock Context interface for testing purposes.
+ * Extends the standard Context interface with additional testing utilities.
+ * @since 1.9.1
+ */
+export interface TestContext<TContextData>
+  extends
+    Omit<Context<TContextData>, "clone">,
+    Pick<
+      RequestContext<TContextData>,
+      | "request"
+      | "url"
+      | "getActor"
+      | "getObject"
+      | "getSignedKey"
+      | "getSignedKeyOwner"
+      | "sendActivity"
+      | "routeActivity"
+    > {
+  // Override clone to return TestContext
+  clone(data: TContextData): TestContext<TContextData>;
+
+  // Test-specific methods
+  getSentActivities(): Array<{
+    sender: any;
+    recipients: any;
+    activity: Activity;
+  }>;
+  reset(): void;
+}
+
+/**
+ * A mock Federation interface for testing purposes.
+ * Extends the standard Federation interface with additional testing utilities.
+ * @since 1.9.1
+ */
+export interface TestFederation<TContextData>
+  extends Omit<Federation<TContextData>, "createContext"> {
+  // Test-specific properties
+  sentActivities: SentActivity[];
+  queueStarted: boolean;
+  sentCounter: number;
+
+  // Test-specific methods
+  receiveActivity(activity: Activity): Promise<void>;
+  reset(): void;
+
+  // Override createContext to return TestContext
+  createContext(
+    baseUrlOrRequest: URL | Request,
+    contextData: TContextData,
+  ): TestContext<TContextData>;
+}
+
+/**
  * A mock implementation of the {@link Federation} interface for unit testing.
  * This class provides a way to test Fedify applications without needing
  * a real federation setup.
@@ -148,17 +191,17 @@ export interface SentActivity {
  * @example
  * ```typescript
  * import { Create } from "@fedify/fedify/vocab";
- * import { MockFederation } from "@fedify/testing";
+ * import { createFederation } from "@fedify/testing";
  *
  * // Create a mock federation with contextData
- * const federation = new MockFederation<{ userId: string }>({
+ * const federation = createFederation<{ userId: string }>({
  *   contextData: { userId: "test-user" }
  * });
  *
  * // Set up inbox listeners
  * federation
  *   .setInboxListeners("/users/{identifier}/inbox")
- *   .on(Create, async (ctx, activity) => {
+ *   .on(Create, async (ctx: any, activity: any) => {
  *     console.log("Received:", activity);
  *   });
  *
@@ -178,14 +221,13 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
   public queueStarted = false;
   private activeQueues: Set<"inbox" | "outbox" | "fanout"> = new Set();
   public sentCounter = 0;
-  private nodeInfoDispatcher?: NodeInfoDispatcher<TContextData>;
+  private nodeInfoDispatcher?: any;
   // Note: Using `any` instead of WebFingerLinksDispatcher to avoid JSR hang.
   // WebFingerLinksDispatcher references Link type from @fedify/fedify/webfinger,
   // which causes JSR type analyzer to hang when combined with @opentelemetry/api
   // types present in Context.tracerProvider (issue #468).
   private webFingerDispatcher?: any;
-  private actorDispatchers: Map<string, ActorDispatcher<TContextData>> =
-    new Map();
+  private actorDispatchers: Map<string, any> = new Map();
   public actorPath?: string;
   public inboxPath?: string;
   public outboxPath?: string;
@@ -197,54 +239,15 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
   public nodeInfoPath?: string;
   public sharedInboxPath?: string;
   public objectPaths: Map<string, string> = new Map();
-  private objectDispatchers: Map<
-    string,
-    ObjectDispatcher<TContextData, Object, string>
-  > = new Map();
-  private inboxDispatcher?: CollectionDispatcher<
-    Activity,
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  >;
-  private outboxDispatcher?: CollectionDispatcher<
-    Activity,
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  >;
-  private followingDispatcher?: CollectionDispatcher<
-    Actor | URL,
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  >;
-  private followersDispatcher?: CollectionDispatcher<
-    Recipient,
-    Context<TContextData>,
-    TContextData,
-    URL
-  >;
-  private likedDispatcher?: CollectionDispatcher<
-    Object | URL,
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  >;
-  private featuredDispatcher?: CollectionDispatcher<
-    Object,
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  >;
-  private featuredTagsDispatcher?: CollectionDispatcher<
-    Hashtag,
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  >;
-  private inboxListeners: Map<string, InboxListener<TContextData, Activity>[]> =
-    new Map();
+  private objectDispatchers: Map<string, any> = new Map();
+  private inboxDispatcher?: any;
+  private outboxDispatcher?: any;
+  private followingDispatcher?: any;
+  private followersDispatcher?: any;
+  private likedDispatcher?: any;
+  private featuredDispatcher?: any;
+  private featuredTagsDispatcher?: any;
+  private inboxListeners: Map<string, any[]> = new Map();
   private contextData?: TContextData;
   private receivedActivities: Activity[] = [];
 
@@ -258,10 +261,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     this.contextData = options.contextData;
   }
 
-  setNodeInfoDispatcher(
-    path: string,
-    dispatcher: NodeInfoDispatcher<TContextData>,
-  ): void {
+  setNodeInfoDispatcher(path: string, dispatcher: any): void {
     this.nodeInfoDispatcher = dispatcher;
     this.nodeInfoPath = path;
   }
@@ -274,10 +274,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     this.webFingerDispatcher = dispatcher;
   }
 
-  setActorDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    dispatcher: ActorDispatcher<TContextData>,
-  ): ActorCallbackSetters<TContextData> {
+  setActorDispatcher(path: any, dispatcher: any): any {
     this.actorDispatchers.set(path, dispatcher);
     this.actorPath = path;
     return {
@@ -288,11 +285,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setObjectDispatcher<TObject extends Object, TParam extends string>(
-    cls: (new (...args: any[]) => TObject) & { typeId: URL },
-    path: string,
-    dispatcher: ObjectDispatcher<TContextData, TObject, TParam>,
-  ): ObjectCallbackSetters<TContextData, TObject, TParam> {
+  setObjectDispatcher(cls: any, path: string, dispatcher: any): any {
     this.objectDispatchers.set(path, dispatcher);
     this.objectPaths.set(cls.typeId.href, path);
     return {
@@ -300,19 +293,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setInboxDispatcher(
-    _path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    dispatcher: CollectionDispatcher<
-      Activity,
-      RequestContext<TContextData>,
-      TContextData,
-      void
-    >,
-  ): CollectionCallbackSetters<
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  > {
+  setInboxDispatcher(_path: any, dispatcher: any): any {
     this.inboxDispatcher = dispatcher;
     // Note: inboxPath is set in setInboxListeners
     return {
@@ -323,19 +304,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setOutboxDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    dispatcher: CollectionDispatcher<
-      Activity,
-      RequestContext<TContextData>,
-      TContextData,
-      void
-    >,
-  ): CollectionCallbackSetters<
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  > {
+  setOutboxDispatcher(path: any, dispatcher: any): any {
     this.outboxDispatcher = dispatcher;
     this.outboxPath = path;
     return {
@@ -346,19 +315,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setFollowingDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    dispatcher: CollectionDispatcher<
-      Actor | URL,
-      RequestContext<TContextData>,
-      TContextData,
-      void
-    >,
-  ): CollectionCallbackSetters<
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  > {
+  setFollowingDispatcher(path: any, dispatcher: any): any {
     this.followingDispatcher = dispatcher;
     this.followingPath = path;
     return {
@@ -369,15 +326,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setFollowersDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    dispatcher: CollectionDispatcher<
-      Recipient,
-      Context<TContextData>,
-      TContextData,
-      URL
-    >,
-  ): CollectionCallbackSetters<Context<TContextData>, TContextData, URL> {
+  setFollowersDispatcher(path: any, dispatcher: any): any {
     this.followersDispatcher = dispatcher;
     this.followersPath = path;
     return {
@@ -388,19 +337,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setLikedDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    dispatcher: CollectionDispatcher<
-      Object | URL,
-      RequestContext<TContextData>,
-      TContextData,
-      void
-    >,
-  ): CollectionCallbackSetters<
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  > {
+  setLikedDispatcher(path: any, dispatcher: any): any {
     this.likedDispatcher = dispatcher;
     this.likedPath = path;
     return {
@@ -411,19 +348,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setFeaturedDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    dispatcher: CollectionDispatcher<
-      Object,
-      RequestContext<TContextData>,
-      TContextData,
-      void
-    >,
-  ): CollectionCallbackSetters<
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  > {
+  setFeaturedDispatcher(path: any, dispatcher: any): any {
     this.featuredDispatcher = dispatcher;
     this.featuredPath = path;
     return {
@@ -434,19 +359,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setFeaturedTagsDispatcher(
-    path: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    dispatcher: CollectionDispatcher<
-      Hashtag,
-      RequestContext<TContextData>,
-      TContextData,
-      void
-    >,
-  ): CollectionCallbackSetters<
-    RequestContext<TContextData>,
-    TContextData,
-    void
-  > {
+  setFeaturedTagsDispatcher(path: any, dispatcher: any): any {
     this.featuredTagsDispatcher = dispatcher;
     this.featuredTagsPath = path;
     return {
@@ -457,35 +370,27 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
     };
   }
 
-  setInboxListeners(
-    inboxPath: `${string}{identifier}${string}` | `${string}{handle}${string}`,
-    sharedInboxPath?: string,
-  ): InboxListenerSetters<TContextData> {
+  setInboxListeners(inboxPath: any, sharedInboxPath?: string): any {
     this.inboxPath = inboxPath;
     this.sharedInboxPath = sharedInboxPath;
     // deno-lint-ignore no-this-alias
     const self = this;
     return {
-      on<TActivity extends Activity>(
-        type: new (...args: any[]) => TActivity,
-        listener: InboxListener<TContextData, TActivity>,
-      ): InboxListenerSetters<TContextData> {
+      on(type: any, listener: any): any {
         const typeName = type.name;
         if (!self.inboxListeners.has(typeName)) {
           self.inboxListeners.set(typeName, []);
         }
-        self.inboxListeners.get(typeName)!.push(
-          listener as InboxListener<TContextData, Activity>,
-        );
+        self.inboxListeners.get(typeName)!.push(listener);
         return this;
       },
-      onError(): InboxListenerSetters<TContextData> {
+      onError(): any {
         return this;
       },
-      setSharedKeyDispatcher(): InboxListenerSetters<TContextData> {
+      setSharedKeyDispatcher(): any {
         return this;
       },
-      withIdempotency(): InboxListenerSetters<TContextData> {
+      withIdempotency(): any {
         return this;
       },
     };
@@ -629,12 +534,51 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
   }
 }
 
-// Type definitions for inbox listeners
-interface InboxListener<TContextData, TActivity extends Activity> {
-  (
-    context: InboxContext<TContextData>,
-    activity: TActivity,
-  ): void | Promise<void>;
+/**
+ * Creates a mock Federation instance for testing purposes.
+ *
+ * @template TContextData The type of context data to use
+ * @param options Optional configuration for the mock federation
+ * @returns A Federation instance that can be used for testing
+ * @since 1.9.1
+ *
+ * @example
+ * ```typescript
+ * import type { InboxContext } from "@fedify/fedify/federation";
+ * import { Create } from "@fedify/fedify/vocab";
+ * import { createFederation } from "@fedify/testing";
+ *
+ * // Create a mock federation with contextData
+ * const federation = createFederation<{ userId: string }>({
+ *   contextData: { userId: "test-user" }
+ * });
+ *
+ * // Set up inbox listeners
+ * federation
+ *   .setInboxListeners("/users/{identifier}/inbox")
+ *   .on(Create, async (ctx: InboxContext<{ userId: string }>, activity: Create) => {
+ *     console.log("Received:", activity);
+ *   });
+ *
+ * // Simulate receiving an activity
+ * const createActivity = new Create({
+ *   id: new URL("https://example.com/create/1"),
+ *   actor: new URL("https://example.com/users/alice")
+ * });
+ * await federation.receiveActivity(createActivity);
+ *
+ * // Check sent activities
+ * console.log(federation.sentActivities);
+ * ```
+ */
+export function createFederation<TContextData>(
+  options: {
+    contextData?: TContextData;
+    origin?: string;
+    tracerProvider?: any;
+  } = {},
+): TestFederation<TContextData> {
+  return new MockFederation<TContextData>(options);
 }
 
 /**
@@ -651,11 +595,11 @@ interface InboxListener<TContextData, TActivity extends Activity> {
  * @example
  * ```typescript
  * import { Person, Create } from "@fedify/fedify/vocab";
- * import { MockFederation } from "@fedify/testing";
+ * import { createFederation } from "@fedify/testing";
  *
  * // Create a mock federation and context
- * const mockFederation = new MockFederation<{ userId: string }>();
- * const context = mockFederation.createContext(
+ * const federation = createFederation<{ userId: string }>();
+ * const context = federation.createContext(
  *   new URL("https://example.com"),
  *   { userId: "test-user" }
  * );
@@ -673,7 +617,7 @@ interface InboxListener<TContextData, TActivity extends Activity> {
  * );
  *
  * // Check sent activities from the federation
- * const sent = mockFederation.sentActivities;
+ * const sent = federation.sentActivities;
  * console.log(sent[0].activity);
  * ```
  *
@@ -690,6 +634,8 @@ class MockContext<TContextData> implements Context<TContextData> {
   readonly documentLoader: DocumentLoader;
   readonly contextLoader: DocumentLoader;
   readonly tracerProvider: any;
+  readonly request: Request;
+  readonly url: URL;
 
   private sentActivities: Array<{
     sender: any;
@@ -712,6 +658,8 @@ class MockContext<TContextData> implements Context<TContextData> {
     this.canonicalOrigin = url.origin;
     this.host = url.host;
     this.hostname = url.hostname;
+    this.url = url;
+    this.request = new Request(url);
     this.data = options.data;
     this.federation = options.federation;
     // deno-lint-ignore require-await
@@ -724,9 +672,25 @@ class MockContext<TContextData> implements Context<TContextData> {
     this.tracerProvider = options.tracerProvider ?? noopTracerProvider;
   }
 
-  clone(data: TContextData): Context<TContextData> {
+  getActor(_handle: string): Promise<any> {
+    return Promise.resolve(null);
+  }
+
+  getObject(_cls: any, _values: any): Promise<any> {
+    return Promise.resolve(null);
+  }
+
+  getSignedKey(): Promise<any> {
+    return Promise.resolve(null);
+  }
+
+  getSignedKeyOwner(): Promise<any> {
+    return Promise.resolve(null);
+  }
+
+  clone(data: TContextData): TestContext<TContextData> {
     return new MockContext({
-      url: new URL(this.origin),
+      url: this.url,
       data,
       federation: this.federation,
       documentLoader: this.documentLoader,

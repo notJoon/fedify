@@ -185,9 +185,11 @@ bun add @fedify/testing
 
 :::
 
-### `MockFederation`
+### `createFederation()`
 
-The `MockFederation` class provides a mock implementation of the `Federation`
+*This API is available since Fedify 1.9.1.*
+
+The `createFederation()` function creates a mock implementation of the `Federation`
 interface that allows you to:
 
  -  Track sent activities without making network requests
@@ -195,21 +197,21 @@ interface that allows you to:
  -  Configure custom URI templates for testing
  -  Test queue-based activity processing
 
-Here's a basic example of using `MockFederation`:
+Here's a basic example of using `createFederation()`:
 
 ~~~~ typescript twoslash
-import { MockFederation } from "@fedify/testing";
+import { createFederation, type TestFederation } from "@fedify/testing";
 import { Create, Note } from "@fedify/fedify/vocab";
 
 // Create a mock federation with context data
-const federation = new MockFederation<{ userId: string }>({
+const federation: TestFederation<{ userId: string }> = createFederation<{ userId: string }>({
   contextData: { userId: "test-user" }
 });
 
 // Set up inbox listeners
 federation
   .setInboxListeners("/users/{identifier}/inbox")
-  .on(Create, async (ctx, activity) => {
+  .on(Create, async (ctx: any, activity: any) => {
     console.log("Received activity:", activity.id);
     // Your inbox logic here
   });
@@ -232,17 +234,17 @@ console.log("Sent activities:", federation.sentActivities);
 
 ### Creating mock contexts
 
-You can create mock contexts using `MockFederation.createContext()` method,
+You can create mock contexts using the `createContext()` method,
 which provides a mock implementation of the `Context` interface that tracks
 sent activities and provides mock implementations of URI generation methods:
 
 ~~~~ typescript twoslash
-import { MockFederation } from "@fedify/testing";
+import { createFederation, type TestContext } from "@fedify/testing";
 import { Create, Note, Person } from "@fedify/fedify/vocab";
 
 // Create a mock federation and context
-const federation = new MockFederation<{ userId: string }>();
-const context = federation.createContext(
+const federation = createFederation<{ userId: string }>();
+const context: TestContext<{ userId: string }> = federation.createContext(
   new URL("https://example.com"),
   { userId: "test-user" }
 );
@@ -273,15 +275,15 @@ console.log("Federation sent activities:", federation.sentActivities);
 
 ### Testing URI generation
 
-Mock contexts created with `MockFederation.createContext()` provide mock
+Mock contexts created with the `createContext()` method provide mock
 implementations of all URI generation methods that work with the paths
-configured in your `MockFederation`:
+configured in your test federation:
 
 ~~~~ typescript twoslash
-import { MockFederation } from "@fedify/testing";
+import { createFederation } from "@fedify/testing";
 import { Note } from "@fedify/fedify/vocab";
 
-const federation = new MockFederation();
+const federation = createFederation();
 
 // Configure paths (similar to real federation setup)
 federation.setActorDispatcher("/users/{identifier}", () => null);
@@ -303,14 +305,14 @@ console.log(context.getObjectUri(Note, { id: "123" })); // https://example.com/n
 
 ### Tracking sent activities
 
-Both `MockFederation` and mock contexts track sent activities with detailed
+Both the test federation and mock contexts track sent activities with detailed
 metadata:
 
 ~~~~ typescript twoslash
 // @noErrors: 2554
-import { MockFederation } from "@fedify/testing";
+import { createFederation } from "@fedify/testing";
 
-const federation = new MockFederation();
+const federation = createFederation();
 const context = federation.createContext(
   new URL("https://example.com/"),
   undefined
@@ -341,9 +343,9 @@ You can test queue-based activity processing by starting the mock queue:
 
 ~~~~ typescript twoslash
 // @noErrors: 2554
-import { MockFederation } from "@fedify/testing";
+import { createFederation } from "@fedify/testing";
 
-const federation = new MockFederation();
+const federation = createFederation();
 
 // Start the queue to simulate background processing
 await federation.startQueue({ contextData: { userId: "test" } });
@@ -362,12 +364,12 @@ console.log("Queued activities:", queued.length);
 
 ### Resetting mock state
 
-Both `MockFederation` and mock contexts provide `reset()` methods to clear
+Both the test federation and mock contexts provide `reset()` methods to clear
 tracked activities:
 
 ~~~~ typescript twoslash
-import { MockFederation } from "@fedify/testing";
-const federation = new MockFederation();
+import { createFederation } from "@fedify/testing";
+const federation = createFederation();
 const context = federation.createContext(
   new URL("https://example.com/"),
   undefined

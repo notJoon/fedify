@@ -1,3 +1,4 @@
+import type { InboxContext } from "@fedify/fedify/federation";
 import { Create, Note, Person } from "@fedify/fedify/vocab";
 import { assertEquals, assertRejects } from "@std/assert";
 import { test } from "../../fedify/src/testing/mod.ts";
@@ -74,10 +75,13 @@ test("receiveActivity triggers inbox listeners", async () => {
   // Set up an inbox listener
   mockFederation
     .setInboxListeners("/users/{identifier}/inbox")
-    // deno-lint-ignore require-await
-    .on(Create, async (_ctx, activity) => {
-      receivedActivity = activity;
-    });
+    .on(
+      Create,
+      (_ctx: InboxContext<{ test: string }>, activity: Create) => {
+        receivedActivity = activity;
+        return Promise.resolve();
+      },
+    );
 
   // Create and receive an activity
   const activity = new Create({
@@ -258,8 +262,9 @@ test("receiveActivity throws error when contextData not initialized", async () =
   // Set up an inbox listener without initializing contextData
   mockFederation
     .setInboxListeners("/users/{identifier}/inbox")
-    .on(Create, async (_ctx, _activity) => {
+    .on(Create, (_ctx: InboxContext<void>, _activity: Create) => {
       /* should not happen */
+      return Promise.resolve();
     });
 
   const activity = new Create({
