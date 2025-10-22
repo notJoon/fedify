@@ -11,24 +11,17 @@ To be released.
 ### @fedify/testing
 
  -  Fixed JSR publishing hanging indefinitely at the *processing* stage by
-    refactoring the public API to use TypeScript utility types (`Omit`, `Pick`)
-    instead of direct class exports.  The JSR type analyzer struggled with
-    complex type dependencies when exporting the `MockFederation` class
-    directly, causing indefinite hangs during the processing stage.  [[#468]]
+    hiding complex type exports from the public API.  The JSR type analyzer
+    struggled with complex type dependencies when analyzing the `MockFederation`,
+    `TestFederation`, `TestContext`, and `SentActivity` types, causing indefinite
+    hangs during the processing stage.  [[#468]]
 
-     -  Added `TestContext<TContextData>` interface that extends `Context` with
-        testing utilities using `Omit<Context, "clone">` and
-        `Pick<RequestContext, ...>`.  This ensures automatic inheritance of new
-        methods added to `Context` or `RequestContext` while maintaining JSR
-        compatibility.
-     -  Added `TestFederation<TContextData>` interface that extends `Federation`
-        with testing utilities using `Omit<Federation, "createContext">`.
-     -  Added `createFederation()` factory function that returns
-        `TestFederation<TContextData>` for creating mock federation instances.
-     -  Exported `SentActivity` interface for tracking sent activities.
      -  **Breaking change**: `MockFederation` class is no longer exported from
-        the public API.  Use `createFederation()` instead, which returns a
-        `TestFederation` instance with the same functionality.
+        the public API.  Use `createFederation()` factory function instead.
+     -  `TestFederation<TContextData>`, `TestContext<TContextData>`, and
+        `SentActivity` interfaces are no longer exported from the public API,
+        but their types are still inferred from `createFederation()` return type
+        and can be used via TypeScript's type inference.
 
 ### @fedify/cli
 

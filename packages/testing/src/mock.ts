@@ -69,7 +69,7 @@ function expandUriTemplate(
  * Represents a sent activity with metadata about how it was sent.
  * @since 1.8.0
  */
-export interface SentActivity {
+interface SentActivity {
   /** Whether the activity was queued or sent immediately. */
   queued: boolean;
   /** Which queue was used (if queued). */
@@ -85,7 +85,7 @@ export interface SentActivity {
  * Extends the standard Context interface with additional testing utilities.
  * @since 1.9.1
  */
-export interface TestContext<TContextData>
+interface TestContext<TContextData>
   extends
     Omit<Context<TContextData>, "clone">,
     Pick<
@@ -116,7 +116,7 @@ export interface TestContext<TContextData>
  * Extends the standard Federation interface with additional testing utilities.
  * @since 1.9.1
  */
-export interface TestFederation<TContextData>
+interface TestFederation<TContextData>
   extends Omit<Federation<TContextData>, "createContext"> {
   // Test-specific properties
   sentActivities: SentActivity[];
@@ -167,7 +167,7 @@ export interface TestFederation<TContextData>
  * @template TContextData The context data to pass to the {@link Context}.
  * @since 1.8.0
  */
-export class MockFederation<TContextData> implements Federation<TContextData> {
+class MockFederation<TContextData> implements Federation<TContextData> {
   public sentActivities: SentActivity[] = [];
   public queueStarted = false;
   private activeQueues: Set<"inbox" | "outbox" | "fanout"> = new Set();

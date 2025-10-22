@@ -200,11 +200,11 @@ interface that allows you to:
 Here's a basic example of using `createFederation()`:
 
 ~~~~ typescript twoslash
-import { createFederation, type TestFederation } from "@fedify/testing";
+import { createFederation } from "@fedify/testing";
 import { Create, Note } from "@fedify/fedify/vocab";
 
 // Create a mock federation with context data
-const federation: TestFederation<{ userId: string }> = createFederation<{ userId: string }>({
+const federation = createFederation<{ userId: string }>({
   contextData: { userId: "test-user" }
 });
 
@@ -239,12 +239,12 @@ which provides a mock implementation of the `Context` interface that tracks
 sent activities and provides mock implementations of URI generation methods:
 
 ~~~~ typescript twoslash
-import { createFederation, type TestContext } from "@fedify/testing";
+import { createFederation } from "@fedify/testing";
 import { Create, Note, Person } from "@fedify/fedify/vocab";
 
 // Create a mock federation and context
 const federation = createFederation<{ userId: string }>();
-const context: TestContext<{ userId: string }> = federation.createContext(
+const context = federation.createContext(
   new URL("https://example.com"),
   { userId: "test-user" }
 );

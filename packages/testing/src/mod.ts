@@ -28,7 +28,4 @@ export {
   createFederation,
   createInboxContext,
   createRequestContext,
-  type SentActivity,
-  type TestContext,
-  type TestFederation,
 } from "./mock.ts";

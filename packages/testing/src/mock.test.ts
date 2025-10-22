@@ -2,10 +2,10 @@ import type { InboxContext } from "@fedify/fedify/federation";
 import { Create, Note, Person } from "@fedify/fedify/vocab";
 import { assertEquals, assertRejects } from "@std/assert";
 import { test } from "../../fedify/src/testing/mod.ts";
-import { MockFederation } from "./mock.ts";
+import { createFederation } from "./mock.ts";
 
 test("getSentActivities returns sent activities", async () => {
-  const mockFederation = new MockFederation<void>();
+  const mockFederation = createFederation<void>();
   const context = mockFederation.createContext(
     new URL("https://example.com"),
     undefined,
@@ -36,7 +36,7 @@ test("getSentActivities returns sent activities", async () => {
 });
 
 test("reset clears sent activities", async () => {
-  const mockFederation = new MockFederation<void>();
+  const mockFederation = createFederation<void>();
   const context = mockFederation.createContext(
     new URL("https://example.com"),
     undefined,
@@ -67,7 +67,7 @@ test("reset clears sent activities", async () => {
 
 test("receiveActivity triggers inbox listeners", async () => {
   // Provide contextData through constructor
-  const mockFederation = new MockFederation<{ test: string }>({
+  const mockFederation = createFederation<{ test: string }>({
     contextData: { test: "data" },
   });
   let receivedActivity: Create | null = null;
@@ -100,7 +100,7 @@ test("receiveActivity triggers inbox listeners", async () => {
 });
 
 test("MockContext tracks sent activities", async () => {
-  const mockFederation = new MockFederation<void>();
+  const mockFederation = createFederation<void>();
   const mockContext = mockFederation.createContext(
     new URL("https://example.com"),
     undefined,
@@ -129,7 +129,7 @@ test("MockContext tracks sent activities", async () => {
 });
 
 test("MockContext URI methods should work correctly", () => {
-  const mockFederation = new MockFederation<void>();
+  const mockFederation = createFederation<void>();
   const mockContext = mockFederation.createContext(
     new URL("https://example.com"),
     undefined,
@@ -167,7 +167,7 @@ test("MockContext URI methods should work correctly", () => {
 });
 
 test("MockContext URI methods respect registered paths", () => {
-  const mockFederation = new MockFederation<void>();
+  const mockFederation = createFederation<void>();
 
   // Register custom paths with dummy dispatchers
   mockFederation.setNodeInfoDispatcher("/.well-known/nodeinfo", () => ({
@@ -257,7 +257,7 @@ test("MockContext URI methods respect registered paths", () => {
 });
 
 test("receiveActivity throws error when contextData not initialized", async () => {
-  const mockFederation = new MockFederation<void>();
+  const mockFederation = createFederation<void>();
 
   // Set up an inbox listener without initializing contextData
   mockFederation
@@ -281,7 +281,7 @@ test("receiveActivity throws error when contextData not initialized", async () =
 });
 
 test("MockFederation distinguishes between immediate and queued activities", async () => {
-  const mockFederation = new MockFederation<void>();
+  const mockFederation = createFederation<void>();
 
   // Start the queue to enable queued sending
   await mockFederation.startQueue(undefined);
@@ -329,7 +329,7 @@ test("MockFederation distinguishes between immediate and queued activities", asy
 });
 
 test("MockFederation without queue sends all activities immediately", async () => {
-  const mockFederation = new MockFederation<void>();
+  const mockFederation = createFederation<void>();
 
   const context = mockFederation.createContext(
     new URL("https://example.com"),
