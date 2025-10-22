@@ -22,6 +22,7 @@
  * @module
  */
 
+// Export factory functions for creating test instances
 export {
   createContext,
   createFederation,

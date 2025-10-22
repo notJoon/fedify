@@ -5,7 +5,6 @@ import type {
   Federation,
   FederationFetchOptions,
   FederationStartQueueOptions,
-  InboxContext,
   Message,
   ParseUriResult,
   RequestContext,
@@ -19,10 +18,14 @@ import type {
   Object,
   TraverseCollectionOptions,
 } from "@fedify/fedify/vocab";
-import { createContext } from "./context.ts";
+import {
+  createContext,
+  createInboxContext,
+  createRequestContext,
+} from "./context.ts";
 
-// Re-export createContext for public API
-export { createContext };
+// Re-export for public API
+export { createContext, createInboxContext, createRequestContext };
 
 // Create a no-op tracer provider.
 // We use `any` type instead of importing TracerProvider from @opentelemetry/api
@@ -60,58 +63,6 @@ function expandUriTemplate(
   return template.replace(/{([^}]+)}/g, (match, key) => {
     return values[key] || match;
   });
-}
-
-/**
- * Creates a RequestContext for testing purposes.
- * @param args Partial RequestContext properties
- * @returns A RequestContext instance
- * @since 1.8.0
- */
-export function createRequestContext<TContextData>(
-  args: Partial<RequestContext<TContextData>> & {
-    url: URL;
-    data: TContextData;
-    federation: Federation<TContextData>;
-  },
-): RequestContext<TContextData> {
-  return {
-    ...createContext(args),
-    clone: args.clone ?? ((data) => createRequestContext({ ...args, data })),
-    request: args.request ?? new Request(args.url),
-    url: args.url,
-    getActor: args.getActor ?? (() => Promise.resolve(null)),
-    getObject: args.getObject ?? (() => Promise.resolve(null)),
-    getSignedKey: args.getSignedKey ?? (() => Promise.resolve(null)),
-    getSignedKeyOwner: args.getSignedKeyOwner ?? (() => Promise.resolve(null)),
-    sendActivity: args.sendActivity ?? ((_params) => {
-      throw new Error("Not implemented");
-    }),
-  };
-}
-
-/**
- * Creates an InboxContext for testing purposes.
- * @param args Partial InboxContext properties
- * @returns An InboxContext instance
- * @since 1.8.0
- */
-export function createInboxContext<TContextData>(
-  args: Partial<InboxContext<TContextData>> & {
-    url?: URL;
-    data: TContextData;
-    recipient?: string | null;
-    federation: Federation<TContextData>;
-  },
-): InboxContext<TContextData> {
-  return {
-    ...createContext(args),
-    clone: args.clone ?? ((data) => createInboxContext({ ...args, data })),
-    recipient: args.recipient ?? null,
-    forwardActivity: args.forwardActivity ?? ((_params) => {
-      throw new Error("Not implemented");
-    }),
-  };
 }
 
 /**
@@ -544,7 +495,6 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
  *
  * @example
  * ```typescript
- * import type { InboxContext } from "@fedify/fedify/federation";
  * import { Create } from "@fedify/fedify/vocab";
  * import { createFederation } from "@fedify/testing";
  *
@@ -556,7 +506,7 @@ export class MockFederation<TContextData> implements Federation<TContextData> {
  * // Set up inbox listeners
  * federation
  *   .setInboxListeners("/users/{identifier}/inbox")
- *   .on(Create, async (ctx: InboxContext<{ userId: string }>, activity: Create) => {
+ *   .on(Create, async (ctx, activity) => {
  *     console.log("Received:", activity);
  *   });
  *

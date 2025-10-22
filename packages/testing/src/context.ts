@@ -38,7 +38,8 @@ const noopTracerProvider: any = {
 
 // NOTE: Copied from @fedify/fedify/testing/context.ts
 
-export function createContext<TContextData>(
+// Not exported - used internally only. Public API is in mock.ts
+function createContext<TContextData>(
   values: Partial<Context<TContextData>> & {
     url?: URL;
     data: TContextData;
@@ -143,11 +144,12 @@ export function createContext<TContextData>(
 
 /**
  * Creates a RequestContext for testing purposes.
+ * Not exported - used internally only. Public API is in mock.ts
  * @param args Partial RequestContext properties
  * @returns A RequestContext instance
  * @since 1.8.0
  */
-export function createRequestContext<TContextData>(
+function createRequestContext<TContextData>(
   args: Partial<RequestContext<TContextData>> & {
     url: URL;
     data: TContextData;
@@ -170,19 +172,27 @@ export function createRequestContext<TContextData>(
 }
 
 /**
+ * Test-specific InboxContext type alias.
+ * This indirection helps avoid JSR type analyzer issues.
+ * @since 1.9.1
+ */
+type TestInboxContext<TContextData> = InboxContext<TContextData>;
+
+/**
  * Creates an InboxContext for testing purposes.
+ * Not exported - used internally only. Public API is in mock.ts
  * @param args Partial InboxContext properties
  * @returns An InboxContext instance
  * @since 1.8.0
  */
-export function createInboxContext<TContextData>(
+function createInboxContext<TContextData>(
   args: Partial<InboxContext<TContextData>> & {
     url?: URL;
     data: TContextData;
     recipient?: string | null;
     federation: Federation<TContextData>;
   },
-): InboxContext<TContextData> {
+): TestInboxContext<TContextData> {
   return {
     ...createContext(args),
     clone: args.clone ?? ((data) => createInboxContext({ ...args, data })),
@@ -192,3 +202,6 @@ export function createInboxContext<TContextData>(
     }),
   };
 }
+
+// Export for internal use by mock.ts only
+export { createContext, createInboxContext, createRequestContext };
