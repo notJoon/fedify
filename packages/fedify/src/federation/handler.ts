@@ -740,8 +740,8 @@ async function handleInboxInternal<TContextData>(
   }
   let httpSigKey: CryptographicKey | null = null;
   // Check if HTTP Signature verification is needed
-  const needsHttpSigVerification =
-    activity == null || (requireHttpSignature ?? false);
+  const needsHttpSigVerification = activity == null ||
+    (requireHttpSignature ?? false);
   if (needsHttpSigVerification) {
     if (!skipSignatureVerification) {
       const key = await verifyRequest(request, {

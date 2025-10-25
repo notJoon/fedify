@@ -5,10 +5,7 @@ import {
   createRequestContext,
 } from "../testing/context.ts";
 import { mockDocumentLoader } from "../testing/docloader.ts";
-import {
-  rsaPrivateKey3,
-  rsaPublicKey3,
-} from "../testing/keys.ts";
+import { rsaPrivateKey3, rsaPublicKey3 } from "../testing/keys.ts";
 import { test } from "../testing/mod.ts";
 import { Create, Note, Person } from "../vocab/vocab.ts";
 import type { ActorDispatcher } from "./callback.ts";
