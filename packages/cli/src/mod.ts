@@ -1,4 +1,6 @@
-import { Command, CompletionsCommand, HelpCommand } from "@cliffy/command";
+import { Command } from "@cliffy/command";
+import { CompletionsCommand } from "@cliffy/command/completions";
+import { HelpCommand } from "@cliffy/command/help";
 import { getFileSink } from "@logtape/file";
 import { configure, getConsoleSink } from "@logtape/logtape";
 import { setColorEnabled } from "@std/fmt/colors";

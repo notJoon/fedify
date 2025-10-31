@@ -5,9 +5,6 @@
   "exports": {
     ".": "./src/mod.ts"
   },
-  "imports": {
-    "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0"
-  },
   "exclude": [
     "dist",
     "node_modules",
