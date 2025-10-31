@@ -4,6 +4,7 @@ packages:
 - packages/cli
 - packages/elysia
 - packages/express
+- packages/fastify
 - packages/fedify
 - packages/h3
 - packages/hono
@@ -22,6 +23,7 @@ packages:
 - examples/express
 - examples/koa
 - examples/next-integration
+- examples/fastify
 - examples/next14-app-router
 - examples/next15-app-router
 - examples/sveltekit-sample
@@ -30,8 +32,8 @@ catalog:
   "@cloudflare/workers-types": ^4.20250529.0
   "@fxts/core": ^1.15.0
   "@js-temporal/polyfill": ^0.5.1
-  "@logtape/file": ^1.0.0
-  "@logtape/logtape": ^1.0.0
+  "@logtape/file": ^1.1.1
+  "@logtape/logtape": ^1.1.1
   "@std/assert": "jsr:^1.0.13"
   "@std/async": "jsr:^1.0.13"
   "@std/path": "jsr:^1.0.6"
@@ -45,6 +47,8 @@ catalog:
   elysia: ^1.3.8
   es-toolkit: 1.39.5
   express: ^4.0.0
+  fastify: ^5.2.0
+  fastify-plugin: ^5.0.1
   fetch-mock: ^12.5.4
   h3: ^1.15.0
   hono: ^4.0.0

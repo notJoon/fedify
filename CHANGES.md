@@ -125,10 +125,44 @@ To be released.
         provides the runtime infrastructure for ActivityPub object processing.
 
 
+Version 1.10.0
+--------------
+
+To be released.
+
+
+Version 1.9.1
+-------------
+
+Released on October 31, 2025.
+
+### @fedify/testing
+
+ -  Fixed JSR publishing hanging indefinitely at the *processing* stage by
+    hiding complex type exports from the public API.  The JSR type analyzer
+    struggled with complex type dependencies when analyzing the `MockFederation`,
+    `TestFederation`, `TestContext`, and `SentActivity` types, causing indefinite
+    hangs during the processing stage.  [[#468]]
+
+     -  *Breaking change*: `MockFederation` class is no longer exported from
+        the public API.  Use `createFederation()` factory function instead.
+     -  `TestFederation<TContextData>`, `TestContext<TContextData>`, and
+        `SentActivity` interfaces are no longer exported from the public API,
+        but their types are still inferred from `createFederation()` return type
+        and can be used via TypeScript's type inference.
+
+### @fedify/cli
+
+ -  Fixed `fedify` command failing on Windows with `PermissionDenied` error
+    when trying to locate or execute package managers during initialization.
+    The CLI now properly handles _\*.cmd_ and _\*.bat_ files on Windows by
+    invoking them through `cmd /c`.  [[#463]]
+
+
 Version 1.9.0
 -------------
 
-To be released.
+Released on October 14, 2025.
 
 ### @fedify/fedify
 
@@ -285,10 +319,11 @@ To be released.
  -  Added `-T`/`--timeout` option to `fedify lookup` command. This option allows
     users to specify timeout in seconds for network requests to prevent
     hanging on slow or unresponsive servers.
-    [[#258] by Hyunchae Kim]
+    [[#258], [#372] by Hyunchae Kim]
 
 [#353]: https://github.com/fedify-dev/fedify/issues/353
 [#365]: https://github.com/fedify-dev/fedify/pull/365
+[#372]: https://github.com/fedify-dev/fedify/pull/372
 
 ### @fedify/amqp
 
@@ -316,6 +351,21 @@ To be released.
 
  -  Added CommonJS support alongside ESM for better compatibility with
     CommonJS-based Node.js applications.  [[#429], [#431]]
+
+### @fedify/fastify
+
+ -  Created [Fastify] integration as the *@fedify/fastify* package.
+    [[#151], [#450] by An Subin]
+
+     -  Added `fedifyPlugin()` function for integrating Fedify into Fastify
+        applications.
+     -  Converts between Fastify's request/reply API and Web Standards
+        `Request`/`Response`.
+     -  Supports both ESM and CommonJS for broad Node.js compatibility.
+
+[Fastify]: https://fastify.dev/
+[#151]: https://github.com/fedify-dev/fedify/issues/151
+[#450]: https://github.com/fedify-dev/fedify/pull/450
 
 ### @fedify/h3
 
@@ -396,6 +446,49 @@ To be released.
 
  -  Added CommonJS support alongside ESM for better compatibility with
     CommonJS-based Node.js applications.  [[#429], [#431]]
+
+
+Version 1.8.14
+--------------
+
+Released on October 19, 2025.
+
+### @fedify/testing
+
+ -  Fixed JSR publishing hanging indefinitely at the *processing* stage.
+    The issue was caused by TypeScript function overload signatures in
+    `MockContext` and `MockFederation` classes that triggered a bug in JSR's
+    type analyzer.  All method overloads have been removed and simplified to
+    use `any` types where necessary.  [[#468], [#470]]
+
+[#468]: https://github.com/fedify-dev/fedify/issues/468
+[#470]: https://github.com/fedify-dev/fedify/pull/470
+
+### @fedify/cli
+
+ -  Fixed `fedify` command failing on Windows with `PermissionDenied` error
+    when trying to locate or execute package managers during initialization.
+    The CLI now properly handles _\*.cmd_ and _\*.bat_ files on Windows by
+    invoking them through `cmd /c`.  [[#463]]
+
+[#463]: https://github.com/fedify-dev/fedify/issues/463
+
+
+Version 1.8.13
+--------------
+
+Released on October 10, 2025.
+
+### @fedify/fedify
+
+ -  Fixed inconsistent encoding/decoding of URI template identifiers with
+    special characters.  Updated *uri-template-router* to version 1.0.0,
+    which properly decodes percent-encoded characters in URI template variables
+    according to RFC 6570.  This resolves issues where identifiers containing
+    URIs (e.g., `https%3A%2F%2Fexample.com`) were being inconsistently decoded
+    in dispatcher callbacks and double-encoded in collection URLs.  [[#416]]
+
+[#416]: https://github.com/fedify-dev/fedify/issues/416
 
 
 Version 1.8.12

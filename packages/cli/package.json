@@ -1,7 +1,6 @@
 {
   "name": "@fedify/cli",
   "version": "2.0.0",
-  "private": true,
   "description": "CLI toolchain for Fedify and debugging ActivityPub",
   "keywords": [
     "fedify",
