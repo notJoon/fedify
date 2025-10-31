@@ -176,10 +176,12 @@ When adding a new package to the monorepo, the following files must be updated:
  1. *AGENTS.md* and *CONTRIBUTING.md*: Add the package to the repository
     structure list
  2. *README.md*: Add the package to the "Packages" section table
- 3. *.github/workflows/build.yaml*: Update the PR comment in the `publish` job
+ 3. *package.json*: Add the `repository` field to the package metadata.
+    This is required for provenance information when publishing to npm.
+ 4. *.github/workflows/build.yaml*: Update the PR comment in the `publish` job
     (around the `thollander/actions-comment-pull-request` action)
- 4. Root *deno.json*: Add the package path to the `workspace` array
- 5. *pnpm-workspace.yaml*: Add the package path to the `packages` array
+ 5. Root *deno.json*: Add the package path to the `workspace` array
+ 6. *pnpm-workspace.yaml*: Add the package path to the `packages` array
 
 **Conditional updates:**
 
