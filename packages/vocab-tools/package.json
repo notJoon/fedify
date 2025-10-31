@@ -2,6 +2,24 @@
   "name": "@fedify/vocab-tools",
   "version": "2.0.0",
   "description": "Code generator for Activity Vocabulary APIs",
+  "homepage": "https://fedify.dev/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fedify-dev/fedify.git",
+    "directory": "packages/vocab-tools"
+  },
+  "bugs": {
+    "url": "https://github.com/fedify-dev/fedify/issues"
+  },
+  "funding": [
+    "https://opencollective.com/fedify",
+    "https://github.com/sponsors/dahlia"
+  ],
+  "engines": {
+    "deno": ">=2.0.0",
+    "node": ">=22.0.0",
+    "bun": ">=1.1.0"
+  },
   "type": "module",
   "main": "./dist/mod.cjs",
   "module": "./dist/mod.js",
