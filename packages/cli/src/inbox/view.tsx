@@ -4,6 +4,7 @@ import type { LogRecord } from "@logtape/logtape";
 import { getStatusText } from "@poppanator/http-constants";
 import { type FC, Fragment, type PropsWithChildren } from "hono/jsx";
 import { getSingletonHighlighter } from "shiki";
+import util from "node:util";
 import type { ActivityEntry } from "./entry.ts";
 import {
   renderActivity,
@@ -356,7 +357,7 @@ const Log: FC<LogProps> = (
           {message.map((m, i) =>
             i % 2 == 0 ? m : (
               <code key={i}>
-                {typeof m === "string" ? m : Deno.inspect(m)}
+                {typeof m === "string" ? m : util.inspect(m)}
               </code>
             )
           )}

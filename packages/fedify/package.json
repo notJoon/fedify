@@ -150,7 +150,6 @@
     }
   },
   "dependencies": {
-    "@cfworker/json-schema": "^4.1.1",
     "@fedify/vocab-runtime": "workspace:*",
     "@js-temporal/polyfill": "^0.5.1",
     "@logtape/logtape": "catalog:",
@@ -158,7 +157,7 @@
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/semantic-conventions": "^1.27.0",
     "asn1js": "^3.0.5",
-    "byte-encodings": "^1.0.11",
+    "byte-encodings": "catalog:",
     "es-toolkit": "^1.39.5",
     "json-canon": "^1.0.1",
     "jsonld": "^8.3.2",
@@ -171,6 +170,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
+    "@fedify/vocab-tools": "workspace:^",
     "@std/assert": "jsr:^0.226.0",
     "@std/path": "catalog:",
     "@std/url": "jsr:1.0.0-rc.3",
@@ -185,9 +185,9 @@
     "wrangler": "^4.17.0"
   },
   "scripts": {
-    "build": "deno task codegen && tsdown",
-    "prepack": "deno task codegen && tsdown",
-    "prepublish": "deno task codegen && tsdown",
+    "build": "deno task codegen && pnpm run --filter vocab-runtime build && pnpm run --filter vocab-tools build && tsdown",
+    "prepack": "pnpm run build",
+    "prepublish": "pnpm run build",
     "test": "deno task codegen && tsdown && cd dist/ && node --test",
     "test:bun": "deno task codegen && deno task pnpm:build-vocab && tsdown && cd dist/ && bun test --timeout 60000",
     "test:cfworkers": "deno task codegen && wrangler deploy --dry-run --outdir src/cfworkers && node --import=tsx src/cfworkers/client.ts"

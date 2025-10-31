@@ -24,7 +24,9 @@ async function compile(os: OS, arch: Arch, into: string): Promise<void> {
   if (!target) {
     throw new Error(`Unsupported os/arch: ${os}/${arch}`);
   }
-  await $`deno compile --allow-all --target=${target} --output=${into} ${
+  await $`deno compile --allow-all --include=${
+    join("src", "init", "templates")
+  } --target=${target} --output=${into} ${
     join(dirname(import.meta.dirname!), "src", "mod.ts")
   }`;
 }

@@ -33,7 +33,6 @@ import {
   string,
   withDefault,
 } from "@optique/core";
-import * as colors from "@std/fmt/colors";
 import Table from "cli-table3";
 import { type Context as HonoContext, Hono } from "hono";
 import type { BlankEnv, BlankInput } from "hono/types";
@@ -47,6 +46,7 @@ import { ActivityEntryPage, ActivityListPage } from "./inbox/view.tsx";
 import { recordingSink } from "./log.ts";
 import { tableStyle } from "./table.ts";
 import { spawnTemporaryServer, type TemporaryServer } from "./tempserver.ts";
+import { colors } from "./utils.ts";
 
 /**
  * Context data for the ephemeral ActivityPub inbox server.
@@ -79,7 +79,7 @@ export const inboxCommand = command(
         multiple(
           option("-a", "--accept-follow", string({ metavar: "URI" }), {
             description:
-              message`Accept follow requests from the given actor. The argument can be either an actor URI or a handle, or a wildcard (*). Can be specified multiple times. If a wildcard is specified, all follow requests will be accepted.`,
+              message`Accept follow requests from the given actor. The argument can be either an actor URI or a handle, or a wildcard (${"*"}). Can be specified multiple times. If a wildcard is specified, all follow requests will be accepted.`,
           }),
         ),
       ),
@@ -107,6 +107,7 @@ export const inboxCommand = command(
     debugOption,
   ),
   {
+    brief: message`Run an ephemeral ActivityPub inbox server.`,
     description:
       message`Spins up an ephemeral server that serves the ActivityPub inbox with an one-time actor, through a short-lived public DNS with HTTPS. You can monitor the incoming activities in real-time.`,
   },

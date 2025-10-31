@@ -1,13 +1,13 @@
-import { dir } from "@cross/dir";
-import { ensureDir } from "@std/fs";
-import { join } from "@std/path";
+import envPaths from "env-paths";
+import { mkdir } from "node:fs/promises";
 
-export const DEFAULT_CACHE_DIR = join(await dir("cache", true), "fedify");
+const paths = envPaths("fedify", { suffix: "" });
+export const DEFAULT_CACHE_DIR = paths.cache;
 
 let currentCacheDir: string = DEFAULT_CACHE_DIR;
 
 export async function getCacheDir(): Promise<string> {
-  await ensureDir(currentCacheDir);
+  await mkdir(currentCacheDir, { recursive: true });
   return currentCacheDir;
 }
 

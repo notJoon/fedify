@@ -18,12 +18,14 @@ import {
   string,
 } from "@optique/core";
 import { print, printError } from "@optique/run";
-import * as colors from "@std/fmt/colors";
+import type { ChalkInstance } from "chalk";
 import { isICO, parseICO } from "icojs";
 import { defaultFormats, defaultPlugins, intToRGBA } from "jimp";
 import ora from "ora";
+import os from "node:os";
+import process from "node:process";
 import { debugOption } from "./globals.ts";
-import { formatObject } from "./utils.ts";
+import { colors, formatObject } from "./utils.ts";
 
 const logger = getLogger(["fedify", "cli", "nodeinfo"]);
 
@@ -42,21 +44,23 @@ const nodeInfoOption = optional(
     object({
       bestEffort: optional(flag("-b", "--best-effort", {
         description:
-          message`Parse the NodeInfo document with best effort. If the NodeInfo document is not well-formed, the option will try to parse it as much as possible.`,
+          message`Parse the NodeInfo document with best effort.  If the NodeInfo document is not well-formed, the option will try to parse it as much as possible.`,
       })),
       noFavicon: optional(flag("--no-favicon", {
         description: message`Disable fetching the favicon of the instance`,
       })),
       metadata: optional(flag("-m", "--metadata", {
         description:
-          message`show the extra metadata of the NodeInfo, i.e., the metadata field of the document.`,
+          message`Show the extra metadata of the NodeInfo, i.e., the metadata field of the document.`,
       })),
     }),
   ),
 );
 
 const userAgentOption = optional(object({
-  userAgent: option("-u", "--user-agent", string()),
+  userAgent: option("-u", "--user-agent", string(), {
+    description: message`The custom User-Agent header value.`,
+  }),
 }));
 
 export const nodeInfoCommand = Command(
@@ -64,7 +68,7 @@ export const nodeInfoCommand = Command(
   merge(
     object({
       command: constant("nodeinfo"),
-      host: argument(string({ metavar: "hostname or URL" }), {
+      host: argument(string({ metavar: "HOST" }), {
         description: message`Bare hostname or a full URL of the instance`,
       }),
     }),
@@ -73,8 +77,12 @@ export const nodeInfoCommand = Command(
     userAgentOption,
   ),
   {
+    brief:
+      message`Get information about a remote node using the NodeInfo protocol`,
     description:
-      message`Get information about a remote node using the NodeInfo protocol. The argument is the hostname of the remote node, or the URL of the remote node.`,
+      message`Get information about a remote node using the NodeInfo protocol.
+
+The argument is the hostname of the remote node, or the URL of the remote node.`,
   },
 );
 
@@ -99,7 +107,7 @@ export async function runNodeInfo(
     if (nodeInfo === undefined) {
       spinner.fail("No NodeInfo document found.");
       printError(message`No NodeInfo document found.`);
-      Deno.exit(1);
+      process.exit(1);
     }
     spinner.succeed("NodeInfo document fetched.");
 
@@ -121,7 +129,7 @@ export async function runNodeInfo(
         message`Use the -b/--best-effort option to try to parse the document anyway.`,
       );
     }
-    Deno.exit(1);
+    process.exit(1);
   }
 
   let layout: string[];
@@ -154,7 +162,7 @@ export async function runNodeInfo(
         }
         const image = await Jimp.read(buffer);
         const colorSupport = checkTerminalColorSupport();
-        layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, colorSupport)
+        layout = getAsciiArt(image, DEFAULT_IMAGE_WIDTH, colorSupport, colors)
           .split("\n").map((line) => ` ${line}  `);
         defaultWidth = 41;
       } else {
@@ -309,13 +317,13 @@ export async function getFaviconUrl(
 
 function checkTerminalColorSupport(): "truecolor" | "256color" | "none" {
   // Check if colors are explicitly disabled
-  const noColor = Deno.env.get("NO_COLOR");
+  const noColor = process.env.NO_COLOR;
   if (noColor != null && noColor !== "") {
     return "none";
   }
 
   // Check for true color (24-bit) support
-  const colorTerm = Deno.env.get("COLORTERM");
+  const colorTerm = process.env.COLORTERM;
   if (
     colorTerm != null &&
     (colorTerm.includes("24bit") || colorTerm.includes("truecolor"))
@@ -324,7 +332,7 @@ function checkTerminalColorSupport(): "truecolor" | "256color" | "none" {
   }
 
   // Check for xterm 256-color support
-  const term = Deno.env.get("TERM");
+  const term = process.env.TERM;
   if (
     term != null &&
     (term.includes("256color") ||
@@ -342,8 +350,8 @@ function checkTerminalColorSupport(): "truecolor" | "256color" | "none" {
 
   // Check for Windows Terminal support
   // FIXME: WT_SESSION is not a reliable way to check for Windows Terminal support
-  const isWindows = Deno.build.os === "windows";
-  const isWT = Deno.env.get("WT_SESSION");
+  const isWindows = os.platform() === "win32";
+  const isWT = process.env.WT_SESSION;
   if (isWindows && isWT != null && isWT !== "") {
     return "truecolor";
   }
@@ -408,6 +416,7 @@ export function getAsciiArt(
   image: Awaited<ReturnType<typeof Jimp.read>>,
   width = DEFAULT_IMAGE_WIDTH,
   colorSupport: "truecolor" | "256color" | "none",
+  colors: ChalkInstance,
 ): string {
   const ratio = image.width / image.height;
   const height = Math.round(
@@ -430,10 +439,10 @@ export function getAsciiArt(
       const char = ASCII_CHARS[charIndex];
 
       if (colorSupport === "truecolor") {
-        art += colors.rgb24(char, color);
+        art += colors.rgb(color.r, color.g, color.b)(char);
       } else if (colorSupport === "256color") {
         const colorIndex = rgbTo256Color(color.r, color.g, color.b);
-        art += colors.rgb8(char, colorIndex);
+        art += colors.ansi256(colorIndex)(char);
       } else {
         art += char;
       }

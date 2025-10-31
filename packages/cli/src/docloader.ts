@@ -1,11 +1,9 @@
-import { DenoKvStore } from "@fedify/denokv";
 import { kvCache } from "@fedify/fedify";
 import {
   type DocumentLoader,
   getDocumentLoader as getDefaultDocumentLoader,
 } from "@fedify/vocab-runtime";
-import { join } from "@std/path";
-import { getCacheDir } from "./cache.ts";
+import { getKvStore } from "#kv";
 
 const documentLoaders: Record<string, DocumentLoader> = {};
 
@@ -17,8 +15,7 @@ export async function getDocumentLoader(
   { userAgent }: DocumentLoaderOptions = {},
 ): Promise<DocumentLoader> {
   if (documentLoaders[userAgent ?? ""]) return documentLoaders[userAgent ?? ""];
-  const path = join(await getCacheDir(), "kv");
-  const kv = new DenoKvStore(await Deno.openKv(path));
+  const kv = await getKvStore();
   return documentLoaders[userAgent ?? ""] = kvCache({
     kv,
     rules: [
@@ -31,7 +28,7 @@ export async function getDocumentLoader(
           search: "*",
           hash: "*",
         }),
-        Temporal.Duration.from({ seconds: 0 }),
+        { seconds: 0 },
       ],
       [
         new URLPattern({
@@ -42,7 +39,7 @@ export async function getDocumentLoader(
           search: "*",
           hash: "*",
         }),
-        Temporal.Duration.from({ seconds: 0 }),
+        { seconds: 0 },
       ],
       [
         new URLPattern({
@@ -53,7 +50,7 @@ export async function getDocumentLoader(
           search: "*",
           hash: "*",
         }),
-        Temporal.Duration.from({ seconds: 0 }),
+        { seconds: 0 },
       ],
     ],
     loader: getDefaultDocumentLoader({

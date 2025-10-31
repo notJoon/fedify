@@ -1,4 +1,4 @@
-import { join as joinPath } from "@std/path";
+import { join as joinPath } from "node:path";
 import type { InitCommandData } from "../types.ts";
 
 export const isDry = ({ dryRun }: InitCommandData) => dryRun;

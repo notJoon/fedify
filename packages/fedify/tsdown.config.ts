@@ -80,11 +80,6 @@ export default [
           join(ctx.options.outDir, "fixtures"),
           { recursive: true },
         );
-        await cp(
-          join("src", "codegen", "schema.yaml"),
-          join(ctx.options.outDir, "vocab", "schema.yaml"),
-          { force: true },
-        );
         for await (const file of glob("src/vocab/**/*.yaml")) {
           await cp(
             file,
