@@ -12,6 +12,5 @@ export default defineConfig({
     "@fedify/fedify/utils",
     "@fedify/fedify/vocab",
     "@fedify/fedify/webfinger",
-    "@opentelemetry/api",
   ],
 });

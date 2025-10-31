@@ -53,10 +53,15 @@ async function pack(os: OS, arch: Arch): Promise<void> {
   }
 }
 
+const osFilter = Deno.env.get("OS")?.toLowerCase();
+const archFilter = Deno.env.get("ARCH")?.toLowerCase();
+
 const promises: Promise<void>[] = [];
 for (const osKey in triplets) {
   const os = osKey as OS;
+  if (osFilter != null && osFilter !== os) continue;
   for (const arch in triplets[os]) {
+    if (archFilter != null && archFilter !== arch) continue;
     const promise = pack(os, arch as Arch);
     promises.push(promise);
   }

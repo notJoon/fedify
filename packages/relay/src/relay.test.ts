@@ -10,7 +10,7 @@ import {
   getDocumentLoader,
   type RemoteDocument,
 } from "@fedify/vocab-runtime";
-import { MockFederation } from "@fedify/testing";
+import { createFederation } from "@fedify/testing";
 
 // Simple mock document loader that returns a minimal context
 const mockDocumentLoader = async (url: string): Promise<RemoteDocument> => {
@@ -77,7 +77,7 @@ describe("MastodonRelay", () => {
       kv: new MemoryKvStore(),
       domain: "relay.example.com",
       documentLoaderFactory: () => mockDocumentLoader,
-      federation: new MockFederation<void>({ contextData: undefined }),
+      federation: createFederation<void>({ contextData: undefined }),
     };
 
     const relay = new MastodonRelay(options);
@@ -115,7 +115,7 @@ describe("MastodonRelay", () => {
       kv,
       domain: "relay.example.com",
       documentLoaderFactory: () => mockDocumentLoader,
-      federation: new MockFederation<void>({ contextData: undefined }),
+      federation: createFederation<void>({ contextData: undefined }),
     });
 
     const request = new Request("https://relay.example.com/users/relay", {
@@ -296,7 +296,7 @@ describe("MastodonRelay", () => {
       kv,
       domain: "relay.example.com",
       documentLoaderFactory: () => mockDocumentLoader,
-      federation: new MockFederation<void>({ contextData: undefined }),
+      federation: createFederation<void>({ contextData: undefined }),
     });
 
     relay.setSubscriptionHandler(async (_ctx, _actor) => {
@@ -345,7 +345,7 @@ describe("MastodonRelay", () => {
       kv,
       domain: "relay.example.com",
       documentLoaderFactory: () => mockDocumentLoader,
-      federation: new MockFederation<void>({ contextData: undefined }),
+      federation: createFederation<void>({ contextData: undefined }),
     });
 
     // Simulate the Undo Follow logic
@@ -369,7 +369,7 @@ describe("MastodonRelay", () => {
       kv,
       domain: "relay.example.com",
       documentLoaderFactory: () => mockDocumentLoader,
-      federation: new MockFederation<void>({ contextData: undefined }),
+      federation: createFederation<void>({ contextData: undefined }),
     });
 
     relay.setSubscriptionHandler(async (_ctx, _actor) => {
@@ -418,7 +418,7 @@ describe("MastodonRelay", () => {
       kv,
       domain: "relay.example.com",
       documentLoaderFactory: () => mockDocumentLoader,
-      federation: new MockFederation<void>({ contextData: undefined }),
+      federation: createFederation<void>({ contextData: undefined }),
     });
 
     relay.setSubscriptionHandler(async (_ctx, _actor) =>
