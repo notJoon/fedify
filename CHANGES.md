@@ -6,7 +6,7 @@ Fedify changelog
 Version 1.9.1
 -------------
 
-To be released.
+Released on October 31, 2025.
 
 ### @fedify/testing
 
@@ -16,7 +16,7 @@ To be released.
     `TestFederation`, `TestContext`, and `SentActivity` types, causing indefinite
     hangs during the processing stage.  [[#468]]
 
-     -  **Breaking change**: `MockFederation` class is no longer exported from
+     -  *Breaking change*: `MockFederation` class is no longer exported from
         the public API.  Use `createFederation()` factory function instead.
      -  `TestFederation<TContextData>`, `TestContext<TContextData>`, and
         `SentActivity` interfaces are no longer exported from the public API,
