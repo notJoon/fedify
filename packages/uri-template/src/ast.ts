@@ -15,7 +15,7 @@ export type Operator =
 /**
  * A variable specification inside an expression
  * - `explode` (`*`) and `prefix` (`:n`) modifies are Level 4 features.
- * - Parser guarentees: if `prefix` is present, it is a positive integer.
+ * - Parser guarantees: if `prefix` is present, it is a positive integer.
  */
 export interface VarSpec {
   name: string;

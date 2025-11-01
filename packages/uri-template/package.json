@@ -47,9 +47,6 @@
     "dist/",
     "package.json"
   ],
-  "peerDependencies": {
-    "@fedify/fedify": "workspace:"
-  },
   "devDependencies": {
     "@types/node": "catalog:",
     "tsdown": "catalog:",
