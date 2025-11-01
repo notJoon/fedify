@@ -1,3 +1,4 @@
+import type { Message } from "@optique/core";
 import type { RequiredNotNull } from "../utils.ts";
 import type { InitCommand } from "./command.ts";
 import type {
@@ -35,12 +36,12 @@ export interface WebFrameworkInitializer {
   command?: string[];
   dependencies?: object;
   devDependencies?: object;
-  federationFile: string;
+  federationFile: Message;
   loggingFile: string;
   files?: Record<string, string>;
   compilerOptions?: Record<string, string | boolean | number | string[] | null>;
   tasks?: Record<string, string>;
-  instruction: string;
+  instruction: Message;
 }
 
 export interface WebFrameworkDescription {

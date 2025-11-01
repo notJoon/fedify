@@ -16,6 +16,7 @@ import {
   optional,
   or,
   string,
+  text,
 } from "@optique/core";
 import { print, printError } from "@optique/run";
 import type { ChalkInstance } from "chalk";
@@ -111,7 +112,7 @@ export async function runNodeInfo(
     }
     spinner.succeed("NodeInfo document fetched.");
 
-    console.log(formatObject(nodeInfo, undefined, true));
+    print(message`${text(formatObject(nodeInfo, undefined, true))}`);
     return;
   }
   const nodeInfo = await getNodeInfo(url, {
