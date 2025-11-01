@@ -83,6 +83,15 @@ To be released.
 
  - Adds the `-A`/`--authorized-fetch` flag to the `fedify inbox` command. [[#229], [#472] By Lee ByeongJun]
 
+ -  The `@fedify/fedify/x/*` modules are removed.  Also, there are no Fresh
+    integration for now. [[#391] by Chanhaeng Lee]
+
+     -  Removed `@fedify/fedify/x/cfworkers` in favor of `@fedify/cfworkers`.
+     -  Removed `@fedify/fedify/x/denokv` in favor of `@fedify/denokv`.
+     -  Removed `@fedify/fedify/x/hono` in favor of `@fedify/hono`.
+     -  Removed `@fedify/fedify/x/sveltekit` in favor of `@fedify/sveltekit`.
+     -  Removed `@fedify/fedify/x/fresh` (Fresh integration). [[#466]]
+
 [#229]: https://github.com/fedify-dev/fedify/issues/229
 [#280]: https://github.com/fedify-dev/fedify/issues/280
 [#366]: https://github.com/fedify-dev/fedify/issues/366
@@ -94,6 +103,8 @@ To be released.
 [#444]: https://github.com/fedify-dev/fedify/issues/444
 [#445]: https://github.com/fedify-dev/fedify/pull/445
 [#451]: https://github.com/fedify-dev/fedify/pull/451
+[#391]: https://github.com/fedify-dev/fedify/pull/391
+[#466]: https://github.com/fedify-dev/fedify/issues/466
 
 ### @fedify/cli
 
