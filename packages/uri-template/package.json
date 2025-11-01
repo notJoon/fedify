@@ -56,7 +56,7 @@
     "typescript": "catalog:"
   },
   "scripts": {
-    "build": "deno task codegen && pnpm run --filter vocab-runtime build && pnpm run --filter vocab-tools build && tsdown",
+    "build": "deno task codegen && tsdown",
     "prepack": "pnpm run build",
     "prepublish": "pnpm run build",
     "test": "tsdown && node --experimental-transform-types --test"
