@@ -11,12 +11,7 @@
     "./testing": "./src/testing/mod.ts",
     "./vocab": "./src/vocab/mod.ts",
     "./utils": "./src/utils/mod.ts",
-    "./webfinger": "./src/webfinger/mod.ts",
-    "./x/cfworkers": "./src/x/cfworkers.ts",
-    "./x/denokv": "./src/x/denokv.ts",
-    "./x/fresh": "./src/x/fresh.ts",
-    "./x/hono": "./src/x/hono.ts",
-    "./x/sveltekit": "./src/x/sveltekit.ts"
+    "./webfinger": "./src/webfinger/mod.ts"
   },
   "imports": {
     "@multiformats/base-x": "npm:@multiformats/base-x@^4.0.1",

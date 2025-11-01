@@ -117,36 +117,6 @@
       "import": "./dist/webfinger/mod.js",
       "require": "./dist/webfinger/mod.cjs",
       "default": "./dist/webfinger/mod.js"
-    },
-    "./x/cfworkers": {
-      "types": {
-        "import": "./dist/x/cfworkers.d.ts",
-        "require": "./dist/x/cfworkers.d.cts",
-        "default": "./dist/x/cfworkers.d.ts"
-      },
-      "import": "./dist/x/cfworkers.js",
-      "require": "./dist/x/cfworkers.cjs",
-      "default": "./dist/x/cfworkers.js"
-    },
-    "./x/hono": {
-      "types": {
-        "import": "./dist/x/hono.d.ts",
-        "require": "./dist/x/hono.d.cts",
-        "default": "./dist/x/hono.d.ts"
-      },
-      "import": "./dist/x/hono.js",
-      "require": "./dist/x/hono.cjs",
-      "default": "./dist/x/hono.js"
-    },
-    "./x/sveltekit": {
-      "types": {
-        "import": "./dist/x/sveltekit.d.ts",
-        "require": "./dist/x/sveltekit.d.cts",
-        "default": "./dist/x/sveltekit.d.ts"
-      },
-      "import": "./dist/x/sveltekit.js",
-      "require": "./dist/x/sveltekit.cjs",
-      "default": "./dist/x/sveltekit.js"
     }
   },
   "dependencies": {
@@ -169,7 +139,6 @@
     "urlpattern-polyfill": "^10.1.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "catalog:",
     "@fedify/vocab-tools": "workspace:^",
     "@std/assert": "jsr:^0.226.0",
     "@std/path": "catalog:",

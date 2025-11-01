@@ -18,7 +18,6 @@
     "./packages/vocab-runtime",
     "./packages/relay",
     "./packages/vocab-tools",
-    "./examples/blog",
     "./examples/hono-sample"
   ],
   "imports": {

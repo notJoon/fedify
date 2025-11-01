@@ -236,10 +236,6 @@ Hono
 
 *This API is available since Fedify 1.9.0.*
 
-> [!WARNING]
-> The `@fedify/fedify/x/hono` module is deprecated and will be removed in
-> Fedify 2.0.0.  Please use the `@fedify/hono` package instead.
-
 [Hono] is a fast, lightweight, and Web standard-compliant server framework for
 TypeScript.  The *@fedify/hono* package provides a middleware to integrate
 Fedify with Hono:
@@ -350,42 +346,10 @@ app.use(router);
 [TanStack Start]: https://tanstack.com/start
 
 
-Fresh
------
-
-*This API is available since Fedify 1.9.0.*
-
-[Fresh] is a full stack modern web framework for Deno.  Fedify has the
-`@fedify/fedify/x/fresh` module that provides a middleware to integrate Fedify
-with Fresh.  Put the following code in your *routes/_middleware.ts* file:
-
-~~~~ typescript{8-12}
-import { createFederation } from "@fedify/fedify";
-import { integrateHandler } from "@fedify/fedify/x/fresh";
-
-const federation = createFederation<string>({
-  // Omitted for brevity; see the related section for details.
-});
-
-// This is the entry point to the Fedify middleware from the Fresh framework:
-export const handler = integrateHandler(
-  federation,
-  (req, ctx) => "context data",
-);
-
-~~~~
-
-[Fresh]: https://fresh.deno.dev/
-
-
 SvelteKit
 ---------
 
 *This API is available since Fedify 1.3.0.*
-
-> [!WARNING]
-> The `@fedify/fedify/x/sveltekit` module is deprecated and will be removed in
-> Fedify 2.0.0.  Please use the `@fedify/sveltekit` package instead.
 
 [SvelteKit] is a framework for building web applications with [Svelte].  The
 *@fedify/sveltekit* package provides a middleware to integrate Fedify with

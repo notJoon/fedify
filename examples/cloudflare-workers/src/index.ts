@@ -1,3 +1,4 @@
+import { WorkersKvStore, WorkersMessageQueue } from "@fedify/cfworkers";
 import {
   createFederationBuilder,
   type Federation,
@@ -17,10 +18,6 @@ import {
   Person,
   Undo,
 } from "@fedify/fedify/vocab";
-import {
-  WorkersKvStore,
-  WorkersMessageQueue,
-} from "@fedify/fedify/x/cfworkers";
 
 interface ContextData {
   kv: KVNamespace<string>;

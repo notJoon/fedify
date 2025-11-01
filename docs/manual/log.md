@@ -282,11 +282,6 @@ related to looking up WebFinger resources.  When you are curious about the
 lookup process, you can check the log messages in this category with the
 `"debug"` level.
 
-### `["fedify", "x", "fresh"]`
-
-The `["fedify", "x", "fresh"]` category is used for logging messages related
-to the `@fedify/fedify/x/fresh` module.
-
 
 Sinks
 -----
