@@ -34,7 +34,7 @@ export interface CompileOptions {
  * @example
  * ```typescript
  * const t = compile("/repos{/owner,repo}{?q,lang}");
-  * const url = t.expand({ owner: "alice", repo: "hello/world", q: "a b", lang: "en" });
+ * const url = t.expand({ owner: "alice", repo: "hello/world", q: "a b", lang: "en" });
  * // "/repos/alice/hello%2Fworld?q=a%20b&lang=en"
  * ```
  */
