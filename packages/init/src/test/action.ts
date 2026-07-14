@@ -1,6 +1,6 @@
 import { pipe, tap, when } from "@fxts/core";
-import { set } from "../utils.ts";
 import type { TestInitCommand } from "../command.ts";
+import { set } from "../utils.ts";
 import { checkRequiredDbs } from "./db.ts";
 import { fillEmptyOptions } from "./fill.ts";
 import runTests from "./run.ts";

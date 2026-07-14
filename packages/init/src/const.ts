@@ -15,6 +15,7 @@ export const WEB_FRAMEWORK = [
   "express",
   "nuxt",
   "solidstart",
+  "sveltekit",
 ] as const;
 /** All supported message queue backend identifiers. */
 export const MESSAGE_QUEUE = Object.keys(mq) as readonly (keyof typeof mq)[];
