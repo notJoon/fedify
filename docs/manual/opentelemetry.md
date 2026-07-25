@@ -524,9 +524,11 @@ Fedify records the following OpenTelemetry metrics:
     `verifyRequest()` / `verifyRequestDetailed()`, `verifyJsonLd()`, and
     `verifyProof()` each emit exactly one measurement, even when the
     implementation retries internally after a cache mismatch.  Wrappers
-    such as `verifyObject()` emit one measurement per inner `verifyProof()`
-    call (and none when the object has no proofs); higher-level inbox
-    handling can perform several verification attempts in series.
+    such as `verifyObject()` and `verifyPortableObjectProof()` emit one
+    measurement per inner `verifyProof()` call.  They emit none when there
+    are no proofs or portable proof policy rejects the document before
+    cryptographic verification; higher-level inbox handling can perform
+    several verification attempts in series.
 
     Kind-specific optional attributes are recorded only when the value
     matches a small, spec-bounded set, to keep cardinality safe even when
