@@ -714,9 +714,30 @@ const FEP_2277_COLLECTION_PROPERTIES = [
   "current",
 ].map((property) => AS_NAMESPACE + property);
 const SECURITY_PROOF = `${SECURITY_NAMESPACE}proof`;
+const SECURITY_VERIFICATION_METHOD = `${SECURITY_NAMESPACE}verificationMethod`;
 
 function isJsonLdNode(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value != null && !Array.isArray(value);
+}
+
+function hasSingleVerificationMethod(proofValue: unknown): boolean {
+  if (!isJsonLdNode(proofValue)) return false;
+  let proofNode = proofValue;
+  if ("@graph" in proofNode) {
+    const graph = proofNode["@graph"];
+    if (
+      !Array.isArray(graph) || graph.length !== 1 ||
+      !isJsonLdNode(graph[0])
+    ) {
+      return false;
+    }
+    proofNode = graph[0];
+  }
+  const verificationMethods = proofNode[SECURITY_VERIFICATION_METHOD];
+  return Array.isArray(verificationMethods) &&
+    verificationMethods.length === 1 &&
+    !(isJsonLdNode(verificationMethods[0]) &&
+      "@list" in verificationMethods[0]);
 }
 
 function classifyFep2277CoreType(
@@ -828,10 +849,17 @@ export async function verifyPortableObjectProof(
 
   const proofs: DataIntegrityProof[] = [];
   for (let proofIndex = 0; proofIndex < proofValues.length; proofIndex++) {
+    const proofValue = proofValues[proofIndex];
+    if (!hasSingleVerificationMethod(proofValue)) {
+      return {
+        verified: false,
+        reason: { type: "invalidProof", proofIndex },
+      };
+    }
     let proof: DataIntegrityProof;
     try {
       proof = await DataIntegrityProof.fromJsonLd(
-        proofValues[proofIndex],
+        proofValue,
         options,
       );
     } catch {

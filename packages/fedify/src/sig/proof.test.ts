@@ -1312,6 +1312,37 @@ test("verifyPortableObjectProof()", async (t) => {
     assertFalse(fetched);
   });
 
+  await t.step(
+    "rejects proofs with multiple verification methods",
+    async () => {
+      const signed = await signPortableJsonLd(unsignedObject);
+      const proof = signed.proof as Record<string, unknown>;
+      for (
+        const additionalVerificationMethod of [
+          "did:key:z6MkMallory#z6MkMallory",
+          "https://attacker.example/key",
+        ]
+      ) {
+        assertEquals(
+          await verifyPortableObjectProof({
+            ...signed,
+            proof: {
+              ...proof,
+              verificationMethod: [
+                portableKeyId.href,
+                additionalVerificationMethod,
+              ],
+            },
+          }, options),
+          {
+            verified: false,
+            reason: { type: "invalidProof", proofIndex: 0 },
+          },
+        );
+      }
+    },
+  );
+
   await t.step("reports cryptographic failures separately", async () => {
     const signed = await signPortableJsonLd(unsignedObject);
     const tampered = { ...signed, content: "Tampered" };
