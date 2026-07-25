@@ -495,6 +495,28 @@ interface ProofMessageDigestCache {
   value?: Promise<ProofMessageDigests>;
 }
 
+function expandContextPropertyIri(
+  activeContext: unknown,
+  key: string,
+): unknown {
+  const termId = jsonld.getContextValue(activeContext, key, "@id");
+  if (termId != null) return termId;
+  const colon = key.indexOf(":");
+  if (colon < 1) return key;
+  const prefix = key.substring(0, colon);
+  const suffix = key.substring(colon + 1);
+  if (prefix === "_" || suffix.startsWith("//")) return key;
+  const mapping = jsonld.getContextValue(activeContext, prefix);
+  if (
+    typeof mapping === "object" && mapping != null &&
+    mapping._prefix === true &&
+    typeof mapping["@id"] === "string"
+  ) {
+    return mapping["@id"] + suffix;
+  }
+  return key;
+}
+
 async function getProofPropertyNames(
   jsonLd: Record<string, unknown>,
 ): Promise<Set<string>> {
@@ -512,7 +534,7 @@ async function getProofPropertyNames(
     for (const key of globalThis.Object.keys(jsonLd).sort()) {
       if (
         key !== "@type" &&
-        jsonld.getContextValue(activeContext, key, "@id") !== "@type"
+        expandContextPropertyIri(activeContext, key) !== "@type"
       ) {
         continue;
       }
@@ -535,9 +557,7 @@ async function getProofPropertyNames(
       }
     }
     for (const key of globalThis.Object.keys(jsonLd)) {
-      if (
-        jsonld.getContextValue(activeContext, key, "@id") === SECURITY_PROOF
-      ) {
+      if (expandContextPropertyIri(activeContext, key) === SECURITY_PROOF) {
         names.add(key);
       }
     }

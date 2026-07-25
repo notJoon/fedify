@@ -1053,9 +1053,10 @@ test("verifyPortableObjectProof()", async (t) => {
     const proofAlias = "integrityProof";
     const proofIri = "https://w3id.org/security#proof";
     for (
-      const { context, typeProperty, type } of [
+      const { context, proofProperty, typeProperty, type } of [
         {
           context: { [proofAlias]: proofIri },
+          proofProperty: proofAlias,
           typeProperty: "type",
           type: "Note",
         },
@@ -1066,6 +1067,7 @@ test("verifyPortableObjectProof()", async (t) => {
               "@context": { [proofAlias]: proofIri },
             },
           },
+          proofProperty: proofAlias,
           typeProperty: "type",
           type: "PortableNote",
         },
@@ -1077,8 +1079,26 @@ test("verifyPortableObjectProof()", async (t) => {
               "@context": { [proofAlias]: proofIri },
             },
           },
+          proofProperty: proofAlias,
           typeProperty: "kind",
           type: "PortableNote",
+        },
+        {
+          context: { sec: "https://w3id.org/security#" },
+          proofProperty: "sec:proof",
+          typeProperty: "type",
+          type: "Note",
+        },
+        {
+          context: {
+            sec: {
+              "@id": "https://w3id.org/security#",
+              "@prefix": true,
+            },
+          },
+          proofProperty: "sec:proof",
+          typeProperty: "type",
+          type: "Note",
         },
       ]
     ) {
@@ -1091,7 +1111,7 @@ test("verifyPortableObjectProof()", async (t) => {
       const { proof, ...signed } = await signPortableJsonLd(document);
       const result = await verifyPortableObjectProof({
         ...signed,
-        [proofAlias]: proof,
+        [proofProperty]: proof,
       }, options);
       assert(result.verified);
       assertEquals(result.keys.length, 1);
