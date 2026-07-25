@@ -495,18 +495,69 @@ interface ProofMessageDigestCache {
   value?: Promise<ProofMessageDigests>;
 }
 
+async function getProofPropertyNames(
+  jsonLd: Record<string, unknown>,
+): Promise<Set<string>> {
+  const names = new Set(["proof", SECURITY_PROOF]);
+  if (jsonLd["@context"] == null) return names;
+  try {
+    const options = { documentLoader: preloadedOnlyDocumentLoader };
+    let activeContext = await jsonld.processContext(null, null, options);
+    activeContext = await jsonld.processContext(
+      activeContext,
+      jsonLd["@context"],
+      options,
+    );
+    const typeScopedContext = activeContext;
+    for (const key of globalThis.Object.keys(jsonLd).sort()) {
+      if (
+        key !== "@type" &&
+        jsonld.getContextValue(activeContext, key, "@id") !== "@type"
+      ) {
+        continue;
+      }
+      const value = jsonLd[key];
+      const types = Array.isArray(value) ? value.slice().sort() : [value];
+      for (const type of types) {
+        if (typeof type !== "string") continue;
+        const scopedContext = jsonld.getContextValue(
+          typeScopedContext,
+          type,
+          "@context",
+        );
+        if (scopedContext != null) {
+          activeContext = await jsonld.processContext(
+            activeContext,
+            scopedContext,
+            options,
+          );
+        }
+      }
+    }
+    for (const key of globalThis.Object.keys(jsonLd)) {
+      if (
+        jsonld.getContextValue(activeContext, key, "@id") === SECURITY_PROOF
+      ) {
+        names.add(key);
+      }
+    }
+  } catch {
+    // Unavailable contexts must not prevent the literal proof properties
+    // from being removed without a network fetch.
+  }
+  return names;
+}
+
 async function createProofMessageDigests(
   jsonLd: unknown,
 ): Promise<ProofMessageDigests> {
   const msg = { ...(jsonLd as Record<string, unknown>) };
   // `verifyProof()` promises to ignore existing proofs on the input;
-  // strip both the compact (`proof`) and the expanded
-  // (`https://w3id.org/security#proof`) forms so callers passing JSON-LD
-  // in either shape do not have the proof bytes folded into the JCS
+  // strip every top-level property that the active JSON-LD context maps to
+  // the security proof predicate so its bytes are not folded into the JCS
   // message digest.
-  if ("proof" in msg) delete msg.proof;
-  if ("https://w3id.org/security#proof" in msg) {
-    delete msg["https://w3id.org/security#proof"];
+  for (const property of await getProofPropertyNames(msg)) {
+    delete msg[property];
   }
   const encoder = new TextEncoder();
   const digest = async (value: unknown): Promise<ArrayBuffer> => {

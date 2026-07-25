@@ -1049,6 +1049,56 @@ test("verifyPortableObjectProof()", async (t) => {
     },
   );
 
+  await t.step("verifies aliased proof properties", async () => {
+    const proofAlias = "integrityProof";
+    const proofIri = "https://w3id.org/security#proof";
+    for (
+      const { context, typeProperty, type } of [
+        {
+          context: { [proofAlias]: proofIri },
+          typeProperty: "type",
+          type: "Note",
+        },
+        {
+          context: {
+            PortableNote: {
+              "@id": "https://www.w3.org/ns/activitystreams#Note",
+              "@context": { [proofAlias]: proofIri },
+            },
+          },
+          typeProperty: "type",
+          type: "PortableNote",
+        },
+        {
+          context: {
+            kind: "@type",
+            PortableNote: {
+              "@id": "https://www.w3.org/ns/activitystreams#Note",
+              "@context": { [proofAlias]: proofIri },
+            },
+          },
+          typeProperty: "kind",
+          type: "PortableNote",
+        },
+      ]
+    ) {
+      const document: Record<string, unknown> = {
+        ...unsignedObject,
+        "@context": [...portableContext, context],
+      };
+      delete document.type;
+      document[typeProperty] = type;
+      const { proof, ...signed } = await signPortableJsonLd(document);
+      const result = await verifyPortableObjectProof({
+        ...signed,
+        [proofAlias]: proof,
+      }, options);
+      assert(result.verified);
+      assertEquals(result.keys.length, 1);
+      assertEquals(result.keys[0].id, portableKeyId);
+    }
+  });
+
   await t.step("verifies portable actors and activities by shape", async () => {
     for (
       const document of [
