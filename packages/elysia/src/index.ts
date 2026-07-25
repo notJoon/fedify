@@ -1,5 +1,5 @@
 import type { Federation } from "@fedify/fedify";
-import type { Elysia } from "elysia";
+import type { AnyElysia } from "elysia";
 
 export type ContextDataFactory<TContextData> = (
   req?: Request,
@@ -8,8 +8,8 @@ export type ContextDataFactory<TContextData> = (
 export const fedify = <TContextData = unknown>(
   federation: Federation<TContextData>,
   contextDataFactory: ContextDataFactory<TContextData>,
-) => {
-  return (app: Elysia) =>
+): (app: AnyElysia) => AnyElysia => {
+  return (app: AnyElysia) =>
     app
       .decorate("federation", federation)
       .onRequest(async ({ request, set, federation }) => {
@@ -19,7 +19,7 @@ export const fedify = <TContextData = unknown>(
         // Create context data using the factory or default to empty object
         const contextData = await contextDataFactory(request);
 
-        const response = await federation.fetch(request, {
+        const response: Response = await federation.fetch(request, {
           contextData,
           onNotFound: () => {
             // Let Elysia handle non-federation routes
