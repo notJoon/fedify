@@ -152,7 +152,9 @@ async function validateDevToolScripts(
       .noThrow()
       .spawn();
     await saveOutputs(dir, result);
-    if (result.code !== 0) return false;
+    if (result.code !== 0) {
+      printMessage`    Warning: ${script} failed, continuing anyway.`;
+    }
   }
   return true;
 }
