@@ -990,9 +990,9 @@ export async function verifyPortableObjectProof(
     proofs.push(proof);
   }
 
-  // Complete policy validation for the whole proof set before resolving any
-  // keys.  This prevents a later non-DID or cross-authority proof from causing
-  // unnecessary attacker-controlled document fetches.
+  // Validate the whole proof set before resolving any keys.  A later non-DID
+  // or cross-authority proof therefore cannot cause unnecessary
+  // attacker-controlled document fetches.
   for (let proofIndex = 0; proofIndex < proofs.length; proofIndex++) {
     const verificationMethod = proofs[proofIndex].verificationMethodId;
     if (verificationMethod == null) {
