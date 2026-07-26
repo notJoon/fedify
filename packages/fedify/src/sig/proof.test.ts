@@ -1472,6 +1472,39 @@ test("verifyPortableObjectProof()", async (t) => {
     },
   );
 
+  await t.step(
+    "rejects multiple values in functional proof fields",
+    async () => {
+      const signed = await signPortableJsonLd(unsignedObject);
+      const proof = signed.proof as Record<string, unknown>;
+      const cases: readonly (readonly [string, unknown])[] = [
+        ["cryptosuite", "eddsa-jcs-2022"],
+        ["proofPurpose", "authentication"],
+        ["proofValue", proof.proofValue],
+        ["created", "2024-01-01T00:00:00Z"],
+      ];
+      for (
+        const [field, additionalValue] of cases
+      ) {
+        const originalValue = proof[field];
+        assert(originalValue != null);
+        assertEquals(
+          await verifyPortableObjectProof({
+            ...signed,
+            proof: {
+              ...proof,
+              [field]: [originalValue, additionalValue],
+            },
+          }, options),
+          {
+            verified: false,
+            reason: { type: "invalidProof", proofIndex: 0 },
+          },
+        );
+      }
+    },
+  );
+
   await t.step("reports cryptographic failures separately", async () => {
     const signed = await signPortableJsonLd(unsignedObject);
     const tampered = { ...signed, content: "Tampered" };
