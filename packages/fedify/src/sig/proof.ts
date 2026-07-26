@@ -572,10 +572,10 @@ async function getProofPropertyNames(
 }
 
 async function createProofMessageDigests(
-  jsonLd: unknown,
+  jsonLd: Record<string, unknown>,
   proofContextLoader?: DocumentLoader,
 ): Promise<ProofMessageDigests> {
-  const msg = { ...(jsonLd as Record<string, unknown>) };
+  const msg = { ...jsonLd };
   // `verifyProof()` promises to ignore existing proofs on the input;
   // strip every top-level property that the active JSON-LD context maps to
   // the security proof predicate so its bytes are not folded into the JCS
@@ -616,9 +616,7 @@ async function verifyProofInternal(
   messageDigestCache: ProofMessageDigestCache,
 ): Promise<Multikey | null> {
   if (
-    typeof jsonLd !== "object" ||
-    jsonLd == null ||
-    Array.isArray(jsonLd) ||
+    !isJsonLdNode(jsonLd) ||
     proof.cryptosuite !== "eddsa-jcs-2022" ||
     proof.verificationMethodId == null ||
     proof.proofPurpose !== "assertionMethod" ||
