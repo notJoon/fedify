@@ -1094,6 +1094,12 @@ When `verifyObject()` checks whether a proof authenticates an object's actor or
 attribution, it treats matching portable `ap:`/`ap+ef61:` IDs and `did:key`
 controllers as the same [FEP-fe34] cryptographic origin.
 
+`verifyProof()` authenticates every received proof option except `proofValue`
+as part of the Ed25519 JCS signature.  It rejects expired proofs and malformed
+standard options.  When a proof is bound to a security domain or challenge,
+pass the expected `domain` or `challenge` through `VerifyProofOptions`; a
+missing or different value makes verification fail.
+
 For received portable objects, use `verifyPortableObjectProof()`.  It keeps
 `verifyProof()` focused on cryptographic verification while also enforcing the
 [FEP-ef61] policy: a portable actor, activity, or object must have proofs, every

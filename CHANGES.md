@@ -10,6 +10,13 @@ To be released.
 
 ### @fedify/fedify
 
+ -  Fixed `verifyProof()` so Ed25519 JCS proofs authenticate every received
+    proof option except `proofValue`, including `expires`, `domain`,
+    `challenge`, `nonce`, and extension options.  It now rejects expired or
+    malformed proof options, and callers can provide expected `domain` and
+    `challenge` values through `VerifyProofOptions` to prevent cross-domain or
+    replay use.  [[#968]]
+
  -  Added `verifyPortableObjectProof()` to enforce the [FEP-ef61] proof policy
     for portable actors, activities, objects, and signed collections.  Its
     detailed result distinguishes documents outside the policy, unsecured

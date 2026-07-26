@@ -86,9 +86,11 @@ async function signPortableJsonLd(
   {
     privateKey = ed25519PrivateKey,
     verificationMethod = portableKeyId,
+    proofOptions = {},
   }: {
     privateKey?: CryptoKey;
     verificationMethod?: URL;
+    proofOptions?: Record<string, unknown>;
   } = {},
 ): Promise<Record<string, unknown>> {
   const proofConfig = {
@@ -98,6 +100,7 @@ async function signPortableJsonLd(
     verificationMethod: verificationMethod.href,
     proofPurpose: "assertionMethod",
     created: portableProofCreated,
+    ...proofOptions,
   };
   const encoder = new TextEncoder();
   const proofDigest = await crypto.subtle.digest(
@@ -123,6 +126,35 @@ async function signPortableJsonLd(
       ),
     },
   };
+}
+
+async function parsePortableProof(
+  document: Record<string, unknown>,
+): Promise<DataIntegrityProof> {
+  const proof = document.proof;
+  assert(
+    typeof proof === "object" && proof != null && !Array.isArray(proof),
+  );
+  return await DataIntegrityProof.fromJsonLd({
+    "@context": document["@context"],
+    ...proof,
+  }, {
+    documentLoader: mockDocumentLoader,
+    contextLoader: mockDocumentLoader,
+  });
+}
+
+async function assertPortableProofVerified(
+  document: Record<string, unknown>,
+  options: VerifyProofOptions,
+): Promise<void> {
+  const key = await verifyProof(
+    document,
+    await parsePortableProof(document),
+    options,
+  );
+  assert(key != null);
+  assertEquals(key.id, portableKeyId);
 }
 const fep8b32TestVectorActivity = new Create({
   id: new URL("https://server.example/activities/1"),
@@ -630,6 +662,268 @@ test("verifyProof()", async () => {
   assertFalse(contextLoaderCalls.includes("https://attacker.example/ctx"));
 });
 
+test("verifyProof() authenticates the complete proof configuration", async (t) => {
+  const jsonLd = {
+    "@context": portableContext,
+    id: "https://example.com/activities/complete-proof-options",
+    type: "Create",
+    actor: "https://example.com/users/alice",
+    object: {
+      type: "Note",
+      content: "Every proof option is authenticated.",
+    },
+  };
+  const options: VerifyProofOptions = {
+    documentLoader: mockDocumentLoader,
+    contextLoader: mockDocumentLoader,
+  };
+
+  await t.step("rejects an expires option added after signing", async () => {
+    const signed = await signPortableJsonLd(jsonLd);
+    const tampered = {
+      ...signed,
+      proof: {
+        ...signed.proof as Record<string, unknown>,
+        expires: "3000-01-01T00:00:00Z",
+      },
+    };
+    assertEquals(
+      await verifyProof(tampered, await parsePortableProof(tampered), options),
+      null,
+    );
+  });
+
+  await t.step("accepts an authenticated future expiration", async () => {
+    const signed = await signPortableJsonLd(jsonLd, {
+      proofOptions: { expires: "3000-01-01T00:00:00Z" },
+    });
+    await assertPortableProofVerified(signed, options);
+  });
+
+  await t.step("rejects an authenticated expired proof", async () => {
+    const signed = await signPortableJsonLd(jsonLd, {
+      proofOptions: { expires: "2000-01-01T00:00:00Z" },
+    });
+    assertEquals(
+      await verifyProof(signed, await parsePortableProof(signed), options),
+      null,
+    );
+  });
+
+  await t.step("authenticates domain, challenge, and nonce", async () => {
+    const signed = await signPortableJsonLd(jsonLd, {
+      proofOptions: {
+        domain: ["social.example", "https://social.example"],
+        challenge: "challenge-123",
+        nonce: "nonce-456",
+      },
+    });
+    const proof = await parsePortableProof(signed);
+    const matchingKey = await verifyProof(signed, proof, {
+      ...options,
+      domain: ["https://social.example", "social.example"],
+      challenge: "challenge-123",
+    });
+    assert(matchingKey != null);
+    assertEquals(matchingKey.id, portableKeyId);
+    assertEquals(
+      await verifyProof(signed, proof, {
+        ...options,
+        domain: ["social.example"],
+        challenge: "challenge-123",
+      }),
+      null,
+    );
+    assertEquals(
+      await verifyProof(signed, proof, {
+        ...options,
+        domain: ["https://social.example", "social.example"],
+        challenge: "wrong-challenge",
+      }),
+      null,
+    );
+
+    for (
+      const [property, value] of [
+        ["domain", ["other.example"]],
+        ["challenge", "tampered-challenge"],
+        ["nonce", "tampered-nonce"],
+      ] as const
+    ) {
+      const tampered = {
+        ...signed,
+        proof: {
+          ...signed.proof as Record<string, unknown>,
+          [property]: value,
+        },
+      };
+      assertEquals(
+        await verifyProof(
+          tampered,
+          await parsePortableProof(tampered),
+          options,
+        ),
+        null,
+      );
+    }
+  });
+
+  await t.step("requires requested domain and challenge options", async () => {
+    const signed = await signPortableJsonLd(jsonLd);
+    const proof = await parsePortableProof(signed);
+    assertEquals(
+      await verifyProof(signed, proof, {
+        ...options,
+        domain: "social.example",
+      }),
+      null,
+    );
+    assertEquals(
+      await verifyProof(signed, proof, {
+        ...options,
+        challenge: "challenge-123",
+      }),
+      null,
+    );
+  });
+
+  await t.step("rejects malformed proof options", async () => {
+    for (
+      const proofOptions of [
+        { expires: "not-a-date" },
+        { domain: ["social.example", 42] },
+        { challenge: 42 },
+        { nonce: { value: "not-a-string" } },
+        { nonce: ["not", "a", "string"] },
+        { previousProof: ["urn:uuid:proof-1", 42] },
+      ]
+    ) {
+      const signed = await signPortableJsonLd(jsonLd, { proofOptions });
+      assertEquals(
+        await verifyProof(signed, await parsePortableProof(signed), options),
+        null,
+      );
+    }
+  });
+
+  await t.step("authenticates aliased and extension options", async () => {
+    const aliasedJsonLd = {
+      ...jsonLd,
+      "@context": [
+        ...portableContext,
+        {
+          validUntil: {
+            "@id": "https://w3id.org/security#expiration",
+            "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+          },
+          extensionOption: "https://example.com/security#extensionOption",
+        },
+      ],
+    };
+    const signed = await signPortableJsonLd(aliasedJsonLd, {
+      proofOptions: {
+        validUntil: "3000-01-01T00:00:00Z",
+        extensionOption: { nested: ["one", "two"] },
+      },
+    });
+    await assertPortableProofVerified(signed, options);
+
+    for (
+      const [property, value] of [
+        ["validUntil", "2999-01-01T00:00:00Z"],
+        ["extensionOption", { nested: ["one", "changed"] }],
+      ] as const
+    ) {
+      const tampered = {
+        ...signed,
+        proof: {
+          ...signed.proof as Record<string, unknown>,
+          [property]: value,
+        },
+      };
+      assertEquals(
+        await verifyProof(
+          tampered,
+          await parsePortableProof(tampered),
+          options,
+        ),
+        null,
+      );
+    }
+  });
+
+  await t.step(
+    "accepts literal proof fields with an unresolved extra context",
+    async () => {
+      const document = {
+        ...jsonLd,
+        "@context": [
+          ...portableContext,
+          "https://context.example/unrelated",
+        ],
+      };
+      const signed = await signPortableJsonLd(document);
+      const rawProof = signed.proof as Record<string, unknown>;
+      const proof = new DataIntegrityProof({
+        cryptosuite: "eddsa-jcs-2022",
+        verificationMethod: portableKeyId,
+        proofPurpose: "assertionMethod",
+        proofValue: decodeMultibase(rawProof.proofValue as string),
+        created: Temporal.Instant.from(portableProofCreated),
+      });
+      const key = await verifyProof(signed, proof, options);
+      assert(key != null);
+      assertEquals(key.id, portableKeyId);
+    },
+  );
+
+  await t.step(
+    "rejects aliases whose proof context cannot be resolved safely",
+    async () => {
+      const contextUrl = "https://context.example/proof-options";
+      const document = {
+        ...jsonLd,
+        "@context": [...portableContext, contextUrl],
+      };
+      const signed = await signPortableJsonLd(document, {
+        proofOptions: {
+          validUntil: "2000-01-01T00:00:00Z",
+        },
+      });
+      const rawProof = signed.proof as Record<string, unknown>;
+      const proof = new DataIntegrityProof({
+        cryptosuite: "eddsa-jcs-2022",
+        verificationMethod: portableKeyId,
+        proofPurpose: "assertionMethod",
+        proofValue: decodeMultibase(rawProof.proofValue as string),
+        created: Temporal.Instant.from(portableProofCreated),
+      });
+      const contextLoader = async (url: string) => {
+        if (url !== contextUrl) return await mockDocumentLoader(url);
+        return {
+          contextUrl: null,
+          documentUrl: url,
+          document: {
+            "@context": {
+              validUntil: {
+                "@id": "https://w3id.org/security#expiration",
+                "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+              },
+            },
+          },
+        };
+      };
+      assertEquals(
+        await verifyProof(signed, proof, {
+          ...options,
+          contextLoader,
+        }),
+        null,
+      );
+    },
+  );
+});
+
 test("verifyProof() resolves did:key verification methods locally", async () => {
   const multibaseKey = (await exportDidKey(ed25519PublicKey.publicKey)).slice(
     "did:key:".length,
@@ -949,12 +1243,14 @@ test("verifyProof() records verification duration metric", async (t) => {
     "verifyObject() wrapper emits one measurement per inner verifyProof()",
     async () => {
       const [meterProvider, recorder] = createTestMeterProvider();
+      const serializedProof = await proof.toJsonLd({
+        format: "compact",
+        contextLoader: mockDocumentLoader,
+      }) as Record<string, unknown>;
+      const { "@context": _proofContext, ...embeddedProof } = serializedProof;
       const create = await verifyObject(Create, {
         ...jsonLd,
-        proof: await proof.toJsonLd({
-          format: "compact",
-          contextLoader: mockDocumentLoader,
-        }),
+        proof: embeddedProof,
       }, {
         documentLoader: mockDocumentLoader,
         contextLoader: mockDocumentLoader,
@@ -1046,6 +1342,41 @@ test("verifyPortableObjectProof()", async (t) => {
       assert(result.verified);
       assertEquals(result.keys.length, 1);
       assertEquals(result.keys[0].id, portableKeyId);
+    },
+  );
+
+  await t.step(
+    "rejects unauthenticated and expired proof options",
+    async () => {
+      const signed = await signPortableJsonLd(unsignedObject);
+      const tampered = {
+        ...signed,
+        proof: {
+          ...signed.proof as Record<string, unknown>,
+          expires: "3000-01-01T00:00:00Z",
+        },
+      };
+      const tamperedResult = await verifyPortableObjectProof(
+        tampered,
+        options,
+      );
+      assertFalse(tamperedResult.verified);
+      assertEquals(tamperedResult.reason, {
+        type: "invalidProof",
+        proofIndex: 0,
+      });
+
+      const expiredResult = await verifyPortableObjectProof(
+        await signPortableJsonLd(unsignedObject, {
+          proofOptions: { expires: "2000-01-01T00:00:00Z" },
+        }),
+        options,
+      );
+      assertFalse(expiredResult.verified);
+      assertEquals(expiredResult.reason, {
+        type: "invalidProof",
+        proofIndex: 0,
+      });
     },
   );
 
@@ -1585,6 +1916,32 @@ test("verifyPortableObjectProof()", async (t) => {
       portableKeyId,
       portableKeyId,
     ]);
+  });
+
+  await t.step("matches proofs across aliased properties", async () => {
+    const document = {
+      ...unsignedObject,
+      "@context": [
+        ...portableContext,
+        {
+          firstProof: "https://w3id.org/security#proof",
+          secondProof: "https://w3id.org/security#proof",
+        },
+      ],
+    };
+    const firstSigned = await signPortableJsonLd(document, {
+      proofOptions: { domain: "first.example" },
+    });
+    const secondSigned = await signPortableJsonLd(document, {
+      proofOptions: { domain: "second.example" },
+    });
+    const result = await verifyPortableObjectProof({
+      ...document,
+      secondProof: secondSigned.proof,
+      firstProof: firstSigned.proof,
+    }, options);
+    assert(result.verified);
+    assertEquals(result.keys.length, 2);
   });
 
   await t.step(

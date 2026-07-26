@@ -53,6 +53,16 @@ const OIP_KNOWN_CRYPTOSUITES = new Set<string>(
 );
 
 const logger = getLogger(["fedify", "sig", "proof"]);
+const SECURITY_NAMESPACE = "https://w3id.org/security#";
+const SECURITY_PROOF = `${SECURITY_NAMESPACE}proof`;
+const SECURITY_PROOF_VALUE = `${SECURITY_NAMESPACE}proofValue`;
+const DATA_INTEGRITY_PROOF = `${SECURITY_NAMESPACE}DataIntegrityProof`;
+const SECURITY_VERIFICATION_METHOD = `${SECURITY_NAMESPACE}verificationMethod`;
+const SECURITY_EXPIRATION = `${SECURITY_NAMESPACE}expiration`;
+const SECURITY_DOMAIN = `${SECURITY_NAMESPACE}domain`;
+const SECURITY_CHALLENGE = `${SECURITY_NAMESPACE}challenge`;
+const SECURITY_NONCE = `${SECURITY_NAMESPACE}nonce`;
+const SECURITY_PREVIOUS_PROOF = `${SECURITY_NAMESPACE}previousProof`;
 
 /**
  * Checks if the given JSON-LD document has a DataIntegrityProof-like object,
@@ -287,6 +297,20 @@ export async function signObject<T extends Object>(
  */
 export interface VerifyProofOptions {
   /**
+   * The security domain expected by the verifier.  When specified, it must
+   * contain the same strings as the proof's `domain` option.
+   * @since 2.4.0
+   */
+  domain?: string | readonly string[];
+
+  /**
+   * The challenge expected by the verifier.  When specified, it must exactly
+   * match the proof's `challenge` option.
+   * @since 2.4.0
+   */
+  challenge?: string;
+
+  /**
    * The context loader for loading remote JSON-LD contexts.
    */
   contextLoader?: DocumentLoader;
@@ -417,6 +441,7 @@ async function verifyProofWithMessageDigestCache(
   proof: DataIntegrityProof,
   options: VerifyProofOptions,
   messageDigestCache: ProofMessageDigestCache = {},
+  rawProofCandidates?: readonly RawProofCandidate[],
 ): Promise<Multikey | null> {
   const tracerProvider = options.tracerProvider ?? trace.getTracerProvider();
   const tracer = tracerProvider.getTracer(metadata.name, metadata.version);
@@ -457,6 +482,7 @@ async function verifyProofWithMessageDigestCache(
           proof,
           options,
           messageDigestCache,
+          rawProofCandidates,
         );
         if (key == null) span.setStatus({ code: SpanStatusCode.ERROR });
         else verified = true;
@@ -493,7 +519,7 @@ interface ProofMessageDigests {
 }
 
 interface ProofMessageDigestCache {
-  value?: Promise<ProofMessageDigests>;
+  values?: Map<string, Promise<ProofMessageDigests>>;
   proofContextLoader?: DocumentLoader;
 }
 
@@ -519,18 +545,23 @@ function expandContextPropertyIri(
   return key;
 }
 
-async function getProofPropertyNames(
+async function getJsonLdPropertyNames(
   jsonLd: Record<string, unknown>,
+  propertyIri: string,
+  defaults: readonly string[],
   documentLoader: DocumentLoader = preloadedOnlyDocumentLoader,
-): Promise<Set<string>> {
-  const names = new Set(["proof", SECURITY_PROOF]);
-  if (jsonLd["@context"] == null) return names;
+  inheritedContext?: unknown,
+  rejectOnContextError = false,
+): Promise<Set<string> | null> {
+  const names = new Set(defaults);
+  const context = jsonLd["@context"] ?? inheritedContext;
+  if (context == null) return names;
   try {
     const options = { documentLoader };
     let activeContext = await jsonld.processContext(null, null, options);
     activeContext = await jsonld.processContext(
       activeContext,
-      jsonLd["@context"],
+      context,
       options,
     );
     const typeScopedContext = activeContext;
@@ -560,20 +591,34 @@ async function getProofPropertyNames(
       }
     }
     for (const key of globalThis.Object.keys(jsonLd)) {
-      if (expandContextPropertyIri(activeContext, key) === SECURITY_PROOF) {
+      if (expandContextPropertyIri(activeContext, key) === propertyIri) {
         names.add(key);
       }
     }
   } catch {
+    if (rejectOnContextError) return null;
     // Unavailable contexts must not prevent the literal proof properties
     // from being removed without a network fetch.
   }
   return names;
 }
 
+async function getProofPropertyNames(
+  jsonLd: Record<string, unknown>,
+  documentLoader: DocumentLoader = preloadedOnlyDocumentLoader,
+): Promise<Set<string>> {
+  return await getJsonLdPropertyNames(
+    jsonLd,
+    SECURITY_PROOF,
+    ["proof", SECURITY_PROOF],
+    documentLoader,
+  ) ?? new Set(["proof", SECURITY_PROOF]);
+}
+
 async function createProofMessageDigests(
   jsonLd: Record<string, unknown>,
   proofContextLoader?: DocumentLoader,
+  context?: unknown,
 ): Promise<ProofMessageDigests> {
   const msg = { ...jsonLd };
   // `verifyProof()` promises to ignore existing proofs on the input;
@@ -585,6 +630,7 @@ async function createProofMessageDigests(
   ) {
     delete msg[property];
   }
+  if (context != null) msg["@context"] = structuredClone(context);
   const encoder = new TextEncoder();
   const digest = async (value: unknown): Promise<ArrayBuffer> => {
     const bytes = encoder.encode(serialize(value));
@@ -609,11 +655,432 @@ async function createProofMessageDigests(
   };
 }
 
+interface ProofConfiguration {
+  readonly value: Record<string, unknown>;
+  readonly context: unknown;
+}
+
+function contextValues(context: unknown): unknown[] {
+  return Array.isArray(context) ? context : [context];
+}
+
+function equalJsonValues(left: unknown, right: unknown): boolean {
+  try {
+    return serialize(left) === serialize(right);
+  } catch {
+    return false;
+  }
+}
+
+function contextStartsWith(
+  documentContext: unknown,
+  proofContext: unknown,
+): boolean {
+  if (documentContext == null) return false;
+  const documentValues = contextValues(documentContext);
+  const proofValues = contextValues(proofContext);
+  return proofValues.length <= documentValues.length &&
+    proofValues.every((value, index) =>
+      equalJsonValues(value, documentValues[index])
+    );
+}
+
+function appendProofValues(values: unknown[], value: unknown): void {
+  if (Array.isArray(value)) {
+    for (const item of value) appendProofValues(values, item);
+  } else if (
+    isJsonLdNode(value) && Array.isArray(value["@graph"])
+  ) {
+    for (const item of value["@graph"]) appendProofValues(values, item);
+  } else {
+    values.push(value);
+  }
+}
+
+async function getRawProofValues(
+  jsonLd: Record<string, unknown>,
+  documentLoader: DocumentLoader,
+): Promise<unknown[]> {
+  const propertyNames = await getProofPropertyNames(jsonLd, documentLoader);
+  const values: unknown[] = [];
+  for (const [property, value] of globalThis.Object.entries(jsonLd)) {
+    if (propertyNames.has(property)) appendProofValues(values, value);
+  }
+  return values;
+}
+
+function sameBytes(
+  left: Uint8Array | null,
+  right: Uint8Array | null,
+): boolean {
+  if (left == null || right == null) return left === right;
+  return left.length === right.length &&
+    left.every((value, index) => value === right[index]);
+}
+
+function sameProof(
+  left: DataIntegrityProof,
+  right: DataIntegrityProof,
+): boolean {
+  return left.cryptosuite === right.cryptosuite &&
+    left.verificationMethodId?.href === right.verificationMethodId?.href &&
+    left.proofPurpose === right.proofPurpose &&
+    sameBytes(left.proofValue, right.proofValue) &&
+    left.created?.toString() === right.created?.toString();
+}
+
+interface RawProofCandidate {
+  readonly value: unknown;
+  readonly proof: DataIntegrityProof | null;
+}
+
+async function parseRawProofCandidates(
+  jsonLd: Record<string, unknown>,
+  values: readonly unknown[],
+  options: VerifyProofOptions,
+  documentLoader: DocumentLoader,
+): Promise<RawProofCandidate[]> {
+  const candidates: RawProofCandidate[] = [];
+  for (const value of values) {
+    let parsed: DataIntegrityProof | null = null;
+    if (isJsonLdNode(value)) {
+      const proofJsonLd = value["@context"] == null &&
+          jsonLd["@context"] != null
+        ? { "@context": jsonLd["@context"], ...value }
+        : value;
+      try {
+        parsed = await DataIntegrityProof.fromJsonLd(
+          proofJsonLd,
+          { ...options, contextLoader: documentLoader },
+        );
+      } catch {
+        // Malformed sibling proofs cannot match a typed proof.
+      }
+    }
+    candidates.push({ value, proof: parsed });
+  }
+  return candidates;
+}
+
+async function findRawProofValue(
+  jsonLd: Record<string, unknown>,
+  proof: DataIntegrityProof,
+  options: VerifyProofOptions,
+  documentLoader: DocumentLoader,
+  rawProofCandidates?: readonly RawProofCandidate[],
+): Promise<unknown | undefined> {
+  const candidates = rawProofCandidates ??
+    await parseRawProofCandidates(
+      jsonLd,
+      await getRawProofValues(jsonLd, documentLoader),
+      options,
+      documentLoader,
+    );
+  for (const candidate of candidates) {
+    if (
+      candidate.proof != null &&
+      sameProof(candidate.proof, proof)
+    ) {
+      return candidate.value;
+    }
+  }
+  return undefined;
+}
+
+const STANDARD_COMPACT_PROOF_PROPERTIES = new Set([
+  "@context",
+  "type",
+  "cryptosuite",
+  "verificationMethod",
+  "proofPurpose",
+  "proofValue",
+  "created",
+]);
+
+const STANDARD_EXPANDED_PROOF_PROPERTIES = new Set([
+  "@context",
+  "@type",
+  `${SECURITY_NAMESPACE}cryptosuite`,
+  SECURITY_VERIFICATION_METHOD,
+  `${SECURITY_NAMESPACE}proofPurpose`,
+  `${SECURITY_NAMESPACE}proofValue`,
+  "http://purl.org/dc/terms/created",
+]);
+
+function hasAdditionalProofOptions(value: unknown): boolean {
+  const node = Array.isArray(value) && value.length === 1 ? value[0] : value;
+  return isJsonLdNode(node) &&
+    globalThis.Object.keys(node).some((property) =>
+      !STANDARD_COMPACT_PROOF_PROPERTIES.has(property) &&
+      !STANDARD_EXPANDED_PROOF_PROPERTIES.has(property)
+    );
+}
+
+function isExpandedJsonLdNode(value: Record<string, unknown>): boolean {
+  const properties = globalThis.Object.keys(value).filter((key) =>
+    !key.startsWith("@")
+  );
+  return properties.length > 0 &&
+    properties.every((property) => URL.canParse(property));
+}
+
+async function normalizeProofConfiguration(
+  rawProof: unknown,
+  documentContext: unknown,
+  documentLoader: DocumentLoader,
+): Promise<ProofConfiguration | null> {
+  let node = Array.isArray(rawProof) && rawProof.length === 1
+    ? rawProof[0]
+    : rawProof;
+  if (!isJsonLdNode(node)) return null;
+  if (isExpandedJsonLdNode(node)) {
+    if (documentContext == null) return null;
+    node = await jsonld.compact(node, documentContext, {
+      documentLoader,
+    });
+    if (!isJsonLdNode(node)) return null;
+  } else {
+    node = structuredClone(node);
+  }
+
+  const receivedContext = node["@context"];
+  if (
+    receivedContext != null &&
+    !contextStartsWith(documentContext, receivedContext)
+  ) {
+    return null;
+  }
+  const context = receivedContext ?? documentContext;
+  if (context != null) node["@context"] = structuredClone(context);
+
+  const proofValueProperties = await getJsonLdPropertyNames(
+    node,
+    SECURITY_PROOF_VALUE,
+    ["proofValue", SECURITY_PROOF_VALUE],
+    documentLoader,
+    context,
+  ) ?? new Set(["proofValue", SECURITY_PROOF_VALUE]);
+  for (const property of proofValueProperties) delete node[property];
+  return { value: node, context };
+}
+
+async function createProofConfiguration(
+  jsonLd: Record<string, unknown>,
+  proof: DataIntegrityProof,
+  options: VerifyProofOptions,
+  documentLoader: DocumentLoader,
+  rawProofCandidates?: readonly RawProofCandidate[],
+): Promise<ProofConfiguration | null> {
+  let rawProof = await findRawProofValue(
+    jsonLd,
+    proof,
+    options,
+    documentLoader,
+    rawProofCandidates,
+  );
+  if (rawProof == null) {
+    const serializedProof = await proof.toJsonLd();
+    if (hasAdditionalProofOptions(serializedProof)) {
+      rawProof = serializedProof;
+    }
+  }
+  if (rawProof != null) {
+    return await normalizeProofConfiguration(
+      rawProof,
+      jsonLd["@context"],
+      documentLoader,
+    );
+  }
+  const context = jsonLd["@context"];
+  return {
+    value: {
+      ...(context == null ? {} : { "@context": context }),
+      type: "DataIntegrityProof",
+      cryptosuite: proof.cryptosuite,
+      verificationMethod: proof.verificationMethodId!.href,
+      proofPurpose: proof.proofPurpose,
+      created: proof.created!.toString(),
+    },
+    context,
+  };
+}
+
+interface ProofOption {
+  readonly present: boolean;
+  readonly value?: unknown;
+}
+
+const KNOWN_PROOF_CONFIGURATION_PROPERTIES = new Set([
+  "@context",
+  "@id",
+  "@type",
+  "id",
+  "type",
+  "cryptosuite",
+  `${SECURITY_NAMESPACE}cryptosuite`,
+  "verificationMethod",
+  SECURITY_VERIFICATION_METHOD,
+  "proofPurpose",
+  `${SECURITY_NAMESPACE}proofPurpose`,
+  "created",
+  "http://purl.org/dc/terms/created",
+  "expires",
+  SECURITY_EXPIRATION,
+  "domain",
+  SECURITY_DOMAIN,
+  "challenge",
+  SECURITY_CHALLENGE,
+  "nonce",
+  SECURITY_NONCE,
+  "previousProof",
+  SECURITY_PREVIOUS_PROOF,
+]);
+
+async function getProofOption(
+  proofConfig: Record<string, unknown>,
+  propertyIri: string,
+  defaults: readonly string[],
+  documentLoader: DocumentLoader,
+): Promise<ProofOption | null> {
+  let names = await getJsonLdPropertyNames(
+    proofConfig,
+    propertyIri,
+    defaults,
+    documentLoader,
+    proofConfig["@context"],
+    true,
+  );
+  if (names == null) {
+    if (
+      globalThis.Object.keys(proofConfig).some((property) =>
+        !KNOWN_PROOF_CONFIGURATION_PROPERTIES.has(property)
+      )
+    ) {
+      return null;
+    }
+    names = new Set(defaults);
+  }
+  const present = globalThis.Object.keys(proofConfig).filter((property) =>
+    names.has(property)
+  );
+  if (present.length > 1) return null;
+  return present.length < 1
+    ? { present: false }
+    : { present: true, value: proofConfig[present[0]] };
+}
+
+function parseStringSet(value: unknown): Set<string> | null {
+  if (typeof value === "string") return new Set([value]);
+  if (
+    !Array.isArray(value) ||
+    value.some((item) => typeof item !== "string")
+  ) {
+    return null;
+  }
+  return new Set(value);
+}
+
+function equalStringSets(left: Set<string>, right: Set<string>): boolean {
+  return left.size === right.size &&
+    [...left].every((value) => right.has(value));
+}
+
+async function hasValidProofOptions(
+  proofConfig: Record<string, unknown>,
+  options: VerifyProofOptions,
+  documentLoader: DocumentLoader,
+): Promise<boolean> {
+  const expires = await getProofOption(
+    proofConfig,
+    SECURITY_EXPIRATION,
+    ["expires", SECURITY_EXPIRATION],
+    documentLoader,
+  );
+  if (expires == null) return false;
+  if (expires.present) {
+    if (typeof expires.value !== "string") return false;
+    let expiration: Temporal.Instant;
+    try {
+      expiration = Temporal.Instant.from(expires.value);
+    } catch {
+      return false;
+    }
+    if (Temporal.Instant.compare(Temporal.Now.instant(), expiration) >= 0) {
+      return false;
+    }
+  }
+
+  const domain = await getProofOption(
+    proofConfig,
+    SECURITY_DOMAIN,
+    ["domain", SECURITY_DOMAIN],
+    documentLoader,
+  );
+  if (domain == null) return false;
+  const proofDomains = domain.present ? parseStringSet(domain.value) : null;
+  if (domain.present && proofDomains == null) return false;
+  if (options.domain != null) {
+    const expectedDomains = parseStringSet(options.domain);
+    if (
+      expectedDomains == null || proofDomains == null ||
+      !equalStringSets(proofDomains, expectedDomains)
+    ) {
+      return false;
+    }
+  }
+
+  const challenge = await getProofOption(
+    proofConfig,
+    SECURITY_CHALLENGE,
+    ["challenge", SECURITY_CHALLENGE],
+    documentLoader,
+  );
+  if (
+    challenge == null ||
+    challenge.present && typeof challenge.value !== "string" ||
+    options.challenge != null &&
+      (!challenge.present || challenge.value !== options.challenge)
+  ) {
+    return false;
+  }
+
+  const nonce = await getProofOption(
+    proofConfig,
+    SECURITY_NONCE,
+    ["nonce", SECURITY_NONCE],
+    documentLoader,
+  );
+  if (
+    nonce == null ||
+    nonce.present && typeof nonce.value !== "string"
+  ) {
+    return false;
+  }
+
+  const previousProof = await getProofOption(
+    proofConfig,
+    SECURITY_PREVIOUS_PROOF,
+    ["previousProof", SECURITY_PREVIOUS_PROOF],
+    documentLoader,
+  );
+  if (
+    previousProof == null ||
+    previousProof.present &&
+      typeof previousProof.value !== "string" &&
+      (!Array.isArray(previousProof.value) ||
+        previousProof.value.some((item) => typeof item !== "string"))
+  ) {
+    return false;
+  }
+  return true;
+}
+
 async function verifyProofInternal(
   jsonLd: unknown,
   proof: DataIntegrityProof,
   options: VerifyProofOptions,
   messageDigestCache: ProofMessageDigestCache,
+  rawProofCandidates?: readonly RawProofCandidate[],
 ): Promise<Multikey | null> {
   if (
     !isJsonLdNode(jsonLd) ||
@@ -623,6 +1090,25 @@ async function verifyProofInternal(
     proof.proofValue == null ||
     proof.created == null
   ) return null;
+  const proofContextLoader = messageDigestCache.proofContextLoader ??
+    preloadedOnlyDocumentLoader;
+  const proofConfiguration = await createProofConfiguration(
+    jsonLd,
+    proof,
+    options,
+    proofContextLoader,
+    rawProofCandidates,
+  );
+  if (
+    proofConfiguration == null ||
+    !await hasValidProofOptions(
+      proofConfiguration.value,
+      options,
+      proofContextLoader,
+    )
+  ) {
+    return null;
+  }
   // Start the key fetch eagerly so it overlaps with the JCS
   // canonicalization and SHA-256 digest work below.  `measureSignatureKeyFetch`
   // is an async function whose body runs synchronously up to the first
@@ -633,17 +1119,8 @@ async function verifyProofInternal(
     "object_integrity",
     () => fetchKey(proof.verificationMethodId!, Multikey, options),
   );
-  const proofConfig = {
-    // deno-lint-ignore no-explicit-any
-    "@context": (jsonLd as any)["@context"],
-    type: "DataIntegrityProof",
-    cryptosuite: proof.cryptosuite,
-    verificationMethod: proof.verificationMethodId.href,
-    proofPurpose: proof.proofPurpose,
-    created: proof.created.toString(),
-  };
   const encoder = new TextEncoder();
-  const proofBytes = encoder.encode(serialize(proofConfig));
+  const proofBytes = encoder.encode(serialize(proofConfiguration.value));
   const proofDigest = await crypto.subtle.digest("SHA-256", proofBytes);
   // Try the on-wire form first.  Only if that fails do we fall back to
   // Fedify's outgoing JSON-LD compatibility form so that signatures created
@@ -697,6 +1174,7 @@ async function verifyProofInternal(
           },
         },
         messageDigestCache,
+        rawProofCandidates,
       );
     }
     logger.debug(
@@ -725,12 +1203,18 @@ async function verifyProofInternal(
       digest,
     );
   };
-  const messageDigests = await (
-    messageDigestCache.value ??= createProofMessageDigests(
+  const messageDigestKey = serialize(proofConfiguration.context ?? null);
+  const messageDigestValues = messageDigestCache.values ??= new Map();
+  let messageDigestsPromise = messageDigestValues.get(messageDigestKey);
+  if (messageDigestsPromise == null) {
+    messageDigestsPromise = createProofMessageDigests(
       jsonLd,
       messageDigestCache.proofContextLoader,
-    )
-  );
+      proofConfiguration.context,
+    );
+    messageDigestValues.set(messageDigestKey, messageDigestsPromise);
+  }
+  const messageDigests = await messageDigestsPromise;
   if (await verifyCandidate(messageDigests.onWire)) return publicKey;
   const normalizedDigest = await messageDigests.normalized();
   if (normalizedDigest != null && await verifyCandidate(normalizedDigest)) {
@@ -756,6 +1240,7 @@ async function verifyProofInternal(
         },
       },
       messageDigestCache,
+      rawProofCandidates,
     );
   }
   logger.debug(
@@ -775,7 +1260,6 @@ type Fep2277CoreType =
   | "object";
 
 const AS_NAMESPACE = "https://www.w3.org/ns/activitystreams#";
-const SECURITY_NAMESPACE = "https://w3id.org/security#";
 const FEP_2277_ACTOR_PROPERTIES = [
   "http://www.w3.org/ns/ldp#inbox",
   `${AS_NAMESPACE}outbox`,
@@ -791,9 +1275,6 @@ const FEP_2277_COLLECTION_PROPERTIES = [
   "prev",
   "current",
 ].map((property) => AS_NAMESPACE + property);
-const SECURITY_PROOF = `${SECURITY_NAMESPACE}proof`;
-const DATA_INTEGRITY_PROOF = `${SECURITY_NAMESPACE}DataIntegrityProof`;
-const SECURITY_VERIFICATION_METHOD = `${SECURITY_NAMESPACE}verificationMethod`;
 const PORTABLE_OBJECT_ID_PATTERN = /^ap(?:\+ef61)?:\/\//i;
 const FUNCTIONAL_PROOF_PROPERTIES = [
   `${SECURITY_NAMESPACE}cryptosuite`,
@@ -970,7 +1451,9 @@ export async function verifyPortableObjectProof(
       reason: { type: "invalidProof", proofIndex: 0 },
     };
   }
-
+  const rawProofValues = isJsonLdNode(jsonLd)
+    ? await getRawProofValues(jsonLd, proofContextLoader)
+    : [];
   const proofs: DataIntegrityProof[] = [];
   for (let proofIndex = 0; proofIndex < proofValues.length; proofIndex++) {
     const proofValue = proofValues[proofIndex];
@@ -1043,6 +1526,12 @@ export async function verifyPortableObjectProof(
   }
 
   const keys: Multikey[] = [];
+  const rawProofCandidates = await parseRawProofCandidates(
+    jsonLd as Record<string, unknown>,
+    rawProofValues,
+    options,
+    proofContextLoader,
+  );
   const messageDigestCache: ProofMessageDigestCache = { proofContextLoader };
   for (let proofIndex = 0; proofIndex < proofs.length; proofIndex++) {
     const key = await verifyProofWithMessageDigestCache(
@@ -1050,6 +1539,7 @@ export async function verifyPortableObjectProof(
       proofs[proofIndex],
       options,
       messageDigestCache,
+      rawProofCandidates,
     );
     if (key == null) {
       return {
@@ -1097,8 +1587,31 @@ export async function verifyObject<T extends Object>(
   if (object instanceof Activity) {
     for (const uri of object.actorIds) attributions.add(uri.href);
   }
+  const rawProofValues = isJsonLdNode(jsonLd)
+    ? await getRawProofValues(
+      jsonLd,
+      options.contextLoader ?? preloadedOnlyDocumentLoader,
+    )
+    : [];
+  const rawProofCandidates = isJsonLdNode(jsonLd)
+    ? await parseRawProofCandidates(
+      jsonLd,
+      rawProofValues,
+      options,
+      options.contextLoader ?? preloadedOnlyDocumentLoader,
+    )
+    : [];
   for await (const proof of object.getProofs(options)) {
-    const key = await verifyProof(jsonLd, proof, options);
+    const key = await verifyProofWithMessageDigestCache(
+      jsonLd,
+      proof,
+      options,
+      {
+        proofContextLoader: options.contextLoader ??
+          preloadedOnlyDocumentLoader,
+      },
+      rawProofCandidates,
+    );
     if (key === null) return null;
     if (proof.verificationMethodId == null) return null;
     if (key.controllerId == null) {
