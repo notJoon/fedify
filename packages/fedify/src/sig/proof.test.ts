@@ -1505,6 +1505,34 @@ test("verifyPortableObjectProof()", async (t) => {
     },
   );
 
+  await t.step(
+    "requires exactly the DataIntegrityProof type",
+    async () => {
+      const signed = await signPortableJsonLd(unsignedObject);
+      const proof = signed.proof as Record<string, unknown>;
+      const missingType = { ...proof };
+      delete missingType.type;
+      for (
+        const invalidProof of [
+          missingType,
+          { ...proof, type: "Object" },
+          { ...proof, type: ["DataIntegrityProof", "Object"] },
+        ]
+      ) {
+        assertEquals(
+          await verifyPortableObjectProof({
+            ...signed,
+            proof: invalidProof,
+          }, options),
+          {
+            verified: false,
+            reason: { type: "invalidProof", proofIndex: 0 },
+          },
+        );
+      }
+    },
+  );
+
   await t.step("reports cryptographic failures separately", async () => {
     const signed = await signPortableJsonLd(unsignedObject);
     const tampered = { ...signed, content: "Tampered" };

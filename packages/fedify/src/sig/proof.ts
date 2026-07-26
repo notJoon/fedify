@@ -792,6 +792,7 @@ const FEP_2277_COLLECTION_PROPERTIES = [
   "current",
 ].map((property) => AS_NAMESPACE + property);
 const SECURITY_PROOF = `${SECURITY_NAMESPACE}proof`;
+const DATA_INTEGRITY_PROOF = `${SECURITY_NAMESPACE}DataIntegrityProof`;
 const SECURITY_VERIFICATION_METHOD = `${SECURITY_NAMESPACE}verificationMethod`;
 const PORTABLE_OBJECT_ID_PATTERN = /^ap(?:\+ef61)?:\/\//i;
 const FUNCTIONAL_PROOF_PROPERTIES = [
@@ -806,7 +807,7 @@ function isJsonLdNode(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value != null && !Array.isArray(value);
 }
 
-function hasSingleFunctionalProofValues(proofValue: unknown): boolean {
+function hasValidPortableProofShape(proofValue: unknown): boolean {
   if (!isJsonLdNode(proofValue)) return false;
   let proofNode = proofValue;
   if ("@graph" in proofNode) {
@@ -819,12 +820,16 @@ function hasSingleFunctionalProofValues(proofValue: unknown): boolean {
     }
     proofNode = graph[0];
   }
-  return FUNCTIONAL_PROOF_PROPERTIES.every((property) => {
-    const values = proofNode[property];
-    return Array.isArray(values) &&
-      values.length === 1 &&
-      !(isJsonLdNode(values[0]) && "@list" in values[0]);
-  });
+  const types = proofNode["@type"];
+  return Array.isArray(types) &&
+    types.length === 1 &&
+    types[0] === DATA_INTEGRITY_PROOF &&
+    FUNCTIONAL_PROOF_PROPERTIES.every((property) => {
+      const values = proofNode[property];
+      return Array.isArray(values) &&
+        values.length === 1 &&
+        !(isJsonLdNode(values[0]) && "@list" in values[0]);
+    });
 }
 
 function classifyFep2277CoreType(
@@ -969,7 +974,7 @@ export async function verifyPortableObjectProof(
   const proofs: DataIntegrityProof[] = [];
   for (let proofIndex = 0; proofIndex < proofValues.length; proofIndex++) {
     const proofValue = proofValues[proofIndex];
-    if (!hasSingleFunctionalProofValues(proofValue)) {
+    if (!hasValidPortableProofShape(proofValue)) {
       return {
         verified: false,
         reason: { type: "invalidProof", proofIndex },
