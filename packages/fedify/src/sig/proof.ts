@@ -795,6 +795,7 @@ const FEP_2277_COLLECTION_PROPERTIES = [
 ].map((property) => AS_NAMESPACE + property);
 const SECURITY_PROOF = `${SECURITY_NAMESPACE}proof`;
 const SECURITY_VERIFICATION_METHOD = `${SECURITY_NAMESPACE}verificationMethod`;
+const PORTABLE_OBJECT_ID_PATTERN = /^ap(?:\+ef61)?:\/\//i;
 
 function isJsonLdNode(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value != null && !Array.isArray(value);
@@ -897,6 +898,16 @@ export async function verifyPortableObjectProof(
   jsonLd: unknown,
   options: VerifyPortableObjectProofOptions = {},
 ): Promise<VerifyPortableObjectProofResult> {
+  if (
+    isJsonLdNode(jsonLd) &&
+    typeof jsonLd["@id"] === "string" &&
+    !PORTABLE_OBJECT_ID_PATTERN.test(jsonLd["@id"])
+  ) {
+    return {
+      verified: false,
+      reason: { type: "notPortableObject" },
+    };
+  }
   const { root, proofContextLoader } = await expandPortableObjectRoot(
     jsonLd,
     options.contextLoader,
@@ -904,7 +915,7 @@ export async function verifyPortableObjectProof(
   const id = root["@id"];
   if (
     typeof id !== "string" ||
-    !/^ap(?:\+ef61)?:\/\//i.test(id)
+    !PORTABLE_OBJECT_ID_PATTERN.test(id)
   ) {
     return {
       verified: false,

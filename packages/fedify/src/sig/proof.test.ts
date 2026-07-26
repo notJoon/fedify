@@ -1299,6 +1299,28 @@ test("verifyPortableObjectProof()", async (t) => {
     }
   });
 
+  await t.step(
+    "short-circuits clearly non-portable raw IDs",
+    async () => {
+      let contextLoads = 0;
+      const result = await verifyPortableObjectProof({
+        "@context": "https://attacker.example/context",
+        "@id": "https://social.example/objects/1",
+      }, {
+        ...options,
+        contextLoader() {
+          contextLoads++;
+          throw new TypeError("unexpected context load");
+        },
+      });
+      assertEquals(result, {
+        verified: false,
+        reason: { type: "notPortableObject" },
+      });
+      assertEquals(contextLoads, 0);
+    },
+  );
+
   await t.step("distinguishes unsecured and signed collections", async () => {
     const collection = {
       "@context": portableContext,
