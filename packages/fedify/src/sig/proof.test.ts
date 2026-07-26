@@ -1119,6 +1119,43 @@ test("verifyPortableObjectProof()", async (t) => {
     }
   });
 
+  await t.step(
+    "verifies proof aliases from caller-loaded contexts",
+    async () => {
+      const contextUrl = "https://context.example/security";
+      const proofAlias = "integrityProof";
+      const proofIri = "https://w3id.org/security#proof";
+      let contextLoads = 0;
+      const contextLoader = async (url: string) => {
+        if (url !== contextUrl) return await mockDocumentLoader(url);
+        contextLoads++;
+        return {
+          contextUrl: null,
+          documentUrl: url,
+          document: {
+            "@context": { [proofAlias]: proofIri },
+          },
+        };
+      };
+      const document = {
+        ...unsignedObject,
+        "@context": [...portableContext, contextUrl],
+      };
+      const { proof, ...signed } = await signPortableJsonLd(document);
+      const result = await verifyPortableObjectProof({
+        ...signed,
+        [proofAlias]: proof,
+      }, {
+        ...options,
+        contextLoader,
+      });
+      assert(result.verified);
+      assertEquals(result.keys.length, 1);
+      assertEquals(result.keys[0].id, portableKeyId);
+      assertEquals(contextLoads, 1);
+    },
+  );
+
   await t.step("verifies portable actors and activities by shape", async () => {
     for (
       const document of [

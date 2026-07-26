@@ -10,6 +10,7 @@ import {
   getFe34Origin,
   haveSameFe34Origin,
   parseIri,
+  type RemoteDocument,
 } from "@fedify/vocab-runtime";
 import jsonld from "@fedify/vocab-runtime/jsonld";
 import { getLogger } from "@logtape/logtape";
@@ -493,6 +494,7 @@ interface ProofMessageDigests {
 
 interface ProofMessageDigestCache {
   value?: Promise<ProofMessageDigests>;
+  proofContextLoader?: DocumentLoader;
 }
 
 function expandContextPropertyIri(
@@ -519,11 +521,12 @@ function expandContextPropertyIri(
 
 async function getProofPropertyNames(
   jsonLd: Record<string, unknown>,
+  documentLoader: DocumentLoader = preloadedOnlyDocumentLoader,
 ): Promise<Set<string>> {
   const names = new Set(["proof", SECURITY_PROOF]);
   if (jsonLd["@context"] == null) return names;
   try {
-    const options = { documentLoader: preloadedOnlyDocumentLoader };
+    const options = { documentLoader };
     let activeContext = await jsonld.processContext(null, null, options);
     activeContext = await jsonld.processContext(
       activeContext,
@@ -570,13 +573,16 @@ async function getProofPropertyNames(
 
 async function createProofMessageDigests(
   jsonLd: unknown,
+  proofContextLoader?: DocumentLoader,
 ): Promise<ProofMessageDigests> {
   const msg = { ...(jsonLd as Record<string, unknown>) };
   // `verifyProof()` promises to ignore existing proofs on the input;
   // strip every top-level property that the active JSON-LD context maps to
   // the security proof predicate so its bytes are not folded into the JCS
   // message digest.
-  for (const property of await getProofPropertyNames(msg)) {
+  for (
+    const property of await getProofPropertyNames(msg, proofContextLoader)
+  ) {
     delete msg[property];
   }
   const encoder = new TextEncoder();
@@ -722,7 +728,10 @@ async function verifyProofInternal(
     );
   };
   const messageDigests = await (
-    messageDigestCache.value ??= createProofMessageDigests(jsonLd)
+    messageDigestCache.value ??= createProofMessageDigests(
+      jsonLd,
+      messageDigestCache.proofContextLoader,
+    )
   );
   if (await verifyCandidate(messageDigests.onWire)) return publicKey;
   const normalizedDigest = await messageDigests.normalized();
@@ -832,18 +841,37 @@ function classifyFep2277CoreType(
 async function expandPortableObjectRoot(
   jsonLd: unknown,
   contextLoader: DocumentLoader | undefined,
-): Promise<Record<string, unknown>> {
+): Promise<{
+  root: Record<string, unknown>;
+  proofContextLoader: DocumentLoader;
+}> {
   if (!isJsonLdNode(jsonLd)) {
     throw new TypeError("Expected a single JSON-LD object.");
   }
+  const loadedContexts = new Map<string, RemoteDocument>();
+  const loader = getNormalizationContextLoader(contextLoader);
+  const recordingLoader: DocumentLoader = async (url, options) => {
+    const remoteDocument = await loader(url, options);
+    const key = URL.canParse(url) ? new URL(url).href : url;
+    loadedContexts.set(key, structuredClone(remoteDocument));
+    return remoteDocument;
+  };
   const expanded = await jsonld.expand(jsonLd, {
-    documentLoader: getNormalizationContextLoader(contextLoader),
+    documentLoader: recordingLoader,
     keepFreeFloatingNodes: true,
   });
   if (expanded.length !== 1 || !isJsonLdNode(expanded[0])) {
     throw new TypeError("Expected a single JSON-LD object.");
   }
-  return expanded[0];
+  return {
+    root: expanded[0],
+    proofContextLoader: async (url, options) => {
+      const key = URL.canParse(url) ? new URL(url).href : url;
+      const remoteDocument = loadedContexts.get(key);
+      if (remoteDocument != null) return structuredClone(remoteDocument);
+      return await preloadedOnlyDocumentLoader(url, options);
+    },
+  };
 }
 
 /**
@@ -869,7 +897,10 @@ export async function verifyPortableObjectProof(
   jsonLd: unknown,
   options: VerifyPortableObjectProofOptions = {},
 ): Promise<VerifyPortableObjectProofResult> {
-  const root = await expandPortableObjectRoot(jsonLd, options.contextLoader);
+  const { root, proofContextLoader } = await expandPortableObjectRoot(
+    jsonLd,
+    options.contextLoader,
+  );
   const id = root["@id"];
   if (
     typeof id !== "string" ||
@@ -990,7 +1021,7 @@ export async function verifyPortableObjectProof(
   }
 
   const keys: Multikey[] = [];
-  const messageDigestCache: ProofMessageDigestCache = {};
+  const messageDigestCache: ProofMessageDigestCache = { proofContextLoader };
   for (let proofIndex = 0; proofIndex < proofs.length; proofIndex++) {
     const key = await verifyProofWithMessageDigestCache(
       jsonLd,
