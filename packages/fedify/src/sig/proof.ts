@@ -7,6 +7,8 @@ import {
 } from "@fedify/vocab";
 import {
   type DocumentLoader,
+  formatIri,
+  getDocumentLoader,
   getFe34Origin,
   haveSameFe34Origin,
   parseIri,
@@ -420,13 +422,16 @@ export type VerifyPortableObjectProofResult =
 
 /**
  * Verifies the given proof for the object.
- * @param jsonLd The JSON-LD object to verify the proof for.  If it contains
- *               any proofs, they will be ignored.
+ * @param jsonLd The JSON-LD object to verify the proof for.  Its proof
+ *               properties are excluded from the message, but matching proof
+ *               occurrences are used to authenticate the received proof
+ *               configuration.
  * @param proof The proof to verify.
  * @param options Additional options.  See also {@link VerifyProofOptions}.
  * @returns The public key that was used to sign the proof, or `null` if the
  *          proof is invalid.
  * @since 0.10.0
+ * @since 2.4.0 Matching proof configurations are authenticated.
  */
 export async function verifyProof(
   jsonLd: unknown,
@@ -441,7 +446,7 @@ async function verifyProofWithMessageDigestCache(
   proof: DataIntegrityProof,
   options: VerifyProofOptions,
   messageDigestCache: ProofMessageDigestCache = {},
-  rawProofCandidates?: readonly RawProofCandidate[],
+  rawProofCandidate?: RawProofCandidate,
 ): Promise<Multikey | null> {
   const tracerProvider = options.tracerProvider ?? trace.getTracerProvider();
   const tracer = tracerProvider.getTracer(metadata.name, metadata.version);
@@ -482,7 +487,7 @@ async function verifyProofWithMessageDigestCache(
           proof,
           options,
           messageDigestCache,
-          rawProofCandidates,
+          rawProofCandidate,
         );
         if (key == null) span.setStatus({ code: SpanStatusCode.ERROR });
         else verified = true;
@@ -732,6 +737,23 @@ function sameProof(
 interface RawProofCandidate {
   readonly value: unknown;
   readonly proof: DataIntegrityProof | null;
+  readonly reference?: string;
+}
+
+function normalizeDocumentUrl(url: string): string {
+  try {
+    return formatIri(parseIri(url));
+  } catch {
+    return URL.canParse(url) ? new URL(url).href : url;
+  }
+}
+
+function getRawProofReference(value: unknown): string | undefined {
+  const node = Array.isArray(value) && value.length === 1 ? value[0] : value;
+  if (typeof node === "string") return normalizeDocumentUrl(node);
+  if (!isJsonLdNode(node)) return undefined;
+  const id = node["@id"] ?? node.id;
+  return typeof id === "string" ? normalizeDocumentUrl(id) : undefined;
 }
 
 async function parseRawProofCandidates(
@@ -757,31 +779,79 @@ async function parseRawProofCandidates(
         // Malformed sibling proofs cannot match a typed proof.
       }
     }
-    candidates.push({ value, proof: parsed });
+    candidates.push({
+      value,
+      proof: parsed,
+      reference: getRawProofReference(value) ?? parsed?.id?.href,
+    });
   }
   return candidates;
 }
 
-async function findRawProofValue(
+async function findRawProofCandidate(
   jsonLd: Record<string, unknown>,
   proof: DataIntegrityProof,
   options: VerifyProofOptions,
   documentLoader: DocumentLoader,
-  rawProofCandidates?: readonly RawProofCandidate[],
-): Promise<unknown | undefined> {
-  const candidates = rawProofCandidates ??
-    await parseRawProofCandidates(
-      jsonLd,
-      await getRawProofValues(jsonLd, documentLoader),
-      options,
-      documentLoader,
-    );
+): Promise<RawProofCandidate | null | undefined> {
+  const candidates = await parseRawProofCandidates(
+    jsonLd,
+    await getRawProofValues(jsonLd, documentLoader),
+    options,
+    documentLoader,
+  );
+  const matches: RawProofCandidate[] = [];
   for (const candidate of candidates) {
     if (
       candidate.proof != null &&
       sameProof(candidate.proof, proof)
     ) {
-      return candidate.value;
+      matches.push(candidate);
+    }
+  }
+  if (matches.length < 1) return undefined;
+  const first = matches[0];
+  // A standalone verifyProof() call cannot know which received occurrence
+  // produced the lossy typed proof.  Compare the signed configurations after
+  // inheriting the document context and removing proofValue so equivalent
+  // JSON-LD representations remain interchangeable.
+  const configurations = await Promise.all(
+    matches.map((candidate) =>
+      normalizeProofConfiguration(
+        candidate.value,
+        jsonLd["@context"],
+        documentLoader,
+      )
+    ),
+  );
+  const firstConfiguration = configurations[0];
+  return firstConfiguration != null &&
+      configurations.every((configuration) =>
+        configuration != null &&
+        equalJsonValues(configuration.value, firstConfiguration.value)
+      )
+    ? first
+    : null;
+}
+
+interface RawProofCandidatePool {
+  readonly candidates: readonly RawProofCandidate[];
+  readonly used: Set<number>;
+}
+
+function takeRawProofCandidate(
+  pool: RawProofCandidatePool,
+  proof: DataIntegrityProof,
+): RawProofCandidate | undefined {
+  for (let index = 0; index < pool.candidates.length; index++) {
+    if (pool.used.has(index)) continue;
+    const candidate = pool.candidates[index];
+    if (
+      candidate.proof != null &&
+      sameProof(candidate.proof, proof)
+    ) {
+      pool.used.add(index);
+      return candidate;
     }
   }
   return undefined;
@@ -869,15 +939,21 @@ async function createProofConfiguration(
   proof: DataIntegrityProof,
   options: VerifyProofOptions,
   documentLoader: DocumentLoader,
-  rawProofCandidates?: readonly RawProofCandidate[],
+  rawProofCandidate?: RawProofCandidate,
 ): Promise<ProofConfiguration | null> {
-  let rawProof = await findRawProofValue(
-    jsonLd,
-    proof,
-    options,
-    documentLoader,
-    rawProofCandidates,
-  );
+  let rawProof: unknown;
+  if (rawProofCandidate == null) {
+    const match = await findRawProofCandidate(
+      jsonLd,
+      proof,
+      options,
+      documentLoader,
+    );
+    if (match === null) return null;
+    rawProof = match?.value;
+  } else {
+    rawProof = rawProofCandidate.value;
+  }
   if (rawProof == null) {
     const serializedProof = await proof.toJsonLd();
     if (hasAdditionalProofOptions(serializedProof)) {
@@ -1080,7 +1156,7 @@ async function verifyProofInternal(
   proof: DataIntegrityProof,
   options: VerifyProofOptions,
   messageDigestCache: ProofMessageDigestCache,
-  rawProofCandidates?: readonly RawProofCandidate[],
+  rawProofCandidate?: RawProofCandidate,
 ): Promise<Multikey | null> {
   if (
     !isJsonLdNode(jsonLd) ||
@@ -1097,7 +1173,7 @@ async function verifyProofInternal(
     proof,
     options,
     proofContextLoader,
-    rawProofCandidates,
+    rawProofCandidate,
   );
   if (
     proofConfiguration == null ||
@@ -1174,7 +1250,7 @@ async function verifyProofInternal(
           },
         },
         messageDigestCache,
-        rawProofCandidates,
+        rawProofCandidate,
       );
     }
     logger.debug(
@@ -1240,7 +1316,7 @@ async function verifyProofInternal(
         },
       },
       messageDigestCache,
-      rawProofCandidates,
+      rawProofCandidate,
     );
   }
   logger.debug(
@@ -1532,14 +1608,28 @@ export async function verifyPortableObjectProof(
     options,
     proofContextLoader,
   );
+  const rawProofCandidatePool: RawProofCandidatePool = {
+    candidates: rawProofCandidates,
+    used: new Set(),
+  };
   const messageDigestCache: ProofMessageDigestCache = { proofContextLoader };
   for (let proofIndex = 0; proofIndex < proofs.length; proofIndex++) {
+    const rawProofCandidate = takeRawProofCandidate(
+      rawProofCandidatePool,
+      proofs[proofIndex],
+    );
+    if (rawProofCandidate == null) {
+      return {
+        verified: false,
+        reason: { type: "invalidProof", proofIndex },
+      };
+    }
     const key = await verifyProofWithMessageDigestCache(
       jsonLd,
       proofs[proofIndex],
       options,
       messageDigestCache,
-      rawProofCandidates,
+      rawProofCandidate,
     );
     if (key == null) {
       return {
@@ -1583,6 +1673,8 @@ export async function verifyObject<T extends Object>(
 ): Promise<T | null> {
   const logger = getLogger(["fedify", "sig", "proof"]);
   const object = await cls.fromJsonLd(jsonLd, options);
+  const defaultDocumentLoader = getDocumentLoader();
+  const proofContextLoader = options.contextLoader ?? defaultDocumentLoader;
   const attributions = new Set(object.attributionIds.map((uri) => uri.href));
   if (object instanceof Activity) {
     for (const uri of object.actorIds) attributions.add(uri.href);
@@ -1590,7 +1682,7 @@ export async function verifyObject<T extends Object>(
   const rawProofValues = isJsonLdNode(jsonLd)
     ? await getRawProofValues(
       jsonLd,
-      options.contextLoader ?? preloadedOnlyDocumentLoader,
+      proofContextLoader,
     )
     : [];
   const rawProofCandidates = isJsonLdNode(jsonLd)
@@ -1598,19 +1690,70 @@ export async function verifyObject<T extends Object>(
       jsonLd,
       rawProofValues,
       options,
-      options.contextLoader ?? preloadedOnlyDocumentLoader,
+      proofContextLoader,
     )
     : [];
-  for await (const proof of object.getProofs(options)) {
+  const rawProofCandidatePool: RawProofCandidatePool = {
+    candidates: rawProofCandidates,
+    used: new Set(),
+  };
+  const baseDocumentLoader = options.documentLoader ?? defaultDocumentLoader;
+  const hydratedCandidates = new Set<number>();
+  const proofDocumentLoader: DocumentLoader = async (
+    url,
+    loaderOptions,
+  ) => {
+    const remoteDocument = await baseDocumentLoader(url, loaderOptions);
+    const reference = normalizeDocumentUrl(url);
+    const candidateIndex = rawProofCandidates.findIndex(
+      (candidate, index) =>
+        !hydratedCandidates.has(index) &&
+        !rawProofCandidatePool.used.has(index) &&
+        candidate.reference === reference,
+    );
+    if (candidateIndex >= 0) {
+      hydratedCandidates.add(candidateIndex);
+      let parsed: DataIntegrityProof | null = null;
+      try {
+        parsed = await DataIntegrityProof.fromJsonLd(
+          remoteDocument.document,
+          {
+            documentLoader: baseDocumentLoader,
+            contextLoader: proofContextLoader,
+            tracerProvider: options.tracerProvider,
+            baseUrl: parseIri(remoteDocument.documentUrl),
+          },
+        );
+      } catch {
+        // The vocabulary parser will report the same malformed remote proof.
+      }
+      rawProofCandidates[candidateIndex] = {
+        value: structuredClone(remoteDocument.document),
+        proof: parsed,
+        reference,
+      };
+    }
+    return remoteDocument;
+  };
+  for await (
+    const proof of object.getProofs({
+      ...options,
+      documentLoader: proofDocumentLoader,
+    })
+  ) {
+    const rawProofCandidate = takeRawProofCandidate(
+      rawProofCandidatePool,
+      proof,
+    );
+    if (rawProofCandidate == null) return null;
     const key = await verifyProofWithMessageDigestCache(
       jsonLd,
       proof,
       options,
       {
-        proofContextLoader: options.contextLoader ??
-          preloadedOnlyDocumentLoader,
+        proofContextLoader,
       },
-      rawProofCandidates,
+      rawProofCandidate,
     );
     if (key === null) return null;
     if (proof.verificationMethodId == null) return null;

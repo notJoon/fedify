@@ -19,6 +19,7 @@ import {
   encodeMultibase,
   exportDidKey,
   exportMultibaseKey,
+  formatIri,
   importMultibaseKey,
   parseIri,
 } from "@fedify/vocab-runtime";
@@ -851,6 +852,47 @@ test("verifyProof() authenticates the complete proof configuration", async (t) =
       );
     }
   });
+
+  await t.step(
+    "distinguishes equivalent and ambiguous raw proof configurations",
+    async () => {
+      const signed = await signPortableJsonLd(jsonLd);
+      const proof = signed.proof as Record<string, unknown>;
+      const parsed = await parsePortableProof(signed);
+      const identicalDuplicates = {
+        ...signed,
+        proof: [proof, structuredClone(proof)],
+      };
+      assert(
+        await verifyProof(identicalDuplicates, parsed, options) != null,
+      );
+
+      const inheritedContextProof = structuredClone(proof);
+      delete inheritedContextProof["@context"];
+      const equivalentDuplicates = {
+        ...signed,
+        proof: [proof, inheritedContextProof],
+      };
+      assert(
+        await verifyProof(equivalentDuplicates, parsed, options) != null,
+      );
+
+      const ambiguousDuplicates = {
+        ...signed,
+        proof: [
+          proof,
+          {
+            ...structuredClone(proof),
+            expires: "3000-01-01T00:00:00Z",
+          },
+        ],
+      };
+      assertEquals(
+        await verifyProof(ambiguousDuplicates, parsed, options),
+        null,
+      );
+    },
+  );
 
   await t.step(
     "accepts literal proof fields with an unresolved extra context",
@@ -1918,6 +1960,22 @@ test("verifyPortableObjectProof()", async (t) => {
     ]);
   });
 
+  await t.step("rejects a tampered duplicate proof", async () => {
+    const signed = await signPortableJsonLd(unsignedObject);
+    const proof = signed.proof as Record<string, unknown>;
+    const result = await verifyPortableObjectProof({
+      ...signed,
+      proof: [
+        proof,
+        {
+          ...structuredClone(proof),
+          expires: "3000-01-01T00:00:00Z",
+        },
+      ],
+    }, options);
+    assertFalse(result.verified);
+  });
+
   await t.step("matches proofs across aliased properties", async () => {
     const document = {
       ...unsignedObject,
@@ -2233,6 +2291,127 @@ test("verifyObject() accepts did:key proofs for matching portable attribution or
 
   assertInstanceOf(verified, Note);
   assertEquals(verified.content, "Portable note");
+
+  assert(
+    typeof jsonLd === "object" && jsonLd != null && !Array.isArray(jsonLd),
+  );
+  const rawProof = (jsonLd as Record<string, unknown>).proof;
+  assert(
+    typeof rawProof === "object" && rawProof != null &&
+      !Array.isArray(rawProof),
+  );
+  assertEquals(
+    await verifyObject(Note, {
+      ...jsonLd as Record<string, unknown>,
+      proof: [
+        rawProof,
+        {
+          ...structuredClone(rawProof),
+          expires: "3000-01-01T00:00:00Z",
+        },
+      ],
+    }, {
+      documentLoader() {
+        throw new TypeError("did:key must not use the document loader");
+      },
+      contextLoader: mockDocumentLoader,
+    }),
+    null,
+  );
+
+  async function verifyRemotelyReferencedProof(
+    proofOptions: Record<string, unknown> = {},
+    proofUrl = "https://proof.example/proofs/1",
+  ): Promise<Note | null> {
+    const remotelyReferencedJsonLd = {
+      ...jsonLd as Record<string, unknown>,
+    };
+    delete remotelyReferencedJsonLd.proof;
+    remotelyReferencedJsonLd["https://w3id.org/security#proof"] = [
+      { "@graph": [rawProof] },
+      { "@graph": [{ "@id": proofUrl }] },
+    ];
+    let proofFetches = 0;
+    const result = await verifyObject(Note, remotelyReferencedJsonLd, {
+      documentLoader(url) {
+        if (url !== formatIri(parseIri(proofUrl))) {
+          throw new TypeError(`unexpected document URL: ${url}`);
+        }
+        proofFetches++;
+        return Promise.resolve({
+          contextUrl: null,
+          document: {
+            "@context": (jsonLd as Record<string, unknown>)["@context"],
+            ...structuredClone(rawProof as Record<string, unknown>),
+            ...proofOptions,
+          },
+          documentUrl: url,
+        });
+      },
+      contextLoader: mockDocumentLoader,
+    });
+    assertEquals(proofFetches, 1);
+    return result;
+  }
+
+  assertInstanceOf(
+    await verifyRemotelyReferencedProof(),
+    Note,
+  );
+  assertInstanceOf(
+    await verifyRemotelyReferencedProof(
+      {},
+      `ap://did:key:${did.substring("did:key:".length)}/proofs/1`,
+    ),
+    Note,
+  );
+  assertEquals(
+    await verifyRemotelyReferencedProof({
+      expires: "3000-01-01T00:00:00Z",
+    }),
+    null,
+  );
+});
+
+test("verifyObject() hydrates pending proof references", async () => {
+  const did = await exportDidKey(ed25519PublicKey.publicKey);
+  const method = did.substring("did:key:".length);
+  const keyId = new URL(`${did}#${method}`);
+  const proofUrl = `ap://did:key:${method}/proofs/1`;
+  const signed = await signPortableJsonLd({
+    "@context": portableContext,
+    id: `ap://did:key:${method}/objects/1`,
+    type: "Note",
+    attributedTo: `ap://did:key:${method}/actor`,
+    content: "Portable note with a referenced proof",
+  }, {
+    verificationMethod: keyId,
+    proofOptions: { id: proofUrl },
+  });
+  const rawProof = signed.proof as Record<string, unknown>;
+  const remotelyReferencedJsonLd = { ...signed };
+  delete remotelyReferencedJsonLd.proof;
+  remotelyReferencedJsonLd["https://w3id.org/security#proof"] = [
+    { "@graph": [rawProof] },
+    { "@graph": [{ "@id": proofUrl }] },
+  ];
+
+  let proofFetches = 0;
+  const verified = await verifyObject(Note, remotelyReferencedJsonLd, {
+    documentLoader(url) {
+      assertEquals(url, formatIri(parseIri(proofUrl)));
+      proofFetches++;
+      return Promise.resolve({
+        contextUrl: null,
+        document: structuredClone(rawProof),
+        documentUrl: url,
+      });
+    },
+    contextLoader: mockDocumentLoader,
+  });
+
+  assertEquals(proofFetches, 1);
+  assertInstanceOf(verified, Note);
 });
 
 test("verifyObject() accepts multiple portable attributions from the same did:key origin", async () => {
