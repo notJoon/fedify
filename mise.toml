@@ -15,11 +15,12 @@ bun = "1.2.22"
 deno = "2.8.3"
 node = "22"
 pnpm = "10.28.0"
-"aqua:dahlia/hongdown" = "0.5.1"
+"aqua:dahlia/hongdown" = "0.5.3"
 # Nushell powers the cross-platform orchestration tasks (prepare-each,
 # check-each, test-each, check-versions) so they run identically on Windows,
 # macOS, and Linux without Bash.
-"aqua:nushell/nushell" = "0.113.1"
+"aqua:nushell/nushell" = "0.114.0"
+"github:dahlia/sacho" = "0.3.2"
 
 # Dependency providers <https://mise.jdx.dev/dev-tools/deps.html>
 #
@@ -102,6 +103,7 @@ run = "pnpm install"
 shell = "nu -c"
 run = '''
 mise deps
+sacho init --no-interactive
 # Only touch the Git hook when git is actually available; in minimal
 # environments (e.g. some containers) git may be missing, and invoking it
 # unguarded would fail the whole postinstall hook.
@@ -113,6 +115,18 @@ if (which git | is-not-empty) {
       mise generate git-pre-commit --write --task=check
     }
   }
+}
+'#!/bin/sh
+sacho hook-commit-msg "$1"' | save --force .git/hooks/commit-msg
+'#!/bin/sh
+if test "$1" = prepared; then
+  sacho_state=$(git rev-parse --git-path sacho-commit-state) || exit $?
+  if test -f "$sacho_state"; then
+    sacho hook-reference-transaction "$1"
+  fi
+fi' | save --force .git/hooks/reference-transaction
+if $nu.os-info.name != 'windows' {
+  chmod +x .git/hooks/commit-msg .git/hooks/reference-transaction
 }
 '''
 
@@ -179,6 +193,7 @@ depends = [
   "check:workspace-protocol",
   "check:fixture-usage",
 ]
+run = "sacho check"
 
 [tasks."check:fmt"]
 description = "Check code formatting"
@@ -376,3 +391,18 @@ run = "deno task -f @fedify/init update-init-deps"
 [tasks."hooks:install"]
 description = "Install Git hooks for pre-commit checks"
 run = "mise generate git-pre-commit --write --task=check"
+
+[tasks.bump-version]
+description = "Bump the version of all packages in the monorepo"
+usage = """
+arg "<version>" help="New version (e.g., 1.2.3, major, minor, patch)"
+"""
+shell = "nu -c"
+run = """
+sacho next $env.usage_version
+open packages/fedify/deno.json |
+  upsert version $env.usage_version |
+  save --force packages/fedify/deno.json
+mise run check-versions --fix
+mise run fmt
+"""

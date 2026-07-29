@@ -1638,7 +1638,7 @@ npm run db:push
 ### The key pairs dispatcher
 
 Open *server/federation.ts*.  We will add three Fedify helpers
-([`generateCryptoKeyPair`], [`exportJwk`], [`importJwk`]), pull in
+(`generateCryptoKeyPair()`, `exportJwk()`, `importJwk()`), pull in
 the `actorKeys` table, and chain a `setKeyPairsDispatcher` onto the
 existing dispatcher chain:
 

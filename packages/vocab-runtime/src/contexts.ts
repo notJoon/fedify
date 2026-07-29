@@ -13,6 +13,7 @@ import gotosocial from "./contexts/gotosocial.json" with { type: "json" };
 import identityV1 from "./contexts/identity-v1.json" with { type: "json" };
 import joinLemmyContext from "./contexts/join-lemmy.json" with { type: "json" };
 import joinmastodon from "./contexts/joinmastodon.json" with { type: "json" };
+import miscellany from "./contexts/miscellany.json" with { type: "json" };
 import schemaorg from "./contexts/schemaorg.json" with { type: "json" };
 import securityDataIntegrityV1 from "./contexts/security-data-integrity-v1.json" with {
   type: "json",
@@ -59,6 +60,18 @@ const preloadedContexts: Record<string, unknown> = {
   // See: https://github.com/mastodon/joinmastodon/issues/148
   //      https://github.com/fedify-dev/fedify/issues/630
   "http://joinmastodon.org/ns": joinmastodon,
+
+  // The SWICG "ActivityPub Miscellaneous Terms" context.  Bridgy Fed (via
+  // granary) references this URL in the @context of every activity it sends,
+  // and other implementations use it as the recommended home for widely
+  // deployed extension terms like as:Hashtag and as:sensitive.  It is served
+  // through purl.archive.org (Internet Archive's PURL service), which suffers
+  // recurring outages; while it is unreachable, every activity referencing
+  // this URL fails JSON-LD expansion before application handlers run.  The
+  // document is a deliberately stable, versioned SWICG deliverable, so we
+  // ship a built-in copy.
+  // See: https://swicg.github.io/miscellany/
+  "https://purl.archive.org/miscellany": miscellany,
 };
 
 export default preloadedContexts;

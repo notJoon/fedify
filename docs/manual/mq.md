@@ -496,6 +496,8 @@ const federation = createFederation<void>({
 :::
 
 [`SqliteMessageQueue`]: https://jsr.io/@fedify/sqlite/doc/mq/~/SqliteMessageQueue
+[`node:sqlite`]: https://nodejs.org/api/sqlite.html
+[`bun:sqlite`]: https://bun.com/docs/runtime/sqlite
 
 ### `WorkersMessageQueue` (Cloudflare Workers only)
 
@@ -654,6 +656,7 @@ export default {
 > };
 > ~~~~
 
+[`WorkersMessageQueue`]: https://jsr.io/@fedify/cfworkers/doc/~/WorkersMessageQueue
 [Cloudflare Workers]: https://workers.cloudflare.com/
 [Cloudflare Queues]: https://developers.cloudflare.com/queues/
 
