@@ -82,7 +82,14 @@ async function testCompatibility(testCase: CompatibilityCase): Promise<void> {
             "@fedify/vocab": tarballs.get("@fedify/vocab"),
             astro: testCase.astro,
           },
-          pnpm: { overrides: Object.fromEntries(tarballs) },
+          pnpm: {
+            overrides: {
+              ...Object.fromEntries(tarballs),
+              // Version 1.2.0 requires @emnapi/* 2.0 prereleases, while its
+              // consumers still provide @emnapi/* 1.x.
+              "@napi-rs/wasm-runtime@^1.1.6": "1.1.6",
+            },
+          },
         },
         null,
         2,
