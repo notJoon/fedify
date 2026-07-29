@@ -8,6 +8,18 @@ Version 2.1.20
 
 To be released.
 
+### @fedify/vocab-runtime
+
+ -  Added <https://purl.archive.org/miscellany> (the
+    [SWICG ActivityPub Miscellaneous Terms] context, referenced by every Bridgy
+    Fed activity) to preloaded JSON-LD contexts.  The context is served through
+    purl.archive.org, which suffers recurring outages; during one, JSON-LD
+    expansion of any activity referencing this URL fails before application
+    handlers can run. [[#965] by Michael Barrett]
+
+[SWICG ActivityPub Miscellaneous Terms]: https://swicg.github.io/miscellany/
+[#965]: https://github.com/fedify-dev/fedify/issues/965
+
 
 Version 2.1.19
 --------------
@@ -705,6 +717,21 @@ Released on March 24, 2026.
 [#586]: https://github.com/fedify-dev/fedify/issues/586
 [#597]: https://github.com/fedify-dev/fedify/pull/597
 [#599]: https://github.com/fedify-dev/fedify/pull/599
+
+
+Version 2.0.24
+--------------
+
+Released on July 29, 2026.
+
+### @fedify/vocab-runtime
+
+ -  Added <https://purl.archive.org/miscellany> (the
+    [SWICG ActivityPub Miscellaneous Terms] context, referenced by every Bridgy
+    Fed activity) to preloaded JSON-LD contexts.  The context is served through
+    purl.archive.org, which suffers recurring outages; during one, JSON-LD
+    expansion of any activity referencing this URL fails before application
+    handlers can run. [[#965] by Michael Barrett]
 
 
 Version 2.0.23
