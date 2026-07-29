@@ -3,6 +3,8 @@ bun = "1.2.22"
 deno = "2.8.3"
 node = "22"
 pnpm = "10.28.0"
+"aqua:nushell/nushell" = "0.114.0"
+"github:dahlia/sacho" = "0.3.2"
 
 [tools."github:dahlia/hongdown"]
 version = "0.4.3"
@@ -10,6 +12,26 @@ version = "0.4.3"
 [tools."github:dahlia/hongdown".platforms]
 linux-x64 = "hongdown-*-x86_64-unknown-linux-musl.tar.bz2"
 linux-arm64 = "hongdown-*-aarch64-unknown-linux-musl.tar.bz2"
+
+[hooks.postinstall]
+shell = "nu -c"
+run = """
+mise run install
+sacho init --no-interactive
+mise generate git-pre-commit --write --task=check
+'#!/bin/sh
+sacho hook-commit-msg "$1"' | save --force .git/hooks/commit-msg
+'#!/bin/sh
+if test "$1" = prepared; then
+  sacho_state=$(git rev-parse --git-path sacho-commit-state) || exit $?
+  if test -f "$sacho_state"; then
+    sacho hook-reference-transaction "$1"
+  fi
+fi' | save --force .git/hooks/reference-transaction
+if $nu.os-info.name != 'windows' {
+  chmod +x .git/hooks/commit-msg .git/hooks/reference-transaction
+}
+"""
 
 # Installation and setup
 [tasks.install]
@@ -49,6 +71,7 @@ depends = [
   "check:manifest:workspace-protocol",
   "check:fixture-usage",
 ]
+run = "sacho check"
 
 [tasks."check:fmt"]
 description = "Check code formatting"
@@ -256,3 +279,18 @@ run = "deno task -f @fedify/init update-init-deps"
 [tasks."hooks:install"]
 description = "Install Git hooks for pre-commit checks"
 run = "mise generate git-pre-commit --write --task=check"
+
+[tasks.bump-version]
+description = "Bump the version of all packages in the monorepo"
+usage = """
+arg "<version>" help="New version (e.g., 1.2.3, major, minor, patch)"
+"""
+shell = "nu -c"
+run = """
+sacho next $env.usage_version
+open packages/fedify/deno.json |
+  upsert version $env.usage_version |
+  save --force packages/fedify/deno.json
+mise run check-versions --fix
+mise run fmt
+"""
