@@ -6,7 +6,7 @@ Fedify changelog
 Version 2.2.9
 -------------
 
-To be released.
+Released on July 29, 2026.
 
 ### @fedify/vocab-runtime
 
