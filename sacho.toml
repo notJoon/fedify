@@ -1,0 +1,30 @@
+[changelog]
+path = "CHANGES.md"
+title = "Fedify changelog"
+unreleased-heading = "To be released."
+materialize = true
+region-detection = "heading"
+
+[fragments]
+directory = "changes.d"
+next-file = "next.txt"
+
+[links]
+"#" = "https://github.com/fedify-dev/fedify/issues/{n}"
+
+[vcs]
+preset = "git"
+
+[check]
+paths = []
+
+[[sections]]
+id = "@fedify/fedify"
+directory = "fedify"
+paths = ["packages/fedify/**"]
+
+[[section-patterns]]
+source = "packages/{name}"
+id = "@fedify/{name}"
+directory = "{name}"
+paths = ["packages/{name}/**"]
