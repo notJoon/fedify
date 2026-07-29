@@ -117,10 +117,11 @@ mise trust
 mise install
 ~~~~
 
-The `mise install` post-install hook runs `mise deps`.  That command generates
-code, installs dependencies, builds the packages, and installs the Git
-pre-commit hook when no hook is already present.  You normally need to run
-`mise install` only once per checkout.
+The `mise install` post-install hook runs `mise deps`, registers Sacho's Git
+merge drivers, and installs Sacho's commit hooks.  It also installs the Git
+pre-commit hook when no hook is already present.  The `mise deps` command
+generates code, installs dependencies, and builds the packages.  You normally
+need to run `mise install` only once per checkout.
 
 Install or refresh the pre-commit hook explicitly with
 `mise run hooks:install`.
@@ -532,8 +533,8 @@ A bug-fix pull request should include:
 
  -  A regression test that fails without the patch and passes with it.
  -  The fix.
- -  A *CHANGES.md* entry with the issue, pull request, and contributor name,
-    unless the contributor wants to remain anonymous.
+ -  A Sacho changelog fragment with the issue, pull request, and contributor
+    name, unless the contributor wants to remain anonymous.
 
 Link the accepted issue in the pull request.
 
@@ -545,7 +546,7 @@ A feature pull request should include:
  -  The implementation.
  -  Documentation for public API changes.
  -  Any example changes needed to keep the examples working.
- -  A *CHANGES.md* entry.
+ -  A Sacho changelog fragment.
 
 Describe the change, why it is needed, and how it was tested.  Link the
 accepted issue.
@@ -607,22 +608,64 @@ Use one trailer for each tool.  Do not use `Co-authored-by` for AI assistance.
 
 ### Changelog entries
 
-Keep *CHANGES.md* entries in reverse chronological order.  Version sections use
-setext headings and unreleased versions begin with `To be released.`
+Fedify uses [Sacho] to build *CHANGES.md* from Markdown fragments under
+*changes.d/*.  Do not edit the unreleased part of *CHANGES.md* directly.
+Create a fragment for each user-visible change, selecting the affected package
+and using a topic-based name rather than an issue or pull request number:
 
-Use ` -  ` for list items and indent continuation lines by four spaces.
-Describe the user-visible change, why it was made, and what users should do
-differently.  Add a `[[#123]]` marker and define its reference link at the end
-of the version section:
+~~~~ bash
+sacho add --section @fedify/fedify clearer-errors
+~~~~
+
+Each fragment must contain exactly one top-level unordered list.  Start each
+entry with a past-tense verb such as “Added,” “Changed,” “Deprecated,” “Fixed,”
+“Removed,” or “Security.”  Describe the user-visible change, why it was made,
+and what users should do differently.  Keep implementation details and
+development history out of the entry.  If the change evolves before release,
+update the existing fragment so that it describes only the behavior users will
+receive.
+
+Add issue and pull request references at the end of the first paragraph using
+shortcut links.  Include the accepted issue when available, and add the pull
+request number before merging:
 
 ~~~~ markdown
  -  Fixed a bug where foo would bar.  [[#123]]
-
-[#123]: https://github.com/fedify-dev/fedify/pull/123
 ~~~~
 
 For an external contributor, add their name after the marker, for example
-`[[#123] by John Doe]`.
+`[[#123] by John Doe]`, unless they want to remain anonymous.  Sacho generates
+the corresponding link definitions.
+
+Keep the fragment on the same branch and in the same commit series as the
+change.  Format it, preview the compiled section, and check it before
+committing:
+
+~~~~ bash
+mise run fmt
+sacho preview --section @fedify/fedify
+sacho check
+~~~~
+
+Changes with no user-visible effect, such as internal refactoring or test-only
+work, do not need a fragment.  If Sacho's changed-path check requires one, add
+this trailer to the commit message:
+
+~~~~
+Changelog: none
+~~~~
+
+[Sacho]: https://sacho.dev/guide/everyday-workflow
+
+### Version bumps
+
+Maintainers should update the next release version across the monorepo with the
+following command instead of editing package metadata or *changes.d/next.txt*
+by hand:
+
+~~~~ bash
+mise run bump-version <version>
+~~~~
 
 
 Final checks

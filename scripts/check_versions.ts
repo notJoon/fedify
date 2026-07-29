@@ -1,18 +1,31 @@
+import { message, object, option, optionNames } from "@optique/core";
+import { run } from "@optique/run";
 import { dirname, fromFileUrl, join, normalize, resolve } from "@std/path";
 import { parse } from "@std/yaml";
 import workspaceMetadata from "../deno.json" with { type: "json" };
 import fedifyMetadata from "../packages/fedify/deno.json" with { type: "json" };
 
-if (Deno.args.includes("--help") || Deno.args.includes("-h")) {
-  console.log("Usage: mise run check-versions [--help|-h] [--fix|-f]");
-  console.log("Checks that all workspace members have the same version.");
-  console.log(
-    "If --fix or -f is provided, it will attempt to fix version mismatches.",
-  );
-  Deno.exit(0);
-}
-
-const fix = Deno.args.includes("--fix") || Deno.args.includes("-f");
+const { fix, skipNext } = run(
+  object("Options", {
+    fix: option("-f", "--fix", {
+      description:
+        message`Fix package metadata version mismatches automatically.`,
+    }),
+    skipNext: option("--skip-next", {
+      description:
+        message`Skip checking the Sacho next version in changes.d/next.txt.`,
+    }),
+  }),
+  {
+    programName: "check-versions",
+    brief: message`Check package and changelog versions for consistency.`,
+    description:
+      message`Checks that all workspace package versions match.  The Sacho next version in changes.d/next.txt is also checked when present unless ${
+        optionNames(["--skip-next"])
+      } is specified.`,
+    help: "option",
+  },
+);
 
 const workspaceMembers = workspaceMetadata.workspace;
 const pnpmWorkspace = await Deno.readTextFile(
@@ -30,6 +43,7 @@ for (const pkg of (parse(pnpmWorkspace) as { packages: string[] }).packages) {
 
 let version = fedifyMetadata.version;
 let mismatched = 0;
+let fixed = 0;
 for (const member of workspaceMembers) {
   const memberPath = join(dirname(import.meta.dirname!), member);
 
@@ -59,6 +73,7 @@ for (const member of workspaceMembers) {
             denoJsonPath,
             JSON.stringify(deno, null, 2) + "\n",
           );
+          fixed++;
           console.error("Fixed version in %o", denoJsonPath);
         }
       }
@@ -90,23 +105,44 @@ for (const member of workspaceMembers) {
           pkgJsonPath,
           JSON.stringify(pkg, null, 2) + "\n",
         );
+        fixed++;
         console.error("Fixed version in %o", pkgJsonPath);
       }
     }
   }
 }
 
-if (mismatched > 0 && !fix) Deno.exit(1);
-else if (mismatched > 0 && fix) {
-  if (mismatched === 1) {
+if (!skipNext) {
+  const nextVersionPath = join(projectRoot, "changes.d", "next.txt");
+  let nextVersion: string | undefined;
+  try {
+    nextVersion = (await Deno.readTextFile(nextVersionPath)).trim();
+  } catch (error) {
+    if (!(error instanceof Deno.errors.NotFound)) throw error;
+  }
+  if (nextVersion != null && version !== nextVersion) {
+    mismatched++;
+    console.error(
+      "Version mismatch in %o: expected %o, found %o",
+      "changes.d/next.txt",
+      version,
+      nextVersion,
+    );
+  }
+}
+
+if (fixed > 0) {
+  if (fixed === 1) {
     console.error(
       "Fixed %d version mismatch. Please commit the changes.",
-      mismatched,
+      fixed,
     );
   } else {
     console.error(
       "Fixed %d version mismatches. Please commit the changes.",
-      mismatched,
+      fixed,
     );
   }
 }
+
+if (mismatched > fixed) Deno.exit(1);

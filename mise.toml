@@ -215,11 +215,15 @@ run = "hongdown --check"
 
 [tasks.check-versions]
 description = "Check that all package versions are consistent across the monorepo"
-usage = 'flag "--fix" help="Automatically fix version mismatches"'
+usage = """
+flag "--fix" help="Automatically fix package metadata version mismatches"
+flag "--skip-next" help="Skip checking changes.d/next.txt"
+"""
 shell = "nu -c"
 run = '''
-let args = if (($env.usage_fix? | default "false") == "true") { ["--fix"] } else { [] }
-deno run --allow-read --allow-write scripts/check_versions.ts ...$args
+let fix_args = if (($env.usage_fix? | default "false") == "true") { ["--fix"] } else { [] }
+let skip_next_args = if (($env.usage_skip_next? | default "false") == "true") { ["--skip-next"] } else { [] }
+deno run --allow-read --allow-write scripts/check_versions.ts ...$fix_args ...$skip_next_args
 '''
 
 [tasks."check:fixture-usage"]
@@ -232,7 +236,7 @@ run = "deno run --allow-read scripts/check_workspace_protocol.ts"
 
 [tasks.fmt]
 description = "Format the codebase"
-run = ["deno fmt", "hongdown --write"]
+run = ["deno fmt", "hongdown --write", "sacho fmt"]
 
 [tasks.check-each]
 description = "Check code quality for specific package(s)"

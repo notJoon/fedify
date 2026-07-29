@@ -21,8 +21,8 @@ To be released.
     for portable actors, activities, objects, and signed collections.  Its
     detailed result distinguishes documents outside the policy, unsecured
     collections, missing or invalid [FEP-8b32] proofs, unsupported verification
-    methods, DID authority mismatches, and successful verification.  [[#832],
-    [#968]]
+    methods, DID authority mismatches, and successful verification.
+    [[#832], [#968]]
 
  -  Updated `verifyObject()` so [FEP-8b32] proofs signed by `did:key`
     verification methods can authenticate portable objects whose owner is an
@@ -34,10 +34,12 @@ To be released.
     Ed25519 `eddsa-jcs-2022` proofs whose `verificationMethod` is a
     `did:key:z...#z...` DID URL without fetching the verification method
     as a remote JSON-LD document, which is required for [FEP-ef61]
-    portable objects.  [[#827], [#915]]
+    portable objects.
+    [[#827], [#915]]
 
  -  Added support for the [ActivityPub Media Upload extension] so that servers
-    can accept client-to-server media uploads:  [[#754], [#927]]
+    can accept client-to-server media uploads:
+    [[#754], [#927]]
 
      -  `Federation` and `FederationBuilder` gained a `setMediaUploader()`
         method (through the new `MediaUploaderSetters` interface) that registers
@@ -92,8 +94,7 @@ To be released.
         The marker TTL and the no-`cas` fallback are tunable with the new
         `FederationOptions.taskDeduplicationTtl` and
         `FederationOptions.taskDeduplicationFallback` options.
-        [[#206], [#797], [#798], [#799], [#803], [#806], [#812], [#923] by
-        ChanHaeng Lee]
+        [[#206], [#797], [#798], [#799], [#803], [#806], [#812], [#923] by ChanHaeng Lee\]
 
  -  Added `MessageQueue.atomicEnqueueMany` for queues that implement
     `enqueueMany()` with separate sends.  Fedify still uses their batch path
@@ -104,7 +105,8 @@ To be released.
  -  Fixed CommonJS distribution files that use Temporal so they no longer
     require `@js-temporal/polyfill` at runtime.  The CommonJS build now
     bundles `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
 
 [FEP-ef61]: https://w3id.org/fep/ef61
 [FEP-8b32]: https://w3id.org/fep/8b32
@@ -138,121 +140,23 @@ To be released.
     Astro 5 compatibility.  The Astro example and `fedify init` templates now
     use Astro 7 with current Node.js and Deno adapters; Bun uses the tested
     `@astrojs/node` standalone output instead of the Astro-5-only
-    `@nurodev/astro-bun` adapter.  [[#931], [#936]]
+    `@nurodev/astro-bun` adapter.
+    [[#931], [#936]]
 
 [#931]: https://github.com/fedify-dev/fedify/issues/931
 [#936]: https://github.com/fedify-dev/fedify/pull/936
-
-### @fedify/vocab
-
- -  Added [FEP-ef61] vocabulary terms for portable ActivityPub objects.
-    Actor classes now expose ordered `gateways` lists, and `Link` plus
-    document/media classes expose `digestMultibase` for external resource
-    integrity metadata.  [[#830], [#928]]
-
- -  Updated [FEP-fe34] cross-origin checks to understand cryptographic origins
-    for [FEP-ef61] portable ActivityPub IDs and DID URLs.  Generated property
-    accessors and `lookupObject()` now treat `ap:`/`ap+ef61:` IDs and matching
-    `did:key` verification method IDs as same-origin when their DID components
-    match.  [[#829], [#926]]
-
- -  Added support for [FEP-ef61] portable ActivityPub IRIs in generated
-    vocabulary codecs.  `ap:` and `ap+ef61:` values with decoded or
-    percent-encoded DID authorities now parse as `URL` objects, and JSON-LD
-    serialization emits canonical `ap+ef61:` values with decoded DID
-    authorities.  [[#826], [#850]]
-
- -  Added vocabulary support for [FEP-7aa9], including
-    `FeaturedCollection`, `FeaturedItem`, `FeatureRequest`, and
-    `FeatureAuthorization`, plus actor `featuredCollections` and
-    `InteractionPolicy.canFeature` properties.  [[#810], [#914]]
-
- -  Added the `Endpoints.uploadMedia` property, the standard ActivityStreams
-    endpoint for the [ActivityPub Media Upload extension].  [[#754], [#927]]
-
- -  Fixed the CommonJS vocabulary build so it no longer requires
-    `@js-temporal/polyfill` at runtime.  The build now bundles
-    `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
-
-[FEP-7aa9]: https://w3id.org/fep/7aa9
-[#810]: https://github.com/fedify-dev/fedify/issues/810
-[#826]: https://github.com/fedify-dev/fedify/issues/826
-[#830]: https://github.com/fedify-dev/fedify/issues/830
-[#850]: https://github.com/fedify-dev/fedify/pull/850
-[#914]: https://github.com/fedify-dev/fedify/pull/914
-[#928]: https://github.com/fedify-dev/fedify/pull/928
-
-### @fedify/interaction-controls
-
- -  Added the new `@fedify/interaction-controls` package for implementing
-    [GoToSocial interaction controls], [FEP-044f], and [FEP-7aa9].  It provides
-    immutable TypeScript APIs for creating and verifying interaction requests
-    and authorizations, evaluating `InteractionPolicy`, recognizing bare
-    interactions, and formatting stable storage keys for like, reply, announce,
-    quote, and feature interactions.  [[#811], [#929]]
-
-[GoToSocial interaction controls]: https://docs.gotosocial.org/en/v0.21.1/federation/interaction_controls/
-[FEP-044f]: https://w3id.org/fep/044f
-[#811]: https://github.com/fedify-dev/fedify/issues/811
-[#929]: https://github.com/fedify-dev/fedify/pull/929
-
-### @fedify/vocab-runtime
-
- -  Added SHA-256 `digestMultibase` and simple `hl:` hashlink helpers for
-    computing, parsing, creating, and verifying portable media resource
-    digests as required by [FEP-ef61].  [[#831], [#935]]
-
- -  Added the [FEP-ef61] JSON-LD context to the preloaded context registry so
-    portable actor and media documents can compact and expand `gateways` and
-    `digestMultibase` without fetching the context remotely.  [[#830], [#928]]
-
- -  Added `getFe34Origin()` and `haveSameFe34Origin()` for comparing ordinary
-    web origins and [FEP-ef61] cryptographic origins with one shared
-    [FEP-fe34] helper.  HTTP(S) URLs keep web-origin semantics, while
-    `ap:`/`ap+ef61:` URIs and DID URLs use their DID component as the origin.
-    [[#829], [#926]]
-
- -  Added `canonicalizePortableUri()` and `arePortableUrisEqual()` for
-    comparing [FEP-ef61] portable ActivityPub URI strings.  The helpers accept
-    `ap:` and `ap+ef61:` values with decoded or percent-encoded DID
-    authorities, normalize them to `ap+ef61:`, and ignore query hints such as
-    `gateways` during comparison.  [[#828], [#924]]
-
- -  Added the [FEP-7aa9] JSON-LD context to the preloaded context registry so
-    FEP-7aa9 documents can be compacted and expanded without fetching the
-    context remotely.  [[#810], [#914]]
-
- -  Added helpers for Ed25519 `did:key` DIDs and verification method DID
-    URLs: `exportDidKey()` exports public keys to base58-btc `did:key` DIDs,
-    `importDidKey()` imports supported DIDs back to `CryptoKey`, and
-    `parseDidKeyVerificationMethod()` validates `did:key:z...#z...`
-    verification methods.  [[#827], [#915]]
-
- -  Changed `getDocumentLoader()` to reject HTML and XHTML responses that do
-    not advertise an ActivityPub alternate document with a `FetchError`
-    instead of attempting to parse the HTML as JSON.  This makes remote HTML
-    error pages surface as document loading failures with the response URL and
-    content type, rather than generic JSON parser crashes.  [[#912], [#913]]
-
-[#828]: https://github.com/fedify-dev/fedify/issues/828
-[#831]: https://github.com/fedify-dev/fedify/issues/831
-[#912]: https://github.com/fedify-dev/fedify/issues/912
-[#913]: https://github.com/fedify-dev/fedify/pull/913
-[#924]: https://github.com/fedify-dev/fedify/pull/924
-[#935]: https://github.com/fedify-dev/fedify/pull/935
 
 ### @fedify/cli
 
  -  Added `fedify.com.es` as a tunneling service.  The CLI pins the service's
     SSH host key and rejects a mismatched server before exposing a local port.
     [[#940]]
-
  -  Removed `localhost.run` as a tunneling service.  The service is no longer
-    available, and the CLI now rejects attempts to use it.  [[#940]]
-
+    available, and the CLI now rejects attempts to use it.
+    [[#940]]
  -  Switched the CLI's Temporal runtime dependency from
-    `@js-temporal/polyfill` to `temporal-polyfill`.  [[#823], [#925]]
+    `@js-temporal/polyfill` to `temporal-polyfill`.
+    [[#823], [#925]]
 
 [#940]: https://github.com/fedify-dev/fedify/pull/940
 
@@ -261,14 +165,60 @@ To be released.
  -  Fixed the CommonJS debugger build so it no longer requires
     `@js-temporal/polyfill` at runtime.  The build now bundles
     `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
+
+### @fedify/init
+
+ -  Fixed `fedify init`'s hydration test validation to run `format` before
+    `format:check`, which previously caused the entire test suite to fail when
+    the package manager is `npm` or `pnpm`:
+    [[#950]]
+    [[#952] by Jang Hanarae\]
+
+[#950]: https://github.com/fedify-dev/fedify/issues/950
+[#952]: https://github.com/fedify-dev/fedify/pull/952
+
+### @fedify/interaction-controls
+
+ -  Added the new `@fedify/interaction-controls` package for implementing
+    [GoToSocial interaction controls], [FEP-044f], and [FEP-7aa9].  It provides
+    immutable TypeScript APIs for creating and verifying interaction requests
+    and authorizations, evaluating `InteractionPolicy`, recognizing bare
+    interactions, and formatting stable storage keys for like, reply, announce,
+    quote, and feature interactions.
+    [[#811], [#929]]
+
+[GoToSocial interaction controls]: https://docs.gotosocial.org/en/v0.21.1/federation/interaction_controls/
+[FEP-044f]: https://w3id.org/fep/044f
+[FEP-7aa9]: https://w3id.org/fep/7aa9
+[#811]: https://github.com/fedify-dev/fedify/issues/811
+[#929]: https://github.com/fedify-dev/fedify/pull/929
+
+### @fedify/lint
+
+ -  Added four lint rules for the media upload endpoint introduced in
+    `@fedify/fedify`:
+    [[#754], [#927]]
+
+     -  `media-uploader-object-uri-required` warns when a `setMediaUploader()`
+        callback does not derive its return value from `ctx.getObjectUri()`.
+     -  `media-uploader-authorization-required` warns when `setMediaUploader()`
+        is registered without an `.authorize()` hook.
+     -  `actor-upload-media-property-required` warns when a media uploader is
+        registered but the actor dispatcher does not advertise
+        `endpoints.uploadMedia`.
+     -  `actor-upload-media-property-mismatch` warns when
+        `endpoints.uploadMedia` is not built with
+        `ctx.getMediaUploaderUri(identifier)`.
 
 ### @fedify/mysql
 
  -  Fixed the CommonJS MySQL adapter build so it no longer requires
     `@js-temporal/polyfill` at runtime.  The build now bundles
     `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
 
 ### @fedify/netlify
 
@@ -285,72 +235,137 @@ To be released.
  -  Added `PostgresKvStore.cas()`, including atomic creation, replacement, and
     deletion with TTL-aware comparison.  This allows PostgreSQL-backed stores,
     including Netlify Database, to enforce queue ordering and other Fedify CAS
-    operations.  [[#930], [#934]]
-
+    operations.
+    [[#930], [#934]]
  -  `PostgresKvStore` now creates crash-safe logged tables by default and
     migrates existing unlogged tables during initialization.  Transient
     unlogged storage remains available with the `unlogged` option.  The
     one-time migration rewrites and exclusively locks an existing table, so
     upgrades with large or busy key–value tables should schedule it
-    accordingly.  [[#930], [#934]]
-
+    accordingly.
+    [[#930], [#934]]
  -  Fixed the CommonJS PostgreSQL adapter build so it no longer requires
     `@js-temporal/polyfill` at runtime.  The build now bundles
     `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
 
 ### @fedify/redis
 
  -  Fixed the CommonJS Redis adapter build so it no longer requires
     `@js-temporal/polyfill` at runtime.  The build now bundles
     `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
 
 ### @fedify/relay
 
  -  Fixed the CommonJS relay build so it no longer requires
     `@js-temporal/polyfill` at runtime.  The build now bundles
     `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
 
 ### @fedify/sqlite
 
  -  Fixed the CommonJS SQLite adapter build so it no longer requires
     `@js-temporal/polyfill` at runtime.  The build now bundles
     `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
 
 ### @fedify/testing
 
  -  Fixed the CommonJS testing utilities build so it no longer requires
     `@js-temporal/polyfill` at runtime.  The build now bundles
     `temporal-polyfill`, while type declarations rely on the standard
-    `esnext.temporal` lib reference.  [[#823], [#925]]
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
 
-### @fedify/lint
+### @fedify/vocab
 
- -  Added four lint rules for the media upload endpoint introduced in
-    `@fedify/fedify`:  [[#754], [#927]]
+ -  Added [FEP-ef61] vocabulary terms for portable ActivityPub objects.
+    Actor classes now expose ordered `gateways` lists, and `Link` plus
+    document/media classes expose `digestMultibase` for external resource
+    integrity metadata.
+    [[#830], [#928]]
+ -  Updated [FEP-fe34] cross-origin checks to understand cryptographic origins
+    for [FEP-ef61] portable ActivityPub IDs and DID URLs.  Generated property
+    accessors and `lookupObject()` now treat `ap:`/`ap+ef61:` IDs and matching
+    `did:key` verification method IDs as same-origin when their DID components
+    match.
+    [[#829], [#926]]
+ -  Added support for [FEP-ef61] portable ActivityPub IRIs in generated
+    vocabulary codecs.  `ap:` and `ap+ef61:` values with decoded or
+    percent-encoded DID authorities now parse as `URL` objects, and JSON-LD
+    serialization emits canonical `ap+ef61:` values with decoded DID
+    authorities.
+    [[#826], [#850]]
+ -  Added vocabulary support for [FEP-7aa9], including
+    `FeaturedCollection`, `FeaturedItem`, `FeatureRequest`, and
+    `FeatureAuthorization`, plus actor `featuredCollections` and
+    `InteractionPolicy.canFeature` properties.
+    [[#810], [#914]]
+ -  Added the `Endpoints.uploadMedia` property, the standard ActivityStreams
+    endpoint for the [ActivityPub Media Upload extension].
+    [[#754], [#927]]
+ -  Fixed the CommonJS vocabulary build so it no longer requires
+    `@js-temporal/polyfill` at runtime.  The build now bundles
+    `temporal-polyfill`, while type declarations rely on the standard
+    `esnext.temporal` lib reference.
+    [[#823], [#925]]
 
-     -  `media-uploader-object-uri-required` warns when a `setMediaUploader()`
-        callback does not derive its return value from `ctx.getObjectUri()`.
-     -  `media-uploader-authorization-required` warns when `setMediaUploader()`
-        is registered without an `.authorize()` hook.
-     -  `actor-upload-media-property-required` warns when a media uploader is
-        registered but the actor dispatcher does not advertise
-        `endpoints.uploadMedia`.
-     -  `actor-upload-media-property-mismatch` warns when
-        `endpoints.uploadMedia` is not built with
-        `ctx.getMediaUploaderUri(identifier)`.
+[#810]: https://github.com/fedify-dev/fedify/issues/810
+[#826]: https://github.com/fedify-dev/fedify/issues/826
+[#830]: https://github.com/fedify-dev/fedify/issues/830
+[#850]: https://github.com/fedify-dev/fedify/pull/850
+[#914]: https://github.com/fedify-dev/fedify/pull/914
+[#928]: https://github.com/fedify-dev/fedify/pull/928
 
-### @fedify/init
+### @fedify/vocab-runtime
 
- -  Fixed `fedify init`'s hydration test validation to run `format` before
-    `format:check`, which previously caused the entire test suite to fail when
-    the package manager is `npm` or `pnpm`: [[#950]] [[#952] by Jang Hanarae]
+ -  Added SHA-256 `digestMultibase` and simple `hl:` hashlink helpers for
+    computing, parsing, creating, and verifying portable media resource
+    digests as required by [FEP-ef61].
+    [[#831], [#935]]
+ -  Added the [FEP-ef61] JSON-LD context to the preloaded context registry so
+    portable actor and media documents can compact and expand `gateways` and
+    `digestMultibase` without fetching the context remotely.
+    [[#830], [#928]]
+ -  Added `getFe34Origin()` and `haveSameFe34Origin()` for comparing ordinary
+    web origins and [FEP-ef61] cryptographic origins with one shared
+    [FEP-fe34] helper.  HTTP(S) URLs keep web-origin semantics, while
+    `ap:`/`ap+ef61:` URIs and DID URLs use their DID component as the origin.
+    [[#829], [#926]]
+ -  Added `canonicalizePortableUri()` and `arePortableUrisEqual()` for
+    comparing [FEP-ef61] portable ActivityPub URI strings.  The helpers accept
+    `ap:` and `ap+ef61:` values with decoded or percent-encoded DID
+    authorities, normalize them to `ap+ef61:`, and ignore query hints such as
+    `gateways` during comparison.
+    [[#828], [#924]]
+ -  Added the [FEP-7aa9] JSON-LD context to the preloaded context registry so
+    FEP-7aa9 documents can be compacted and expanded without fetching the
+    context remotely.
+    [[#810], [#914]]
+ -  Added helpers for Ed25519 `did:key` DIDs and verification method DID
+    URLs: `exportDidKey()` exports public keys to base58-btc `did:key` DIDs,
+    `importDidKey()` imports supported DIDs back to `CryptoKey`, and
+    `parseDidKeyVerificationMethod()` validates `did:key:z...#z...`
+    verification methods.
+    [[#827], [#915]]
+ -  Changed `getDocumentLoader()` to reject HTML and XHTML responses that do
+    not advertise an ActivityPub alternate document with a `FetchError`
+    instead of attempting to parse the HTML as JSON.  This makes remote HTML
+    error pages surface as document loading failures with the response URL and
+    content type, rather than generic JSON parser crashes.
+    [[#912], [#913]]
 
-[#950]: https://github.com/fedify-dev/fedify/issues/950
-[#952]: https://github.com/fedify-dev/fedify/pull/952
+[#828]: https://github.com/fedify-dev/fedify/issues/828
+[#831]: https://github.com/fedify-dev/fedify/issues/831
+[#912]: https://github.com/fedify-dev/fedify/issues/912
+[#913]: https://github.com/fedify-dev/fedify/pull/913
+[#924]: https://github.com/fedify-dev/fedify/pull/924
+[#935]: https://github.com/fedify-dev/fedify/pull/935
 
 
 Version 2.3.4
