@@ -1094,6 +1094,51 @@ When `verifyObject()` checks whether a proof authenticates an object's actor or
 attribution, it treats matching portable `ap:`/`ap+ef61:` IDs and `did:key`
 controllers as the same [FEP-fe34] cryptographic origin.
 
+`verifyProof()` authenticates every received proof option except `proofValue`
+as part of the Ed25519 JCS signature.  It rejects expired proofs and malformed
+standard options.  When a proof is bound to a security domain or challenge,
+pass the expected `domain` or `challenge` through `VerifyProofOptions`; a
+missing or different value makes verification fail.
+
+For received portable objects, use `verifyPortableObjectProof()`.  It keeps
+`verifyProof()` focused on cryptographic verification while also enforcing the
+[FEP-ef61] policy: a portable actor, activity, or object must have proofs, every
+proof must use a DID URL, and that DID must match the authority of the portable
+object ID.  The detailed result distinguishes documents outside the policy,
+missing or invalid proofs, unsupported verification methods, DID mismatches,
+and successful verification:
+
+~~~~ typescript
+import { verifyPortableObjectProof } from "@fedify/fedify";
+
+async function verifyPortableResponse(response: Response): Promise<void> {
+  const jsonLd: unknown = await response.json();
+  let result;
+  try {
+    result = await verifyPortableObjectProof(jsonLd);
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error("Malformed portable object.", { cause: error });
+    }
+    throw error;
+  }
+  if (result.verified) {
+    console.log("Verified with", result.keys);
+  } else if (result.reason.type === "unsecuredCollection") {
+    // Apply the gateway trust policy for an unsigned portable collection.
+  } else if (result.reason.type !== "notPortableObject") {
+    throw new Error(`Portable proof rejected: ${result.reason.type}`);
+  }
+}
+~~~~
+
+A portable collection that has proofs is verified in the same way.  A portable
+collection without a proof produces the `unsecuredCollection` result so the
+caller can apply the separate gateway trust policy allowed by [FEP-ef61].
+`verifyPortableObjectProof()` examines only the top-level JSON-LD node.  An
+embedded portable object needs its own verification; success for an outer
+activity does not authenticate portable objects nested inside it.
+
 > [!TIP]
 > HTTPS Signatures, Linked Data Signatures, and Object Integrity Proofs can
 > coexist in an application and be used together for maximum compatibility.

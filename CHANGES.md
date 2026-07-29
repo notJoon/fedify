@@ -10,6 +10,20 @@ To be released.
 
 ### @fedify/fedify
 
+ -  Fixed `verifyProof()` so Ed25519 JCS proofs authenticate every received
+    proof option except `proofValue`, including `expires`, `domain`,
+    `challenge`, `nonce`, and extension options.  It now rejects expired or
+    malformed proof options, and callers can provide expected `domain` and
+    `challenge` values through `VerifyProofOptions` to prevent cross-domain or
+    replay use.  [[#968]]
+
+ -  Added `verifyPortableObjectProof()` to enforce the [FEP-ef61] proof policy
+    for portable actors, activities, objects, and signed collections.  Its
+    detailed result distinguishes documents outside the policy, unsecured
+    collections, missing or invalid [FEP-8b32] proofs, unsupported verification
+    methods, DID authority mismatches, and successful verification.  [[#832],
+    [#968]]
+
  -  Updated `verifyObject()` so [FEP-8b32] proofs signed by `did:key`
     verification methods can authenticate portable objects whose owner is an
     `ap:` or `ap+ef61:` URI with the same [FEP-fe34] cryptographic origin.
@@ -92,9 +106,9 @@ To be released.
     bundles `temporal-polyfill`, while type declarations rely on the standard
     `esnext.temporal` lib reference.  [[#823], [#925]]
 
+[FEP-ef61]: https://w3id.org/fep/ef61
 [FEP-8b32]: https://w3id.org/fep/8b32
 [FEP-fe34]: https://w3id.org/fep/fe34
-[FEP-ef61]: https://w3id.org/fep/ef61
 [ActivityPub Media Upload extension]: https://www.w3.org/wiki/SocialCG/ActivityPub/MediaUpload
 [Standard Schema]: https://standardschema.dev/
 [#206]: https://github.com/fedify-dev/fedify/issues/206
@@ -108,6 +122,7 @@ To be released.
 [#823]: https://github.com/fedify-dev/fedify/issues/823
 [#827]: https://github.com/fedify-dev/fedify/issues/827
 [#829]: https://github.com/fedify-dev/fedify/issues/829
+[#832]: https://github.com/fedify-dev/fedify/issues/832
 [#915]: https://github.com/fedify-dev/fedify/pull/915
 [#923]: https://github.com/fedify-dev/fedify/pull/923
 [#925]: https://github.com/fedify-dev/fedify/pull/925
@@ -115,6 +130,7 @@ To be released.
 [#927]: https://github.com/fedify-dev/fedify/pull/927
 [#930]: https://github.com/fedify-dev/fedify/issues/930
 [#934]: https://github.com/fedify-dev/fedify/pull/934
+[#968]: https://github.com/fedify-dev/fedify/pull/968
 
 ### @fedify/astro
 

@@ -16,8 +16,10 @@ import {
 } from "@fedify/vocab";
 import {
   decodeMultibase,
+  encodeMultibase,
   exportDidKey,
   exportMultibaseKey,
+  formatIri,
   importMultibaseKey,
   parseIri,
 } from "@fedify/vocab-runtime";
@@ -30,6 +32,7 @@ import {
   assertRejects,
 } from "@std/assert";
 import { decodeHex } from "byte-encodings/hex";
+import serialize from "json-canon";
 import {
   ed25519Multikey,
   ed25519PrivateKey,
@@ -44,6 +47,7 @@ import {
   signObject,
   verifyObject,
   type VerifyObjectOptions,
+  verifyPortableObjectProof,
   verifyProof,
   type VerifyProofOptions,
 } from "./proof.ts";
@@ -68,6 +72,91 @@ const fep8b32TestVectorPrivateKey = await crypto.subtle.importKey(
 const fep8b32TestVectorKeyId = new URL(
   "https://server.example/users/alice#ed25519-key",
 );
+
+const portableDid = await exportDidKey(ed25519PublicKey.publicKey);
+const portableDidMethod = portableDid.substring("did:key:".length);
+const portableKeyId = new URL(`${portableDid}#${portableDidMethod}`);
+const portableContext = [
+  "https://www.w3.org/ns/activitystreams",
+  "https://w3id.org/security/data-integrity/v1",
+];
+const portableProofCreated = "2023-02-24T23:36:38Z";
+
+async function signPortableJsonLd(
+  document: Record<string, unknown>,
+  {
+    privateKey = ed25519PrivateKey,
+    verificationMethod = portableKeyId,
+    proofOptions = {},
+  }: {
+    privateKey?: CryptoKey;
+    verificationMethod?: URL;
+    proofOptions?: Record<string, unknown>;
+  } = {},
+): Promise<Record<string, unknown>> {
+  const proofConfig = {
+    "@context": document["@context"],
+    type: "DataIntegrityProof",
+    cryptosuite: "eddsa-jcs-2022",
+    verificationMethod: verificationMethod.href,
+    proofPurpose: "assertionMethod",
+    created: portableProofCreated,
+    ...proofOptions,
+  };
+  const encoder = new TextEncoder();
+  const proofDigest = await crypto.subtle.digest(
+    "SHA-256",
+    encoder.encode(serialize(proofConfig)),
+  );
+  const messageDigest = await crypto.subtle.digest(
+    "SHA-256",
+    encoder.encode(serialize(document)),
+  );
+  const digest = new Uint8Array(
+    proofDigest.byteLength + messageDigest.byteLength,
+  );
+  digest.set(new Uint8Array(proofDigest), 0);
+  digest.set(new Uint8Array(messageDigest), proofDigest.byteLength);
+  const signature = await crypto.subtle.sign("Ed25519", privateKey, digest);
+  return {
+    ...document,
+    proof: {
+      ...proofConfig,
+      proofValue: new TextDecoder().decode(
+        encodeMultibase("base58btc", new Uint8Array(signature)),
+      ),
+    },
+  };
+}
+
+async function parsePortableProof(
+  document: Record<string, unknown>,
+): Promise<DataIntegrityProof> {
+  const proof = document.proof;
+  assert(
+    typeof proof === "object" && proof != null && !Array.isArray(proof),
+  );
+  return await DataIntegrityProof.fromJsonLd({
+    "@context": document["@context"],
+    ...proof,
+  }, {
+    documentLoader: mockDocumentLoader,
+    contextLoader: mockDocumentLoader,
+  });
+}
+
+async function assertPortableProofVerified(
+  document: Record<string, unknown>,
+  options: VerifyProofOptions,
+): Promise<void> {
+  const key = await verifyProof(
+    document,
+    await parsePortableProof(document),
+    options,
+  );
+  assert(key != null);
+  assertEquals(key.id, portableKeyId);
+}
 const fep8b32TestVectorActivity = new Create({
   id: new URL("https://server.example/activities/1"),
   actor: new URL("https://server.example/users/alice"),
@@ -574,6 +663,309 @@ test("verifyProof()", async () => {
   assertFalse(contextLoaderCalls.includes("https://attacker.example/ctx"));
 });
 
+test("verifyProof() authenticates the complete proof configuration", async (t) => {
+  const jsonLd = {
+    "@context": portableContext,
+    id: "https://example.com/activities/complete-proof-options",
+    type: "Create",
+    actor: "https://example.com/users/alice",
+    object: {
+      type: "Note",
+      content: "Every proof option is authenticated.",
+    },
+  };
+  const options: VerifyProofOptions = {
+    documentLoader: mockDocumentLoader,
+    contextLoader: mockDocumentLoader,
+  };
+
+  await t.step("rejects an expires option added after signing", async () => {
+    const signed = await signPortableJsonLd(jsonLd);
+    const tampered = {
+      ...signed,
+      proof: {
+        ...signed.proof as Record<string, unknown>,
+        expires: "3000-01-01T00:00:00Z",
+      },
+    };
+    assertEquals(
+      await verifyProof(tampered, await parsePortableProof(tampered), options),
+      null,
+    );
+  });
+
+  await t.step("accepts an authenticated future expiration", async () => {
+    const signed = await signPortableJsonLd(jsonLd, {
+      proofOptions: { expires: "3000-01-01T00:00:00Z" },
+    });
+    await assertPortableProofVerified(signed, options);
+  });
+
+  await t.step("rejects an authenticated expired proof", async () => {
+    const signed = await signPortableJsonLd(jsonLd, {
+      proofOptions: { expires: "2000-01-01T00:00:00Z" },
+    });
+    assertEquals(
+      await verifyProof(signed, await parsePortableProof(signed), options),
+      null,
+    );
+  });
+
+  await t.step("authenticates domain, challenge, and nonce", async () => {
+    const signed = await signPortableJsonLd(jsonLd, {
+      proofOptions: {
+        domain: ["social.example", "https://social.example"],
+        challenge: "challenge-123",
+        nonce: "nonce-456",
+      },
+    });
+    const proof = await parsePortableProof(signed);
+    const matchingKey = await verifyProof(signed, proof, {
+      ...options,
+      domain: ["https://social.example", "social.example"],
+      challenge: "challenge-123",
+    });
+    assert(matchingKey != null);
+    assertEquals(matchingKey.id, portableKeyId);
+    assertEquals(
+      await verifyProof(signed, proof, {
+        ...options,
+        domain: ["social.example"],
+        challenge: "challenge-123",
+      }),
+      null,
+    );
+    assertEquals(
+      await verifyProof(signed, proof, {
+        ...options,
+        domain: ["https://social.example", "social.example"],
+        challenge: "wrong-challenge",
+      }),
+      null,
+    );
+
+    for (
+      const [property, value] of [
+        ["domain", ["other.example"]],
+        ["challenge", "tampered-challenge"],
+        ["nonce", "tampered-nonce"],
+      ] as const
+    ) {
+      const tampered = {
+        ...signed,
+        proof: {
+          ...signed.proof as Record<string, unknown>,
+          [property]: value,
+        },
+      };
+      assertEquals(
+        await verifyProof(
+          tampered,
+          await parsePortableProof(tampered),
+          options,
+        ),
+        null,
+      );
+    }
+  });
+
+  await t.step("requires requested domain and challenge options", async () => {
+    const signed = await signPortableJsonLd(jsonLd);
+    const proof = await parsePortableProof(signed);
+    assertEquals(
+      await verifyProof(signed, proof, {
+        ...options,
+        domain: "social.example",
+      }),
+      null,
+    );
+    assertEquals(
+      await verifyProof(signed, proof, {
+        ...options,
+        challenge: "challenge-123",
+      }),
+      null,
+    );
+  });
+
+  await t.step("rejects malformed proof options", async () => {
+    for (
+      const proofOptions of [
+        { expires: "not-a-date" },
+        { domain: ["social.example", 42] },
+        { challenge: 42 },
+        { nonce: { value: "not-a-string" } },
+        { nonce: ["not", "a", "string"] },
+        { previousProof: ["urn:uuid:proof-1", 42] },
+      ]
+    ) {
+      const signed = await signPortableJsonLd(jsonLd, { proofOptions });
+      assertEquals(
+        await verifyProof(signed, await parsePortableProof(signed), options),
+        null,
+      );
+    }
+  });
+
+  await t.step("authenticates aliased and extension options", async () => {
+    const aliasedJsonLd = {
+      ...jsonLd,
+      "@context": [
+        ...portableContext,
+        {
+          validUntil: {
+            "@id": "https://w3id.org/security#expiration",
+            "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+          },
+          extensionOption: "https://example.com/security#extensionOption",
+        },
+      ],
+    };
+    const signed = await signPortableJsonLd(aliasedJsonLd, {
+      proofOptions: {
+        validUntil: "3000-01-01T00:00:00Z",
+        extensionOption: { nested: ["one", "two"] },
+      },
+    });
+    await assertPortableProofVerified(signed, options);
+
+    for (
+      const [property, value] of [
+        ["validUntil", "2999-01-01T00:00:00Z"],
+        ["extensionOption", { nested: ["one", "changed"] }],
+      ] as const
+    ) {
+      const tampered = {
+        ...signed,
+        proof: {
+          ...signed.proof as Record<string, unknown>,
+          [property]: value,
+        },
+      };
+      assertEquals(
+        await verifyProof(
+          tampered,
+          await parsePortableProof(tampered),
+          options,
+        ),
+        null,
+      );
+    }
+  });
+
+  await t.step(
+    "distinguishes equivalent and ambiguous raw proof configurations",
+    async () => {
+      const signed = await signPortableJsonLd(jsonLd);
+      const proof = signed.proof as Record<string, unknown>;
+      const parsed = await parsePortableProof(signed);
+      const identicalDuplicates = {
+        ...signed,
+        proof: [proof, structuredClone(proof)],
+      };
+      assert(
+        await verifyProof(identicalDuplicates, parsed, options) != null,
+      );
+
+      const inheritedContextProof = structuredClone(proof);
+      delete inheritedContextProof["@context"];
+      const equivalentDuplicates = {
+        ...signed,
+        proof: [proof, inheritedContextProof],
+      };
+      assert(
+        await verifyProof(equivalentDuplicates, parsed, options) != null,
+      );
+
+      const ambiguousDuplicates = {
+        ...signed,
+        proof: [
+          proof,
+          {
+            ...structuredClone(proof),
+            expires: "3000-01-01T00:00:00Z",
+          },
+        ],
+      };
+      assertEquals(
+        await verifyProof(ambiguousDuplicates, parsed, options),
+        null,
+      );
+    },
+  );
+
+  await t.step(
+    "accepts literal proof fields with an unresolved extra context",
+    async () => {
+      const document = {
+        ...jsonLd,
+        "@context": [
+          ...portableContext,
+          "https://context.example/unrelated",
+        ],
+      };
+      const signed = await signPortableJsonLd(document);
+      const rawProof = signed.proof as Record<string, unknown>;
+      const proof = new DataIntegrityProof({
+        cryptosuite: "eddsa-jcs-2022",
+        verificationMethod: portableKeyId,
+        proofPurpose: "assertionMethod",
+        proofValue: decodeMultibase(rawProof.proofValue as string),
+        created: Temporal.Instant.from(portableProofCreated),
+      });
+      const key = await verifyProof(signed, proof, options);
+      assert(key != null);
+      assertEquals(key.id, portableKeyId);
+    },
+  );
+
+  await t.step(
+    "rejects aliases whose proof context cannot be resolved safely",
+    async () => {
+      const contextUrl = "https://context.example/proof-options";
+      const document = {
+        ...jsonLd,
+        "@context": [...portableContext, contextUrl],
+      };
+      const signed = await signPortableJsonLd(document, {
+        proofOptions: {
+          validUntil: "2000-01-01T00:00:00Z",
+        },
+      });
+      const rawProof = signed.proof as Record<string, unknown>;
+      const proof = new DataIntegrityProof({
+        cryptosuite: "eddsa-jcs-2022",
+        verificationMethod: portableKeyId,
+        proofPurpose: "assertionMethod",
+        proofValue: decodeMultibase(rawProof.proofValue as string),
+        created: Temporal.Instant.from(portableProofCreated),
+      });
+      const contextLoader = async (url: string) => {
+        if (url !== contextUrl) return await mockDocumentLoader(url);
+        return {
+          contextUrl: null,
+          documentUrl: url,
+          document: {
+            "@context": {
+              validUntil: {
+                "@id": "https://w3id.org/security#expiration",
+                "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+              },
+            },
+          },
+        };
+      };
+      assertEquals(
+        await verifyProof(signed, proof, {
+          ...options,
+          contextLoader,
+        }),
+        null,
+      );
+    },
+  );
+});
+
 test("verifyProof() resolves did:key verification methods locally", async () => {
   const multibaseKey = (await exportDidKey(ed25519PublicKey.publicKey)).slice(
     "did:key:".length,
@@ -893,12 +1285,14 @@ test("verifyProof() records verification duration metric", async (t) => {
     "verifyObject() wrapper emits one measurement per inner verifyProof()",
     async () => {
       const [meterProvider, recorder] = createTestMeterProvider();
+      const serializedProof = await proof.toJsonLd({
+        format: "compact",
+        contextLoader: mockDocumentLoader,
+      }) as Record<string, unknown>;
+      const { "@context": _proofContext, ...embeddedProof } = serializedProof;
       const create = await verifyObject(Create, {
         ...jsonLd,
-        proof: await proof.toJsonLd({
-          format: "compact",
-          contextLoader: mockDocumentLoader,
-        }),
+        proof: embeddedProof,
       }, {
         documentLoader: mockDocumentLoader,
         contextLoader: mockDocumentLoader,
@@ -959,6 +1353,848 @@ test("verifyProof() records verification duration metric", async (t) => {
       );
       assertFalse(
         "object_integrity_proofs.cryptosuite" in measurements[0].attributes,
+      );
+    },
+  );
+});
+
+test("verifyPortableObjectProof()", async (t) => {
+  const options: VerifyProofOptions = {
+    documentLoader() {
+      throw new TypeError("did:key must not use the document loader");
+    },
+    contextLoader: mockDocumentLoader,
+  };
+  const objectId = `ap://did:key:${portableDidMethod}/objects/1`;
+  const unsignedObject = {
+    "@context": portableContext,
+    id: objectId,
+    type: "Note",
+    attributedTo: `ap://did:key:${portableDidMethod}/actor`,
+    content: "Portable note",
+  };
+
+  await t.step(
+    "verifies a portable object with a matching DID proof",
+    async () => {
+      const result = await verifyPortableObjectProof(
+        await signPortableJsonLd(unsignedObject),
+        options,
+      );
+      assert(result.verified);
+      assertEquals(result.keys.length, 1);
+      assertEquals(result.keys[0].id, portableKeyId);
+    },
+  );
+
+  await t.step(
+    "rejects unauthenticated and expired proof options",
+    async () => {
+      const signed = await signPortableJsonLd(unsignedObject);
+      const tampered = {
+        ...signed,
+        proof: {
+          ...signed.proof as Record<string, unknown>,
+          expires: "3000-01-01T00:00:00Z",
+        },
+      };
+      const tamperedResult = await verifyPortableObjectProof(
+        tampered,
+        options,
+      );
+      assertFalse(tamperedResult.verified);
+      assertEquals(tamperedResult.reason, {
+        type: "invalidProof",
+        proofIndex: 0,
+      });
+
+      const expiredResult = await verifyPortableObjectProof(
+        await signPortableJsonLd(unsignedObject, {
+          proofOptions: { expires: "2000-01-01T00:00:00Z" },
+        }),
+        options,
+      );
+      assertFalse(expiredResult.verified);
+      assertEquals(expiredResult.reason, {
+        type: "invalidProof",
+        proofIndex: 0,
+      });
+    },
+  );
+
+  await t.step("verifies aliased proof properties", async () => {
+    const proofAlias = "integrityProof";
+    const proofIri = "https://w3id.org/security#proof";
+    for (
+      const { context, proofProperty, typeProperty, type } of [
+        {
+          context: { [proofAlias]: proofIri },
+          proofProperty: proofAlias,
+          typeProperty: "type",
+          type: "Note",
+        },
+        {
+          context: {
+            PortableNote: {
+              "@id": "https://www.w3.org/ns/activitystreams#Note",
+              "@context": { [proofAlias]: proofIri },
+            },
+          },
+          proofProperty: proofAlias,
+          typeProperty: "type",
+          type: "PortableNote",
+        },
+        {
+          context: {
+            kind: "@type",
+            PortableNote: {
+              "@id": "https://www.w3.org/ns/activitystreams#Note",
+              "@context": { [proofAlias]: proofIri },
+            },
+          },
+          proofProperty: proofAlias,
+          typeProperty: "kind",
+          type: "PortableNote",
+        },
+        {
+          context: { sec: "https://w3id.org/security#" },
+          proofProperty: "sec:proof",
+          typeProperty: "type",
+          type: "Note",
+        },
+        {
+          context: {
+            sec: {
+              "@id": "https://w3id.org/security#",
+              "@prefix": true,
+            },
+          },
+          proofProperty: "sec:proof",
+          typeProperty: "type",
+          type: "Note",
+        },
+      ]
+    ) {
+      const document: Record<string, unknown> = {
+        ...unsignedObject,
+        "@context": [...portableContext, context],
+      };
+      delete document.type;
+      document[typeProperty] = type;
+      const { proof, ...signed } = await signPortableJsonLd(document);
+      const result = await verifyPortableObjectProof({
+        ...signed,
+        [proofProperty]: proof,
+      }, options);
+      assert(result.verified);
+      assertEquals(result.keys.length, 1);
+      assertEquals(result.keys[0].id, portableKeyId);
+    }
+  });
+
+  await t.step(
+    "verifies proof aliases from caller-loaded contexts",
+    async () => {
+      const contextUrl = "https://context.example/security";
+      const proofAlias = "integrityProof";
+      const proofIri = "https://w3id.org/security#proof";
+      let contextLoads = 0;
+      const contextLoader = async (url: string) => {
+        if (url !== contextUrl) return await mockDocumentLoader(url);
+        contextLoads++;
+        return {
+          contextUrl: null,
+          documentUrl: url,
+          document: {
+            "@context": { [proofAlias]: proofIri },
+          },
+        };
+      };
+      const document = {
+        ...unsignedObject,
+        "@context": [...portableContext, contextUrl],
+      };
+      const { proof, ...signed } = await signPortableJsonLd(document);
+      const result = await verifyPortableObjectProof({
+        ...signed,
+        [proofAlias]: proof,
+      }, {
+        ...options,
+        contextLoader,
+      });
+      assert(result.verified);
+      assertEquals(result.keys.length, 1);
+      assertEquals(result.keys[0].id, portableKeyId);
+      assertEquals(contextLoads, 1);
+    },
+  );
+
+  await t.step("verifies portable actors and activities by shape", async () => {
+    for (
+      const document of [
+        {
+          "@context": portableContext,
+          id: `ap+ef61://did:key:${portableDidMethod}/actor`,
+          type: "UnknownActorType",
+          inbox: "https://gateway.example/users/alice/inbox",
+          outbox: "https://gateway.example/users/alice/outbox",
+        },
+        {
+          "@context": portableContext,
+          id: `ap://did:key:${portableDidMethod}/activities/1`,
+          type: "UnknownActivityType",
+          actor: `ap://did:key:${portableDidMethod}/actor`,
+          object: objectId,
+        },
+      ]
+    ) {
+      const result = await verifyPortableObjectProof(
+        await signPortableJsonLd(document),
+        options,
+      );
+      assert(result.verified);
+      assertEquals(result.keys.length, 1);
+    }
+  });
+
+  await t.step("uses the normative FEP-2277 precedence order", async () => {
+    for (
+      const document of [
+        {
+          "@context": portableContext,
+          id: `ap://did:key:${portableDidMethod}/actor`,
+          type: "Collection",
+          inbox: "https://gateway.example/users/alice/inbox",
+          outbox: "https://gateway.example/users/alice/outbox",
+          totalItems: 0,
+        },
+        {
+          "@context": portableContext,
+          id: `ap://did:key:${portableDidMethod}/activities/1`,
+          type: "Collection",
+          actor: `ap://did:key:${portableDidMethod}/actor`,
+          totalItems: 0,
+        },
+      ]
+    ) {
+      assertEquals(
+        await verifyPortableObjectProof(document, options),
+        { verified: false, reason: { type: "missingProof" } },
+      );
+    }
+  });
+
+  await t.step(
+    "accepts portable URI spelling and location-hint variants",
+    async () => {
+      const variants = [
+        `ap+ef61://did%3Akey%3A${portableDidMethod}/objects/1`,
+        `AP://did:key:${portableDidMethod}/objects/1`,
+        `ap://did:key:${portableDidMethod}/objects/1?%40gateway=${
+          encodeURIComponent("https://gateway.example")
+        }`,
+        `ap://did:key:${portableDidMethod}/objects/1#content`,
+      ];
+      for (const id of variants) {
+        const result = await verifyPortableObjectProof(
+          await signPortableJsonLd({ ...unsignedObject, id }),
+          options,
+        );
+        assert(result.verified, id);
+      }
+    },
+  );
+
+  await t.step(
+    "supports matching DID methods resolved by a caller",
+    async () => {
+      const verificationMethod = new URL("did:web:example.com#key");
+      const document = {
+        ...unsignedObject,
+        id: "ap://did:web:example.com/objects/1",
+      };
+      let fetches = 0;
+      const result = await verifyPortableObjectProof(
+        await signPortableJsonLd(document, { verificationMethod }),
+        {
+          contextLoader: mockDocumentLoader,
+          documentLoader: async (url) => {
+            fetches++;
+            assertEquals(url, verificationMethod.href);
+            return {
+              contextUrl: null,
+              documentUrl: url,
+              document: {
+                "@context": "https://w3id.org/security/multikey/v1",
+                id: verificationMethod.href,
+                type: "Multikey",
+                controller: "did:web:example.com",
+                publicKeyMultibase: await exportMultibaseKey(
+                  ed25519PublicKey.publicKey,
+                ),
+              },
+            };
+          },
+        },
+      );
+      assert(result.verified);
+      assertEquals(fetches, 1);
+    },
+  );
+
+  await t.step("reports a missing proof on portable objects", async () => {
+    assertEquals(
+      await verifyPortableObjectProof(unsignedObject, options),
+      { verified: false, reason: { type: "missingProof" } },
+    );
+  });
+
+  await t.step("keeps non-portable documents outside the policy", async () => {
+    for (
+      const document of [
+        { ...unsignedObject, id: "https://social.example/objects/1" },
+        {
+          ...unsignedObject,
+          id:
+            "https://gateway.example/.well-known/apgateway/did:key:z6MkAlice/objects/1",
+        },
+        {
+          "@context": portableContext,
+          type: "Note",
+          content: "Object without an ID",
+        },
+      ]
+    ) {
+      assertEquals(
+        await verifyPortableObjectProof(document, options),
+        { verified: false, reason: { type: "notPortableObject" } },
+      );
+    }
+  });
+
+  await t.step(
+    "short-circuits clearly non-portable raw IDs",
+    async () => {
+      let contextLoads = 0;
+      const result = await verifyPortableObjectProof({
+        "@context": "https://attacker.example/context",
+        "@id": "https://social.example/objects/1",
+      }, {
+        ...options,
+        contextLoader() {
+          contextLoads++;
+          throw new TypeError("unexpected context load");
+        },
+      });
+      assertEquals(result, {
+        verified: false,
+        reason: { type: "notPortableObject" },
+      });
+      assertEquals(contextLoads, 0);
+    },
+  );
+
+  await t.step("distinguishes unsecured and signed collections", async () => {
+    const collection = {
+      "@context": portableContext,
+      id: `ap://did:key:${portableDidMethod}/collections/1`,
+      type: "Note",
+      totalItems: 0,
+    };
+    assertEquals(
+      await verifyPortableObjectProof(collection, options),
+      { verified: false, reason: { type: "unsecuredCollection" } },
+    );
+    const result = await verifyPortableObjectProof(
+      await signPortableJsonLd(collection),
+      options,
+    );
+    assert(result.verified);
+  });
+
+  await t.step(
+    "classifies unsupported core types without using type",
+    async () => {
+      const cases = [
+        {
+          document: { ...unsignedObject, href: "https://example.com/" },
+          objectType: "link",
+        },
+        {
+          document: {
+            ...unsignedObject,
+            "https://w3id.org/security#publicKeyMultibase":
+              "z6MkrJVnaZkeFzdQyMZu1cgjg7k1pZZ6pvBQ7XJPt4swbTQ2",
+          },
+          objectType: "verificationMethod",
+        },
+        {
+          document: {
+            ...unsignedObject,
+            "https://w3id.org/security#publicKeyPem": "not-a-real-key",
+          },
+          objectType: "publicKey",
+        },
+      ] as const;
+      for (const { document, objectType } of cases) {
+        assertEquals(
+          await verifyPortableObjectProof(document, options),
+          {
+            verified: false,
+            reason: { type: "unsupportedObjectType", objectType },
+          },
+        );
+      }
+    },
+  );
+
+  await t.step(
+    "rejects non-DID verification methods before fetching",
+    async () => {
+      let fetched = false;
+      const verificationMethod = new URL(
+        "https://attacker.example/keys/ed25519",
+      );
+      const result = await verifyPortableObjectProof(
+        await signPortableJsonLd(unsignedObject, { verificationMethod }),
+        {
+          contextLoader: mockDocumentLoader,
+          documentLoader() {
+            fetched = true;
+            throw new TypeError("unexpected fetch");
+          },
+        },
+      );
+      assertFalse(result.verified);
+      assertEquals(result.reason, {
+        type: "unsupportedVerificationMethod",
+        proofIndex: 0,
+        verificationMethod,
+      });
+      assertFalse(fetched);
+    },
+  );
+
+  await t.step("rejects malformed DID verification methods", async () => {
+    const verificationMethod = new URL("did:invalid");
+    const result = await verifyPortableObjectProof(
+      await signPortableJsonLd(unsignedObject, { verificationMethod }),
+      options,
+    );
+    assertFalse(result.verified);
+    assertEquals(result.reason, {
+      type: "unsupportedVerificationMethod",
+      proofIndex: 0,
+      verificationMethod,
+    });
+  });
+
+  await t.step("rejects a proof from another DID before fetching", async () => {
+    let fetched = false;
+    const verificationMethod = new URL(
+      "did:key:z6MkMallory#z6MkMallory",
+    );
+    const result = await verifyPortableObjectProof(
+      await signPortableJsonLd(unsignedObject, { verificationMethod }),
+      {
+        contextLoader: mockDocumentLoader,
+        documentLoader() {
+          fetched = true;
+          throw new TypeError("unexpected fetch");
+        },
+      },
+    );
+    assertFalse(result.verified);
+    assertEquals(result.reason, {
+      type: "verificationMethodMismatch",
+      proofIndex: 0,
+      objectId: parseIri(objectId),
+      verificationMethod,
+    });
+    assertFalse(fetched);
+  });
+
+  await t.step(
+    "rejects proofs with multiple verification methods",
+    async () => {
+      const signed = await signPortableJsonLd(unsignedObject);
+      const proof = signed.proof as Record<string, unknown>;
+      for (
+        const additionalVerificationMethod of [
+          "did:key:z6MkMallory#z6MkMallory",
+          "https://attacker.example/key",
+        ]
+      ) {
+        assertEquals(
+          await verifyPortableObjectProof({
+            ...signed,
+            proof: {
+              ...proof,
+              verificationMethod: [
+                portableKeyId.href,
+                additionalVerificationMethod,
+              ],
+            },
+          }, options),
+          {
+            verified: false,
+            reason: { type: "invalidProof", proofIndex: 0 },
+          },
+        );
+      }
+    },
+  );
+
+  await t.step(
+    "rejects multiple values in functional proof fields",
+    async () => {
+      const signed = await signPortableJsonLd(unsignedObject);
+      const proof = signed.proof as Record<string, unknown>;
+      const cases: readonly (readonly [string, unknown])[] = [
+        ["cryptosuite", "eddsa-jcs-2022"],
+        ["proofPurpose", "authentication"],
+        ["proofValue", proof.proofValue],
+        ["created", "2024-01-01T00:00:00Z"],
+      ];
+      for (
+        const [field, additionalValue] of cases
+      ) {
+        const originalValue = proof[field];
+        assert(originalValue != null);
+        assertEquals(
+          await verifyPortableObjectProof({
+            ...signed,
+            proof: {
+              ...proof,
+              [field]: [originalValue, additionalValue],
+            },
+          }, options),
+          {
+            verified: false,
+            reason: { type: "invalidProof", proofIndex: 0 },
+          },
+        );
+      }
+    },
+  );
+
+  await t.step(
+    "requires exactly the DataIntegrityProof type",
+    async () => {
+      const signed = await signPortableJsonLd(unsignedObject);
+      const proof = signed.proof as Record<string, unknown>;
+      const missingType = { ...proof };
+      delete missingType.type;
+      for (
+        const invalidProof of [
+          missingType,
+          { ...proof, type: "Object" },
+          { ...proof, type: ["DataIntegrityProof", "Object"] },
+        ]
+      ) {
+        assertEquals(
+          await verifyPortableObjectProof({
+            ...signed,
+            proof: invalidProof,
+          }, options),
+          {
+            verified: false,
+            reason: { type: "invalidProof", proofIndex: 0 },
+          },
+        );
+      }
+    },
+  );
+
+  await t.step("reports cryptographic failures separately", async () => {
+    const signed = await signPortableJsonLd(unsignedObject);
+    const tampered = { ...signed, content: "Tampered" };
+    assertEquals(
+      await verifyPortableObjectProof(tampered, options),
+      {
+        verified: false,
+        reason: { type: "invalidProof", proofIndex: 0 },
+      },
+    );
+  });
+
+  await t.step("reports malformed proof structures as invalid", async () => {
+    for (
+      const proof of [
+        { type: "DataIntegrityProof" },
+        {
+          type: "DataIntegrityProof",
+          cryptosuite: "eddsa-jcs-2022",
+          verificationMethod: portableKeyId.href,
+          proofPurpose: "assertionMethod",
+          proofValue: "zInvalid",
+          created: "not-an-instant",
+        },
+      ]
+    ) {
+      assertEquals(
+        await verifyPortableObjectProof({
+          ...unsignedObject,
+          proof,
+        }, options),
+        {
+          verified: false,
+          reason: { type: "invalidProof", proofIndex: 0 },
+        },
+      );
+    }
+  });
+
+  await t.step("accepts multiple valid proofs in input order", async () => {
+    const signed = await signPortableJsonLd(unsignedObject);
+    const proof = signed.proof as Record<string, unknown>;
+    const result = await verifyPortableObjectProof({
+      ...signed,
+      proof: [proof, structuredClone(proof)],
+    }, options);
+    assert(result.verified);
+    assertEquals(result.keys.length, 2);
+    assertEquals(result.keys.map((key) => key.id), [
+      portableKeyId,
+      portableKeyId,
+    ]);
+  });
+
+  await t.step("rejects a tampered duplicate proof", async () => {
+    const signed = await signPortableJsonLd(unsignedObject);
+    const proof = signed.proof as Record<string, unknown>;
+    const result = await verifyPortableObjectProof({
+      ...signed,
+      proof: [
+        proof,
+        {
+          ...structuredClone(proof),
+          expires: "3000-01-01T00:00:00Z",
+        },
+      ],
+    }, options);
+    assertFalse(result.verified);
+  });
+
+  await t.step("matches proofs across aliased properties", async () => {
+    const document = {
+      ...unsignedObject,
+      "@context": [
+        ...portableContext,
+        {
+          firstProof: "https://w3id.org/security#proof",
+          secondProof: "https://w3id.org/security#proof",
+        },
+      ],
+    };
+    const firstSigned = await signPortableJsonLd(document, {
+      proofOptions: { domain: "first.example" },
+    });
+    const secondSigned = await signPortableJsonLd(document, {
+      proofOptions: { domain: "second.example" },
+    });
+    const result = await verifyPortableObjectProof({
+      ...document,
+      secondProof: secondSigned.proof,
+      firstProof: firstSigned.proof,
+    }, options);
+    assert(result.verified);
+    assertEquals(result.keys.length, 2);
+  });
+
+  await t.step(
+    "canonicalizes the document only once for multiple proofs",
+    async () => {
+      async function countContentReads(proofCount: number): Promise<number> {
+        const signed = await signPortableJsonLd(unsignedObject);
+        const proof = signed.proof as Record<string, unknown>;
+        const document = {
+          ...signed,
+          proof: Array.from(
+            { length: proofCount },
+            () => structuredClone(proof),
+          ),
+        };
+        let contentReads = 0;
+        Object.defineProperty(document, "content", {
+          configurable: true,
+          enumerable: true,
+          get() {
+            contentReads++;
+            return unsignedObject.content;
+          },
+        });
+        const result = await verifyPortableObjectProof(document, options);
+        assert(result.verified);
+        assertEquals(result.keys.length, proofCount);
+        return contentReads;
+      }
+
+      assertEquals(await countContentReads(3), await countContentReads(1));
+    },
+  );
+
+  await t.step("requires every proof to verify", async () => {
+    const signed = await signPortableJsonLd(unsignedObject);
+    const proof = signed.proof as Record<string, unknown>;
+    const result = await verifyPortableObjectProof({
+      ...signed,
+      proof: [
+        proof,
+        { ...proof, proofValue: "zInvalid" },
+      ],
+    }, options);
+    assertEquals(result, {
+      verified: false,
+      reason: { type: "invalidProof", proofIndex: 1 },
+    });
+  });
+
+  await t.step("checks every proof policy before resolving keys", async () => {
+    const didWebId = "ap://did:web:example.com/objects/1";
+    const didWebMethod = new URL("did:web:example.com#key");
+    const didWebSigned = await signPortableJsonLd(
+      { ...unsignedObject, id: didWebId },
+      { verificationMethod: didWebMethod },
+    );
+    const httpMethod = new URL("https://attacker.example/key");
+    const httpSigned = await signPortableJsonLd(
+      { ...unsignedObject, id: didWebId },
+      { verificationMethod: httpMethod },
+    );
+    let fetched = false;
+    const result = await verifyPortableObjectProof({
+      ...didWebSigned,
+      proof: [didWebSigned.proof, httpSigned.proof],
+    }, {
+      contextLoader: mockDocumentLoader,
+      documentLoader() {
+        fetched = true;
+        throw new TypeError("unexpected fetch");
+      },
+    });
+    assertFalse(result.verified);
+    assertEquals(result.reason, {
+      type: "unsupportedVerificationMethod",
+      proofIndex: 1,
+      verificationMethod: httpMethod,
+    });
+    assertFalse(fetched);
+  });
+
+  await t.step("accepts the expanded proof property", async () => {
+    const signed = await signPortableJsonLd(unsignedObject);
+    const { proof, ...document } = signed;
+    const parsedProof = await DataIntegrityProof.fromJsonLd(proof, {
+      contextLoader: mockDocumentLoader,
+      documentLoader: mockDocumentLoader,
+    });
+    const expandedProof = await parsedProof.toJsonLd({
+      format: "expand",
+      contextLoader: mockDocumentLoader,
+    });
+    const result = await verifyPortableObjectProof({
+      ...document,
+      "https://w3id.org/security#proof": expandedProof,
+    }, options);
+    assert(result.verified);
+  });
+
+  await t.step(
+    "classifies JSON-LD aliases by their expanded properties",
+    async () => {
+      const aliasedActivity = {
+        "@context": [
+          ...portableContext,
+          { performedBy: "https://www.w3.org/ns/activitystreams#actor" },
+        ],
+        id: `ap://did:key:${portableDidMethod}/activities/aliased`,
+        type: "UnknownActivity",
+        performedBy: `ap://did:key:${portableDidMethod}/actor`,
+      };
+      const result = await verifyPortableObjectProof(
+        await signPortableJsonLd(aliasedActivity),
+        options,
+      );
+      assert(result.verified);
+    },
+  );
+
+  await t.step(
+    "does not claim to verify embedded portable objects",
+    async () => {
+      const outer = {
+        "@context": portableContext,
+        id: `ap://did:key:${portableDidMethod}/activities/outer`,
+        type: "Create",
+        actor: `ap://did:key:${portableDidMethod}/actor`,
+        object: {
+          id: `ap://did:key:${portableDidMethod}/objects/embedded`,
+          type: "Note",
+          content: "Unsigned embedded object",
+        },
+      };
+      const result = await verifyPortableObjectProof(
+        await signPortableJsonLd(outer),
+        options,
+      );
+      assert(result.verified);
+    },
+  );
+
+  await t.step("rejects malformed roots and portable IDs", async () => {
+    await assertRejects(
+      () => verifyPortableObjectProof([], options),
+      TypeError,
+      "single JSON-LD object",
+    );
+    await assertRejects(
+      () =>
+        verifyPortableObjectProof({
+          ...unsignedObject,
+          id: `ap://did:key:${portableDidMethod}`,
+        }, options),
+      TypeError,
+    );
+    await assertRejects(
+      () =>
+        verifyPortableObjectProof({
+          ...unsignedObject,
+          id: "ap://did%ZZkey/objects/1",
+        }, options),
+      TypeError,
+    );
+  });
+
+  await t.step(
+    "emits metrics only for attempted proof verification",
+    async () => {
+      const [meterProvider, recorder] = createTestMeterProvider();
+      const signed = await signPortableJsonLd(unsignedObject);
+      const proof = signed.proof as Record<string, unknown>;
+      const verified = await verifyPortableObjectProof({
+        ...signed,
+        proof: [proof, structuredClone(proof)],
+      }, { ...options, meterProvider });
+      assert(verified.verified);
+      assertEquals(
+        recorder.getMeasurements(
+          "activitypub.signature.verification.duration",
+        ).length,
+        2,
+      );
+
+      const [rejectedMeterProvider, rejectedRecorder] =
+        createTestMeterProvider();
+      await verifyPortableObjectProof(unsignedObject, {
+        ...options,
+        meterProvider: rejectedMeterProvider,
+      });
+      assertEquals(
+        rejectedRecorder.getMeasurements(
+          "activitypub.signature.verification.duration",
+        ).length,
+        0,
       );
     },
   );
@@ -1055,6 +2291,127 @@ test("verifyObject() accepts did:key proofs for matching portable attribution or
 
   assertInstanceOf(verified, Note);
   assertEquals(verified.content, "Portable note");
+
+  assert(
+    typeof jsonLd === "object" && jsonLd != null && !Array.isArray(jsonLd),
+  );
+  const rawProof = (jsonLd as Record<string, unknown>).proof;
+  assert(
+    typeof rawProof === "object" && rawProof != null &&
+      !Array.isArray(rawProof),
+  );
+  assertEquals(
+    await verifyObject(Note, {
+      ...jsonLd as Record<string, unknown>,
+      proof: [
+        rawProof,
+        {
+          ...structuredClone(rawProof),
+          expires: "3000-01-01T00:00:00Z",
+        },
+      ],
+    }, {
+      documentLoader() {
+        throw new TypeError("did:key must not use the document loader");
+      },
+      contextLoader: mockDocumentLoader,
+    }),
+    null,
+  );
+
+  async function verifyRemotelyReferencedProof(
+    proofOptions: Record<string, unknown> = {},
+    proofUrl = "https://proof.example/proofs/1",
+  ): Promise<Note | null> {
+    const remotelyReferencedJsonLd = {
+      ...jsonLd as Record<string, unknown>,
+    };
+    delete remotelyReferencedJsonLd.proof;
+    remotelyReferencedJsonLd["https://w3id.org/security#proof"] = [
+      { "@graph": [rawProof] },
+      { "@graph": [{ "@id": proofUrl }] },
+    ];
+    let proofFetches = 0;
+    const result = await verifyObject(Note, remotelyReferencedJsonLd, {
+      documentLoader(url) {
+        if (url !== formatIri(parseIri(proofUrl))) {
+          throw new TypeError(`unexpected document URL: ${url}`);
+        }
+        proofFetches++;
+        return Promise.resolve({
+          contextUrl: null,
+          document: {
+            "@context": (jsonLd as Record<string, unknown>)["@context"],
+            ...structuredClone(rawProof as Record<string, unknown>),
+            ...proofOptions,
+          },
+          documentUrl: url,
+        });
+      },
+      contextLoader: mockDocumentLoader,
+    });
+    assertEquals(proofFetches, 1);
+    return result;
+  }
+
+  assertInstanceOf(
+    await verifyRemotelyReferencedProof(),
+    Note,
+  );
+  assertInstanceOf(
+    await verifyRemotelyReferencedProof(
+      {},
+      `ap://did:key:${did.substring("did:key:".length)}/proofs/1`,
+    ),
+    Note,
+  );
+  assertEquals(
+    await verifyRemotelyReferencedProof({
+      expires: "3000-01-01T00:00:00Z",
+    }),
+    null,
+  );
+});
+
+test("verifyObject() hydrates pending proof references", async () => {
+  const did = await exportDidKey(ed25519PublicKey.publicKey);
+  const method = did.substring("did:key:".length);
+  const keyId = new URL(`${did}#${method}`);
+  const proofUrl = `ap://did:key:${method}/proofs/1`;
+  const signed = await signPortableJsonLd({
+    "@context": portableContext,
+    id: `ap://did:key:${method}/objects/1`,
+    type: "Note",
+    attributedTo: `ap://did:key:${method}/actor`,
+    content: "Portable note with a referenced proof",
+  }, {
+    verificationMethod: keyId,
+    proofOptions: { id: proofUrl },
+  });
+  const rawProof = signed.proof as Record<string, unknown>;
+  const remotelyReferencedJsonLd = { ...signed };
+  delete remotelyReferencedJsonLd.proof;
+  remotelyReferencedJsonLd["https://w3id.org/security#proof"] = [
+    { "@graph": [rawProof] },
+    { "@graph": [{ "@id": proofUrl }] },
+  ];
+
+  let proofFetches = 0;
+  const verified = await verifyObject(Note, remotelyReferencedJsonLd, {
+    documentLoader(url) {
+      assertEquals(url, formatIri(parseIri(proofUrl)));
+      proofFetches++;
+      return Promise.resolve({
+        contextUrl: null,
+        document: structuredClone(rawProof),
+        documentUrl: url,
+      });
+    },
+    contextLoader: mockDocumentLoader,
+  });
+
+  assertEquals(proofFetches, 1);
+  assertInstanceOf(verified, Note);
 });
 
 test("verifyObject() accepts multiple portable attributions from the same did:key origin", async () => {
