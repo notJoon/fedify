@@ -14,6 +14,8 @@ added in the future.[^1]
  -  [Fedi badge]
  -  [Ghost's ActivityPub server]
  -  [Hollo: a federated single-user microblogging software]
+ -  [H3 integration example](./h3/), which demonstrates serving a Fedify
+    federation through an H3 application
  -  [Hono integration sample](./hono-sample/)
  -  [Fastify integration example](./fastify/)
  -  [Fedify–Express integration example](./express/)
