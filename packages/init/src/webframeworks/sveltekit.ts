@@ -3,7 +3,7 @@ import deps from "../json/deps.json" with { type: "json" };
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { PackageManager, WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, getNodeBunDevToolTasks } from "./utils.ts";
+import { getInstruction, nodeBunDevToolTasks, pmToRt } from "./utils.ts";
 
 const sveltekitDescription: WebFrameworkDescription = {
   label: "SvelteKit",
@@ -19,6 +19,9 @@ const sveltekitDescription: WebFrameworkDescription = {
       ...defaultDevDependencies,
       "typescript": deps["npm:typescript"],
       "@types/node": deps["npm:@types/node@25"],
+      ...(pmToRt(pm) === "deno"
+        ? {}
+        : { "@dotenvx/dotenvx": deps["npm:@dotenvx/dotenvx"] }),
     },
     federationFile: "src/lib/federation.ts",
     loggingFile: "src/lib/logging.ts",
@@ -26,7 +29,7 @@ const sveltekitDescription: WebFrameworkDescription = {
     files: {
       "src/hooks.server.ts": await readTemplate("sveltekit/hooks.server.ts"),
     },
-    tasks: getNodeBunDevToolTasks(pm),
+    tasks: pmToRt(pm) === "deno" ? {} : { ...TASKS },
     instruction: getInstruction(pm, 5173),
   }),
 };
@@ -61,3 +64,10 @@ const getSvelteKitInitCommand = (pm: PackageManager): string[] =>
     : pm === "npm"
     ? ["npx", "sv", "create"]
     : [pm, "dlx", "sv", "create"];
+
+const TASKS = {
+  "dev": "dotenvx run -- vite dev",
+  "build": "dotenvx run -- vite build",
+  "preview": "dotenvx run -- vite preview",
+  ...nodeBunDevToolTasks,
+};
