@@ -5,7 +5,12 @@ import {
 } from "@fedify/fedify";
 import { test } from "@fedify/fixture";
 import { strict as assert } from "node:assert";
-import { fedifyWith, isFederationRequest, isNodeInfoRequest } from "./index.ts";
+import {
+  fedifyWith,
+  integrateFederation,
+  isFederationRequest,
+  isNodeInfoRequest,
+} from "./index.ts";
 
 test("Accept header detection", () => {
   const request = new Request("https://example.com/", {
@@ -73,4 +78,38 @@ test("Non-federation request delegation", async () => {
 
   assert.strictEqual(await response1.text(), "Default response");
   assert.strictEqual(await response2.text(), "Custom middleware response");
+});
+
+test("Custom not-found/not acceptable handler", async () => {
+  const federation = createFederation({
+    kv: new MemoryKvStore(),
+    queue: new InProcessMessageQueue(),
+  });
+
+  // Set up a dispatcher that always returns null to simulate a not acceptable scenario
+  federation.setActorDispatcher("/users/{identifier}", () => null);
+
+  const handler = integrateFederation(federation, undefined, {
+    onNotFound: () => new Response("Custom not found", { status: 418 }),
+    onNotAcceptable: () =>
+      new Response("Custom not acceptable", { status: 418 }),
+  });
+
+  const response1 = await handler(
+    new Request("https://example.com/missing", {
+      headers: { Accept: "application/activity+json" },
+    }),
+  );
+
+  assert.strictEqual(response1.status, 418);
+  assert.strictEqual(await response1.text(), "Custom not found");
+
+  const response2 = await handler(
+    new Request("https://example.com/users/123", {
+      headers: { Accept: "text/html" },
+    }),
+  );
+
+  assert.strictEqual(response2.status, 418);
+  assert.strictEqual(await response2.text(), "Custom not acceptable");
 });
