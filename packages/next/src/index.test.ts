@@ -1,6 +1,6 @@
 import { test } from "@fedify/fixture";
 import { strict as assert } from "node:assert";
-import { isFederationRequest } from "./index.ts";
+import { isFederationRequest, isNodeInfoRequest } from "./index.ts";
 
 test("Accept header detection", () => {
   const request = new Request("https://example.com/", {
@@ -21,4 +21,16 @@ test("Content-Type header detection", () => {
   });
 
   assert.strictEqual(isFederationRequest(request), true);
+});
+
+test("NodeInfo route detection", () => {
+  const request1 = new Request("https://example.com/.well-known/nodeinfo", {});
+
+  const request2 = new Request(
+    "https://example.com/.well-known/x-nodeinfo2",
+    {},
+  );
+
+  assert.strictEqual(isNodeInfoRequest(request1), true);
+  assert.strictEqual(isNodeInfoRequest(request2), true);
 });
