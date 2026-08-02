@@ -148,6 +148,9 @@ To be released.
 
 ### @fedify/cli
 
+ -  Added \[SvelteKit\] option to `fedify init` command. This option allows
+    users to initialize a new Fedify project with SvelteKit integration.
+    [[#892], [#971] by Jang Hanarae\]
  -  Added `fedify.com.es` as a tunneling service.  The CLI pins the service's
     SSH host key and rejects a mismatched server before exposing a local port.
     [[#940]]
@@ -158,7 +161,9 @@ To be released.
     `@js-temporal/polyfill` to `temporal-polyfill`.
     [[#823], [#925]]
 
+[#892]: https://github.com/fedify-dev/fedify/issues/892
 [#940]: https://github.com/fedify-dev/fedify/pull/940
+[#971]: https://github.com/fedify-dev/fedify/pull/971
 
 ### @fedify/debugger
 
@@ -178,10 +183,8 @@ To be released.
  -  Supported \[SvelteKit\] as a web framework option in
     `fedify init`.  [[#892], [#971] by Jang Hanarae\]
 
-[#892]: https://github.com/fedify-dev/fedify/issues/892
 [#950]: https://github.com/fedify-dev/fedify/issues/950
 [#952]: https://github.com/fedify-dev/fedify/pull/952
-[#971]: https://github.com/fedify-dev/fedify/pull/971
 
 ### @fedify/interaction-controls
 
