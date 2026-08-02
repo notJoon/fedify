@@ -26,7 +26,7 @@ Supported options
 The initializer supports the following project configurations:
 
  -  **Web frameworks**: Bare-bones, [Astro], [Elysia], [Express], [Hono],
-    [Next.js], [Nitro], [Nuxt], [SolidStart]
+    [Next.js], [Nitro], [Nuxt], [SolidStart], [SvelteKit]
  -  **Package managers**: Deno, pnpm, Bun, Yarn, npm
  -  **Key-value stores**: In-Memory, Deno KV, Redis, PostgreSQL
  -  **Message queues**: In-Process, Deno KV, Redis, PostgreSQL, AMQP
@@ -39,6 +39,7 @@ The initializer supports the following project configurations:
 [Nitro]: https://nitro.build/
 [Nuxt]: https://nuxt.com/
 [SolidStart]: https://start.solidjs.com/
+[SvelteKit]: https://svelte.dev/
 
 
 Installation

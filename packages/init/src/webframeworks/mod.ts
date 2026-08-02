@@ -8,6 +8,7 @@ import next from "./next.ts";
 import nitro from "./nitro.ts";
 import nuxt from "./nuxt.ts";
 import solidstart from "./solidstart.ts";
+import sveltekit from "./sveltekit.ts";
 
 /**
  * Registry of all supported web framework configurations.
@@ -26,6 +27,7 @@ const webFrameworks: WebFrameworks = {
   nitro,
   nuxt,
   solidstart,
+  sveltekit,
 } as const;
 
 export default webFrameworks;

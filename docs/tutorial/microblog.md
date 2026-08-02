@@ -169,6 +169,7 @@ Select *Hono*, *npm*, *in-process*, and *in-memory* in order:
   Express
   Nuxt
   SolidStart
+  SvelteKit
 
 
 ? Choose the package manager to use

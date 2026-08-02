@@ -132,9 +132,12 @@ export async function replacePortInApp(
     return;
   }
 
-  if (wf === "astro") {
-    // Insert server.port into the Astro config
-    const configPath = join(dir, "astro.config.ts");
+  if (wf === "astro" || wf === "sveltekit") {
+    // Insert server.port into the Astro or Vite config
+    const configPath = join(
+      dir,
+      wf === "astro" ? "astro.config.ts" : "vite.config.ts",
+    );
     const content = await readFile(configPath, "utf8");
     await writeFile(
       configPath,
