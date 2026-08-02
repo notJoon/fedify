@@ -170,13 +170,13 @@ To be released.
 
 ### @fedify/init
 
- -  Supported [SvelteKit] as a web framework option in `fedify init` [[#892],
-    [#971] by Jang Hanarae]
-
  -  Fixed `fedify init`'s hydration test validation to run `format` before
     `format:check`, which previously caused the entire test suite to fail when
     the package manager is `npm` or `pnpm`:
-    [[#950], [#952] by Jang Hanarae]
+    [[#950]]
+    [[#952] by Jang Hanarae\]
+ -  Supported \[SvelteKit\] as a web framework option in
+    `fedify init`.  [[#892], [#971] by Jang Hanarae\]
 
 [#892]: https://github.com/fedify-dev/fedify/issues/892
 [#950]: https://github.com/fedify-dev/fedify/issues/950
