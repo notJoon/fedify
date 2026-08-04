@@ -59,7 +59,7 @@
     "build": "pnpm --filter @fedify/next... run build:self",
     "prepack": "pnpm build",
     "prepublish": "pnpm build",
-    "test": "node --experimental-transform-types --test",
+    "test": "node --test dist/",
     "test:bun": "bun test"
   }
 }
