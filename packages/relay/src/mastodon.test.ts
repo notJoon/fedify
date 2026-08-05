@@ -389,12 +389,13 @@ describe("MastodonRelay", () => {
     strictEqual(handlerCalled, true);
     ok(handlerActor);
 
-    // Verify follower was stored
+    // Verify follower was immediately accepted
     const followerData = await kv.get([
       "follower",
       "https://remote.example.com/users/alice",
     ]);
-    ok(followerData);
+    ok(isRelayFollowerData(followerData));
+    strictEqual(followerData.state, "accepted");
   });
 
   test("handles Follow activity with subscription rejection", async () => {
