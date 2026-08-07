@@ -1,6 +1,6 @@
+import type { Request as ERequest, Response as EResponse } from "express";
 import { strict as assert } from "node:assert";
 import { describe, test } from "node:test";
-import type { Request as ERequest, Response as EResponse } from "express";
 import { integrateFederation } from "./index.ts";
 
 interface MockFederation {
@@ -63,13 +63,22 @@ function createMockResponse(): {
 
 describe("integrateFederation()", () => {
   test("waits for an async contextDataFactory and passes the resolved value to federation.fetch()", async () => {
+    let resolveContextData!: (value: string) => void;
+    let fetchCalled = false;
+
     const mockFederation: MockFederation = {
       fetch(_request, options) {
+        fetchCalled = true;
         const { contextData } = options as { contextData: unknown };
         return Promise.resolve(new Response(String(contextData)));
       },
     };
-    const contextDataFactory = () => Promise.resolve("Hello World");
+
+    const contextDataFactory = () =>
+      new Promise<string>((resolve) => {
+        resolveContextData = resolve;
+      });
+
     const middleware = integrateFederation(
       mockFederation as never,
       contextDataFactory,
@@ -82,6 +91,11 @@ describe("integrateFederation()", () => {
     middleware(req, response, () => {
       nextCalled = true;
     });
+
+    await Promise.resolve();
+    assert.strictEqual(fetchCalled, false);
+
+    resolveContextData("Hello World");
     await ended;
 
     assert.strictEqual(nextCalled, false);
