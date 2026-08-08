@@ -35,6 +35,7 @@ function createInitData(): InitCommandData {
     initializer: {
       federationFile: "federation.ts",
       loggingFile: "logging.ts",
+      testFile: "scripts/smokeTest.ts",
       instruction: message`done`,
       tasks: {},
       compilerOptions: {},
