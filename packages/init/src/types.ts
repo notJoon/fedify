@@ -96,6 +96,8 @@ export interface WebFrameworkInitializer {
   federationFile: string;
   /** Relative path where the logging configuration file will be created. */
   loggingFile: string;
+  /** Relative path where the smoke-test script file will be created. */
+  testFile: string;
   /** Optional template path for the logging configuration file. */
   loggingTemplate?: string;
   /**

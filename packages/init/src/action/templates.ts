@@ -1,6 +1,6 @@
 import { concat, entries, join, map, pipe, when } from "@fxts/core";
 import { toMerged } from "es-toolkit";
-import { readTemplate } from "../lib.ts";
+import { getDevCommand, readTemplate } from "../lib.ts";
 import type { InitCommandData, PackageManager } from "../types.ts";
 import { replace } from "../utils.ts";
 import { needsDenoDotenv } from "./utils.ts";
@@ -55,6 +55,28 @@ export const loadLogging = async (
   pipe(
     await readTemplate(initializer.loggingTemplate ?? "defaults/logging.ts"),
     replace(/\/\* project name \*\//, JSON.stringify(projectName)),
+  );
+
+/**
+ * Loads the smoke-test script content for the initializer.
+ *
+ * Every framework shares the same *defaults/smokeTest.ts* template, so unlike
+ * {@link loadLogging} there is no per-framework template override.  The
+ * template spawns the project's own dev server, so it needs the dev command
+ * for the chosen package manager baked in at generation time.
+ *
+ * @param param0 - {@link InitCommandData} containing `packageManager`
+ * @returns The complete smoke-test script content as a string
+ */
+export const loadTest = async (
+  { packageManager }: InitCommandData,
+) =>
+  pipe(
+    await readTemplate("defaults/smokeTest.ts"),
+    replace(
+      /\/\* dev command \*\//,
+      JSON.stringify(getDevCommand(packageManager).split(" ")),
+    ),
   );
 
 /**
