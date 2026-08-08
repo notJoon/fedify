@@ -3,7 +3,12 @@ import deps from "../json/deps.json" with { type: "json" };
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { PackageManager, WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies } from "./const.ts";
-import { getInstruction, pmToRt } from "./utils.ts";
+import {
+  getInstruction,
+  getTestDependencies,
+  getTestTask,
+  pmToRt,
+} from "./utils.ts";
 
 const astroNodeBunDevDependencies = {
   "@fedify/lint": PACKAGE_VERSION,
@@ -74,9 +79,11 @@ const astroDescription: WebFrameworkDescription = {
             "@types/node": deps["npm:@types/node@22"],
           }
           : {}),
+        ...getTestDependencies(pm),
       },
       federationFile: "src/federation.ts",
       loggingFile: "src/logging.ts",
+      testFile: "scripts/smokeTest.ts",
       format: pm === "deno" ? undefined : { tool: "prettier" },
       files: {
         "astro.config.ts": await readTemplate(
@@ -131,17 +138,20 @@ const TASKS = {
     dev: `${astroDenoCommand} dev`,
     build: `${astroDenoCommand} build`,
     preview: `${astroDenoCommand} preview`,
+    test: getTestTask("deno"),
   },
   "bun": {
     dev: "bunx --bun astro dev",
     build: "bunx --bun astro build",
     preview: "bun ./dist/server/entry.mjs",
+    test: getTestTask("bun"),
     ...astroNodeBunDevToolTasks,
   },
   "node": {
     dev: "dotenvx run -- astro dev",
     build: "dotenvx run -- astro build",
     preview: "dotenvx run -- astro preview",
+    test: getTestTask("npm"),
     ...astroNodeBunDevToolTasks,
   },
 };

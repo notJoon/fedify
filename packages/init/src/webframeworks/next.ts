@@ -3,7 +3,12 @@ import deps from "../json/deps.json" with { type: "json" };
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { PackageManager, WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, getNodeBunDevToolTasks } from "./utils.ts";
+import {
+  getInstruction,
+  getNodeBunDevToolTasks,
+  getTestDependencies,
+  getTestTask,
+} from "./utils.ts";
 
 const nextDescription: WebFrameworkDescription = {
   label: "Next.js",
@@ -23,9 +28,11 @@ const nextDescription: WebFrameworkDescription = {
     devDependencies: {
       "@types/node": deps["npm:@types/node@20"],
       ...defaultDevDependencies,
+      ...getTestDependencies(pm),
     },
     federationFile: "federation/index.ts",
     loggingFile: "logging.ts",
+    testFile: "scripts/smokeTest.ts",
     format: {
       ignorePatterns: [".next/**"],
     },
@@ -33,7 +40,7 @@ const nextDescription: WebFrameworkDescription = {
       "instrumentation.ts": await readTemplate("next/instrumentation.ts"),
       "middleware.ts": await readTemplate("next/middleware.ts"),
     },
-    tasks: getNodeBunDevToolTasks(pm),
+    tasks: { ...getNodeBunDevToolTasks(pm), test: getTestTask(pm) },
     instruction: getInstruction(pm, 3000),
   }),
 };

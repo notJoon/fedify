@@ -3,7 +3,12 @@ import deps from "../json/deps.json" with { type: "json" };
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, nodeBunDevToolTasks, pmToRt } from "./utils.ts";
+import {
+  getInstruction,
+  getTestTask,
+  nodeBunDevToolTasks,
+  pmToRt,
+} from "./utils.ts";
 
 const expressDescription: WebFrameworkDescription = {
   label: "Express",
@@ -26,6 +31,7 @@ const expressDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
+    testFile: "scripts/smokeTest.ts",
     files: {
       "src/app.ts": (await readTemplate("express/app.ts"))
         .replace(/\/\* logger \*\//, projectName),
@@ -54,15 +60,18 @@ const TASKS = {
       "deno run --allow-read --allow-net --allow-env --allow-sys --watch ./src/index.ts",
     prod:
       "deno run --allow-read --allow-net --allow-env --allow-sys ./src/index.ts",
+    test: getTestTask("deno"),
   },
   bun: {
     dev: "bun run --hot ./src/index.ts",
     prod: "bun run ./src/index.ts",
+    test: getTestTask("bun"),
     ...nodeBunDevToolTasks,
   },
   node: {
     dev: "dotenvx run -- tsx watch ./src/index.ts",
     prod: "dotenvx run -- node --import tsx ./src/index.ts",
+    test: getTestTask("npm"),
     ...nodeBunDevToolTasks,
   },
 };

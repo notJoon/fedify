@@ -5,7 +5,12 @@ import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { WebFrameworkDescription } from "../types.ts";
 import { replace } from "../utils.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, nodeBunDevToolTasks, pmToRt } from "./utils.ts";
+import {
+  getInstruction,
+  getTestTask,
+  nodeBunDevToolTasks,
+  pmToRt,
+} from "./utils.ts";
 
 const honoDescription: WebFrameworkDescription = {
   label: "Hono",
@@ -19,6 +24,7 @@ const honoDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
+    testFile: "scripts/smokeTest.ts",
     files: {
       "src/app.tsx": pipe(
         await readTemplate("hono/app.tsx"),
@@ -75,15 +81,18 @@ const TASKS = {
   deno: {
     dev: "deno run -A --watch ./src/index.ts",
     prod: "deno run -A ./src/index.ts",
+    test: getTestTask("deno"),
   },
   bun: {
     dev: "bun run --hot ./src/index.ts",
     prod: "bun run ./src/index.ts",
+    test: getTestTask("bun"),
     ...nodeBunDevToolTasks,
   },
   node: {
     dev: "dotenvx run -- tsx watch ./src/index.ts",
     prod: "dotenvx run -- node --import tsx ./src/index.ts",
+    test: getTestTask("npm"),
     ...nodeBunDevToolTasks,
   },
 };

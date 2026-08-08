@@ -3,7 +3,12 @@ import deps from "../json/deps.json" with { type: "json" };
 import { readTemplate } from "../lib.ts";
 import type { WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, nodeBunDevToolTasks, pmToRt } from "./utils.ts";
+import {
+  getInstruction,
+  getTestTask,
+  nodeBunDevToolTasks,
+  pmToRt,
+} from "./utils.ts";
 
 const bareBonesDescription: WebFrameworkDescription = {
   label: "Bare-bones",
@@ -19,6 +24,7 @@ const bareBonesDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
+    testFile: "scripts/smokeTest.ts",
     files: {
       "src/main.ts": await readTemplate(`bare-bones/main/${pmToRt(pm)}.ts`),
     },
@@ -63,15 +69,18 @@ const TASKS = {
   deno: {
     dev: "deno run -A --watch ./src/main.ts",
     prod: "deno run -A ./src/main.ts",
+    test: getTestTask("deno"),
   },
   bun: {
     dev: "bun run --hot ./src/main.ts",
     prod: "bun run ./src/main.ts",
+    test: getTestTask("bun"),
     ...nodeBunDevToolTasks,
   },
   node: {
     dev: "dotenvx run -- tsx watch ./src/main.ts",
     prod: "dotenvx run -- node --import tsx ./src/main.ts",
+    test: getTestTask("npm"),
     ...nodeBunDevToolTasks,
   },
 };

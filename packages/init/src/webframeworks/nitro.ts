@@ -2,7 +2,12 @@ import { PACKAGE_MANAGER } from "../const.ts";
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { PackageManager, WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, getNodeBunDevToolTasks } from "./utils.ts";
+import {
+  getInstruction,
+  getNodeBunDevToolTasks,
+  getTestDependencies,
+  getTestTask,
+} from "./utils.ts";
 
 const nitroDescription: WebFrameworkDescription = {
   label: "Nitro",
@@ -18,9 +23,13 @@ const nitroDescription: WebFrameworkDescription = {
       "@fedify/h3": PACKAGE_VERSION,
       ...(pm === "deno" && defaultDenoDependencies),
     },
-    devDependencies: defaultDevDependencies,
+    devDependencies: {
+      ...defaultDevDependencies,
+      ...getTestDependencies(pm),
+    },
     federationFile: "server/federation.ts",
     loggingFile: "server/logging.ts",
+    testFile: "scripts/smokeTest.ts",
     format: {
       ignorePatterns: [".output/**"],
     },
@@ -60,7 +69,7 @@ const nitroDescription: WebFrameworkDescription = {
       lib: ["ESNext", "DOM"],
       baseUrl: ".",
     },
-    tasks: getNodeBunDevToolTasks(pm),
+    tasks: { ...getNodeBunDevToolTasks(pm), test: getTestTask(pm) },
     instruction: getInstruction(pm, 3000),
   }),
 };
