@@ -164,7 +164,7 @@ Select *Hono*, *npm*, *in-process*, and *in-memory* in order:
 ❯ Hono
   Nitro
   Next.js
-  ElysiaJS
+  Elysia
   Astro
   Express
   Nuxt

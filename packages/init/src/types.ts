@@ -113,7 +113,7 @@ export interface WebFrameworkInitializer {
 
 /**
  * Describes a web framework integration (Hono, Express, Nitro, Next.js,
- * ElysiaJS, Astro) and how to initialize a project with it.
+ * Elysia, Astro) and how to initialize a project with it.
  */
 export interface WebFrameworkDescription {
   /** Human-readable name of the framework (e.g., `"Hono"`, `"Next.js"`). */
