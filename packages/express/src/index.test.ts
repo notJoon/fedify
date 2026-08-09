@@ -36,21 +36,12 @@ function createMockResponse(): {
     setHeader() {
       return response;
     },
-    removeHeader() {
-      return response;
-    },
     write(chunk: Buffer | string) {
       body += chunk.toString();
       return true;
     },
     end() {
       resolveEnded();
-      return response;
-    },
-    send() {
-      return response;
-    },
-    json() {
       return response;
     },
   };
