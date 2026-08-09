@@ -6,7 +6,7 @@ import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
 import { getInstruction, nodeBunDevToolTasks, pmToRt } from "./utils.ts";
 
 const elysiaDescription: WebFrameworkDescription = {
-  label: "ElysiaJS",
+  label: "Elysia",
   packageManagers: PACKAGE_MANAGER,
   defaultPort: 3000,
   init: async ({ projectName, packageManager: pm }) => ({
