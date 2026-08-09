@@ -1,9 +1,12 @@
 import { equal, ok } from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import astroDescription from "./webframeworks/astro.ts";
+import webFrameworks from "./webframeworks/mod.ts";
 import nextDescription from "./webframeworks/next.ts";
 import nitroDescription from "./webframeworks/nitro.ts";
-import webFrameworks from "./webframeworks/mod.ts";
 import solidstartDescription from "./webframeworks/solidstart.ts";
 
 test("Nitro template loads LogTape during server startup", async () => {
@@ -160,5 +163,22 @@ test("Astro Node.js and Bun templates use Prettier for Astro files", async () =>
     equal(initializer.devDependencies?.["oxfmt"], undefined);
     equal(initializer.devDependencies?.["oxlint"] != null, true);
     equal(initializer.format?.tool, "prettier");
+  }
+});
+
+test("README.md's web framework list matches the framework registry", async () => {
+  const modList = Object.values(webFrameworks).map((f) => f.label);
+  const readmeFile = resolve(dirname(fileURLToPath(import.meta.url)), "..", "README.md");
+  const readme = await readFile(readmeFile, "utf-8");
+  const readmeWebframeworks = readme.match(/\*\*Web frameworks\*\*:\s*([\s\S]+?)(?=\n\s*-\s*\*\*)/);
+  ok(readmeWebframeworks);
+  const readmeList = readmeWebframeworks[1]
+    .split(/,\s*/)
+    .map((s) => s.trim().replace(/^\[|\]$/g, ""));
+  equal(modList.length, readmeList.length);
+  modList.sort();
+  readmeList.sort();
+  for (let i = 0; i < modList.length; i++){
+    equal(modList[i], readmeList[i]);
   }
 });
