@@ -168,9 +168,15 @@ test("Astro Node.js and Bun templates use Prettier for Astro files", async () =>
 
 test("README.md's web framework list matches the framework registry", async () => {
   const modList = Object.values(webFrameworks).map((f) => f.label);
-  const readmeFile = resolve(dirname(fileURLToPath(import.meta.url)), "..", "README.md");
+  const readmeFile = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    "..",
+    "README.md",
+  );
   const readme = await readFile(readmeFile, "utf-8");
-  const readmeWebframeworks = readme.match(/\*\*Web frameworks\*\*:\s*([\s\S]+?)(?=\n\s*-\s*\*\*)/);
+  const readmeWebframeworks = readme.match(
+    /\*\*Web frameworks\*\*:\s*([\s\S]+?)(?=\n\s*-\s*\*\*)/,
+  );
   ok(readmeWebframeworks);
   const readmeList = readmeWebframeworks[1]
     .split(/,\s*/)
@@ -178,7 +184,7 @@ test("README.md's web framework list matches the framework registry", async () =
   equal(modList.length, readmeList.length);
   modList.sort();
   readmeList.sort();
-  for (let i = 0; i < modList.length; i++){
+  for (let i = 0; i < modList.length; i++) {
     equal(modList[i], readmeList[i]);
   }
 });
