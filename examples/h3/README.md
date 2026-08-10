@@ -16,26 +16,33 @@ Running the example
     git clone https://github.com/fedify-dev/fedify.git
     ~~~~
 
-2.  Move to the example folder:
+2.  Go to the directory of the cloned repository:
+
+    ~~~~ sh
+    cd fedify
+    ~~~~
+
+3.  Trust and install dependencies using `mise`:
+
+    ~~~~ sh
+    mise trust
+    mise install
+    ~~~~
+
+4.  Go to the `h3` example directory:
 
     ~~~~ sh
     cd examples/h3
     ~~~~
 
-3.  Install dependencies:
-
-    ~~~~ sh
-    pnpm install
-    ~~~~
-
-4.  Start the server:
+5.  Open the server using Deno:
 
     ~~~~ sh
     deno serve -A index.ts
     ~~~~
 
-5.  Look up the actor URL:
+6.  Lookup an actor using `@fedify/cli`:
 
-    ~~~~
-    http://localhost:8000/users/{identifier}
+    ~~~~ sh
+    fedify lookup http://localhost:8000/users/{identifier}
     ~~~~
