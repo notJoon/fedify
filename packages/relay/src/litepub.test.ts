@@ -466,60 +466,64 @@ describe("LitePubRelay", () => {
     strictEqual(followerData, undefined);
   });
 
-  test("ignores duplicate Follow activity from pending follower", async () => {
-    const kv = new MemoryKvStore();
-    let handlerCallCount = 0;
+  for (const state of ["pending", "accepted"] as const) {
+    test(`ignores duplicate Follow activity from ${state} follower`, async () => {
+      const kv = new MemoryKvStore();
+      let handlerCallCount = 0;
 
-    const relay = createRelay("litepub", {
-      kv,
-      origin: "https://relay.example.com",
-      documentLoaderFactory: () => mockDocumentLoader,
-      authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
-      subscriptionHandler: async (_ctx, _actor) => {
-        handlerCallCount++;
-        return await Promise.resolve(true);
-      },
+      const relay = createRelay("litepub", {
+        kv,
+        origin: "https://relay.example.com",
+        documentLoaderFactory: () => mockDocumentLoader,
+        authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
+        subscriptionHandler: async (_ctx, _actor) => {
+          handlerCallCount++;
+          return await Promise.resolve(true);
+        },
+      });
+
+      const follower = new Person({
+        id: new URL("https://remote.example.com/users/alice"),
+        preferredUsername: "alice",
+        inbox: new URL("https://remote.example.com/users/alice/inbox"),
+      });
+      await kv.set(
+        ["follower", "https://remote.example.com/users/alice"],
+        { actor: await follower.toJsonLd(), state },
+      );
+
+      const followActivity = new Follow({
+        id: new URL("https://remote.example.com/activities/follow/1"),
+        actor: follower.id,
+        object: new URL("https://relay.example.com/users/relay"),
+      });
+
+      let request = new Request("https://relay.example.com/inbox", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/activity+json",
+        },
+        body: JSON.stringify(
+          await followActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
+        ),
+      });
+      request = await signRequest(
+        request,
+        rsaKeyPair.privateKey,
+        rsaPublicKey.id,
+      );
+
+      await relay.fetch(request);
+
+      strictEqual(handlerCallCount, 0);
+      const followerData = await kv.get([
+        "follower",
+        "https://remote.example.com/users/alice",
+      ]);
+      ok(isRelayFollowerData(followerData));
+      strictEqual(followerData.state, state);
     });
-
-    const follower = new Person({
-      id: new URL("https://remote.example.com/users/alice"),
-      preferredUsername: "alice",
-      inbox: new URL("https://remote.example.com/users/alice/inbox"),
-    });
-
-    // Pre-populate with pending follower
-    await kv.set(
-      ["follower", "https://remote.example.com/users/alice"],
-      { actor: await follower.toJsonLd(), state: "pending" },
-    );
-
-    const followActivity = new Follow({
-      id: new URL("https://remote.example.com/activities/follow/1"),
-      actor: follower.id,
-      object: new URL("https://relay.example.com/users/relay"),
-    });
-
-    let request = new Request("https://relay.example.com/inbox", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/activity+json",
-      },
-      body: JSON.stringify(
-        await followActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
-      ),
-    });
-
-    request = await signRequest(
-      request,
-      rsaKeyPair.privateKey,
-      rsaPublicKey.id,
-    );
-
-    await relay.fetch(request);
-
-    // Verify handler was NOT called (duplicate follow ignored)
-    strictEqual(handlerCallCount, 0);
-  });
+  }
 
   test("handles Accept activity completing reciprocal follow", async () => {
     const kv = new MemoryKvStore();

@@ -34,11 +34,11 @@ export class LitePubRelay extends BaseRelay {
     follower: Actor,
   ): Promise<boolean> {
     if (follower.id == null) return true;
-    const existingFollow = await ctx.data.kv.get<RelayFollowerData>([
+    const existingFollow = await ctx.data.kv.get([
       "follower",
       follower.id.href,
     ]);
-    return existingFollow?.state === "pending";
+    return existingFollow != null;
   }
 
   protected override async afterFollowApproved(
