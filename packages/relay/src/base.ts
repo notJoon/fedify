@@ -204,8 +204,8 @@ export abstract class BaseRelay implements Relay {
     ctx: InboxContext<RelayOptions>,
     activity: RelayableActivity,
   ): Promise<void> {
-    const sender = await activity.getActor(ctx);
-    const excludeBaseUris = sender?.id == null ? [] : [new URL(sender.id)];
+    const senderId = activity.actorId;
+    const excludeBaseUris = senderId == null ? [] : [senderId];
     await this.deliverActivity(ctx, activity, excludeBaseUris);
   }
 
