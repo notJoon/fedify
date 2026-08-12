@@ -10,6 +10,7 @@ import {
 import { getLogger } from "@logtape/logtape";
 import { BaseRelay, type RelayableActivity } from "./base.ts";
 import {
+  isRelayFollowerData,
   RELAY_SERVER_ACTOR,
   type RelayFollowerData,
   type RelayOptions,
@@ -103,10 +104,13 @@ export class LitePubRelay extends BaseRelay {
         "follower",
         followerActor.id.href,
       ]);
-      if (followerData == null) return;
+      if (!isRelayFollowerData(followerData)) return;
 
       // Update follower state to accepted
-      const updatedFollowerData = { ...followerData, state: "accepted" };
+      const updatedFollowerData: RelayFollowerData = {
+        ...followerData,
+        state: "accepted",
+      };
       await ctx.data.kv.set(
         ["follower", followerActor.id.href],
         updatedFollowerData,

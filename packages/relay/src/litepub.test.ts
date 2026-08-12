@@ -18,7 +18,7 @@ import {
   getDocumentLoader,
   type RemoteDocument,
 } from "@fedify/vocab-runtime";
-import { ok, strictEqual } from "node:assert";
+import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import test, { describe } from "node:test";
 import { isRelayFollowerData } from "./types.ts";
 
@@ -581,6 +581,55 @@ describe("LitePubRelay", () => {
     ]);
     ok(isRelayFollowerData(followerData));
     strictEqual(followerData.state, "accepted");
+  });
+
+  test("ignores Accept activity for invalid follower data", async () => {
+    const kv = new MemoryKvStore();
+    const followerId = "https://remote.example.com/users/alice";
+    const invalidFollowerData = { state: "pending" };
+
+    await kv.set(["follower", followerId], invalidFollowerData);
+
+    const relay = createRelay("litepub", {
+      kv,
+      origin: "https://relay.example.com",
+      documentLoaderFactory: () => mockDocumentLoader,
+      authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
+      subscriptionHandler: () => Promise.resolve(true),
+    });
+
+    const relayFollow = new Follow({
+      id: new URL("https://relay.example.com/activities/follow/1"),
+      actor: new URL("https://relay.example.com/users/relay"),
+      object: new URL(followerId),
+    });
+    const acceptActivity = new Accept({
+      id: new URL("https://remote.example.com/activities/accept/1"),
+      actor: new URL(followerId),
+      object: relayFollow,
+    });
+
+    let request = new Request("https://relay.example.com/inbox", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/activity+json",
+      },
+      body: JSON.stringify(
+        await acceptActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
+      ),
+    });
+    request = await signRequest(
+      request,
+      rsaKeyPair.privateKey,
+      rsaPublicKey.id,
+    );
+
+    await relay.fetch(request);
+
+    deepStrictEqual(
+      await kv.get(["follower", followerId]),
+      invalidFollowerData,
+    );
   });
 
   for (const state of ["pending", "accepted"] as const) {
