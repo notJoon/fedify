@@ -153,7 +153,7 @@ Select *Astro*, *bun*, *in-process*, and *in-memory* in order:
   Hono
   Nitro
   Next.js
-  ElysiaJS
+  Elysia
 ❯ Astro
   Express
 
