@@ -93,7 +93,7 @@ export class LitePubRelay extends BaseRelay {
       if (relayActorId == null) return;
 
       // Validate follower actor - accept activity sender
-      const followerActor = await accept.getActor();
+      const followerActor = await accept.getActor(ctx);
       if (!isActor(followerActor) || !followerActor.id) return;
       const parsed = ctx.parseUri(relayActorId);
       if (parsed == null || parsed.type !== "actor") return;
