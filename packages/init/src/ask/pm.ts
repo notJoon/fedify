@@ -1,4 +1,3 @@
-import { pipe, when } from "@fxts/core";
 import { select } from "@inquirer/prompts";
 import { message, optionName, text } from "@optique/core/message";
 import { print } from "@optique/run";
@@ -8,9 +7,7 @@ import {
   checkAllRuntimes,
   getInstallUrl,
   isPackageManagerAvailable,
-  kvStores,
-  messageQueues,
-  packageManagers,
+  isTest,
   runtimes,
 } from "../lib.ts";
 import type {
@@ -25,38 +22,34 @@ import { pmToRt } from "../webframeworks/utils.ts";
 
 /**
  * Fills in the package manager by prompting the user if not provided.
- * Ensures the selected package manager is compatible with the chosen web framework.
- * If the selected package manager is not installed, informs the user and prompts again.
+ * Ensures the selected package manager is compatible with the chosen web
+ * framework and installed on the system. When an explicitly requested package
+ * manager is unavailable, informs the user and prompts again.
  *
  * @param options - Initialization options possibly containing a packageManager and webFramework
  * @returns A promise resolving to options with a guaranteed packageManager
  */
 const fillPackageManager: //
-  <T extends { packageManager?: PackageManager; webFramework: WebFramework }> //
+  <
+    T extends {
+      packageManager?: PackageManager;
+      webFramework: WebFramework;
+      testMode: boolean;
+    },
+  > //
   (options: T) => //
   Promise<Omit<T, "packageManager"> & { packageManager: PackageManager }> = //
   async ({ packageManager, ...options }) => {
     const choices = await calculateChoices(options.webFramework);
     if (packageManager != null) {
-      const pm = packageManager;
-      const choice = choices.find(({ value }) => value === pm)!;
-      if (choice.disabled != null) {
-        print(message`${optionName(choice.name)} ${text(choice.disabled)}`);
-        process.exit(1);
+      const choice = choices.find(({ value }) => value === packageManager)!;
+      if (choice.disabled == null) {
+        return { ...options, packageManager };
       }
-      if (!await isPackageManagerAvailable(pm)) {
-        noticeInstallUrl(pm);
-        process.exit(1);
-      }
-      return ({ ...options, packageManager: pm });
+      print(message`${optionName(choice.name)} ${text(choice.disabled)}`);
+      if (isTest(options)) process.exit(1);
     }
-    while (true) {
-      const pm = await askPackageManager(choices);
-      if (await isPackageManagerAvailable(pm)) {
-        return ({ ...options, packageManager: pm });
-      }
-      noticeInstallUrl(pm);
-    }
+    return { ...options, packageManager: await askPackageManager(choices) };
   };
 
 export default fillPackageManager;
@@ -65,7 +58,9 @@ const calculateChoices = async (wf: WebFramework) => {
   const runtimeChecks = await checkAllRuntimes(
     webFrameworks[wf].minRuntimeVersions,
   );
-  const choices = PACKAGE_MANAGER.map(choicePackageManager(wf, runtimeChecks));
+  const choices = await Promise.all(
+    PACKAGE_MANAGER.map(choicePackageManager(wf, runtimeChecks)),
+  );
   if (choices.every((choice) => choice.disabled)) {
     printErrorMessage`No package manager with a supported runtime is available for ${
       webFrameworks[wf].label
@@ -85,7 +80,7 @@ const askPackageManager = (
 
 const choicePackageManager =
   (wf: WebFramework, runtimeChecks: Record<Runtime, RuntimeCheck>) =>
-  (value: PackageManager) => {
+  async (value: PackageManager) => {
     const check = runtimeChecks[pmToRt(value)];
     const label = runtimes[pmToRt(value)].label;
     const disabled = !isWfSupportsPm(wf, value)
@@ -96,6 +91,8 @@ const choicePackageManager =
       ? `requires ${label} which is not installed`
       : check.status === "malformed"
       ? `could not detect ${label} version`
+      : pmToRt(value) === "node" && !await isPackageManagerAvailable(value)
+      ? `is not installed; install it from ${getInstallUrl(value)}`
       : "";
     return disabled === "" ? { name: value, value } : {
       name: value,
@@ -108,23 +105,3 @@ const isWfSupportsPm = (
   wf: WebFramework,
   pm: PackageManager,
 ) => webFrameworks[wf].packageManagers.includes(pm);
-
-const noticeInstallUrl = (pm: PackageManager) => {
-  const label = getLabel(pm);
-  const url = getInstallUrl(pm);
-  print(message`  Package manager ${label} is not installed.`);
-  print(message`  You can install it from following link: ${url}`);
-  print(message`  or choose another package manager:`);
-};
-
-const getLabel = (name: string) =>
-  pipe(
-    name,
-    whenHasLabel(webFrameworks),
-    whenHasLabel(packageManagers),
-    whenHasLabel(messageQueues),
-    whenHasLabel(kvStores),
-    whenHasLabel(runtimes),
-  );
-const whenHasLabel = <T extends Record<string, { label: string }>>(desc: T) =>
-  when((name: string) => name in desc, (name) => desc[name as keyof T].label);
