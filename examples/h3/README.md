@@ -44,5 +44,5 @@ Running the example
 6.  Lookup an actor using `@fedify/cli`:
 
     ~~~~ sh
-    fedify lookup http://localhost:8000/users/{identifier}
+    mise run cli lookup http://localhost:8000/users/{identifier}
     ~~~~
