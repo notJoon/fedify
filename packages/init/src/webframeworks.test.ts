@@ -167,7 +167,7 @@ test("Astro Node.js and Bun templates use Prettier for Astro files", async () =>
 });
 
 test("README.md's web framework list matches the framework registry", async () => {
-  const modList = Object.values(webFrameworks).map((f) => f.label);
+  const modSet = new Set(Object.values(webFrameworks).map((f) => f.label));
   const readmeFile = resolve(
     dirname(fileURLToPath(import.meta.url)),
     "..",
@@ -178,13 +178,25 @@ test("README.md's web framework list matches the framework registry", async () =
     /\*\*Web frameworks\*\*:\s*([\s\S]+?)(?=\n\s*-\s*\*\*)/,
   );
   ok(readmeWebframeworks);
-  const readmeList = readmeWebframeworks[1]
-    .split(/,\s*/)
-    .map((s) => s.trim().replace(/^\[|\]$/g, ""));
-  equal(modList.length, readmeList.length);
-  modList.sort();
-  readmeList.sort();
-  for (let i = 0; i < modList.length; i++) {
-    equal(modList[i], readmeList[i]);
+  const readmeSet = new Set(
+    readmeWebframeworks[1]
+      .split(/,\s*/)
+      .map((s) => s.trim().replace(/^\[|\]$/g, "")),
+  );
+  const missingInReadme = modSet.difference(readmeSet);
+  const missingInMod = readmeSet.difference(modSet);
+  const errorMsg = [];
+  if (missingInReadme.size > 0) {
+    errorMsg.push(
+      `Missing from README.md: ${[...missingInReadme].join(", ")}`,
+    );
+  }
+  if (missingInMod.size > 0) {
+    errorMsg.push(
+      `Missing from the framework registry: ${[...missingInMod].join(", ")}`,
+    );
+  }
+  if (errorMsg.length > 0) {
+    throw new Error(errorMsg.join("\n"));
   }
 });
