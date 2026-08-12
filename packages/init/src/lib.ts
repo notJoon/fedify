@@ -260,22 +260,9 @@ export function resolveRequiredVersion(
 }
 
 /**
- * Checks whether `runtime` meets its required version, applying framework
- * `overrides` on top of the base minimum.
- */
-function checkRuntimeRequirement(
-  runtime: Runtime,
-  overrides: Partial<Record<Runtime, string>> = {},
-): Promise<RuntimeCheck> {
-  return checkRuntimeVersion({
-    ...runtimes[runtime],
-    minVersion: resolveRequiredVersion(runtime, overrides[runtime]),
-  });
-}
-
-/**
  * Checks every supported runtime once and returns a map from each runtime
- * identifier to its {@link checkRuntimeRequirement} result.
+ * identifier to its version-check result, applying framework `overrides` on
+ * top of each runtime's base minimum.
  */
 export async function checkAllRuntimes(
   overrides: Partial<Record<Runtime, string>> = {},
@@ -284,7 +271,13 @@ export async function checkAllRuntimes(
 > {
   const checked = await Promise.all(
     RUNTIME.map(async (runtime) =>
-      [runtime, await checkRuntimeRequirement(runtime, overrides)] as const
+      [
+        runtime,
+        await checkRuntimeVersion({
+          ...runtimes[runtime],
+          minVersion: resolveRequiredVersion(runtime, overrides[runtime]),
+        }),
+      ] as const
     ),
   );
   return Object.fromEntries(checked) as Record<Runtime, RuntimeCheck>;
