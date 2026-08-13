@@ -1,12 +1,37 @@
-import type { Context, Federation, FederationBuilder } from "@fedify/fedify";
-import { isActor, Object as APObject } from "@fedify/vocab";
+import type {
+  Context,
+  Federation,
+  FederationBuilder,
+  InboxContext,
+  InboxListenerSetters,
+} from "@fedify/fedify";
 import {
-  isRelayFollowerData,
+  type Actor,
+  Announce,
+  Create,
+  Delete,
+  Follow,
+  Move,
+  Undo,
+  Update,
+} from "@fedify/vocab";
+import type { Logger } from "@logtape/logtape";
+import {
+  handleUndoFollow,
+  sendFollowResponse,
+  validateFollowActivity,
+} from "./follow.ts";
+import {
+  parseRelayFollowerData,
   type Relay,
   RELAY_SERVER_ACTOR,
   type RelayFollower,
+  type RelayFollowerState,
   type RelayOptions,
 } from "./types.ts";
+
+/** @internal */
+export type RelayableActivity = Create | Delete | Move | Update | Announce;
 
 /**
  * Abstract base class for relay implementations.
@@ -18,6 +43,9 @@ export abstract class BaseRelay implements Relay {
   protected federationBuilder: FederationBuilder<RelayOptions>;
   protected options: RelayOptions;
   protected federation?: Federation<RelayOptions>;
+
+  protected abstract readonly initialFollowerState: RelayFollowerState;
+  protected abstract readonly logger: Logger;
 
   constructor(
     options: RelayOptions,
@@ -31,31 +59,6 @@ export abstract class BaseRelay implements Relay {
     return await (await this.#getFederation()).fetch(request, {
       contextData: this.options,
     });
-  }
-
-  /**
-   * Helper method to parse and validate follower data from storage.
-   * Deserializes JSON-LD actor data and validates it.
-   *
-   * @param actorId The actor ID of the follower
-   * @param data Raw data from KV store
-   * @returns RelayFollower object if valid, null otherwise
-   * @internal
-   */
-  private async parseFollowerData(
-    actorId: string,
-    data: unknown,
-  ): Promise<RelayFollower | null> {
-    if (!isRelayFollowerData(data)) return null;
-
-    const actor = await APObject.fromJsonLd(data.actor);
-    if (!isActor(actor)) return null;
-
-    return {
-      actorId,
-      actor,
-      state: data.state,
-    };
   }
 
   /**
@@ -88,7 +91,7 @@ export abstract class BaseRelay implements Relay {
       const actorId = entry.key[1];
       if (typeof actorId !== "string") continue;
 
-      const follower = await this.parseFollowerData(actorId, entry.value);
+      const follower = await parseRelayFollowerData(actorId, entry.value);
       if (follower) yield follower;
     }
   }
@@ -123,14 +126,100 @@ export abstract class BaseRelay implements Relay {
    */
   async getFollower(actorId: string): Promise<RelayFollower | null> {
     const followerData = await this.options.kv.get(["follower", actorId]);
-    return await this.parseFollowerData(actorId, followerData);
+    return await parseRelayFollowerData(actorId, followerData);
   }
 
-  /**
-   * Set up inbox listeners for handling ActivityPub activities.
-   * Each relay type implements this method with protocol-specific logic.
-   */
-  protected abstract setupInboxListeners(): void;
+  protected shouldSkipFollow(
+    _ctx: InboxContext<RelayOptions>,
+    _follower: Actor,
+  ): Promise<boolean> {
+    return Promise.resolve(false);
+  }
+
+  protected afterFollowApproved(
+    _ctx: InboxContext<RelayOptions>,
+    _follower: Actor,
+  ): Promise<void> {
+    return Promise.resolve();
+  }
+
+  protected abstract deliverActivity(
+    ctx: InboxContext<RelayOptions>,
+    activity: RelayableActivity,
+    excludeBaseUris: URL[],
+  ): Promise<void>;
+
+  async #handleFollow(
+    ctx: InboxContext<RelayOptions>,
+    follow: Follow,
+  ): Promise<void> {
+    const follower = await validateFollowActivity(ctx, follow);
+    if (follower?.id == null || await this.shouldSkipFollow(ctx, follower)) {
+      return;
+    }
+
+    const approved = await this.options.subscriptionHandler(ctx, follower);
+    if (approved) {
+      await ctx.data.kv.set(
+        ["follower", follower.id.href],
+        {
+          actor: await follower.toJsonLd(),
+          state: this.initialFollowerState,
+        },
+      );
+    }
+
+    await sendFollowResponse(ctx, follow, follower, approved);
+    if (approved) await this.afterFollowApproved(ctx, follower);
+  }
+
+  async #relayActivity(
+    ctx: InboxContext<RelayOptions>,
+    activity: RelayableActivity,
+  ): Promise<void> {
+    const senderId = activity.actorId;
+    const excludeBaseUris = senderId == null ? [] : [senderId];
+    await this.deliverActivity(ctx, activity, excludeBaseUris);
+  }
+
+  protected setupInboxListeners(): InboxListenerSetters<RelayOptions> {
+    if (this.federation == null) {
+      throw new Error("Federation must be initialized before inbox listeners");
+    }
+
+    const listeners = this.federation.setInboxListeners(
+      "/users/{identifier}/inbox",
+      "/inbox",
+    );
+    listeners
+      .on(Follow, async (ctx, follow) => await this.#handleFollow(ctx, follow))
+      .on(
+        Undo,
+        async (ctx, undo) => await handleUndoFollow(ctx, undo, this.logger),
+      )
+      .on(
+        Create,
+        async (ctx, create) => await this.#relayActivity(ctx, create),
+      )
+      .on(
+        Delete,
+        async (ctx, deleteActivity) =>
+          await this.#relayActivity(ctx, deleteActivity),
+      )
+      .on(
+        Move,
+        async (ctx, move) => await this.#relayActivity(ctx, move),
+      )
+      .on(
+        Update,
+        async (ctx, update) => await this.#relayActivity(ctx, update),
+      )
+      .on(
+        Announce,
+        async (ctx, announce) => await this.#relayActivity(ctx, announce),
+      );
+    return listeners;
+  }
 
   async #getFederation(): Promise<Federation<RelayOptions>> {
     if (this.federation == null) {

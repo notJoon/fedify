@@ -1,7 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
-import { MemoryKvStore, signRequest } from "@fedify/fedify";
+import { MemoryKvStore, signJsonLd, signRequest } from "@fedify/fedify";
 import { createRelay, type RelayOptions } from "@fedify/relay";
 import {
+  Announce,
   Create,
   Delete,
   Follow,
@@ -16,7 +17,7 @@ import {
   getDocumentLoader,
   type RemoteDocument,
 } from "@fedify/vocab-runtime";
-import { ok, strictEqual } from "node:assert";
+import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import test, { describe } from "node:test";
 import { isRelayFollowerData } from "./types.ts";
 
@@ -389,12 +390,13 @@ describe("MastodonRelay", () => {
     strictEqual(handlerCalled, true);
     ok(handlerActor);
 
-    // Verify follower was stored
+    // Verify follower was immediately accepted
     const followerData = await kv.get([
       "follower",
       "https://remote.example.com/users/alice",
     ]);
-    ok(followerData);
+    ok(isRelayFollowerData(followerData));
+    strictEqual(followerData.state, "accepted");
   });
 
   test("handles Follow activity with subscription rejection", async () => {
@@ -686,6 +688,88 @@ describe("MastodonRelay", () => {
 
     // Verify the request was accepted
     ok(response.status === 200 || response.status === 202);
+  });
+
+  test("handles Announce activity forwarding", async () => {
+    const kv = new MemoryKvStore();
+    const follower = new Person({
+      id: new URL("https://follower.example.com/users/bob"),
+      preferredUsername: "bob",
+      inbox: new URL("https://follower.example.com/users/bob/inbox"),
+    });
+    await kv.set(
+      ["follower", follower.id!.href],
+      { actor: await follower.toJsonLd(), state: "accepted" },
+    );
+
+    const relay = createRelay("mastodon", {
+      kv,
+      origin: "https://relay.example.com",
+      documentLoaderFactory: () => mockDocumentLoader,
+      authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
+      subscriptionHandler: () => Promise.resolve(true),
+    });
+
+    const announceActivity = new Announce({
+      id: new URL("https://remote.example.com/activities/announce/1"),
+      actor: new URL("https://remote.example.com/users/alice"),
+      object: new URL("https://remote.example.com/notes/1"),
+    });
+    const signedAnnounce = await signJsonLd(
+      await announceActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
+      rsaKeyPair.privateKey,
+      rsaPublicKey.id,
+      { contextLoader: mockDocumentLoader },
+    );
+
+    let request = new Request("https://relay.example.com/inbox", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/activity+json",
+      },
+      body: JSON.stringify(signedAnnounce),
+    });
+
+    request = await signRequest(
+      request,
+      rsaKeyPair.privateKey,
+      rsaPublicKey.id,
+    );
+
+    const originalFetch = globalThis.fetch;
+    let deliveryMethod: string | undefined;
+    let deliveredActivity: unknown;
+    globalThis.fetch = (async (
+      input: URL | RequestInfo,
+      init?: RequestInit,
+    ) => {
+      const outboundRequest = input instanceof Request
+        ? input
+        : new Request(input, init);
+      if (
+        outboundRequest.url ===
+          "https://follower.example.com/users/bob/inbox"
+      ) {
+        deliveryMethod = outboundRequest.method;
+        deliveredActivity = await outboundRequest.json();
+        return new Response(null, { status: 202 });
+      }
+      return originalFetch(input, init);
+    }) as typeof fetch;
+
+    try {
+      const response = await relay.fetch(request);
+      ok(
+        response.status === 200 || response.status === 202,
+        `Unexpected inbox response status: ${response.status}`,
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+
+    ok(deliveredActivity, "Expected Announce delivery to the follower inbox");
+    strictEqual(deliveryMethod, "POST");
+    deepStrictEqual(deliveredActivity, signedAnnounce);
   });
 
   test("ignores Follow activity without required fields", async () => {
