@@ -116,8 +116,12 @@ export const notEmpty = <T extends string | { length: number }>(s: T) =>
   s.length > 0;
 
 /** Type guard that checks whether an error is a "file not found" (`ENOENT`) error. */
-export const isNotFoundError = (e: unknown): e is { code: "ENOENT" } =>
-  isObject(e) && "code" in e && e.code === "ENOENT";
+export const isNotFoundError = (
+  e: unknown,
+): e is { code: "ENOENT" } | { exitCode: 127 } =>
+  isObject(e) &&
+  (("code" in e && e.code === "ENOENT") ||
+    ("exitCode" in e && e.exitCode === 127));
 
 /**
  * Error thrown when a spawned shell command exits with a non-zero code.
