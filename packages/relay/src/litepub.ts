@@ -11,6 +11,7 @@ import { getLogger } from "@logtape/logtape";
 import { BaseRelay, type RelayableActivity } from "./base.ts";
 import {
   isRelayFollowerData,
+  parseRelayFollowerData,
   RELAY_SERVER_ACTOR,
   type RelayFollowerData,
   type RelayOptions,
@@ -38,7 +39,11 @@ export class LitePubRelay extends BaseRelay {
       "follower",
       follower.id.href,
     ]);
-    return isRelayFollowerData(existingFollow);
+    const storedFollower = await parseRelayFollowerData(
+      follower.id.href,
+      existingFollow,
+    );
+    return storedFollower != null;
   }
 
   protected override async afterFollowApproved(
@@ -105,6 +110,11 @@ export class LitePubRelay extends BaseRelay {
         followerActor.id.href,
       ]);
       if (!isRelayFollowerData(followerData)) return;
+      const storedFollower = await parseRelayFollowerData(
+        followerActor.id.href,
+        followerData,
+      );
+      if (storedFollower == null) return;
 
       // Update follower state to accepted
       const updatedFollowerData: RelayFollowerData = {

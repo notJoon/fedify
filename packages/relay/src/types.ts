@@ -1,5 +1,5 @@
 import type { Context, KvStore, MessageQueue } from "@fedify/fedify";
-import type { Actor } from "@fedify/vocab";
+import { type Actor, isActor, Object as APObject } from "@fedify/vocab";
 import type {
   AuthenticatedDocumentLoaderFactory,
   DocumentLoaderFactory,
@@ -168,4 +168,27 @@ export function isRelayFollowerData(
     typeof obj.state === "string" &&
     (obj.state === "pending" || obj.state === "accepted")
   );
+}
+
+/**
+ * Parses and semantically validates follower data from storage.
+ *
+ * @param actorId The actor ID used as the follower's storage key.
+ * @param value The stored follower data.
+ * @returns The parsed follower, or `null` if the row is invalid.
+ * @internal
+ */
+export async function parseRelayFollowerData(
+  actorId: string,
+  value: unknown,
+): Promise<RelayFollower | null> {
+  if (!isRelayFollowerData(value)) return null;
+
+  try {
+    const actor = await APObject.fromJsonLd(value.actor);
+    if (!isActor(actor) || actor.id?.href !== actorId) return null;
+    return { actorId, actor, state: value.state };
+  } catch {
+    return null;
+  }
 }

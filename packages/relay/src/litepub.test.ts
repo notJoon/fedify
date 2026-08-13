@@ -467,47 +467,60 @@ describe("LitePubRelay", () => {
   });
 
   test("replaces malformed follower data on Follow", async () => {
-    const kv = new MemoryKvStore();
     const followerId = "https://remote.example.com/users/alice";
-    await kv.set(["follower", followerId], { state: "pending" });
-    let handlerCallCount = 0;
-
-    const relay = createRelay("litepub", {
-      kv,
-      origin: "https://relay.example.com",
-      documentLoaderFactory: () => mockDocumentLoader,
-      authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
-      subscriptionHandler: () => {
-        handlerCallCount++;
-        return Promise.resolve(true);
-      },
+    const mismatchedActor = new Person({
+      id: new URL("https://remote.example.com/users/bob"),
     });
+    const malformedRows = [
+      { state: "pending" },
+      { actor: null, state: "pending" },
+      { actor: {}, state: "pending" },
+      { actor: await mismatchedActor.toJsonLd(), state: "pending" },
+    ];
 
-    const followActivity = new Follow({
-      id: new URL("https://remote.example.com/activities/follow/1"),
-      actor: new URL(followerId),
-      object: new URL("https://relay.example.com/users/relay"),
-    });
-    let request = new Request("https://relay.example.com/inbox", {
-      method: "POST",
-      headers: { "Content-Type": "application/activity+json" },
-      body: JSON.stringify(
-        await followActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
-      ),
-    });
-    request = await signRequest(
-      request,
-      rsaKeyPair.privateKey,
-      rsaPublicKey.id,
-    );
+    for (const malformedRow of malformedRows) {
+      const kv = new MemoryKvStore();
+      await kv.set(["follower", followerId], malformedRow);
+      let handlerCallCount = 0;
 
-    await relay.fetch(request);
+      const relay = createRelay("litepub", {
+        kv,
+        origin: "https://relay.example.com",
+        documentLoaderFactory: () => mockDocumentLoader,
+        authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
+        subscriptionHandler: () => {
+          handlerCallCount++;
+          return Promise.resolve(true);
+        },
+      });
+      strictEqual(await relay.getFollower(followerId), null);
 
-    strictEqual(handlerCallCount, 1);
-    const follower = await relay.getFollower(followerId);
-    ok(follower);
-    strictEqual(follower.state, "pending");
-    strictEqual(follower.actor.id?.href, followerId);
+      const followActivity = new Follow({
+        id: new URL("https://remote.example.com/activities/follow/1"),
+        actor: new URL(followerId),
+        object: new URL("https://relay.example.com/users/relay"),
+      });
+      let request = new Request("https://relay.example.com/inbox", {
+        method: "POST",
+        headers: { "Content-Type": "application/activity+json" },
+        body: JSON.stringify(
+          await followActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
+        ),
+      });
+      request = await signRequest(
+        request,
+        rsaKeyPair.privateKey,
+        rsaPublicKey.id,
+      );
+
+      await relay.fetch(request);
+
+      strictEqual(handlerCallCount, 1);
+      const follower = await relay.getFollower(followerId);
+      ok(follower);
+      strictEqual(follower.state, "pending");
+      strictEqual(follower.actor.id?.href, followerId);
+    }
   });
 
   for (const state of ["pending", "accepted"] as const) {
@@ -632,52 +645,59 @@ describe("LitePubRelay", () => {
   });
 
   test("ignores Accept activity for invalid follower data", async () => {
-    const kv = new MemoryKvStore();
     const followerId = "https://remote.example.com/users/alice";
-    const invalidFollowerData = { state: "pending" };
-
-    await kv.set(["follower", followerId], invalidFollowerData);
-
-    const relay = createRelay("litepub", {
-      kv,
-      origin: "https://relay.example.com",
-      documentLoaderFactory: () => mockDocumentLoader,
-      authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
-      subscriptionHandler: () => Promise.resolve(true),
+    const mismatchedActor = new Person({
+      id: new URL("https://remote.example.com/users/bob"),
     });
+    const invalidRows = [
+      { state: "pending" },
+      { actor: null, state: "pending" },
+      { actor: {}, state: "pending" },
+      { actor: await mismatchedActor.toJsonLd(), state: "pending" },
+    ];
 
-    const relayFollow = new Follow({
-      id: new URL("https://relay.example.com/activities/follow/1"),
-      actor: new URL("https://relay.example.com/users/relay"),
-      object: new URL(followerId),
-    });
-    const acceptActivity = new Accept({
-      id: new URL("https://remote.example.com/activities/accept/1"),
-      actor: new URL(followerId),
-      object: relayFollow,
-    });
+    for (const invalidRow of invalidRows) {
+      const kv = new MemoryKvStore();
+      await kv.set(["follower", followerId], invalidRow);
 
-    let request = new Request("https://relay.example.com/inbox", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/activity+json",
-      },
-      body: JSON.stringify(
-        await acceptActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
-      ),
-    });
-    request = await signRequest(
-      request,
-      rsaKeyPair.privateKey,
-      rsaPublicKey.id,
-    );
+      const relay = createRelay("litepub", {
+        kv,
+        origin: "https://relay.example.com",
+        documentLoaderFactory: () => mockDocumentLoader,
+        authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
+        subscriptionHandler: () => Promise.resolve(true),
+      });
 
-    await relay.fetch(request);
+      const relayFollow = new Follow({
+        id: new URL("https://relay.example.com/activities/follow/1"),
+        actor: new URL("https://relay.example.com/users/relay"),
+        object: new URL(followerId),
+      });
+      const acceptActivity = new Accept({
+        id: new URL("https://remote.example.com/activities/accept/1"),
+        actor: new URL(followerId),
+        object: relayFollow,
+      });
 
-    deepStrictEqual(
-      await kv.get(["follower", followerId]),
-      invalidFollowerData,
-    );
+      let request = new Request("https://relay.example.com/inbox", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/activity+json",
+        },
+        body: JSON.stringify(
+          await acceptActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
+        ),
+      });
+      request = await signRequest(
+        request,
+        rsaKeyPair.privateKey,
+        rsaPublicKey.id,
+      );
+
+      await relay.fetch(request);
+
+      deepStrictEqual(await kv.get(["follower", followerId]), invalidRow);
+    }
   });
 
   for (const state of ["pending", "accepted"] as const) {

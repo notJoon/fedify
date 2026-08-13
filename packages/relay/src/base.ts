@@ -11,9 +11,7 @@ import {
   Create,
   Delete,
   Follow,
-  isActor,
   Move,
-  Object as APObject,
   Undo,
   Update,
 } from "@fedify/vocab";
@@ -24,7 +22,7 @@ import {
   validateFollowActivity,
 } from "./follow.ts";
 import {
-  isRelayFollowerData,
+  parseRelayFollowerData,
   type Relay,
   RELAY_SERVER_ACTOR,
   type RelayFollower,
@@ -64,31 +62,6 @@ export abstract class BaseRelay implements Relay {
   }
 
   /**
-   * Helper method to parse and validate follower data from storage.
-   * Deserializes JSON-LD actor data and validates it.
-   *
-   * @param actorId The actor ID of the follower
-   * @param data Raw data from KV store
-   * @returns RelayFollower object if valid, null otherwise
-   * @internal
-   */
-  private async parseFollowerData(
-    actorId: string,
-    data: unknown,
-  ): Promise<RelayFollower | null> {
-    if (!isRelayFollowerData(data)) return null;
-
-    const actor = await APObject.fromJsonLd(data.actor);
-    if (!isActor(actor)) return null;
-
-    return {
-      actorId,
-      actor,
-      state: data.state,
-    };
-  }
-
-  /**
    * Lists all followers of the relay.
    *
    * @returns An async iterator of follower entries
@@ -118,7 +91,7 @@ export abstract class BaseRelay implements Relay {
       const actorId = entry.key[1];
       if (typeof actorId !== "string") continue;
 
-      const follower = await this.parseFollowerData(actorId, entry.value);
+      const follower = await parseRelayFollowerData(actorId, entry.value);
       if (follower) yield follower;
     }
   }
@@ -153,7 +126,7 @@ export abstract class BaseRelay implements Relay {
    */
   async getFollower(actorId: string): Promise<RelayFollower | null> {
     const followerData = await this.options.kv.get(["follower", actorId]);
-    return await this.parseFollowerData(actorId, followerData);
+    return await parseRelayFollowerData(actorId, followerData);
   }
 
   protected shouldSkipFollow(
