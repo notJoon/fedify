@@ -86,7 +86,7 @@ const choicePackageManager =
     const disabled = !isWfSupportsPm(wf, value)
       ? `not supported with ${webFrameworks[wf].label}`
       : check.status === "unsupported"
-      ? `requires ${label} ${check.required} or later`
+      ? `requires ${label} ${check.required} or later (detected: ${check.detected})`
       : check.status === "missing"
       ? `requires ${label} which is not installed`
       : check.status === "malformed"
