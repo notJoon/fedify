@@ -38,7 +38,7 @@ export class LitePubRelay extends BaseRelay {
       "follower",
       follower.id.href,
     ]);
-    return existingFollow != null;
+    return isRelayFollowerData(existingFollow);
   }
 
   protected override async afterFollowApproved(

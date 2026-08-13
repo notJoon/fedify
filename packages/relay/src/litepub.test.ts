@@ -466,6 +466,50 @@ describe("LitePubRelay", () => {
     strictEqual(followerData, undefined);
   });
 
+  test("replaces malformed follower data on Follow", async () => {
+    const kv = new MemoryKvStore();
+    const followerId = "https://remote.example.com/users/alice";
+    await kv.set(["follower", followerId], { state: "pending" });
+    let handlerCallCount = 0;
+
+    const relay = createRelay("litepub", {
+      kv,
+      origin: "https://relay.example.com",
+      documentLoaderFactory: () => mockDocumentLoader,
+      authenticatedDocumentLoaderFactory: () => mockDocumentLoader,
+      subscriptionHandler: () => {
+        handlerCallCount++;
+        return Promise.resolve(true);
+      },
+    });
+
+    const followActivity = new Follow({
+      id: new URL("https://remote.example.com/activities/follow/1"),
+      actor: new URL(followerId),
+      object: new URL("https://relay.example.com/users/relay"),
+    });
+    let request = new Request("https://relay.example.com/inbox", {
+      method: "POST",
+      headers: { "Content-Type": "application/activity+json" },
+      body: JSON.stringify(
+        await followActivity.toJsonLd({ contextLoader: mockDocumentLoader }),
+      ),
+    });
+    request = await signRequest(
+      request,
+      rsaKeyPair.privateKey,
+      rsaPublicKey.id,
+    );
+
+    await relay.fetch(request);
+
+    strictEqual(handlerCallCount, 1);
+    const follower = await relay.getFollower(followerId);
+    ok(follower);
+    strictEqual(follower.state, "pending");
+    strictEqual(follower.actor.id?.href, followerId);
+  });
+
   for (const state of ["pending", "accepted"] as const) {
     test(`ignores duplicate Follow activity from ${state} follower`, async () => {
       const kv = new MemoryKvStore();
