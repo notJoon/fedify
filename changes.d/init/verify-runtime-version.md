@@ -1,3 +1,8 @@
+---
+links:
+  '#964': https://github.com/fedify-dev/fedify/issues/964
+  '#981': https://github.com/fedify-dev/fedify/pull/981
+---
  -  Added runtime version verification to `fedify init`. It checks that the
     selected Deno, Bun, or Node.js meets Fedify's minimum version, or a higher
     version required by a framework (such as Astro's Node.js 22.12), before

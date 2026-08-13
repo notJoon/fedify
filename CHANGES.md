@@ -192,7 +192,7 @@ To be released.
 [#950]: https://github.com/fedify-dev/fedify/issues/950
 [#952]: https://github.com/fedify-dev/fedify/pull/952
 [#964]: https://github.com/fedify-dev/fedify/issues/964
-[#981]: https://github.com/fedify-dev/fedify/issues/981
+[#981]: https://github.com/fedify-dev/fedify/pull/981
 
 ### @fedify/interaction-controls
 
