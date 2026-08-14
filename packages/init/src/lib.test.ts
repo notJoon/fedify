@@ -3,7 +3,12 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { isDirectoryEmpty } from "./lib.ts";
+import {
+  isDirectoryEmpty,
+  resolveRequiredVersion,
+  runtimes,
+  verifyRuntimeVersion,
+} from "./lib.ts";
 import { runSubCommand } from "./utils.ts";
 
 test("isDirectoryEmpty allows an unborn Git repository", async () => {
@@ -147,6 +152,53 @@ test("isDirectoryEmpty rejects a .git file", async () => {
 
     strictEqual(await isDirectoryEmpty(dir), false);
   });
+});
+
+test("verifyRuntimeVersion accepts equal versions", () => {
+  strictEqual(verifyRuntimeVersion("2.0.0", "2.0.0"), true);
+  strictEqual(verifyRuntimeVersion("2", "2.0.0"), true);
+});
+
+test("verifyRuntimeVersion accepts higher versions", () => {
+  strictEqual(verifyRuntimeVersion("2.0.1", "2.0"), true);
+  strictEqual(verifyRuntimeVersion("2.1.0", "2.0.0"), true);
+  strictEqual(verifyRuntimeVersion("3.0.0", "2.0.0"), true);
+});
+
+test("verifyRuntimeVersion rejects lower versions", () => {
+  strictEqual(verifyRuntimeVersion("1.9.9", "2.0.0"), false);
+  strictEqual(verifyRuntimeVersion("2.0.1", "2.1.0"), false);
+  strictEqual(verifyRuntimeVersion("2.0.0", "2.0.1"), false);
+});
+
+test("resolveRequiredVersion raises the base minimum for stricter frameworks", () => {
+  strictEqual(resolveRequiredVersion("node", "22.12.0"), "22.12.0");
+  strictEqual(resolveRequiredVersion("node", "21.0.0"), "22.0.0");
+  strictEqual(resolveRequiredVersion("node", undefined), "22.0.0");
+});
+
+test("deno outputPattern extracts stable and pre-release versions", () => {
+  strictEqual(runtimes.deno.outputPattern.exec("deno 2.8.3")?.[1], "2.8.3");
+  strictEqual(
+    runtimes.deno.outputPattern.exec("deno 2.8.3+e5f6a7b")?.[1],
+    "2.8.3",
+  );
+});
+
+test("bun outputPattern extracts stable and pre-release versions", () => {
+  strictEqual(runtimes.bun.outputPattern.exec("1.1.0")?.[1], "1.1.0");
+  strictEqual(
+    runtimes.bun.outputPattern.exec("1.2.14-canary.96")?.[1],
+    "1.2.14",
+  );
+});
+
+test("node outputPattern extracts stable and pre-release versions", () => {
+  strictEqual(runtimes.node.outputPattern.exec("v22.23.1")?.[1], "22.23.1");
+  strictEqual(
+    runtimes.node.outputPattern.exec("v24.0.0-nightly20250412795dd8eb79")?.[1],
+    "24.0.0",
+  );
 });
 
 async function createUnbornGitRepository(dir: string): Promise<void> {
