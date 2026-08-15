@@ -29,7 +29,7 @@ const nitroDescription: WebFrameworkDescription = {
     },
     federationFile: "server/federation.ts",
     loggingFile: "server/logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     format: {
       ignorePatterns: [".output/**"],
     },

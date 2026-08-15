@@ -32,7 +32,7 @@ const sveltekitDescription: WebFrameworkDescription = {
     },
     federationFile: "src/lib/federation.ts",
     loggingFile: "src/lib/logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     env: testMode ? { HOST: "127.0.0.1" } : {} as Record<string, string>,
     files: {
       "src/hooks.server.ts": await readTemplate("sveltekit/hooks.server.ts"),

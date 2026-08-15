@@ -24,7 +24,7 @@ const honoDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     files: {
       "src/app.tsx": pipe(
         await readTemplate("hono/app.tsx"),

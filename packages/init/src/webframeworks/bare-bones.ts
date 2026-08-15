@@ -24,7 +24,7 @@ const bareBonesDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     files: {
       "src/main.ts": await readTemplate(`bare-bones/main/${pmToRt(pm)}.ts`),
     },

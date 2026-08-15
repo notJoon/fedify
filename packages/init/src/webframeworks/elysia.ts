@@ -46,7 +46,7 @@ const elysiaDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     files: {
       "src/index.ts": (await readTemplate(
         `elysia/index/${pmToRt(pm)}.ts`,

@@ -83,7 +83,7 @@ const astroDescription: WebFrameworkDescription = {
       },
       federationFile: "src/federation.ts",
       loggingFile: "src/logging.ts",
-      testFile: "scripts/smokeTest.ts",
+      testFile: "scripts/smoke.test.ts",
       format: pm === "deno" ? undefined : { tool: "prettier" },
       files: {
         "astro.config.ts": await readTemplate(

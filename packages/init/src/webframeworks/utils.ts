@@ -1,7 +1,7 @@
 import type { Message } from "@optique/core";
 import { commandLine, message } from "@optique/core/message";
-import { getDevCommand } from "../lib.ts";
 import deps from "../json/deps.json" with { type: "json" };
+import { getDevCommand } from "../lib.ts";
 import type { PackageManager } from "../types.ts";
 
 export const nodeBunDevToolTasks = {
@@ -14,7 +14,7 @@ export const getNodeBunDevToolTasks = (
   pm: PackageManager,
 ): Record<string, string> => pm === "deno" ? {} : nodeBunDevToolTasks;
 
-const SMOKE_TEST_FILE = "scripts/smokeTest.ts";
+const SMOKE_TEST_FILE = "scripts/smoke.test.ts";
 
 /**
  * Returns the `test` task command that runs the generated smoke-test

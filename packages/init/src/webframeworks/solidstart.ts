@@ -26,7 +26,7 @@ const solidstartDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     format: {
       ignorePatterns: [".solid/**", ".vinxi/**"],
     },

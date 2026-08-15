@@ -60,7 +60,7 @@ export const loadLogging = async (
 /**
  * Loads the smoke-test script content for the initializer.
  *
- * Every framework shares the same *defaults/smokeTest.ts* template, so unlike
+ * Every framework shares the same *defaults/smoke.test.ts* template, so unlike
  * {@link loadLogging} there is no per-framework template override.  The
  * template spawns the project's own dev server, so it needs the dev command
  * for the chosen package manager baked in at generation time.
@@ -72,10 +72,13 @@ export const loadTest = async (
   { packageManager }: InitCommandData,
 ) =>
   pipe(
-    await readTemplate("defaults/smokeTest.ts"),
+    await readTemplate("defaults/smoke.test.ts"),
     replace(
       /\/\* dev command \*\//,
-      JSON.stringify(getDevCommand(packageManager).split(" ")),
+      JSON.stringify(getDevCommand(packageManager).split(" ")).replaceAll(
+        ",",
+        ", ",
+      ),
     ),
   );
 

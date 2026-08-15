@@ -32,7 +32,7 @@ const nextDescription: WebFrameworkDescription = {
     },
     federationFile: "federation/index.ts",
     loggingFile: "logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     format: {
       ignorePatterns: [".next/**"],
     },

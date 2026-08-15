@@ -26,7 +26,7 @@ const nuxtDescription: WebFrameworkDescription = {
     federationFile: "server/federation.ts",
     loggingFile: "server/logging.ts",
     loggingTemplate: "nuxt/server/logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     format: {
       ignorePatterns: [".output/**"],
     },

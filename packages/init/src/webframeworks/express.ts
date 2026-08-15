@@ -31,7 +31,7 @@ const expressDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
-    testFile: "scripts/smokeTest.ts",
+    testFile: "scripts/smoke.test.ts",
     files: {
       "src/app.ts": (await readTemplate("express/app.ts"))
         .replace(/\/\* logger \*\//, projectName),
