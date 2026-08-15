@@ -1,16 +1,20 @@
 import { getDocumentLoader } from "@fedify/fedify";
 import { type Actor, isActor, lookupObject } from "@fedify/vocab";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
+import type { Readable } from "node:stream";
 
 const DEV_COMMAND: string[] = /* dev command */;
 const HANDLE = "john";
 const STARTUP_TIMEOUT = 15_000;
+const IS_WINDOWS = process.platform === "win32";
 
 async function main(): Promise<void> {
   const [command, ...args] = DEV_COMMAND;
   const server = spawn(command, args, {
     stdio: ["ignore", "pipe", "pipe"],
-    detached: true,
+    shell: IS_WINDOWS,
+    windowsHide: true,
+    detached: !IS_WINDOWS,
   });
   server.on("error", () => {});
 
@@ -22,11 +26,14 @@ async function main(): Promise<void> {
   process.once("SIGTERM", exitOnSignal);
 
   let output = "";
-  const collectOutput = (chunk: Buffer) => {
-    output += chunk.toString("utf8");
+  const collectOutput = (stream: Readable | null) => {
+    const decoder = new TextDecoder();
+    stream?.on("data", (chunk: Buffer) => {
+      output += decoder.decode(chunk, { stream: true });
+    });
   };
-  server.stdout?.on("data", collectOutput);
-  server.stderr?.on("data", collectOutput);
+  collectOutput(server.stdout);
+  collectOutput(server.stderr);
 
   try {
     const port = await determinePort(server);
@@ -47,11 +54,14 @@ async function main(): Promise<void> {
   }
 }
 
+function stripEscape(text: string): string {
+  return text.replace(new RegExp("\\u001B\\[[0-9;]*[A-Za-z]", "g"), "");
+}
+
 function determinePort(server: ReturnType<typeof spawn>): Promise<number> {
   const portPatterns = [
     /listening on.*:(\d+)/i,
     /server.*:(\d+)/i,
-    /port\s*:?\s*(\d+)/i,
     /https?:\/\/localhost:(\d+)/i,
     /https?:\/\/0\.0\.0\.0:(\d+)/i,
     /https?:\/\/127\.0\.0\.1:(\d+)/i,
@@ -66,21 +76,32 @@ function determinePort(server: ReturnType<typeof spawn>): Promise<number> {
       );
     }, STARTUP_TIMEOUT);
 
-    const onData = (chunk: Buffer) => {
-      const text = chunk.toString("utf8");
+    const findPort = (text: string) => {
       for (const pattern of portPatterns) {
         const match = text.match(pattern);
         if (match && match[1]) {
           const port = Number.parseInt(match[1], 10);
-          clearTimeout(timeout);
-          resolve(port);
-          return;
+          if (port > 0 && port < 65536) return port;
         }
       }
+      return null;
     };
 
-    server.stdout?.on("data", onData);
-    server.stderr?.on("data", onData);
+    const scan = (stream: Readable | null) => {
+      const decoder = new TextDecoder();
+      let text = "";
+      stream?.on("data", (chunk: Buffer) => {
+        text += decoder.decode(chunk, { stream: true });
+        const port = findPort(stripEscape(text));
+        if (port != null) {
+          clearTimeout(timeout);
+          resolve(port);
+        }
+      });
+    };
+
+    scan(server.stdout);
+    scan(server.stderr);
     server.once("exit", (code) => {
       clearTimeout(timeout);
       reject(new Error(`The dev server exited early with code ${String(code)}.`));
@@ -126,8 +147,16 @@ async function checkActor(url: string): Promise<Actor> {
 }
 
 function stopServer(server: ReturnType<typeof spawn>): void {
+  if (server.pid == null) return;
+  if (IS_WINDOWS) {
+    spawnSync("taskkill", ["/pid", String(server.pid), "/T", "/F"], {
+      stdio: "ignore",
+      windowsHide: true,
+    });
+    return;
+  }
   try {
-    if (server.pid != null) process.kill(-server.pid, "SIGKILL");
+    process.kill(-server.pid, "SIGKILL");
   } catch {
     // Process group already exited.
   }
