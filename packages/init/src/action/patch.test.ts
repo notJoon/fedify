@@ -97,10 +97,10 @@ test("patchFiles writes the smoke-test script", async () => {
     await patchFiles(createInitData(dir, false));
 
     const testScript = await readFile(
-      join(dir, "scripts", "smokeTest.ts"),
+      join(dir, "scripts", "smoke.test.ts"),
       "utf8",
     );
-    assert.match(testScript, /\["npm","run","dev"\]/);
+    assert.match(testScript, /\["npm", "run", "dev"\]/);
   });
 });
 
@@ -123,7 +123,7 @@ function createInitData(
     initializer: {
       federationFile: "src/federation.ts",
       loggingFile: "src/logging.ts",
-      testFile: "scripts/smokeTest.ts",
+      testFile: "scripts/smoke.test.ts",
       instruction: message`done`,
       tasks: {},
       compilerOptions: {},

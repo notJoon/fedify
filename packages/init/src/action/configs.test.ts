@@ -1,3 +1,4 @@
+import { message } from "@optique/core";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -5,11 +6,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
-import { message } from "@optique/core";
 import { kvStores, messageQueues, PACKAGE_VERSION } from "../lib.ts";
 import type { InitCommandData } from "../types.ts";
-import bareBonesDescription from "../webframeworks/bare-bones.ts";
 import astroDescription from "../webframeworks/astro.ts";
+import bareBonesDescription from "../webframeworks/bare-bones.ts";
 import nextDescription from "../webframeworks/next.ts";
 import nitroDescription from "../webframeworks/nitro.ts";
 import nuxtDescription from "../webframeworks/nuxt.ts";
@@ -35,7 +35,7 @@ function createInitData(): InitCommandData {
     initializer: {
       federationFile: "federation.ts",
       loggingFile: "logging.ts",
-      testFile: "scripts/smokeTest.ts",
+      testFile: "scripts/smoke.test.ts",
       instruction: message`done`,
       tasks: {},
       compilerOptions: {},
