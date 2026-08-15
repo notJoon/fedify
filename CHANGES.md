@@ -175,6 +175,10 @@ To be released.
 
 ### @fedify/init
 
+ -  Added a `test` task to projects scaffolded by `fedify init`.  It starts
+    the app, waits for it to become ready, and checks that it resolves a local
+    actor, giving projects a standard smoke test to run right after scaffolding
+    and whenever the app changes afterwards.  [[#898], [#990] by Jang Hanarae\]
  -  Added runtime version verification to `fedify init`. It checks that the
     selected Deno, Bun, or Node.js meets Fedify's minimum version, or a higher
     version required by a framework (such as Astro's Node.js 22.12), before
@@ -189,10 +193,12 @@ To be released.
  -  Supported \[SvelteKit\] as a web framework option in
     `fedify init`.  [[#892], [#971] by Jang Hanarae\]
 
+[#898]: https://github.com/fedify-dev/fedify/issues/898
 [#950]: https://github.com/fedify-dev/fedify/issues/950
 [#952]: https://github.com/fedify-dev/fedify/pull/952
 [#964]: https://github.com/fedify-dev/fedify/issues/964
 [#981]: https://github.com/fedify-dev/fedify/pull/981
+[#990]: https://github.com/fedify-dev/fedify/pull/990
 
 ### @fedify/interaction-controls
 
