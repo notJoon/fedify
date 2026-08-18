@@ -92,4 +92,27 @@ describe("integrateFederation()", () => {
     assert.strictEqual(nextCalled, false);
     assert.strictEqual(getBody(), "Hello World");
   });
+
+  test("responds with 406 when onNotAcceptable is used and no route matches", async () => {
+    const mockFederation: MockFederation = {
+      fetch(_request, options) {
+        const { onNotAcceptable } = options as {
+          onNotAcceptable: () => Response;
+        };
+        return Promise.resolve(onNotAcceptable());
+      },
+    };
+
+    const middleware = integrateFederation(
+      mockFederation as never,
+      () => undefined,
+    );
+
+    const req = createMockRequest();
+    const { response, ended } = createMockResponse();
+
+    middleware(req, response, () => {});
+    await ended;
+    assert.strictEqual(response.statusCode, 406);
+  });
 });
