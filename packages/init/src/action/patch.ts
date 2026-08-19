@@ -25,7 +25,12 @@ import {
   noticeFilesToCreate,
   noticeFilesToInsert,
 } from "./notice.ts";
-import { getImports, loadFederation, loadLogging } from "./templates.ts";
+import {
+  getImports,
+  loadFederation,
+  loadLogging,
+  loadTest,
+} from "./templates.ts";
 import { joinDir, stringifyEnvs } from "./utils.ts";
 
 const jsonsCache = new Map<string, Record<string, object>>();
@@ -133,6 +138,7 @@ const getFiles = async <
     ...data,
   }),
   [data.initializer.loggingFile]: await loadLogging(data),
+  [data.initializer.testFile]: await loadTest(data),
   ".env": stringifyEnvs(data.env),
   ...data.initializer.files,
 });
@@ -183,6 +189,7 @@ const getJsons = <
 const getGeneratedFilePaths = (data: InitCommandData): string[] => [
   data.initializer.federationFile,
   data.initializer.loggingFile,
+  data.initializer.testFile,
   ".env",
   ...Object.keys(data.initializer.files ?? {}),
   ...Object.keys(getJsons(data)),

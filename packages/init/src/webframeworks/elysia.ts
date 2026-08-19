@@ -3,7 +3,12 @@ import deps from "../json/deps.json" with { type: "json" };
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, nodeBunDevToolTasks, pmToRt } from "./utils.ts";
+import {
+  getInstruction,
+  getTestTask,
+  nodeBunDevToolTasks,
+  pmToRt,
+} from "./utils.ts";
 
 const elysiaDescription: WebFrameworkDescription = {
   label: "Elysia",
@@ -41,6 +46,7 @@ const elysiaDescription: WebFrameworkDescription = {
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
+    testFile: "scripts/smoke.test.ts",
     files: {
       "src/index.ts": (await readTemplate(
         `elysia/index/${pmToRt(pm)}.ts`,
@@ -68,16 +74,19 @@ const TASKS = {
     dev:
       "deno serve --allow-read --allow-env --allow-net --watch ./src/index.ts",
     prod: "deno serve --allow-read --allow-env --allow-net ./src/index.ts",
+    test: getTestTask("deno"),
   },
   bun: {
     dev: "bun run --hot ./src/index.ts",
     prod: "bun run ./src/index.ts",
+    test: getTestTask("bun"),
     ...nodeBunDevToolTasks,
   },
   node: {
     dev: "dotenvx run -- tsx watch src/index.ts",
     build: "tsc src/index.ts --outDir dist",
     start: "NODE_ENV=production dotenvx run -- node dist/index.js",
+    test: getTestTask("npm"),
     ...nodeBunDevToolTasks,
   },
 };

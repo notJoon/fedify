@@ -1,9 +1,9 @@
+import { message } from "@optique/core";
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { message } from "@optique/core";
 import type { InitCommandData } from "../types.ts";
 import {
   assertNoGeneratedFileConflicts,
@@ -92,6 +92,18 @@ test("patchFiles merges JSONC files containing only comments", async () => {
   });
 });
 
+test("patchFiles writes the smoke-test script", async () => {
+  await withTempDir(async (dir) => {
+    await patchFiles(createInitData(dir, false));
+
+    const testScript = await readFile(
+      join(dir, "scripts", "smoke.test.ts"),
+      "utf8",
+    );
+    assert.match(testScript, /\["npm", "run", "dev"\]/);
+  });
+});
+
 function createInitData(
   dir: string,
   allowNonEmpty: boolean,
@@ -111,6 +123,7 @@ function createInitData(
     initializer: {
       federationFile: "src/federation.ts",
       loggingFile: "src/logging.ts",
+      testFile: "scripts/smoke.test.ts",
       instruction: message`done`,
       tasks: {},
       compilerOptions: {},

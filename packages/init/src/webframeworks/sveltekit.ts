@@ -3,7 +3,13 @@ import deps from "../json/deps.json" with { type: "json" };
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { PackageManager, WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, nodeBunDevToolTasks, pmToRt } from "./utils.ts";
+import {
+  getInstruction,
+  getTestDependencies,
+  getTestTask,
+  nodeBunDevToolTasks,
+  pmToRt,
+} from "./utils.ts";
 
 const sveltekitDescription: WebFrameworkDescription = {
   label: "SvelteKit",
@@ -22,14 +28,18 @@ const sveltekitDescription: WebFrameworkDescription = {
       ...(pmToRt(pm) === "deno"
         ? {}
         : { "@dotenvx/dotenvx": deps["npm:@dotenvx/dotenvx"] }),
+      ...getTestDependencies(pm),
     },
     federationFile: "src/lib/federation.ts",
     loggingFile: "src/lib/logging.ts",
+    testFile: "scripts/smoke.test.ts",
     env: testMode ? { HOST: "127.0.0.1" } : {} as Record<string, string>,
     files: {
       "src/hooks.server.ts": await readTemplate("sveltekit/hooks.server.ts"),
     },
-    tasks: pmToRt(pm) === "deno" ? {} : { ...TASKS },
+    tasks: pmToRt(pm) === "deno"
+      ? { test: getTestTask("deno") }
+      : { ...TASKS, test: getTestTask(pm) },
     instruction: getInstruction(pm, 5173),
   }),
 };

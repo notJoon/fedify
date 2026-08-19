@@ -3,7 +3,12 @@ import deps from "../json/deps.json" with { type: "json" };
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { PackageManager, WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, getNodeBunDevToolTasks } from "./utils.ts";
+import {
+  getInstruction,
+  getNodeBunDevToolTasks,
+  getTestDependencies,
+  getTestTask,
+} from "./utils.ts";
 
 const nuxtDescription: WebFrameworkDescription = {
   label: "Nuxt",
@@ -16,10 +21,12 @@ const nuxtDescription: WebFrameworkDescription = {
       ...defaultDevDependencies,
       "typescript": deps["npm:typescript"],
       "@types/node": deps["npm:@types/node@25"],
+      ...getTestDependencies(pm),
     },
     federationFile: "server/federation.ts",
     loggingFile: "server/logging.ts",
     loggingTemplate: "nuxt/server/logging.ts",
+    testFile: "scripts/smoke.test.ts",
     format: {
       ignorePatterns: [".output/**"],
     },
@@ -30,7 +37,7 @@ const nuxtDescription: WebFrameworkDescription = {
         "nuxt/server/plugins/logging.ts",
       ),
     },
-    tasks: getNodeBunDevToolTasks(pm),
+    tasks: { ...getNodeBunDevToolTasks(pm), test: getTestTask(pm) },
     instruction: getInstruction(pm, 3000),
   }),
 };

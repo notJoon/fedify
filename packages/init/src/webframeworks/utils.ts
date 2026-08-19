@@ -1,5 +1,6 @@
 import type { Message } from "@optique/core";
 import { commandLine, message } from "@optique/core/message";
+import deps from "../json/deps.json" with { type: "json" };
 import { getDevCommand } from "../lib.ts";
 import type { PackageManager } from "../types.ts";
 
@@ -12,6 +13,30 @@ export const nodeBunDevToolTasks = {
 export const getNodeBunDevToolTasks = (
   pm: PackageManager,
 ): Record<string, string> => pm === "deno" ? {} : nodeBunDevToolTasks;
+
+const SMOKE_TEST_FILE = "scripts/smoke.test.ts";
+
+/**
+ * Returns the `test` task command that runs the generated smoke-test
+ * script (`WebFrameworkInitializer.testFile`) with the runtime matching the
+ * given package manager.
+ */
+export const getTestTask = (pm: PackageManager): string =>
+  pmToRt(pm) === "deno"
+    ? `deno run -A ${SMOKE_TEST_FILE}`
+    : pmToRt(pm) === "bun"
+    ? `bun run ${SMOKE_TEST_FILE}`
+    : `tsx ${SMOKE_TEST_FILE}`;
+
+/**
+ * Returns the dev dependencies the `test` task needs beyond what the
+ * framework already declares.  Node.js runs the smoke-test script through
+ * `tsx`; Deno and Bun execute TypeScript natively.
+ */
+export const getTestDependencies = (
+  pm: PackageManager,
+): Record<string, string> =>
+  pmToRt(pm) === "node" ? { tsx: deps["npm:tsx"] } : {};
 
 /**
  * Generates the post-initialization instruction message that shows

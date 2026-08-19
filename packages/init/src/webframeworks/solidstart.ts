@@ -3,7 +3,13 @@ import deps from "../json/deps.json" with { type: "json" };
 import { PACKAGE_VERSION, readTemplate } from "../lib.ts";
 import type { WebFrameworkDescription } from "../types.ts";
 import { defaultDenoDependencies, defaultDevDependencies } from "./const.ts";
-import { getInstruction, nodeBunDevToolTasks, pmToRt } from "./utils.ts";
+import {
+  getInstruction,
+  getTestDependencies,
+  getTestTask,
+  nodeBunDevToolTasks,
+  pmToRt,
+} from "./utils.ts";
 
 const NPM_SOLIDSTART = `npm:@solidjs/start@${deps["npm:@solidjs/start"]}`;
 const solidstartDescription: WebFrameworkDescription = {
@@ -16,9 +22,11 @@ const solidstartDescription: WebFrameworkDescription = {
       ...defaultDevDependencies,
       typescript: deps["npm:typescript"],
       "@types/node": deps["npm:@types/node@22"],
+      ...getTestDependencies(pm),
     },
     federationFile: "src/federation.ts",
     loggingFile: "src/logging.ts",
+    testFile: "scripts/smoke.test.ts",
     format: {
       ignorePatterns: [".solid/**", ".vinxi/**"],
     },
@@ -94,17 +102,20 @@ const TASKS = {
     dev: "deno run -A npm:vinxi dev",
     build: "deno run -A npm:vinxi build",
     start: "deno run -A npm:vinxi start",
+    test: getTestTask("deno"),
   },
   bun: {
     dev: "bunx vinxi dev",
     build: "bunx vinxi build",
     start: "bunx vinxi start",
+    test: getTestTask("bun"),
     ...nodeBunDevToolTasks,
   },
   node: {
     dev: "vinxi dev",
     build: "vinxi build",
     start: "dotenvx run -- vinxi start",
+    test: getTestTask("npm"),
     ...nodeBunDevToolTasks,
   },
 };
